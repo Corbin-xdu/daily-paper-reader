@@ -25,3 +25,62 @@ subscriptions:
     stage: A
     diff_threshold_pct: 15
   keyword_recall_mode: or
+  intent_profiles:
+    - tag: CV轻量化
+      description: 计算机视觉领域模型轻量化与数学原理和模型底层思考创新论文检索
+      enabled: true
+      paper_sources:
+        - arxiv
+      keywords:
+        - keyword: Model Compression
+          keyword_cn: 模型压缩
+          query: Model compression techniques in computer vision
+        - keyword: Knowledge Distillation
+          keyword_cn: 知识蒸馏
+          query: Mathematical principles of knowledge distillation in CV
+        - keyword: Neural Architecture Search
+          keyword_cn: 神经架构搜索
+          query: Efficient neural architecture search for mobile vision
+        - keyword: Mathematical Optimization
+          keyword_cn: 数学优化
+          query: Mathematical optimization for deep learning efficiency
+        - keyword: Efficient Transformer
+          keyword_cn: 高效Transformer
+          query: Lightweight vision transformer design and optimization
+      intent_queries:
+        - query: Mathematical foundations of lightweight neural network design
+          query_cn: 轻量化神经网络设计的数学基础
+          enabled: true
+          source: manual
+          note: ''
+        - query: Innovative theoretical frameworks for computer vision model efficiency
+          query_cn: 计算机视觉模型效率的创新理论框架
+          enabled: true
+          source: manual
+          note: ''
+        - query: First principles analysis of model compression and acceleration
+          query_cn: 模型压缩与加速的第一性原理分析
+          enabled: true
+          source: manual
+          note: ''
+        - query: Novel architectural paradigms for resource constrained vision tasks
+          query_cn: 资源受限视觉任务的新型架构范式
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-04-13T11:28:37.461Z'
+source_backends:
+  arxiv:
+    papers_table: arxiv_papers
+    use_vector_rpc: true
+    vector_rpc: match_arxiv_papers
+    vector_rpc_exact: match_arxiv_papers_exact
+    use_bm25_rpc: true
+    bm25_rpc: match_arxiv_papers_bm25
+    sync_table: arxiv_sync_status
+    sync_success_value: success
+    schema: public
+    kind: supabase
+    enabled: true
+    url: https://lyucdwgefyfbmaiopjbk.supabase.co
+    anon_key: sb_publishable_lX-oi64Uxyd7SIVv3_w2Uw_MTOojeKq
