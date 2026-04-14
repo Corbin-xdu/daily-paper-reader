@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.05718v1/fig-001.webp",
+      "caption": "Table 3. Results on the Cityscapes dataset (H100, float32) with the Mask Transformer segmentation head [26]. * indicates methods that require training or fine-tuning. Input images were 768x768, corresponding to 2304 tokens in the base sequence.",
+      "page": 7,
+      "index": 1,
+      "width": 429,
+      "height": 302
+    },
+    {
+      "url": "assets/figures/arxiv/2604.05718v1/fig-002.webp",
+      "caption": "Table 2. Results on Pascal Context dataset (H100, Float 32) with Mask Transformer segmentation head [26], 480x480px per image, base sequence length of 900 tokens for patch size 16.",
+      "page": 7,
+      "index": 2,
+      "width": 429,
+      "height": 435
+    },
+    {
+      "url": "assets/figures/arxiv/2604.05718v1/fig-003.webp",
+      "caption": "Figure 3. Accuracy vs. FPS for MPM using different insertion layers in ViT-Base [7] on ADE20K [38].",
+      "page": 7,
+      "index": 3,
+      "width": 474,
+      "height": 283
+    },
+    {
+      "url": "assets/figures/arxiv/2604.05718v1/fig-004.webp",
+      "caption": "Figure 2. Visualization of MPM on the same image during daytime and nighttime. Nighttime is simulated by reducing the image’s luminosity and adding a small amount of thermal and shot noise modeled by Gaussian and Poisson distributions. Approximately 6% fewer tokens are merged at night than during the day.",
+      "page": 5,
+      "index": 4,
+      "width": 437,
+      "height": 435
+    },
+    {
+      "url": "assets/figures/arxiv/2604.05718v1/fig-005.webp",
+      "caption": "Table 1. Comparison of main token reduction methods on ADE20K; images are 512x512 pixels. Results were recorded on a single H100 GPU in full precision without FlashAttention. * indicates methods that require training or fine-tuning, and ∼ denotes the average recorded FLOPs per image over the entire dataset with random batches.",
+      "page": 6,
+      "index": 5,
+      "width": 454,
+      "height": 640
+    },
+    {
+      "url": "assets/figures/arxiv/2604.05718v1/fig-006.webp",
+      "caption": "Figure 1. Visual abstract of Mutual Pair Merging (MPM). Similar tokens are matched by mutual pairs and averaged together. Tokens without a mutual relationship remain as singletons. A merge map is kept in memory to enable reconstruction of the entire token sequence. MPM has no learned parameters and no continuous compression knob; the speed-accuracy trade-off is controlled by the choice of insertion blocks.",
+      "page": 4,
+      "index": 6,
+      "width": 1032,
+      "height": 651
+    }
+  ]
+}

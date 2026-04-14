@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.07000v1/fig-001.webp",
+      "caption": "Fig. 3: Qualitative comparison of super-resolution results on Set14 and B100 using different LUT-based models and our IQ-LUT method.",
+      "page": 4,
+      "index": 1,
+      "width": 510,
+      "height": 329
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07000v1/fig-002.webp",
+      "caption": "Fig. 2: The overview of our model.(a) represents the overall structure of IQ-LUT, (b) is the internal structure of IQ-Block, which is the core of our model. It consists of two parts: NUQD and DPFI. (c) is the internal structure of NUQD. The lower part is the distillation training process, the snowflakes on the left represent freezing, and the flames on the right represent trainable.",
+      "page": 2,
+      "index": 2,
+      "width": 1054,
+      "height": 506
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07000v1/fig-003.webp",
+      "caption": "Table 1: Quantitative results of ×4 super-resolution on five benchmark datasets. The best results are highlighted in bold, while the second best are marked with underline. Size denotes the LUT storage size.",
+      "page": 3,
+      "index": 3,
+      "width": 1046,
+      "height": 362
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07000v1/fig-004.webp",
+      "caption": "Fig. 1: Qualitative and quantitative comparison on Set5 for x4 SR. As can be seen from the left figure, our model IQ-L8C16 performs well on the boundary. As can be seen from the right figure, our three IQ-LUT models all achieve small LUT-Size and high PSNR.",
+      "page": 1,
+      "index": 4,
+      "width": 444,
+      "height": 330
+    }
+  ]
+}

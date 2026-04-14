@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.09445v1/fig-001.webp",
+      "caption": "Figure 1. AsymLoc bridges the gap between powerful database models and lightweight on-device localization. By explicitly modeling teacher–student asymmetry, AsymLoc enables compact query models to perform real-time localization on edge platforms such as smart glasses, drones, and single-board computers, while larger teacher models process the pre-mapped database images offline. This design delivers near-teacher accuracy with up to 25× smaller models and a fraction of the compute cost.",
+      "page": 1,
+      "index": 1,
+      "width": 496,
+      "height": 431
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09445v1/fig-002.webp",
+      "caption": "Table 1. AsymLoc enables compact student (online) models to achieve localization accuracy competitive with much larger teacher (offline) models. We present results using [Blue] SiLK and [Orange] SuperPoint as teachers across four diverse datasets: HPatches (homography), ScanNet (indoor), IMC2022 (outdoor), and Aachen (full localization pipeline). By explicitly modeling the asymmetric setup, AsymLoc consistently achieves performance close to the teacher, while standard symmetric settings struggle. Furthermore, AsymLoc outperforms other asymmetric baselines. We report parameters (Params), GFLOPs, and dataset-specific metrics. Additional ablations are available in Appendix A.4.",
+      "page": 7,
+      "index": 2,
+      "width": 981,
+      "height": 638
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09445v1/fig-003.webp",
+      "caption": "Figure 2. AsymLoc Training Pipeline. Given a pair of images (A,B) with known homography, the teacher model T processes image A, while image B is processed by both the teacher T and the student S. Each network produces N keypoints with corresponding detector confidence and descriptors. The teacher outputs from A and the student outputs from B are combined to form the Mutual Matching Matrix (Sec. 3.2), which is used to compute the geometric matching loss. In parallel, we construct two detector-weighted similarity matrices: one with the teacher outputs of A and the student outputs of B, and the other with the teacher outputs of A and the teacher outputs of B. These matrices form two joint detector–descriptor similarity spaces (Sec. 3.3); their distributions are then aligned through a distillation loss.",
+      "page": 3,
+      "index": 3,
+      "width": 1036,
+      "height": 262
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09445v1/fig-004.webp",
+      "caption": "Table 6. Homography estimation accuracy on HPatches (0.08M and 0.06M).",
+      "page": 13,
+      "index": 4,
+      "width": 529,
+      "height": 233
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09445v1/fig-005.webp",
+      "caption": "Figure 7. FPS Comparison on HPatches with SILK Teacher",
+      "page": 13,
+      "index": 5,
+      "width": 496,
+      "height": 272
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09445v1/fig-006.webp",
+      "caption": "Figure 5. Efficiency–accuracy trade-offs for AsymLoc. (A) Homography estimation accuracy (HE Acc) vs. GFLOPs on HPatches. (B) HE Acc per GFLOP vs. parameter count. (C) Mean localization accuracy (MLA) vs. GFLOPs on IMC2022. (D) MLA per GFLOP vs. parameter count. Across all datasets, asymmetric training yields flatter Pareto curves and higher parameter efficiency, demonstrating superior scalability of AsymLoc compared to standard symmetric training.",
+      "page": 8,
+      "index": 6,
+      "width": 1036,
+      "height": 322
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09445v1/fig-007.webp",
+      "caption": "Figure 3. Examples from the evaluation datasets, spanning planar homography scenes (HPatches), indoor environments (ScanNet), and challenging outdoor benchmarks (IMC2022/Aachen).",
+      "page": 5,
+      "index": 7,
+      "width": 422,
+      "height": 312
+    }
+  ]
+}

@@ -1,0 +1,236 @@
+Title: IQ-LUT: interpolated and quantized LUT for efficient image super-resolution
+
+URL Source: https://arxiv.org/pdf/2604.07000v1
+
+Published Time: Thu, 09 Apr 2026 00:56:52 GMT
+
+Number of Pages: 5
+
+Markdown Content:
+## IQ-LUT: INTERPOLATED AND QUANTIZED LUT FOR EFFICIENT IMAGE SUPER-RESOLUTION 
+
+## Yuxuan Zhang 1, Zhikai Dong 2, Xinning Chai 1, Xiangyun Zhou 2, Yi Xu 1, Zhengxue Cheng 1,† , Li Song 1,† 
+
+> 1
+
+## Shanghai Jiao Tong University  
+
+> 2
+
+## Rockchip Electronics Co., Ltd 
+
+{67keudyhsi,chaixinning,xuyi,zxcheng,song_li}@sjtu.edu.cn {zhikai.dong,zxy}@rock-chips.com 
+
+ABSTRACT 
+
+Lookup table (LUT) methods demonstrate considerable potential in accelerating image super-resolution inference. However, pursuing higher image quality through larger re-ceptive fields and bit-depth triggers exponential growth in the LUT’s index space, creating a storage bottleneck that limits deployment on resource-constrained devices. We introduce 
+
+IQ-LUT , which achieves a reduction in LUT size while si-multaneously enhancing super-resolution quality. First, we integrate interpolation and quantization into the single-input, multiple-output ECNN, which dramatically reduces the in-dex space and thereby the overall LUT size. Second, the integration of residual learning mitigates the dependence on LUT bit-depth, which facilitates training stability and prior-itizes the reconstruction of fine-grained details for superior visual quality. Finally, guided by knowledge distillation, our non-uniform quantization process optimizes the quantization levels, thereby reducing storage while also compensating for quantization loss. Extensive benchmarking demonstrates our approach substantially reduces storage costs (by up to 
+
+50 × compared to ECNN) while achieving superior super-resolution quality. 
+
+Index Terms — Interpolation, Residual learning, Non-uniform quantization, Knowledge distillation, Lookup table 
+
+1. INTRODUCTION 
+
+With the growing demand for real-time high-quality im-age restoration on mobile devices and embedded platforms, lightweight, low-latency single image super-resolution (SISR) methods have become a research hotspot. Lookup table (LUT)-based acceleration is an effective method for resource-constrained devices because it pre-computes the mapping from low-resolution to high-resolution image patches and replaces online inference with efficient table indexing. LUT-based SR methods, such as SR-LUT[1], usually im-prove quality by enlarging the receptive field, which leads to an increase in the LUT index range and an exponential growth      
+
+> †Corresponding author. LR SR-LUT SP-LUT
+> MuLUT IQ-L8C16 HR 10 210 3
+> Size (KB)
+> 29.75
+> 30.00
+> 30.25
+> 30.50
+> 30.75
+> 31.00
+> 31.25
+> 31.50
+> PSNR on Set5 (x4)
+> TinyLUT-S
+> SR-LUT
+> MuLUT
+> SP-LUT
+> IQ-L8C16
+> IQ-L8C8
+> IQ-L12C8
+> ECNN-L8C8
+
+better 
+
+Fig. 1 : Qualitative and quantitative comparison on Set5 for x4 SR. As can be seen from the left figure, our model IQ-L8C16 performs well on the boundary. As can be seen from the right figure, our three IQ-LUT models all achieve small LUT-Size and high PSNR. in LUT size. Subsequent studies[2, 3, 4, 5, 6, 7, 8], such as MuLUT[9], adopted strategies such as interpolation, rotation, and compact encoding to replace storage with additional com-putation, thereby achieving a balance between accuracy and efficiency. However, these methods still suffer from the prob-lems of large overall model size and low quality. Compared with the aforementioned multi-input LUT method, ECNN[10] introduces a novel expanded convolu-tion that maps a single pixel to multiple output values, thus achieving a better balance between size and quality. However, the LUT size still grows exponentially with increasing index bit-depth. To address this, we propose IQ-LUT, an expanded convolution-based model that makes a hardware-efficient trade-off: it introduces minimal computation to circumvent the prohibitive cost of exponential storage growth, a strategy that benefits dedicated hardware where memory dominates. First, in order to reduce the size, we adopt bilinear interpola-tion to establish a low-frequency foundation and solely train the residual component, so that the network focuses on high 
+
+> arXiv:2604.07000v1 [cs.CV] 8 Apr 2026 IQ-Block
+
+xL 
+
+> Upsample
+> Bilinear
+> Inter-
+> polation
+> (a) IQ-LUT
+
+𝐀 1
+
+𝐀 𝐀   
+
+> Conv1x1
+> Conv1x1 & ReLU
+> Conv1x1 & ReLU
+> 𝐀 𝐀
+> Convertible LUT
+> Fuse
+> Reshape
+> &
+> Inplace
+> add
+> Dual-Path Fused
+> Interpolation
+> (DPFI)
+> DPFI
+> NUQD
+> Residual
+> Learning
+> Nonlinear
+> Transformation
+> Quantization
+> -ceil
+> Quantization
+> -floor
+> Inverse
+> Transformation
+> (c) Non-Uniform Quantization with Distillation(NUQD)
+> NUQD
+> (b ) Structure of IQ-Block
+> Inference
+> Training
+> with
+> Distillation Convertible LUT DPFI Distillation-loss
+> 𝐀 𝐀 +1
+
+Fig. 2 : The overview of our model.(a) represents the overall structure of IQ-LUT, (b) is the internal structure of IQ-Block, which is the core of our model. It consists of two parts: NUQD and DPFI. (c) is the internal structure of NUQD. The lower part is the distillation training process, the snowflakes on the left represent freezing, and the flames on the right represent trainable. frequencies and the output distribution is more concentrated. Learnable residual connections are incorporated within each IQ-Block to facilitate stable gradient propagation, enable the training of deeper and wider network architectures, and enhance overall SR performance. Secondly, simply reduc-ing the bit-depth also leads to severe quality degradation. Therefore, in each IQ-Block, we propose an interpolation scheme, called Dual-Path Fused Interpolation (DPFI), which adopts low index bit-depth and interpolates intermediate val-ues instead of explicitly storing them. This strategy enables significant model compression with minimal loss in visual quality. Finally, training only the residuals yields a more concentrated output distribution. This concentration renders uniform quantization suboptimal, as it inefficiently allocates storage to value ranges with low occupancy. To address this issue, We add a non-uniform quantization module (NUQD) at the input of each IQ-Block, applying piecewise-linear map-ping followed by quantization to compress redundant regions. We also use a high bit-depth model as a teacher model for knowledge distillation. This reduces the LUT size by elim-inating redundancy while achieving finer discretization in important regions, thereby improving SR quality. The specific contributions of our IQ-LUT are as follows: • We propose an IQ-LUT comprising stacked IQ-Blocks to explicitly learn high-frequency residuals, which significantly improves detail recovery in image super-resolution. • We propose Dual Path Fusion Interpolation (DPFI), which reduces the input bit-depth while replacing ex-plicit storage with interpolation, effectively balancing model size and reconstruction quality. • We propose Non-uniform Quantization with Distilla-tion (NUDQ), which employs piecewise mapping for finer discretization of key regions and leverages knowl-edge distillation to improve quality. 
+
+2. PROPOSED METHOD 
+
+A.Preliminary 
+
+Our model is built on the expanded convolutional (EC) neural network (ECNN) with L stacked EC layers, followed by an upsample module, which is implemented as a specialized EC layer integrated with a PixelShuffle operation. Each EC layer is designed as a lightweight subnetwork comprising three 1 ×
+
+1 convolutional layers and two ReLU activations, as illus-trated in the Convertible LUT module in Fig. 2. During the training phase, this subnetwork generates intermediate fea-tures for each input pixel. At inference time, it is converted into a LUT to enhance computational efficiency: 
+
+X(i, j, c ) = Φ θ (Fin (i, j, c )) , (1) where Fin is the input and Φθ denotes the subnetwork. The final output Fn,c,h,w is obtained by the "Reshape and Inplace add" windows: 
+
+Fn,c,h,w =
+
+> kh−1
+
+X 
+
+> i=0
+> kw−1
+
+X
+
+> j=0
+> Cin −1
+
+X
+
+> cin =0
+
+Xpatch [n, c in , c, i, j, h + i, w + j],
+
+(2) where Xpatch is obtained by rearranging X(i, j, c ).Table 1 : Quantitative results of ×4 super-resolution on five benchmark datasets. The best results are highlighted in bold , while the second best are marked with underline. Size denotes the LUT storage size.                                                                                                                                                    
+
+> Model Size(KB) Set5 Set14 BSD100 Urban100 Manga109 (PSNR ↑SSIM ↑)(PSNR ↑SSIM ↑)(PSNR ↑SSIM ↑)(PSNR ↑SSIM ↑)(PSNR ↑SSIM ↑)Nearest -26.25 0.7372 24.65 0.6529 25.03 0.6293 22.17 0.6154 23.45 0.7414 Bilinear -27.55 0.7884 25.42 0.6792 25.54 0.6460 22.69 0.6346 24.21 0.7666 Bicubic -28.42 0.8101 26.00 0.7023 25.96 0.6672 23.14 0.6574 24.91 0.7871 SR-LUT 1274 29.82 0.8478 27.01 0.7355 26.53 0.6953 24.02 0.6990 26.80 0.8380 SP-LUT 5500 30.01 0.8516 27.21 0.7427 26.67 0.7019 24.12 0.7058 27.00 0.8430 MuLUT 4062 30.60 0.8653 27.60 0.7541 26.86 0.7110 24.46 0.7194 27.90 0.8633 TinyLUT-F 171 31.18 0.8771 28.01 0.7630 27.13 0.7184 24.92 0.7397 28.83 0.8798 TinyLUT-S 37 30.22 0.8535 27.33 0.7450 26.71 0.7042 24.19 0.7066 27.21 0.8458 ECNN-L8C8 1516 31.06 0.8753 27.91 0.7631 27.08 0.7180 24.82 0.7364 28.59 0.8762 IQ-L8C8 34 31.14 0.8761 27.93 0.7634 27.09 0.7183 24.84 0.7373 28.64 0.8767 IQ-L12C8 50 31.26 0.8794 28.00 0.7660 27.14 0.7204 24.96 0.7427 28.86 0.8817 IQ-L8C16 124 31.50 0.8838 28.12 0.7697 27.22 0.7238 25.14 0.7500 29.17 0.8878
+
+B.The whole structure of IQ-LUT 
+
+As illustrated in Fig. 2 (a), Our IQ-LUT consists of L lay-ers of IQ-Blocks. Each IQ-Block, as shown in part (b) of the Fig. 2, sequentially undergoes non-uniform quantization (NUQD), dual-path fuse interpolation (DPFI), and a learnable residual connection. Finally, after L layers of IQ-Blocks, the output undergoes upsample, then summed with the bilinear interpolation of the low-resolution image to produce a high-resolution image. It mitigates the network’s reliance on high bit-depth. Furthermore, each IQ-Block incorporates a learn-able scalar parameter α to connect the input residual to the output, facilitating adaptive information flow and enabling the training of deeper, wider networks: 
+
+xout = (1 − σ(α)) · x + σ(α) · F (x), (3) where σ(·) denotes the sigmoid function. F (x) is the result of x after NUQD and DPFI module. 
+
+C.NUDQ:Non-uniform quantization with distillation 
+
+To address the trade-off between LUT size and reconstruction quality, we adopt non-uniform quantization to enhance bit-depth efficiency. Unlike standard uniform quantization within a fixed range, non-uniform quantization allows for finer dis-cretization in more important regions, thereby reducing mem-ory requirements while preserving key feature information. Specifically, within each IQ-Block, the input is processed by a Non-uniform Quantization with Distillation (NUDQ) module. We introduce a symmetric piecewise-linear mapping 
+
+Ta,b for its computational efficiency and hardware-friendly implementation: 
+
+Ta,b (x) = 
+
+
+
+−1 + so(x + 1) , x ≤ − a, sm x, |x| < a, b + so(x − a), x ≥ a, 
+
+(4) and sm = ba , s o = 1 − b
+
+1 − a , 0 < a, b < 1. The hyperpa-rameters a and b are optimized via a greedy search to ob-tain different slopes, which in turn facilitate distinct quanti-zation effects. Then We uniformly quantize and nonlinearly inverse transform Ta,b (x). To further stabilize the training and enhance the intermediate feature representation, as shown in Fig. 2 (c), we also fine-tune the low bit-depth pre-trained student network with the high bit-depth pre-trained teacher network to complete knowledge distillation. In our final model, the first IQ-Block use 4-bit input, while all subsequent blocks operate at 3-bit precision, with each IQ-Block producing 8-bit output. The distillation process is con-ducted from a 8-bit input, 12-bit output teacher network. 
+
+D.DPFI:Dual-Path Fused Interpolation 
+
+A major challenge in LUT-based methods is that improving performance comes at the cost of an exponential increase in storage size with higher bit-depth. However, A naive reduc-tion of the bit-depth inevitably leads to a significant degrada-tion in quality. To address this issue, we employ an interpola-tion scheme to approximate intermediate LUT values, thereby enhancing fidelity while preserving a low bit-depth. As shown in Fig. 2 (c), NUQD quantizes an input by per-forming bidirectional rounding (both upward and downward), producing two outputs: Xfloor and Xceil , which correspond to the nearest lower and upper LUT indices, respectively. The interpolation weights T are computed by: 
+
+T = ( xtrans − xfloor ) · (2 b−1 − 1) , T ∈ [0 , 1] 
+
+where b denotes the target bit-depth and xtrans represents the output of nonlinear transformation in NUQD. The fused feature, which is the output of DPFI, is then obtained by a weighted combination: 
+
+F (x) = (1 − T ) ⊙ Xfloor + T ⊙ Xceil . (5) 
+
+3. EXPERIMENTS 
+
+A.Implementation Details 
+
+Datasets and Metrics We employ the DIV2K dataset[11] for training and evaluate on five standard benchmarks: Set5[12], LR SR-LUT SP-LUT Mu-LUT          
+
+> Tiny-LUT Ours-L8C8 Ours-L8C16 HR B100_LR_x4:78004.png
+> LR SR-LUT SP-LUT Mu-LUT
+> Tiny-LUT Ours-L8C8 Ours-L8C16 HR Set14_LR_x4:foreman.png
+
+Fig. 3 : Qualitative comparison of super-resolution results on Set14 and B100 using different LUT-based models and our IQ-LUT method. Set14[13], B100[14], Urban100[15], and Manga109[16]. Quantitative performance is assessed using PSNR and SSIM computed on the Y channel in YCbCr space. 
+
+Training Details The model is trained for 1 × 10 6 iterations using the Adam optimizer [17] ( β1 = 0 .9, β2 = 0 .999 ), with an initial learning rate of 1 × 10 −4 that is halved at 200K, 400K, 600K, and 800K iterations. The loss combines MSE (weight 1.0) and distillation loss (weight 3.0). Training con-sists of two stages: initial optimization with MSE for conver-gence, followed by fine-tuning with non-uniform quantiza-tion and distillation to reduce quantization effects. All exper-iments are implemented in PyTorch on an NVIDIA GeForce RTX 3090 GPU. 
+
+B.Quantitative Comparison 
+
+As presented in Table 1, our model configurations, denoted IQ-LXCY, where X and Y correspond to the number of layers of IQ-Block and the number of channels of intermediate fea-tures, respectively, consistently surpass previous work across all benchmarks. IQ-L8C16 achieves the best PSNR and SSIM results on every dataset with only 124 KB. Even the compact IQ-L8C8 (34 KB) outperforms most LUT-based methods and larger models, demonstrating an excellent balance between efficiency and reconstruction quality and validating our de-sign’s effectiveness. 
+
+C.Qualitative Comparison 
+
+Beyond quantitative metrics, we qualitatively evaluated the recovery of fine textures. As shown in Fig. 3, our IQ-LUT recovers sharper and more accurate textures than prior LUT-based methods. It better preserves complex structures and edges that are typically blurred or over-smoothed by previ-ous methods. This demonstrates the efficacy of our DPFI and residual learning modules in reconstructing high-frequency details. 
+
+Table 2 : Effect of DPFI and Residual Learning (Res) Mod-ules on PSNR Across Benchmark Datasets for ×4 SR. The input quantization bit of every IQ-Block is 4.                      
+
+> DPFI Res Set5 Set14 B100 Urban100 Manga109 30.63 27.59 26.90 24.50 27.69
+> ✓31.04 27.89 27.06 24.75 28.44
+> ✓✓31.20 27.99 27.13 24.91 28.74
+
+Table 3 : Effect of NUQD on PSNR Across Benchmark Datasets for ×4 SR. the first IQ-Block uses 4-bit input. All subsequent blocks operate use 3-bit input.               
+
+> NUQD Set5 Set14 B100 Urban100 Manga109 31.12 27.91 27.09 24.82 28.52
+> ✓31.17 27.95 27.10 24.85 28.65
+
+D.Complexity Analysis 
+
+As anticipated, the introduced interpolation incurs a modest latency overhead. Notably, our model delivers this perfor-mance at merely twice the latency of ECNN on GPU while re-quiring only 1/50 of its parameters. This represents a highly favorable trade-off, exchanging minimal computation for a drastic reduction in storage footprint. Crucially, our primary objective is optimization for custom hardware (ASIC) deploy-ment, where storage—not logic—dominates area and power costs. Consequently, our radical storage compression pro-vides a decisive efficiency advantage that is not reflected in generic processor benchmarks. 
+
+E.Ablation Study 
+
+a) The Effectiveness of DPFI and Residual Learning To evaluate the contributions of the proposed components, we conduct ablation studies on five benchmark datasets using the IQ-L8C8 model. As summarized in Table 2, the DPFI mod-ule consistently improves PSNR, and further incorporating residual learning brings additional gains, confirming that both components are critical to enhancing reconstruction quality. 
+
+b) The Impact of NUDQ We also analyze the impact of NUQD using the IQ-L8C8 model. Results in Table 3 show that introducing NUQD consistently improves performance across all datasets. The results validate its effectiveness in improving reconstruction quality. 
+
+4. CONCLUSIONS 
+
+Our IQ-LUT address the challenges of LUT-based super-resolution by introducing Residual Learning, Dual-Path Fused Interpolation and Non-Uniform Quantization with Distillation. The proposed IQ-LUT achieves state-of-the-art performance across all benchmark datasets, notably attaining a PSNR of 31.50 dB on Set5 with its optimal configuration (IQ-L8C16), while maintaining a compact model size of only 124 KB. These strategies effectively alleviate the LUT size explosion problem and improve super-resolution quality. 5. ACKNOWLEDGEMENTS 
+
+This work was partly supported by the NSFC(62431015, 62571317, 62501387), Science and Technology Commission of Shanghai Municipality No.25511106700, the Fundamental Research Funds for the Central Universities, Shanghai Key Laboratory of Digital Media Processing and Transmission under Grant 22DZ2229005, 111 project BP0719010. 
+
+6. REFERENCES 
+
+[1] Younghyun Jo and Seon Joo Kim, “Practical single-image super-resolution using look-up table,” in 2021 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 2021, pp. 691–700. [2] Yuheng Xu, Shijie Yang, Xin Liu, Jie Liu, Jie Tang, and Gangshan Wu, “Autolut: Lut-based image super-resolution with automatic sampling and adaptive resid-ual learning,” 2025. [3] Kai Yin and Jie Shen, “Efficient look-up table from expanded convolutional network for accelerating im-age super-resolution,” in Proceedings of the Thirty-Eighth AAAI Conference on Artificial Intelligence and Thirty-Sixth Conference on Innovative Applications of Artificial Intelligence and Fourteenth Symposium on Educational Advances in Artificial Intelligence . 2024, AAAI’24/IAAI’24/EAAI’24, AAAI Press. [4] Sejin Park, Sangmin Lee, Kyong Hwan Jin, and Seung-Won Jung, “Im-lut: Interpolation mixing look-up tables for image super-resolution,” 2025. [5] Xin Zhao, Zhicheng Hu, and Liang Chang, “Usr-lut: A high-efficient universal super resolution accelerator with lookup table,” in 2024 IEEE International Symposium on Circuits and Systems (ISCAS) , 2024, pp. 1–5. [6] Gang He, Guancheng Quan, Chang Wu, Shihao Wang, Dajiang Zhou, and Yunsong Li, “Multi-frame de-formable look-up table for compressed video quality en-hancement,” Proceedings of the AAAI Conference on Artificial Intelligence , vol. 39, no. 3, pp. 3392–3400, Apr. 2025. [7] Yinglong Li, Jiacheng Li, and Zhiwei Xiong, “Look-up table compression for efficient image restoration,” in 
+
+2024 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 2024, pp. 26016–26025. [8] Yinglong Li, Jiacheng Li, and Zhiwei Xiong, “Look-up table compression for efficient image restoration,” in 
+
+2024 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 2024, pp. 26016–26025. [9] Jiacheng Li, Chang Chen, Zhen Cheng, and Zhiwei Xiong, “MuLUT: Cooperating multiple look-up tables for efficient image super-resolution,” in ECCV , 2022. [10] Kai Yin and Jie Shen, “Expanded convolutional neural network based look-up tables for high efficient single-image super-resolution,” in ACM Multimedia 2024 ,2024. [11] Eirikur Agustsson and Radu Timofte, “Ntire 2017 chal-lenge on single image super-resolution: Dataset and study,” in The IEEE Conference on Computer Vision and Pattern Recognition (CVPR) Workshops , July 2017. [12] Marco Bevilacqua, Aline Roumy, Christine Guillemot, and Marie-Line Alberi Morel, “Low-complexity single-image super-resolution based on nonnegative neighbor embedding,” in British Machine Vision Conference (BMVC) , 2012. [13] Roman Zeyde, Michael Elad, and Matan Protter, “On single image scale-up using sparse-representations,” in 
+
+Curves and Surfaces , Jean-Daniel Boissonnat, Patrick Chenin, Albert Cohen, Christian Gout, Tom Lyche, Marie-Laurence Mazure, and Larry Schumaker, Eds., Berlin, Heidelberg, 2012, pp. 711–730, Springer Berlin Heidelberg. [14] D. Martin, C. Fowlkes, D. Tal, and J. Malik, “A database of human segmented natural images and its application to evaluating segmentation algorithms and measuring ecological statistics,” in Proceedings Eighth IEEE Inter-national Conference on Computer Vision. ICCV 2001 ,2001, vol. 2, pp. 416–423 vol.2. [15] Jia-Bin Huang, Abhishek Singh, and Narendra Ahuja, “Single image super-resolution from transformed self-exemplars,” in 2015 IEEE Conference on Computer Vi-sion and Pattern Recognition (CVPR) , 2015, pp. 5197– 5206. [16] Yusuke Matsui, Kota Ito, Yuji Aramaki, Azuma Fujimoto, Toru Ogawa, T. Yamasaki, and Kiy-oharu Aizawa, “Sketch-based manga retrieval using manga109 dataset,” Multimedia Tools and Applications ,vol. 76, pp. 21811 – 21838, 2015. [17] Diederik P. Kingma and Jimmy Ba, “Adam: A method for stochastic optimization,” CoRR , vol. abs/1412.6980, 2014.
