@@ -1,0 +1,94 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.07380v1/fig-001.webp",
+      "caption": "Figure 4: Path-norm (σk = update magnitude) vs. function change (|∆L|) per direction. Grokked (left): large σ with near-zero function change—compression (weight space motion without functional consequence). Memorized (right): small σ with large function change—fragility (any motion disrupts the function).",
+      "page": 6,
+      "index": 1,
+      "width": 686,
+      "height": 248
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07380v1/fig-002.webp",
+      "caption": "Figure 3: Perturbation curves (ε-sweep) for the grokked Dyck model. Top: loss; bottom: KL divergence from base model. All curves are nearly flat—edge and bulk alike. The grokked model sits in a wide valley where perturbation along any Gram direction barely changes the output. Maximum KL ≈ 0.00005 for the edge.",
+      "page": 6,
+      "index": 2,
+      "width": 976,
+      "height": 396
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07380v1/fig-003.webp",
+      "caption": "Figure 9: Compositional probing (Dyck, layer 1). Cross-term features (token × cumsum) achieve R2 = 1.0 for both models, confirming depth is compositionally determined. But the grokked model does not linearly encode token identity (R2 = 0.30 vs. 0.99 for memorized)—it abstracts away from surface features.",
+      "page": 11,
+      "index": 3,
+      "width": 979,
+      "height": 423
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07380v1/fig-004.webp",
+      "caption": "Figure 5: Probe R2 for depth from layer-1 representations (Dyck). Left (grokked): linear probes degrade late (0.97 → 0.67); quadratic probes fail even worse (0.59); but MLP probes hold at 0.99 throughout. Right (memorized): all probes remain high. Depth information is not lost—it is nonlinearly re-encoded by weight-decay compression.",
+      "page": 7,
+      "index": 4,
+      "width": 686,
+      "height": 248
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07380v1/fig-005.webp",
+      "caption": "Figure 8: Mean attention patterns (Dyck). Grokked (top): all layer-0 heads converge to uniform backward attention (smooth gradient = the counting algorithm). Memorized (bottom): peaked, position-specific patterns (bright spots = a lookup table).",
+      "page": 10,
+      "index": 5,
+      "width": 976,
+      "height": 290
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07380v1/fig-006.webp",
+      "caption": "Figure 1: (A) Weight decay controls the compression–accessibility tradeoff: increasing ω raises accuracy and attention entropy but lowers linear probe R2 (representations become more abstract). (B) The gradient-to-WD transition on v1: both tasks flip from gradient-dominated (blue) to WDdominated (orange) at grokking. SCAN’s transition is sharper (99.8% WD). (C) Hessian curvature: the grokked edge (solid) is flat (blue shading); the memorized bulk (dashed) is sharply curved (red shading, up to v⊤Hv = 1.84).",
+      "page": 3,
+      "index": 6,
+      "width": 976,
+      "height": 337
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07380v1/fig-007.webp",
+      "caption": "Figure 12: Robustness. (a) All key findings replicate across seeds 42, 137, 2024. MLP probe R2 = 0.990± 0.003 is the most robust. (b) The stability hierarchy: v1 rotates 18◦ (moderate), v3 rotates 52◦ (unstable). SCAN’s v1 rotates only 8◦ (frozen).",
+      "page": 13,
+      "index": 7,
+      "width": 977,
+      "height": 396
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07380v1/fig-008.webp",
+      "caption": "Figure 11: Fourier analysis of Gram edge directions in the depth basis (the correct functional coordinate for Dyck).",
+      "page": 13,
+      "index": 8,
+      "width": 982,
+      "height": 264
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07380v1/fig-009.webp",
+      "caption": "Figure 6: Continuing training from a post-grok checkpoint under four WD conditions (Dyck). Removing WD (ω = 0, red): accuracy holds at 0.97, probe R2 recovers to 0.99, entropy drops, parameter norm balloons. Doubling WD (ω = 2, purple): accuracy rises slightly, probe R2 drops further, entropy maximizes. WD drives compression of the representation; the learned algorithm is independent of WD.",
+      "page": 8,
+      "index": 9,
+      "width": 976,
+      "height": 545
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07380v1/fig-010.webp",
+      "caption": "Figure 10: Depth centroids in PCA space (layer 1). Grokked (top): distributed across dimensions (PCA1 = 34%), smooth arc. Memorized (bottom): stretched along one axis (PCA1 = 81%), 150× larger inter-depth distances. Higher linear R2 in the memorized model (0.95 vs. 0.71) is a signature of explicit storage, not better computation.",
+      "page": 12,
+      "index": 10,
+      "width": 976,
+      "height": 651
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07380v1/fig-011.webp",
+      "caption": "Figure 2: Ablation: removing the Gram edge (v1 + v2, blue) degrades accuracy by 0.29–0.62; removing random 2-dimensional subspaces (red, 20 trials/phase) has zero effect (∆acc < 10−4). The edge is >4000× more impactful than random directions. This is not a norm effect—the random directions remove the same number of dimensions from the same parameter subspace.",
+      "page": 5,
+      "index": 11,
+      "width": 832,
+      "height": 299
+    }
+  ]
+}

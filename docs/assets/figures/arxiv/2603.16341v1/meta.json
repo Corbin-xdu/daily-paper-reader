@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.16341v1/fig-001.webp",
+      "caption": "Fig. 2: PKINet-v2 overview. PKINet-v2 consists of four stages. Each (a) Stage l contains a Patch Embedding layer followed by a sequence of Nl PKINet-v2 Blocks. Each (b) PKINet-v2 Block is composed of a PKS sub-block and an FFN sub-block. The (c) PKS Block mainly comprises a PKS Module and two Fully Connected (FC) layers. (d) PKS Module (§3.3) builds a multi-scope spatial attention map by aggregating heterogeneous branches with wide-range receptive field and fusing them with a 1 × 1 convolution. Here, n=0, . . . , Nl−1 indicates that the PKS Module/Block is located in the n-th PKINet-v2 Block of the l-th stage. Please refer to §3 for more details.",
+      "page": 6,
+      "index": 1,
+      "width": 719,
+      "height": 274
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16341v1/fig-002.webp",
+      "caption": "Table 3: Experimental results on DOTA-v1.0 dataset [55] under single-scale training and testing setting. PKINet-v2-S is pretrained on ImageNet-1K [8] for 300 epochs similar to previous methods [1, 30,38,68]. †: Use the Strip Head [68]. See §4.2.",
+      "page": 11,
+      "index": 2,
+      "width": 727,
+      "height": 398
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16341v1/fig-003.webp",
+      "caption": "Fig. 1: Performance of PKINet-v2 on DOTA-v1 dataset [55]. PKINet-v2 consistently improves mAP while substantially boosting inference efficiency over PKINetv1 [1], across representative oriented detectors.",
+      "page": 2,
+      "index": 3,
+      "width": 567,
+      "height": 304
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16341v1/fig-004.webp",
+      "caption": "Table 9: Diagnostic experiments on DOTA-v1.0 [55]. The adopted default designs are marked in red. All models are pretrained on ImageNet-1K [8] for 100 epochs (ablation setting) and built within Oriented RCNN [56]. FPS reported in Tab. 9a and Tab. 9c is measured during inference after applying HKR. See §4.4 for details.",
+      "page": 14,
+      "index": 4,
+      "width": 702,
+      "height": 255
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16341v1/fig-005.webp",
+      "caption": "Fig. 4: Visual results on DOTA-1.0 dataset [55]. (Top) Geometric complexity. (Bottom) Spatial complexity. PKINet-v2 delivers more robust detection than other methods [1, 30,68] under both challenges. Please refer to §4.3 for more details.",
+      "page": 13,
+      "index": 5,
+      "width": 723,
+      "height": 302
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16341v1/fig-006.webp",
+      "caption": "Fig. 3: Receptive field construction and HKR Strategy. (Left) The multibranch PKS Module (§3.3) aggregates heterogeneous depth-wise branches to form a hierarchically densified receptive field with a broad receptive-field range, where global full-span coverage is progressively enriched toward the center. (Right) Heterogeneous Kernel Re-parameterization (HKR, §3.4) algebraically fuses Conv-BN and merges all branches into one equivalent Kmax×Kmax depth-wise convolution, preserving identical outputs while significantly improving inference efficiency. Please refer to §3 for details.",
+      "page": 8,
+      "index": 6,
+      "width": 688,
+      "height": 238
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16341v1/fig-007.webp",
+      "caption": "Table 5: Experimental results on HRSC2016 dataset [36]. PKINet-S is pretrained on ImageNet1K [8] for 300 epochs which is consistent with previous methods [1, 30, 38, 68] and built within the framework of Oriented RCNN [56]. mAP (07/12): VOC 2007 [11]/2012 [12] metrics. Refer to §4.2.",
+      "page": 12,
+      "index": 7,
+      "width": 421,
+      "height": 302
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.11501v1/fig-001.webp",
+      "caption": "Figure 2: Softmax decision boundary. (a) Two tokens compete. (b) INT4 adds bounded noise—stays on correct side (flip rate 0.03% at gap >0.05). (c) Rank reduction removes a dimension—crosses the boundary (flip rate 4.6%).",
+      "page": 6,
+      "index": 1,
+      "width": 706,
+      "height": 213
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11501v1/fig-002.webp",
+      "caption": "Figure 3: Attention routing disruption (KL divergence) predicts compression damage. Monotonic across all three methods at matched 512-bit budget on Mistral 7B.",
+      "page": 6,
+      "index": 2,
+      "width": 498,
+      "height": 344
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11501v1/fig-003.webp",
+      "caption": "Table 19: Cross-architecture transferability of structural methods.",
+      "page": 15,
+      "index": 3,
+      "width": 486,
+      "height": 265
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11501v1/fig-004.webp",
+      "caption": "Table 1: Quantization vs rank reduction at matched storage (d× b vs r × 16 bits/token/head).",
+      "page": 3,
+      "index": 4,
+      "width": 606,
+      "height": 254
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11501v1/fig-005.webp",
+      "caption": "Figure 1: Perplexity vs storage budget on Mistral 7B. Quantization (blue) achieves near-FP16 quality above 3 bits per dimension. Rank reduction at matched storage (red) is catastrophically worse at every budget. The gap between curves is the paper’s central finding.",
+      "page": 4,
+      "index": 5,
+      "width": 622,
+      "height": 464
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.11071v1/fig-001.webp",
+      "caption": "Figure 4. Overview of our two-stage pipeline. Stage 1 applies frozen preprocessing (CPGA-Net and CLAHE) to the low-light input, producing a 9-channel tensor. Stage 2 is a lightweight 3-level U-Net with depthwise-separable convolution (DWConv) blocks that learns residual color correction. C denotes channel-wise concatenation and + denotes element-wise addition (global residual).",
+      "page": 4,
+      "index": 1,
+      "width": 416,
+      "height": 300
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11071v1/fig-002.webp",
+      "caption": "Figure 3. Distribution of per-image mean brightness before and after preprocessing. On LOLv1 (top), CPGA shifts the distribution close to GT, while CLAHE provides intermediate normalization. On NTIRE LLIE 2026 (bottom), the input distribution is much wider, and preprocessing provides partial but complementary normalization.",
+      "page": 4,
+      "index": 2,
+      "width": 478,
+      "height": 559
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11071v1/fig-003.webp",
+      "caption": "Figure 2. Qualitative comparison on LOLv1 test images. Our Mid model (859K params) produces visually competitive results with less color distortion than RetinexFormer and comparable detail to HVI-CIDNet.",
+      "page": 3,
+      "index": 3,
+      "width": 1032,
+      "height": 308
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11071v1/fig-004.webp",
+      "caption": "Table 2. Quantitative comparison on LOLv1 test set, grouped by model size. Full-reference metrics are reported without GT-mean normalization. Methods are split by the NTIRE 2026 ELLIE constraint of <1 MB in fp16 storage. Best in bold, second best underlined within each group. †: official pretrained weights. ∗: unsupervised (not trained on LOLv1 pairs). ‡: trained by us with the same protocol as Ours.",
+      "page": 6,
+      "index": 4,
+      "width": 722,
+      "height": 476
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11071v1/fig-005.webp",
+      "caption": "Figure 1. Parameter count vs. LPIPS on LOLv1 test (lower-left is better). Our Mid model (859K) achieves lower LPIPS than RetinexFormer (1.6M) and matches HVI-CIDNet w/o perc (2M). All “Ours” parameter counts include the frozen CPGA-Net preprocessor.",
+      "page": 1,
+      "index": 5,
+      "width": 478,
+      "height": 336
+    }
+  ]
+}

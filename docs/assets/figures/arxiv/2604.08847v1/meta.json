@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.08847v1/fig-001.webp",
+      "caption": "Figure 1: We present the first quantization framework tailored for deepfake detection, DeFakeQ, enabling real-time deployment on edge devices. Compared to existing lightweight model designs and conventional quantization approaches, our framework significantly reduces computational cost while maintaining high detection accuracy.",
+      "page": 2,
+      "index": 1,
+      "width": 783,
+      "height": 431
+    },
+    {
+      "url": "assets/figures/arxiv/2604.08847v1/fig-002.webp",
+      "caption": "Table 4: Comparison with compression methods across other technical categories on detection accuracy(%).",
+      "page": 10,
+      "index": 2,
+      "width": 972,
+      "height": 187
+    },
+    {
+      "url": "assets/figures/arxiv/2604.08847v1/fig-003.webp",
+      "caption": "Figure 4: Real-world detection instances of DeFakeQ deployed on an Android device. The quantized model processes in around 35 ms, and outputs the prediction result and the corresponding confidence score. Please refer to the demo video for our real time and real work depoyment on the android phone.",
+      "page": 14,
+      "index": 3,
+      "width": 707,
+      "height": 657
+    },
+    {
+      "url": "assets/figures/arxiv/2604.08847v1/fig-004.webp",
+      "caption": "Figure 3: Visual Comparisons of detected salient forgeries during the quantization process.",
+      "page": 13,
+      "index": 4,
+      "width": 731,
+      "height": 607
+    },
+    {
+      "url": "assets/figures/arxiv/2604.08847v1/fig-005.webp",
+      "caption": "Table 1: Cross-dataset evaluations of Detection Accuracy, Storage Cost and Compression Rate on testing Dataset DFD Zi et al. [2020]. All quantized detectors are trained on FF++ Rossler et al. [2019]. Our method achieves significantly improved detection accuracy (%) comparable to existing quantization approaches, while remains comparable in Compression Rate (%) and Storage Cost (MB).",
+      "page": 8,
+      "index": 5,
+      "width": 970,
+      "height": 385
+    },
+    {
+      "url": "assets/figures/arxiv/2604.08847v1/fig-006.webp",
+      "caption": "Figure 2: The overview of DeFakeQ. It comprises two core components: Horizontal Adaptive Quantization (HAQ) and Vertical Efficient Feature Fine-Tuning (VEFT). HAQ first calculates the importance scores of weights within each network block. Guided by a specially designed horizontal loss function Lhor, it adaptively identifies blocks rich in discriminative information and assigns them higher bit-widths, ensuring critical forgery-related features are preserved during quantization. Complementing HAQ, VEFT operates at the channel level: it adaptively identifies and prioritizes sensitive feature channels within each quantized block. This mechanism maximizes the retention of discriminative features in quantized blocks while maintaining efficient compression of redundant channels.",
+      "page": 4,
+      "index": 6,
+      "width": 972,
+      "height": 433
+    },
+    {
+      "url": "assets/figures/arxiv/2604.08847v1/fig-007.webp",
+      "caption": "Table 3: Additional Cross-datasets evaluation of Detection Accuracy on testing dataset DFDCP Dolhansky et al. [2019] where all quantized detectors are trained on FF++ Rossler et al. [2019].",
+      "page": 9,
+      "index": 7,
+      "width": 971,
+      "height": 291
+    },
+    {
+      "url": "assets/figures/arxiv/2604.08847v1/fig-008.webp",
+      "caption": "Table 2: Additional Cross-datasets evaluation of Detection Accuracy on testing datasets CDF-v1 Li et al. [2020b], CDF-v2 Li et al. [2020b], and DFDC Dolhansky et al. [2019]. All quantized detectors are trained on the FF++ dataset Rossler et al. [2019], with the best results highlighted in bold.",
+      "page": 9,
+      "index": 8,
+      "width": 976,
+      "height": 345
+    }
+  ]
+}

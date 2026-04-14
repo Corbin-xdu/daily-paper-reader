@@ -1,0 +1,326 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-001.webp",
+      "caption": "Table 3 | Dense-objective checkpoints at pretraining resolution (VQA). We compare vision encoders adapted with dense objectives, including detection-pretrained (IN1K→COCO) ViTDet as a Transformer baseline and VMamba as the SSM backbone, and segmentation-pretrained (IN1K→ADE20K) DeiT baselines and VMamba. All checkpoints are evaluated at their pretraining input geometries and we report per-benchmark VQA scores and the average VQA score. Because input geometry (and thus token length) differs across entries, these results reflect the impact of the dense pretraining objective rather than perfectly matched architectural swaps.",
+      "page": 6,
+      "index": 1,
+      "width": 1004,
+      "height": 300
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-002.webp",
+      "caption": "Table 5 | Stabilizing localization collapse: VQA benchmarks. We test two interface strategies on the collapse cases: increasing connector capacity with a stronger MLP connector (marked with (f)) and changing the input geometry to a square 512×512 setting while keeping the vision checkpoint fixed. Values in parentheses denote the change relative to the corresponding collapsed variant, which is highlighted in blue.",
+      "page": 11,
+      "index": 2,
+      "width": 1004,
+      "height": 329
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-003.webp",
+      "caption": "Table 19 | VQA benchmarks for additional backbones with non-classification pretraining or taskadapted checkpoints, alongside VMamba transfer variants. Because these settings differ from the main controlled comparison in pretraining data and objective, they are reported separately.",
+      "page": 25,
+      "index": 3,
+      "width": 1004,
+      "height": 395
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-004.webp",
+      "caption": "Table 20 | Localization benchmarks for additional backbones with non-classification pretraining or task-adapted checkpoints, alongside VMamba transfer variants. Because these settings differ from the main controlled comparison in pretraining data and objective, they are reported separately.",
+      "page": 25,
+      "index": 4,
+      "width": 1004,
+      "height": 413
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-005.webp",
+      "caption": "Table 21 | VQA benchmarks for backbones pretrained with contrastive or self-supervised objectives, along with fused DINOv2/CLIP and DINOv2/SigLIP variants. Rows marked (f) use a stronger connector for stabilization.",
+      "page": 26,
+      "index": 5,
+      "width": 1004,
+      "height": 346
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-006.webp",
+      "caption": "Table 22 | Localization benchmarks for backbones pretrained with contrastive or self-supervised objectives, along with fused DINOv2/CLIP and DINOv2/SigLIP variants. Rows marked (f) use a stronger connector for stabilization. Direct fusion can hurt localization, while stabilized fusion substantially improves grounding performance and yields the strongest results in this group.",
+      "page": 26,
+      "index": 6,
+      "width": 1004,
+      "height": 350
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-007.webp",
+      "caption": "Table 13 | Weighted linear probing scores versus downstream weighted VQA, localization, and overall performance on the test split (%). The Weighted Probing score is the dataset-size-weighted average across probing benchmarks.",
+      "page": 21,
+      "index": 7,
+      "width": 1000,
+      "height": 613
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-008.webp",
+      "caption": "Figure 3 | Correlation matrix of benchmark scores across all evaluated models.",
+      "page": 21,
+      "index": 8,
+      "width": 689,
+      "height": 608
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-009.webp",
+      "caption": "Table 27 | MaxViT VQA benchmarks",
+      "page": 30,
+      "index": 9,
+      "width": 1004,
+      "height": 523
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-010.webp",
+      "caption": "Table 26 | ViT localization benchmarks",
+      "page": 30,
+      "index": 10,
+      "width": 1004,
+      "height": 315
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-011.webp",
+      "caption": "Table 25 | ViT VQA benchmarks",
+      "page": 30,
+      "index": 11,
+      "width": 1004,
+      "height": 302
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-012.webp",
+      "caption": "Figure 1 | Overview of our controlled vision encoder study. We follow a LLaVA-style VLM design where an input image is encoded by a frozen vision encoder into visual tokens, which are then processed by the LLM; this modular setup enables controlled swaps of vision encoders from different architecture families under a fixed training recipe. Right: Each marker summarizes one evaluated vision-backbone checkpoint plugged into the same VLM setting. Colors denote the backbone family; marker shapes denote the pretraining objective (classification, detection, or segmentation); marker size reflects encoder scale. Gray markers indicate configurations that exhibit collapse; arrows point to the corresponding stabilized variants after applying our stabilizations.",
+      "page": 2,
+      "index": 12,
+      "width": 960,
+      "height": 349
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-013.webp",
+      "caption": "Table 4 | Dense-objective checkpoints at pretraining resolution (localization and averages). Same settings as the VQA table, reporting localization/grounding benchmarks, the average localization score, and the overall average across all benchmarks. Checkpoints are evaluated at their pretraining input geometries; since geometry (and token length) differs across entries, the comparisons primarily isolate the effect of dense objectives rather than matched backbone architecture.",
+      "page": 7,
+      "index": 13,
+      "width": 1004,
+      "height": 313
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-014.webp",
+      "caption": "Table 23 | VMamba VQA benchmarks",
+      "page": 29,
+      "index": 14,
+      "width": 1004,
+      "height": 540
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-015.webp",
+      "caption": "Table 24 | VMamba localization benchmarks",
+      "page": 29,
+      "index": 15,
+      "width": 1004,
+      "height": 563
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-016.webp",
+      "caption": "Table 14 | Per-dataset linear probing results on the test split (%). Results are obtained by training a linear classifier on frozen global image features.",
+      "page": 22,
+      "index": 16,
+      "width": 1000,
+      "height": 578
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-017.webp",
+      "caption": "Table 36 | ViT-Adapter localization benchmarks",
+      "page": 33,
+      "index": 17,
+      "width": 1004,
+      "height": 287
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-018.webp",
+      "caption": "Table 35 | ViT-Adapter VQA benchmarks",
+      "page": 33,
+      "index": 18,
+      "width": 1004,
+      "height": 275
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-019.webp",
+      "caption": "Table 7 | MaxViT feature-stage ablation on VQA benchmarks. Rows marked (S4) use stage-4 features, while unmarked rows use stage-3 features. Stage 3 matches the ViT/16 token count at the same input resolution, whereas stage 4 uses fewer vision tokens.",
+      "page": 18,
+      "index": 19,
+      "width": 1004,
+      "height": 240
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-020.webp",
+      "caption": "Table 8 | MaxViT feature-stage ablation on localization benchmarks. Rows marked (S4) use stage-4 features, while unmarked rows use stage-3 features. Using the lower-token stage-4 features substantially degrades grounding and localization performance.",
+      "page": 18,
+      "index": 20,
+      "width": 1004,
+      "height": 244
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-021.webp",
+      "caption": "Table 16 | Representative localization comparison at matched token count. All models are evaluated in the standard 224 × 224 / 196-token setting, or the stage-3 equivalent for hierarchical backbones, providing a compact subset of the main comparison.",
+      "page": 23,
+      "index": 21,
+      "width": 1004,
+      "height": 436
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-022.webp",
+      "caption": "Table 15 | Representative VQA comparison at matched token count. All models are evaluated in the standard 224 × 224 / 196-token setting, or the stage-3 equivalent for hierarchical backbones, providing a compact subset of the main comparison.",
+      "page": 23,
+      "index": 22,
+      "width": 1000,
+      "height": 415
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-023.webp",
+      "caption": "Figure 4 | Scaling of single-GPU VLM inference cost with image resolution at batch size 1. The x-axis shows the square input resolution, written as 𝑅2. The six panels report (a) host-side vision latency, (b) host-side LLM latency, (c) GPU vision latency, (d) GPU LLM latency, (e) end-to-end VLM latency, and (f) peak allocated GPU memory. For each model and resolution, we run 100 warm-up iterations and report the mean over the next 100 iterations. Dotted segments ending with an × indicate the first resolution that exceeds GPU memory capacity. The marker is placed at the top of each subplot to show the out-of-memory threshold rather than a measured metric value. In panel (f), it therefore marks the first failed resolution, not an observed peak-memory measurement.",
+      "page": 28,
+      "index": 23,
+      "width": 956,
+      "height": 622
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-024.webp",
+      "caption": "Figure 2 | (Top) Grounding examples. Under the matched IN1K/224 setting, VMamba-T (blue) predicts boxes closer to ground truth (green) than ViT-S (red). (Bottom) Token–region similarity. Similarity maps between the visual feature map and the corresponding text tokens from an intermediate LLM layer show VMamba-T yields sharper, more spatially localized text–vision alignment than ViT-S, indicating better preservation and utilization of spatial information.",
+      "page": 8,
+      "index": 24,
+      "width": 967,
+      "height": 557
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-025.webp",
+      "caption": "Table 9 | MambaVision feature-stage ablation on VQA benchmarks. Rows marked (S4) use stage-4 features, while unmarked rows use stage-3 features. We report both settings to study the trade-off between token count and semantic abstraction.",
+      "page": 19,
+      "index": 25,
+      "width": 1004,
+      "height": 310
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-026.webp",
+      "caption": "Table 10 | MambaVision feature-stage ablation on localization benchmarks. Rows marked (S4) use stage-4 features, while unmarked rows use stage-3 features. Stage 3 provides a more balanced trade-off for localization under a fair token-count comparison to ViT/16-style backbones.",
+      "page": 19,
+      "index": 26,
+      "width": 1004,
+      "height": 314
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-027.webp",
+      "caption": "Table 32 | Vim localization benchmarks",
+      "page": 32,
+      "index": 27,
+      "width": 1004,
+      "height": 190
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-028.webp",
+      "caption": "Table 33 | ViTDet VQA benchmarks",
+      "page": 32,
+      "index": 28,
+      "width": 1004,
+      "height": 196
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-029.webp",
+      "caption": "Table 31 | Vim VQA benchmarks",
+      "page": 32,
+      "index": 29,
+      "width": 1004,
+      "height": 182
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-030.webp",
+      "caption": "Table 34 | ViTDet localization benchmarks",
+      "page": 32,
+      "index": 30,
+      "width": 1004,
+      "height": 204
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-031.webp",
+      "caption": "Table 6 | Stabilizing localization collapse: localization benchmarks. Same settings as Table 5, reporting grounding metrics and aggregate scores.",
+      "page": 12,
+      "index": 31,
+      "width": 1004,
+      "height": 386
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-032.webp",
+      "caption": "Table 18 | Additional localization results for selected MaxViT and MambaVision configurations beyond the matched 196-token setting. We report larger-resolution and larger-token variants for hierarchical backbones and compare them with the standard VMamba models.",
+      "page": 24,
+      "index": 32,
+      "width": 1004,
+      "height": 506
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-033.webp",
+      "caption": "Table 17 | Additional VQA results for selected MaxViT and MambaVision configurations beyond the matched 196-token setting. We report larger-resolution and larger-token variants for hierarchical backbones and compare them with the standard VMamba models.",
+      "page": 24,
+      "index": 33,
+      "width": 1004,
+      "height": 486
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-034.webp",
+      "caption": "Table 28 | MaxViT localization benchmarks",
+      "page": 31,
+      "index": 34,
+      "width": 1004,
+      "height": 548
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-035.webp",
+      "caption": "Table 29 | MambaVision VQA benchmarks",
+      "page": 31,
+      "index": 35,
+      "width": 1004,
+      "height": 307
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-036.webp",
+      "caption": "Table 30 | MambaVision localization benchmarks",
+      "page": 31,
+      "index": 36,
+      "width": 1004,
+      "height": 321
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-037.webp",
+      "caption": "Table 11 | Vim vs. VMamba on VQA benchmarks under the shared VLM training recipe. VMamba achieves stronger overall performance and is therefore used as the representative SSM-based backbone in the main paper.",
+      "page": 20,
+      "index": 37,
+      "width": 1004,
+      "height": 252
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-038.webp",
+      "caption": "Table 12 | Vim vs. VMamba on localization benchmarks under the shared VLM training recipe. VMamba yields stronger grounding performance overall and is therefore used as the representative SSM-based backbone in the main paper.",
+      "page": 20,
+      "index": 38,
+      "width": 1004,
+      "height": 264
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-039.webp",
+      "caption": "Table 1 | Matched IN1K/224 backbone swaps (VQA). ImageNet-1K supervised vision encoders plugged into the same VLM under a strictly matched setting with 224×224 inputs and 𝐿=196 visual tokens. We report per-benchmark VQA scores and the weighted average VQA score. Across all tables, the best results are shown in bold, and the second best are underlined.",
+      "page": 5,
+      "index": 39,
+      "width": 1004,
+      "height": 494
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19209v1/fig-040.webp",
+      "caption": "Table 2 | Matched IN1K/224 backbone swaps (localization and overall). Same setting as 1, reporting per-benchmark localization/grounding scores, the weighted average localization score, and the weighted overall average across all benchmarks.",
+      "page": 5,
+      "index": 40,
+      "width": 1004,
+      "height": 519
+    }
+  ]
+}

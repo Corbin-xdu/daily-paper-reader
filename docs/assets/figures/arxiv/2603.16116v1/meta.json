@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.16116v1/fig-001.webp",
+      "caption": "Fig. 1. Collaborative learning in distributed C&S networks.",
+      "page": 1,
+      "index": 1,
+      "width": 520,
+      "height": 551
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16116v1/fig-002.webp",
+      "caption": "Table II. Top-2 accuracy (%) improvement relative to the non-distilled student model, along with model sizes and computational complexities. Student models share the same size and complexity, and the same applies to the teacher models.",
+      "page": 6,
+      "index": 2,
+      "width": 1114,
+      "height": 898
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16116v1/fig-003.webp",
+      "caption": "Table I. Comparison of KD topologies in distributed C&S networks",
+      "page": 5,
+      "index": 3,
+      "width": 1068,
+      "height": 577
+    }
+  ]
+}

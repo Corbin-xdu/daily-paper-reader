@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.18739v2/fig-001.webp",
+      "caption": "Figure 3: Architecture of ECDet. ECDet consists of three components: a distilled ECViT backbone, an encoder, and a decoder. The backbone replaces the standard large-stride patch embedding with a four-layer convolutional stem and outputs a single-resolution token representation. A lightweight multi-scale feature generator then aggregates the final transformer blocks and produces feature maps at strides 8, 16, and 32 with interpolation and 1 × 1 projections. The encoder refines and fuses these features, and the decoder performs set-based object prediction from learned object queries. The overall design keeps the detector compact while preserving the multi-scale structure required for dense localization.",
+      "page": 6,
+      "index": 1,
+      "width": 937,
+      "height": 371
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18739v2/fig-002.webp",
+      "caption": "Table 4: Performance comparison of real-time instance segmentation models on COCO (Lin et al., 2014) val2017, grouped by model scale. Best results trained without Objects365 are highlighted in bold. The Extra Sup. column indicates whether a method uses additional supervision beyond COCO, where O365+SAM2 denotes Objects365 pretraining (Shao et al., 2019) with SAM2 (Ravi et al., 2025) pseudo-instance masks before COCO fine-tuning.",
+      "page": 11,
+      "index": 2,
+      "width": 980,
+      "height": 408
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18739v2/fig-003.webp",
+      "caption": "Table 3: Performance comparison of real-time pose estimation methods on COCO val2017, grouped by model scale. Best results trained without Objects365 are highlighted in bold. The Extra Sup. column indicates whether a method uses additional supervision beyond COCO training data, where O365 denotes Objects365 pretraining (Shao et al., 2019).",
+      "page": 11,
+      "index": 3,
+      "width": 979,
+      "height": 410
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18739v2/fig-004.webp",
+      "caption": "Table 11: Hyper-parameters for ECPose.",
+      "page": 21,
+      "index": 4,
+      "width": 727,
+      "height": 445
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18739v2/fig-005.webp",
+      "caption": "Table 10: Hyper-parameters for ECDet.",
+      "page": 21,
+      "index": 5,
+      "width": 694,
+      "height": 469
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18739v2/fig-006.webp",
+      "caption": "Figure 1: Comprehensive evaluation of EdgeCrafter. (a) Comparison with state-of-the-art methods across multiple vision tasks on COCO (Lin et al., 2014). The plots show model parameters (top row) and FLOPs (bottom row) versus mAP. Methods marked with ∗ are pre-trained on the Objects365 dataset (Shao et al., 2019). From left to right, the columns correspond to object detection, human pose estimation, and instance segmentation. (b) Analysis of different pretraining strategies for the backbone, based on the ECDet-T model. ViT-T (Tiny) follows the training strategy proposed in (Steiner et al., 2022) on ImageNet-21K (Ridnik et al., 2021). In our experiments, supervised ImageNet-21K pretraining is weaker than no pretraining for this compact model, consistent with observations reported by Ghiasi et al. (2021); Zoph et al. (2020). Task-specialized distillation yields substantially stronger downstream performance.",
+      "page": 2,
+      "index": 6,
+      "width": 960,
+      "height": 327
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18739v2/fig-007.webp",
+      "caption": "Table 9: Effect of layer fusion strategy. We compare simple mean fusion over different late-layer ranges with concatenation and the STA fusion module from DEIMv2 (Huang et al., 2025a). The gray row marks the adopted default setting in ECDet-M.",
+      "page": 14,
+      "index": 7,
+      "width": 898,
+      "height": 206
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18739v2/fig-008.webp",
+      "caption": "Table 5: Unified ablation on teacher design and distillation data. All experiments use ECViT-T+ as the student. The teacher is initialized from DINOv3 (Siméoni et al., 2025), and “COCO pre-training” indicates that the teacher is first adapted as the ECDet backbone on COCO before distillation.",
+      "page": 13,
+      "index": 8,
+      "width": 656,
+      "height": 270
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18739v2/fig-009.webp",
+      "caption": "Table 2: Performance comparison of real-time object detectors on COCO (Lin et al., 2014) val2017. Best results without Objects365 pre-training are shown in bold. * denotes the actual training epochs, including additional epochs without augmentation. Latency is measured on an NVIDIA T4 GPU with batch size 1 under FP16 using TensorRT (v10.6), following RT-DETR (Lv et al., 2024) and D-FINE (Peng et al., 2025). YOLO latency includes NMS. Gray results indicate pre-training on Objects365 (Shao et al., 2019).",
+      "page": 9,
+      "index": 9,
+      "width": 980,
+      "height": 1102
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18739v2/fig-010.webp",
+      "caption": "Figure 2: Overview of the EdgeCrafter pipeline. Stage 1: A pretrained DINOv3 backbone (Siméoni et al., 2025) is adapted to object detection to create a task-specialized teacher within the ECDet formulation. Stage 2: The resulting teacher distills its detection-oriented representation into compact ECViT student backbones through feature alignment on a large image collection. Stage 3: The distilled students are used to instantiate the ECDet model family at different scales (S/M/L/X), and the same distilled backbone and encoder are further reused for instance segmentation and human pose estimation with lightweight task-specific heads. The key idea is that detection serves as the representation-learning stage, while the learned backbone transfers directly to other dense prediction tasks.",
+      "page": 5,
+      "index": 10,
+      "width": 952,
+      "height": 268
+    }
+  ]
+}

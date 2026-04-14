@@ -1,0 +1,126 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-001.webp",
+      "caption": "Figure 5: Optimization time as a function of pruning level for different network architectures. The horizontal dashed line indicates the time limit of 7,200 seconds. Weight pruning (a) requires aggressive sparsity (99%) for convergence in deep networks, while node pruning (b) achieves convergence at lower sparsity levels (80%) across all architectures.",
+      "page": 15,
+      "index": 1,
+      "width": 976,
+      "height": 305
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-002.webp",
+      "caption": "Figure 6: Total time decomposition (training vs. optimization) for each architecture and pruning strategy. For shallow and wide networks in one-shot optimization, moderate sparsity (e.g., 60% node pruning) provides the best trade-off, whereas for deep and narrow architectures in repeated optimization settings, aggressive pruning (e.g., 99% weight pruning) minimizes overall runtime despite higher training cost.",
+      "page": 15,
+      "index": 2,
+      "width": 832,
+      "height": 429
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-003.webp",
+      "caption": "Figure 12: Performance of pruning on the autothermal reformer flowsheet surrogate. Both weight and node pruning enable convergence within the 7,200-second time limit (left, dashed line) where the unpruned baseline fails, achieving speedups of up to three orders of magnitude. Unlike the peaks function, pruning also improves prediction accuracy (right), with MAPE reductions of approximately 0.20%, suggesting reduced overfitting.",
+      "page": 21,
+      "index": 3,
+      "width": 976,
+      "height": 306
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-004.webp",
+      "caption": "Figure 13: Preactivation bound widths for the flowsheet surrogate across pruning levels. Both weight (a) and node pruning (b) achieve more than two orders of magnitude reduction in median bound widths, consistent with the theoretical predictions and peaks function results.",
+      "page": 21,
+      "index": 4,
+      "width": 976,
+      "height": 263
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-005.webp",
+      "caption": "Figure 1: Graphical abstract.",
+      "page": 2,
+      "index": 5,
+      "width": 786,
+      "height": 375
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-006.webp",
+      "caption": "Figure 4: Comparison of final regression accuracy measured relative to the unpruned baseline across different pruning levels.",
+      "page": 14,
+      "index": 6,
+      "width": 976,
+      "height": 306
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-007.webp",
+      "caption": "Figure 8: Average interval width Ui − Li of big-M bounds across all neurons as a function of sparsity. Pruning monotonically reduces bound widths, with deep networks benefiting most due to compounding effects through multiple layers during interval arithmetic bound propagation.",
+      "page": 18,
+      "index": 7,
+      "width": 756,
+      "height": 540
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-008.webp",
+      "caption": "Figure 9: Monotonic decrease of average big-M widths with increasing sparsity for individual training runs.",
+      "page": 18,
+      "index": 8,
+      "width": 794,
+      "height": 543
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-009.webp",
+      "caption": "Figure 14: Layer-wise big-M bound widths under increasing sparsity for the deep and narrow architecture (102×20). The unpruned network exhibits exponential growth of bound widths with depth due to IA amplification, whereas pruning reduces bounds throughout the network. Weight pruning induces particularly strong reductions in the middle layers, suggesting concentration of information in a lower-dimensional intermediate representation (encoder–decoder-like behavior). This layer-specific effect less evident under node pruning, which enforces uniform sparsity across layers by design.",
+      "page": 28,
+      "index": 9,
+      "width": 976,
+      "height": 1210
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-010.webp",
+      "caption": "Figure 2: (a) Illustration of a dead neuron with pruned incoming weights and consequent flat activation and (b) an illustrative example for the dead neuron cleaning, where the biases of the neurons in the subsequent layer are adjusted to account for the constant activation of the dead neuron, with consequent safe removal of the output weights.",
+      "page": 8,
+      "index": 10,
+      "width": 698,
+      "height": 219
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-011.webp",
+      "caption": "Figure 11: Process flow diagram of the autothermal reformer flowsheet. Natural gas, steam, and air are fed into the reformer reactor to produce syngas. The hot product stream preheats the natural gas feed through a heat exchanger before expansion for power generation.",
+      "page": 19,
+      "index": 11,
+      "width": 786,
+      "height": 466
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-012.webp",
+      "caption": "Figure 10: Impact of sparsity on Gurobi solver performance. Higher sparsity reduces the problem size, enabling faster simplex iterations per second (left), while tighter big-M bounds from pruning strengthen the LP relaxation, reducing the root node gap (right) and accelerating branch and bound convergence by enabling earlier pruning of suboptimal branches.",
+      "page": 19,
+      "index": 12,
+      "width": 786,
+      "height": 452
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-013.webp",
+      "caption": "Table 4: Problem size reduction (%) after preprocessing (presolve) phase of the MILP solver for networks pruned using the node pruning technique. Values represent the percentage reduction in the number of variables, constraints, and integer variables after the solver’s preprocessing step. Mean and standard deviation are reported across all training runs.",
+      "page": 17,
+      "index": 13,
+      "width": 832,
+      "height": 309
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-014.webp",
+      "caption": "Table 3: Problem size reduction (%) after preprocessing (presolve) phase of the MILP solver for networks pruned using the weight pruning technique. Values represent the percentage reduction in the number of variables, constraints, and integer variables after the solver’s preprocessing step. Mean and standard deviation are reported across all training runs.",
+      "page": 16,
+      "index": 14,
+      "width": 618,
+      "height": 309
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23299v1/fig-015.webp",
+      "caption": "Figure 7: Trade-off between predictive accuracy (MAPE increase from the unpruned baseline) and computational cost for different pruning strategies and network architectures. Figure (a) reports the optimization runtime, while Figure (b) reports the total time comprising training and optimization.",
+      "page": 16,
+      "index": 15,
+      "width": 976,
+      "height": 302
+    }
+  ]
+}

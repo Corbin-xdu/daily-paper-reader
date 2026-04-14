@@ -1,0 +1,94 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.20074v1/fig-001.webp",
+      "caption": "Fig. 1. Top-1 Validation Accuracy versus Model Parameters comparison on Imagenet-1k [7] datasets. MFil-Mamba demonstrates superior performance compared to baseline state-of-the-art models with similar parameter counts.",
+      "page": 1,
+      "index": 1,
+      "width": 525,
+      "height": 396
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20074v1/fig-002.webp",
+      "caption": "TABLE I Detailed architecture overview of theMFil-Mamba variants.",
+      "page": 6,
+      "index": 2,
+      "width": 1091,
+      "height": 413
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20074v1/fig-003.webp",
+      "caption": "TABLE II Hyperparameters of MFil-Mamba models for ImageNet-1k classification task.",
+      "page": 6,
+      "index": 3,
+      "width": 440,
+      "height": 359
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20074v1/fig-004.webp",
+      "caption": "Fig. 6. Object detection and instance segmentation visualizations on theMS COCO validation set. In each group of three successive images, the left image shows the original input, the middle shows object detection results with bounding boxes, and the right shows instance segmentation results with masks and bounding boxes.",
+      "page": 11,
+      "index": 4,
+      "width": 1070,
+      "height": 848
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20074v1/fig-005.webp",
+      "caption": "Fig. 7. Semantic segmentation visualizations on the ADE20k dataset.",
+      "page": 11,
+      "index": 5,
+      "width": 1050,
+      "height": 377
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20074v1/fig-006.webp",
+      "caption": "TABLE III Model performances on ImageNet-1K Classification. FLOPs are calculated with an input resolution of 224 × 224.",
+      "page": 7,
+      "index": 6,
+      "width": 1064,
+      "height": 747
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20074v1/fig-007.webp",
+      "caption": "Fig. 5. Grad-CAM visualization on the ImageNet-1k validation set, illustrating model’s ability to focus on the main subject of the image.",
+      "page": 10,
+      "index": 7,
+      "width": 1048,
+      "height": 717
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20074v1/fig-008.webp",
+      "caption": "TABLE IV Object detection and instance segmentation performance on MS COCO dataset [62] using the Mask RCNN framework [30] with 1× schedule. FLOPs are calculated with an input resolution of 1280× 800. APb and APm represents mean average precision (AP) of bounding box and mask, respectively.",
+      "page": 8,
+      "index": 8,
+      "width": 1029,
+      "height": 627
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20074v1/fig-009.webp",
+      "caption": "Fig. 3. Qualitative visualizations of MFil-Mamba-T for object detection (1st row) and instance segmentation tasks (2nd row) on the MS COCO dataset [62], and for semantic segmentation task (3rd row) on the ADE20K dataset [63]. Detailed visualization is presented in Sec IV-G.",
+      "page": 8,
+      "index": 9,
+      "width": 524,
+      "height": 385
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20074v1/fig-010.webp",
+      "caption": "Fig. 4. Comparison of MFil-Mamba’s effective receptive field with existing state-of-the-art baselines.",
+      "page": 9,
+      "index": 10,
+      "width": 510,
+      "height": 319
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20074v1/fig-011.webp",
+      "caption": "TABLE V Semantic segmentation performance of different backbones on ADE20K [63] using UPerNet [80]. FLOPs are computed for an input resolution of 512 × 2048. SS and MS denote single-scale and multi-scale evaluation, respectively.",
+      "page": 9,
+      "index": 11,
+      "width": 512,
+      "height": 646
+    }
+  ]
+}

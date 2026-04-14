@@ -1,0 +1,2950 @@
+Title: A Dual Certificate Approach to Sparsity in Infinite-Width Shallow Neural Networks
+
+URL Source: https://arxiv.org/pdf/2603.17785v1
+
+Published Time: Thu, 19 Mar 2026 01:22:48 GMT
+
+Number of Pages: 29
+
+Markdown Content:
+# A Dual Certificate Approach to Sparsity in Infinite-Width Shallow Neural Networks 
+
+Leonardo Del Grande ∗, Christoph Brune ∗, Marcello Carioni ∗
+
+Abstract 
+
+In this paper, we study total variation (TV)-regularized training of infinite-width shallow ReLU neural networks, formulated as a convex optimization problem over measures on the unit sphere. Our approach leverages the duality theory of TV-regularized optimization problems to establish rigorous guarantees on the sparsity of the solutions to the training problem. Our analysis further characterizes how and when this sparsity persists in a low noise regime and for small regularization parameter. The key observation that motivates our analysis is that, for ReLU activations, the associated dual certificate is piecewise linear in the weight space. Its linearity regions, which we name dual regions, are determined by the activation patterns of the data via the induced hyperplane arrangement. Taking advantage of this structure, we prove that, on each dual region, the dual certificate admits at most one extreme value. As a consequence, the support of any minimizer is finite, and its cardinality can be bounded from above by a constant depending only on the geometry of the data-induced hyperplane arrangement. Then, we further investigate sufficient conditions ensuring uniqueness of such sparse solution. Finally, under a suitable non-degeneracy condition on the dual certificate along the boundaries of the dual regions, we prove that in the presence of low label noise and for small regularization parameter, solutions to the training problem remain sparse with the same number of Dirac deltas. Additionally, their location and the amplitudes converge, and, in case the locations lie in the interior of a dual region, the convergence happens with a rate that depends linearly on the noise and the regularization parameter. 
+
+# 1 Introduction 
+
+Two-layer neural networks with K neurons are parametrized functions Fc,w,b : Rd → R defined as 
+
+Fc,w,b (x) = 
+
+> K
+
+∑
+
+> i=1
+
+ciσ(⟨wi, x ⟩ + bi), (1.1) where σ : R → R is the so-called activation function , while ci ∈ R and wi ∈ Rd are the weights for the output and hidden layers of the network, and bi ∈ R are the biases. Following the approach in [ 2, 22 ] one can consider the formal limit for K → +∞, i.e. when the number of neurons tends to infinity and replace the sum in (1.1) by the integration over a measure taking values on the space of weights and biases. In particular, one defines 
+
+Fμ(x) = 
+
+∫
+
+> Θ
+
+σ(⟨w, x ⟩ + b) dμ (w, b ) (1.2) where (w, b ) ∈ Θ and μ ∈ M (Θ). Problem (1.2) extends (1.1) since by choosing measures μ
+
+of the form μ = ∑Ni=1 ciδ(wi,b i) one recovers instances of (1.1) . Moreover, despite being infinite-dimensional it is convex in the space of measures (1.2) , allowing for insights facilitated by the 
+
+2020 Mathematics Subject Classification: 46A55, 49K27, 49N15, 49Q22, 52A40, 54E35 Keywords: convex optimization, Dirac deltas, duality, neural networks, regions, sparsity, stability 
+
+> ∗
+
+Department of Applied Mathematics, University of Twente, 7500AE Enschede, The Netherlands (l.delgrande@utwente.nl , c.brune@utwente.nl , m.c.carioni@utwente.nl )
+
+1
+
+> arXiv:2603.17785v1 [math.OC] 18 Mar 2026
+
+tools of convex analysis (see for instance [ 9]). As often considered in the available literature, the bias b is reabsorbed into the weight w by identifying x = ( x, 1) and w = ( w, b ), allowing for a more compact representation 
+
+Fμ(x) = 
+
+> ∫
+> Θ
+
+σ(⟨w, x ⟩) dμ (w).
+
+In this work, we consider positively 1-homogeneous activation functions σ : R → R and, in particular, we often restrict our attention to the ReLU activation function defined as σ(z) = max {0, z } for z ∈ R. Due to such 1-homogeneity, since σ(⟨w, x ⟩) = |w|σ(⟨w/ |w|, x ⟩) and rescaling the measure μ one can, without loss of expressivity for Fμ, consider measures taking values on the sphere, that is Θ = Sd−1. Such a choice is also convenient, since the compactness of the parameter space allows for well-posed variational problems in the space of measures. We will make the choice Θ = Sd−1 throughout this paper. According to the previous considerations, given a collection of input/output pairs (xj , y j )nj=1 for 
+
+n ∈ N, a typical training problem taking values in the space of measures M (Sd−1) can be defined as 
+
+min  
+
+> μ∈M(Sd−1)
+
+12
+
+> n∑
+> j=1
+
+|Fμ(xj ) − yj |2 + λ∥μ∥TV , (1.3) where ∥μ∥TV is the total variation norm, defined as 
+
+∥μ∥TV = sup 
+
+> {∫
+
+φ(x) dμ (x) : φ ∈ C(Sd−1) such that ∥φ∥∞ ⩽ 1
+
+> }
+
+. (1.4) In this case, the total variation norm acts as a regularizer (whose intensity is regulated by λ). In particular, it has the goal of enforcing sparsity in the solution. This means selecting solutions that are made of a linear combination of Dirac deltas, thus recovering a classical neural network (with a finite number of neurons). In the regime λ ≪ 1, problem (1.3) approaches an interpolation problem, in which the data fidelity term effectively acts as a hard constraint. Formally, one recovers the constrained formulation 
+
+min  
+
+> μ∈M(Sd−1)
+
+∥μ∥TV subjected to Fμ(xj ) = yj ∀j. (1.5) We also remark that total variation norm regularization allows to define a natural representation costs for infinite-width shallow neural networks opening the way to the analysis of approximation capabilities of shallow neural networks. Indeed, for f ∈ L1(Sd−1) one can define 
+
+∥f ∥B(Sd−1) = inf 
+
+> {
+
+∥μ∥TV : μ ∈ M (Sd−1), F μ(x) = f (x) for a.e. x ∈ Sd−1}
+
+,
+
+that can be seen as a representation cost in infinite-width regimes. In analogy with foundational works by Barron [ 3, 4], the quantity ∥f ∥B(Sd−1) is also named Barron norm and Barron functions are those functions f ∈ L1(Sd−1) such that ∥f ∥B(Sd−1) < ∞ (see for instance [ 21 ]). Many important works have carried out different aspects of such analysis related either to the study of the representation cost or the approximation power of Barron functions [ 18 , 21 , 22 , 23 , 26 , 34 ,38, 40]. 
+
+1.1 Sparse guarantees in infinite-width limit of neural networks: state of the art and super-resolution theory 
+
+It is a natural question to ask under which assumptions solutions of problem (1.3) and (1.5) are sparse, namely their minimizers are made of linear combinations of Dirac deltas of the form 
+
+μ =
+
+> N∑
+> i=1
+
+ciδwi . (1.6) 2As highlighted in [ 6] in the context of Reproducing Kernel Banach Spaces (RKBS), a first, partial answer is provided by so-called representer theorems [ 7, 8]. In particular, when choosing the regularizer R(μ) = ∥μ∥T V and assuming that the weight space Θ is compact, general representer theorems for infinite-dimensional convex optimization problems guarantee the existence of at least one solution of the form (1.6) , with the number of atoms bounded by N ⩽ n. Such sparsity results have been established in various training frameworks [ 5 , 6 , 35 , 36 ]. However, empirical evidence suggests that sparsity is not merely an existence property: in practice, all minimizers often appear to be sparse even when multiple solutions exist. This naturally raises the question of whether all solutions are sparse. While this question remains largely unexplored in the machine learning literature with few exceptions [ 15 , 32 ], it has been studied in depth in the context of super-resolution, where similar problems are formulated as convex optimization problems over spaces of measures. In this context, the property of having unique and sparse solutions is typically referred to as exact reconstruction . Foundational results [ 11 , 14 , 39 ] identify precise conditions under which exact reconstruction holds for TV-regularized interpolation problems with Fourier constraints. These results typically rely on duality arguments, where the key tool is the construction of dual certificates η, i.e. dual variables that certify optimality and sparsity of the primal solution by satisfying the associated first order optimality conditions [25]. Beyond exact recovery, a substantial body of work has focused on sparse stability, namely the robustness of sparsity under perturbations of the problem. In this setting, one seeks conditions ensuring that the sparsity of the solution persists when the regularization parameter λ varies, and the data and labels are contaminated by noise. A series of influential works [ 16 , 19 , 20 , 37 ]has shown that sparse stability is governed by non-degeneracy properties of the dual certificate associated with the optimization problem. More precisely, stability holds when the dual certificate saturates its extreme values on the support of the underlying sparse measure and exhibits a strict second order behavior there, namely local strong concavity (or convexity, depending on the sign convention). These conditions prevent the creation or annihilation of atoms under small perturbations. 
+
+1.2 Contributions of the paper 
+
+In this paper, we study sparsity properties of both problems (1.3) and (1.5) in the case of the ReLU activation function. Our analysis follows a duality-based approach, drawing on classical tools from optimization in the space of measures and super-resolution techniques discussed in the previous part of the introduction. Duality methods play a central role in infinite-dimensional optimization and in the analysis of sparse representations. Nevertheless, their systematic use to establish sparsity guarantees for infinite-width neural networks remains largely unexplored. We note, however, that duality techniques have appeared in the context of Barron spaces [ 41 ] and in certain finite-dimensional settings [29]. We begin our analysis by proving that every solution of both problems is sparse, and that the number of Dirac deltas in any minimizer is uniformly bounded from above by a quantity depending only on the ambient dimension d and on the number of data points n. The key observation underlying our results is that the dual certificate associated with the problems can be written in the explicit form 
+
+η(w) = 
+
+> n∑
+> i=1
+
+piσ(⟨w, x i⟩), pi ∈ R, w ∈ Sd−1.
+
+When σ is the ReLU activation function, η coincides with the restriction to the sphere Sd−1 of a piecewise linear function. More precisely, its linearity regions are determined by the intersection of the half-spaces {w : ⟨w, x i⟩ > 0} and {w : ⟨w, x i⟩ < 0}, referred to as dual regions , and η
+
+changes slope precisely across their common boundaries {w : ⟨w, x j ⟩ = 0 }.Due to the geometry of the sphere, this observation allows us to conclude that in the interior of each dual region, η achieves maximum and minimum in at most one point. Moreover, at the 3common boundary of the regions (determined by the vanishing of the scalar products ⟨w, x i⟩), a similar analysis can also be performed. Since, by optimality conditions, the extreme values of the dual certificates determine the support of the minimizers, one can then infer the sparsity of the minimizers. Additionally, by combinatorial arguments involving the counting of non-empty dual regions, one can also obtain an upper bound on the number of Dirac deltas constituting the minimizers. It is important to emphasize that the sparsity of minimizers alone does not imply uniqueness. In Section 3.3, we introduce sufficient conditions guaranteeing the uniqueness of the minimizer. These conditions rely on two key properties: first, given a sparse measure of the form (1.6) , the associated dual certificate for problems (1.3) and (1.5) attains the extreme values |η(w)| = 1 
+
+exactly at the support points wi; second, the corresponding neural network evaluations at the data points, namely ∫ 
+
+> Sd−1
+
+σ(⟨w, x j ⟩)d μ(w), are linearly independent. In this section we provide sufficient conditions that guarantee such linear independence. Finally, Section 4 is devoted to the analysis of sparse stability for problem (1.5) . More precisely, we show that, under suitable assumptions on the dual certificate and for sufficiently small regularization parameters and noise levels in the labels, the sparsity of the solution is preserved, with the same number of Dirac deltas. Moreover, the weights ci and wi of the minimizer of the perturbed problem converge to the weights of the unperturbed one. As discussed in Section 1.1, a key ingredient for sparse stability is the non-degeneracy of the dual certificate associated with problem (1.5) . While this remains true in our setting, the piecewise linear structure of the dual certificate leads to non-degeneracy conditions with an explicit characterization. In particular, when a Dirac delta lies in the interior of a dual region, no additional non-degeneracy condition is required. In contrast, when a Dirac delta is located at the boundary of a region where the dual certificate is non-differentiable, the non-degeneracy is characterized by sign conditions on the (distributional) derivative of the dual certificate. Finally, in the case where the support points wi lie in the interior of a dual region, we establish quantitative convergence rates for the weights of the minimizer of the perturbed problem. More precisely, under suitable linear independence assumptions on both the neural network evaluations at the data points and their derivatives, we prove that 
+
+> ∣∣∣
+
+ciλ,ζ − ci 
+
+> 0
+> ∣∣∣
+
+= O(λ),
+
+> ∥∥∥
+
+wiλ,ζ − wi 
+
+> 0
+> ∥∥∥
+
+= O(λ),
+
+as λ → 0 and the noise ζ → 0 with ∥ζ∥ ⩽ αλ .
+
+# 2 Notations and preliminaries 
+
+2.1 TV-regularized optimization in the space of measures 
+
+In this section, we review tools of optimization in the space of measures we are going to use in the rest of the paper. We denote by M (X) the Banach space of finite signed Radon measures on a compact set X ⊂ Rd, endowed with the total variation norm. For any Radon measure μ defined on X, we also denote its support by Supp (μ). We will consider TV-regularized optimization problems in the space of measures (commonly known as BLASSO [1]) that will be written as 
+
+inf  
+
+> μ∈M(X)
+
+12 ∥Kμ − yζ ∥2 
+
+> Y
+
++ λ∥μ∥TV ,
+
+where Y is a separable Hilbert space, yζ ∈ Y , K : M (X) → Y is a weak*-to-strong continuous linear operator and λ is a positive parameter. Such problems are popular as inverse problems in the space of measures with applications to signal processing [ 11 ], super-resolution in microscopy [17 ], sensor placement [ 33 ], and many others. Often, the measurement yζ is a noisy perturbation 4of a ground truth signal y0, that is yζ = y0 + ζ. The goal is to reconstruct the optimal μ
+
+determining its sparsity properties. In the formal limit (∥ζ∥Y , λ ) → (0 , 0) , solutions to Pλ(yζ )
+
+converge to solutions to the hard-constrained interpolation problem: 
+
+inf  
+
+> μ∈M(X): Kμ =y0
+
+∥μ∥TV .
+
+Existence of minimizers is guaranteed for all the problems (see for instance [ 12 , Section 3]). Moreover, this convergence can be made rigorous as in the following classical result [ 27 , Theorem 3.5]. 
+
+Proposition 2.1. Suppose that there exists μ ∈ M (X) such that Kμ = y0. Consider sequences 
+
+ζn ∈ Y and λn > 0 such that 
+
+∥ζn∥Y → 0, λn → 0, ∥ζn∥2
+
+> Y
+
+λn
+
+→ 0 as n → ∞ .
+
+Then, any sequence of minimizers of 
+
+inf  
+
+> μ∈M(X)
+
+12 ∥Kμ − yζn ∥2 
+
+> Y
+
++ λn∥μ∥TV 
+
+has a weak* converging subsequence and each limit is a solution to P0(y0). In particular, if 
+
+P0(y0) has a unique minimizer, then the whole sequence converges weak* to it. 
+
+2.1.1 Duality theory and optimality conditions 
+
+A crucial source of information for minimizers of Pλ(yζ ) and P0(y0) is given by respective dual problems and optimality conditions. The dual problem associated with Pλ(yζ ) (cf. [20, 24]) is 
+
+max  
+
+> p∈Y:∥K∗p∥∞⩽1
+
+⟨yζ , p ⟩ − λ
+
+2 ∥p∥2 
+
+> Y
+
+, (Dλ(yζ ))while the dual problem associated with P0(y0) is 
+
+sup  
+
+> p∈Y:∥K∗p∥∞⩽1
+
+⟨y0, p ⟩ . (D0(y0))Here K∗ : Y → C(X) denotes the adjoint operator defined by ⟨Kμ, p ⟩Y = ∫ 
+
+> X
+
+(K∗p)( x) dμ (x) for all μ ∈ M (X) and p ∈ Y , and ∥ · ∥ ∞ is the supremum norm on C(X).
+
+Strong duality holds between Pλ(yζ ) and Dλ(yζ ) and the existence of μλ,ζ ∈ M (X) solution to 
+
+Pλ(yζ ) and pλ,ζ ∈ Y solution to Dλ(yζ ), is equivalent to the following optimality conditions: 
+
+
+
+K∗pλ,ζ ∈ ∂∥μλ,ζ ∥TV ,
+
+−pλ,ζ = 1
+
+λ (Kμ λ,ζ − yζ ) . (2.1) Similarly, strong duality holds between P0(y0) and D0(y0) and the existence of μ0 ∈ M (X)
+
+solution to P0(y0) and p0 ∈ Y solution to D0(y0), is equivalent to the following optimality conditions: {K∗p0 ∈ ∂∥μ0∥TV ,Kμ 0 = y0. (2.2) If ηλ,ζ = K∗pλ,ζ and ηλ,ζ ∈ ∂∥μλ,ζ ∥TV , we call ηλ,ζ a dual certificate for μλ,ζ with respect to 
+
+Pλ(yζ ), since the optimality conditions (2.1) guarantee that μλ,ζ is a solution to Pλ(yζ ). Similarly, if η0 = K∗p0 and η0 ∈ ∂∥μ0∥TV , we call η0 a dual certificate for μ0 with respect to P0(y0), since the optimality conditions (2.2) guarantee that μ0 is a solution to P0(y0).The solution pλ,ζ to Dλ(yζ ) is unique, since this problem can be reformulated as the Hilbert projection of yζ /λ onto the closed convex set {p ∈ Y : ∥K∗p∥∞ ⩽ 1}, c.f. [ 20 , Section 2.3]. On the other hand, the solution to D0(y0) is not unique. Among the dual certificates, an important role is played by the minimal-norm dual certificate defined as follows. 5Definition 2.2 (Minimal-norm dual certificate) . Suppose that there exists a solution to D0(y0).Then the minimal-norm dual certificate is defined as η0 = K∗p0, where 
+
+p0 = argmin {∥ p∥Y : p ∈ Y is a solution to D0(y0)} .
+
+Since the subdifferential of the total variation norm can be characterized as 
+
+∂∥μ∥TV =
+
+{
+
+φ ∈ C(X) : ∥φ∥∞ ⩽ 1 and 
+
+∫
+
+> X
+
+φ(x) dμ = ∥μ∥TV 
+
+}
+
+,
+
+one can deduce the following well-known result that relates the extreme values of the dual certificate with the support of the optimal measure. 
+
+Lemma 2.3. Let η0 ∈ C(X) be a dual certificate for μ0. Then, μ0 is a solution to P0(y0) and 
+
+Supp( μ0) ⊂ { x ∈ X : |η0(x)| = 1 }.
+
+Similarly, if ηλ,ζ ∈ C(X) is the dual certificate for μλ,ζ . Then, μλ,ζ is a solution to Pλ(yζ ) and 
+
+Supp( μλ,ζ ) ⊂ { x ∈ X : |ηλ,ζ (x)| = 1 }.
+
+# 3 Dual regions and sparsity properties for infinite-width neural networks 
+
+The goal of this section is to construct and analyze dual certificates for infinite-width neural networks with ReLU activation, and to infer sparsity properties of the minimizers. From now on, we will identify Y = Rn and consider data points xj ∈ Rd+1 , j = 1 , . . . , n . We set y0 := (y10 , . . . , y n 
+
+> 0
+
+) and yζ := ( y1 
+
+> ζ
+
+, . . . , y nζ ). We will consider both the interpolation problem without noise 
+
+inf  
+
+> μ∈M(Sd−1)
+
+∥μ∥TV subjected to Fμ(xj ) = yj 
+
+> 0
+
+∀j (P0(y0))and the TV-regularized empirical loss where the labels are perturbed as yjζ = yj 
+
+> 0
+
++ ζj , with 
+
+ζ = ( ζ1, . . . , ζ n) ∈ Rn,
+
+inf  
+
+> μ∈M(Sd−1)
+
+12
+
+> n
+
+∑
+
+> j=1
+
+|Fμ(xj ) − yjζ |2 + λ∥μ∥TV . (Pλ(yζ ))We recall that ∥ · ∥ TV denotes the total variation norm, defined in (1.4) . Note that by defining the linear operator K : M (Sd−1) → Rn as 
+
+(Kμ )j := Fμ(xj ) = 
+
+∫
+
+> Sd−1
+
+σ(⟨w, x j ⟩)d μ(w) j = 1 , . . . , n, 
+
+where σ(z) = ReLU (z), we obtain that P0(y0) has the form of a general hard-constrained TV-regularized problem P0(y0)inf  
+
+> μ∈M(Sd−1): Kμ =y0
+
+∥μ∥TV 
+
+and Pλ(yζ ) has the form of a general Tikhonov-type regularized problem Pλ(yζ )inf  
+
+> μ∈M(Sd−1)
+
+12 ∥Kμ − yζ ∥2 
+
+> Rn
+
++ λ∥μ∥TV ,
+
+allowing us to use the dual certificate theory developed in Section 2.1, provided K is weak*-to-strong continuous. This is verified in the next easy lemma. 6Lemma 3.1. The operator K : M (Sd−1) → Rn is weak*-to-strong continuous. Moreover, its adjoint K∗ : Rn → C(Sd−1) is given by 
+
+K∗p(w) = 
+
+> n
+
+∑
+
+> j=1
+
+pj σ(⟨w, x j ⟩) ∀p ∈ Rn. (3.1) 
+
+Proof. The weak* continuity of K is immediate. In particular, since the codomain is finite-dimensional, K is weak*-to-strong continuous. To prove the characterization of K∗ it is enough to note that, for all μ ∈ M (Sd−1), it holds that 
+
+∫
+
+> Sd−1
+
+K∗pdμ(w) = ⟨K∗p, μ ⟩ = ( p, Kμ )Rn =
+
+> n
+
+∑
+
+> j=1
+
+pj (Kμ )j
+
+=
+
+> n
+
+∑
+
+> j=1
+
+pj
+
+∫
+
+> Sd−1
+
+σ(⟨w, x j ⟩)d μ(w) = 
+
+∫
+
+> Sd−1
+> n
+
+∑
+
+> j=1
+
+pj σ(⟨w, x j ⟩)d μ(w)= ⟨
+
+> n
+
+∑
+
+> j=1
+
+pj σ(⟨w, x j ⟩), μ ⟩.
+
+We now specialize, for the sake of clarity in the rest of the paper, the abstract dual problems from the previous section to the present ReLU setting. In particular, using (3.1) , the dual of the interpolation problem P0(y0) becomes 
+
+sup 
+
+> p∈Rn
+
+⟨p, y 0⟩ subject to sup 
+
+> w∈Sd−1
+
+∣∣∣
+
+> n
+
+∑
+
+> j=1
+
+pj σ(⟨w, x j ⟩)
+
+∣∣∣ ⩽ 1. (D0(y0))Any maximizer p0 of D0(y0) yields a dual certificate η0(w) := K∗p0(w) = ∑nj=1 pj 
+
+> 0
+
+σ(⟨w, x j ⟩).
+
+Instead, the dual of Pλ(yζ ) becomes 
+
+sup 
+
+> p∈Rn
+
+⟨yζ , p ⟩ − λ
+
+2 ∥p∥2 subject to sup 
+
+> w∈Sd−1
+
+∣∣∣
+
+> n
+
+∑
+
+> j=1
+
+pj σ(⟨w, x j ⟩)
+
+∣∣∣ ⩽ 1. (Dλ(yζ ))Given the maximizer pλ,ζ of Dλ(yζ ), we define the dual certificate ηλ,ζ (w) := K∗pλ,ζ (w) = 
+
+∑nj=1 pjλ,ζ σ(⟨w, x j ⟩). Since Y = Rn, the dual problem Dλ(yζ ) admits a (unique) maximizer for every λ > 0. For D0(y0), maximizers may be not unique; we will consider the minimal-norm one when needed. Moreover, by the following standard result (see for example [ 20 , Proposition 1]), the dual certificates converge uniformly in the noiseless regime as the regularization parameter vanishes. 
+
+Proposition 3.2 (Convergence of the dual certificates) . Let pλ, 0 be the unique solution to Dλ(y0).Let p0 be the solution with minimal-norm of D0(y0). Then, 
+
+lim  
+
+> λ→0+
+
+∥ηλ, 0 − η0∥∞ = 0 .
+
+Proof. By definition and (3.1), for every w ∈ Sd−1 we have 
+
+ηλ, 0(w) − η0(w) = 
+
+> n
+
+∑
+
+> j=1
+
+(pjλ, 0 − pj
+
+> 0
+
+) σ(⟨w, x j ⟩).
+
+Hence, 
+
+∥ηλ, 0 − η0∥∞ = sup 
+
+> w∈Sd−1
+
+∣∣∣∣∣∣
+
+> n
+
+∑
+
+> j=1
+
+(pjλ, 0 − pj
+
+> 0
+
+) σ(⟨w, x j ⟩)
+
+∣∣∣∣∣∣
+
+7⩽
+
+> n∑
+> j=1
+
+|pjλ, 0 − pj
+
+> 0
+
+| sup 
+
+> w∈Sd−1
+
+σ(⟨w, x j ⟩).
+
+Since σ(z) = max {0, z } and sup ∥w∥=1 ⟨w, x j ⟩ = ∥xj ∥, we obtain sup w∈Sd−1 σ(⟨w, x j ⟩) = ∥xj ∥. If we let C := max 1⩽j⩽n ∥xj ∥ < ∞, then 
+
+∥ηλ, 0 − η0∥∞ ⩽ C
+
+> n∑
+> j=1
+
+|pjλ, 0 − pj
+
+> 0
+
+| = C ∥pλ, 0 − p0∥1.
+
+By [ 20 , Proposition 1], pλ, 0 → p0 in Rn, implying ∥pλ, 0 − p0∥1 → 0 as λ → 0. Therefore, it holds 
+
+lim  
+
+> λ→0+
+
+∥ηλ, 0 − η0∥∞ = 0 
+
+as desired. 
+
+3.1 Dual regions 
+
+Given vectors {x1, . . . , x n} ⊂ Rd (assume xi̸ = 0 ), we consider the hyperplane arrangement 
+
+Hi := {w ∈ Rd : ⟨w, x i⟩ = 0 }, i = 1 , . . . , n, 
+
+together with the associated open half-spaces 
+
+A1 
+
+> i
+
+:= {w ∈ Rd : ⟨w, x i⟩ > 0}, A0 
+
+> i
+
+:= {w ∈ Rd : ⟨w, x i⟩ < 0}.
+
+A binary vector π = ( π1, . . . , π n) ∈ { 0, 1}n prescribes, for each i, a sign pattern for the scalars 
+
+⟨w, x i⟩ and thus determines the intersection 
+
+Rπ := 
+
+> n⋂
+> i=1
+
+Aπi 
+
+> i
+
+.
+
+We call the (possibly empty) open subset Rπ ⊂ Rd a dual region . The term “dual” emphasizes that these regions live in the weight space (w-variable), in contrast with the more common “linear region” decompositions in input space (x-variable). Intersections of this type are well known in the literature of neural networks analysis. We refer, for example, to the “sectors” of [ 30 , 15 ], the linear regions studied in [ 31 ], and the activation regions introduced in [ 28 ]. For instance, see Figure 1, which depicts the spherical dual regions Rπ ∩ S1 for d = n = 2 .
+
+Definition 3.3 (Dual region) . Given π = ( π1, . . . , π n) ∈ { 0, 1}n, we call a dual region associated with πRπ := 
+
+> n⋂
+> i=1
+
+Aπi 
+
+> i
+
+.
+
+It is well known from classical results on linearly separable dichotomies/central hyperplane ar-rangements (Vapnik–Chervonenkis dimension theory) that the number of distinct binary vectors 
+
+π such that the dual region Rπ is non-empty is at most 2 ∑d−1
+
+> k=0
+> (n−1
+> k
+> )
+
+; equality holds when the hyperplanes {Hi}ni=1 are in general position (see, e.g., [ 13 , Theorem 1]). In particular, thanks to the binomial theorem, we obtain that there are at most 2n possible combinations (independent of 
+
+d) if and only if n ⩽ d. Instead, if n > d , then, one can bound the number of these combinations by O(nd) (refer to [ 28 , Proposition 6], [ 30 , Chapter 4]). In what follows, we will denote by Θ
+
+the set of binary vectors π such that the region Rπ is non-empty. Our analysis will necessarily deal with the boundary of dual regions. To capture optimality on these sets, we will introduce the concept of higher codimension dual regions, obtained by allowing 8H1
+
+H2
+
+x1
+
+x2
+
+R(1 ,1) 
+
+R(1 ,0) 
+
+R(0 ,1) 
+
+R(0 ,0) 
+
+Figure 1: Dual regions on S1 induced by two inputs ( d = n = 2 ). some of the defining inequalities to become equalities. This yields a natural stratification of the weight space into open cells of varying codimension, which will be crucial for our study. We also remark that the need for such structures has already been noted in [ 28 , 30 ]. Consider the index set I := {1, . . . , n } and, for k ⩽ n, let Jk = {j1, . . . , j k} ⊂ I. We aim to define regions of codimension n − k that belong to the topological boundary of a given region Rπ.
+
+Definition 3.4 (Higher–codimension dual regions) . Let π ∈ { 0, 1}n and Rπ be as in Defini-tion 3.3. For Jk ⊂ I with |Jk| = k, we define the Jk-stratum of Rπ as follows: 
+
+RJk 
+
+> π
+
+:= 
+
+( ⋂
+
+> j∈Jk
+
+Aπj
+
+> j
+
+)
+
+∩
+
+( ⋂
+
+> z∈I\Jk
+
+Hz
+
+)
+
+,
+
+where Hz := {w ∈ Rd : ⟨w, x z ⟩ = 0 }. By convention, RIπ = Rπ.The set RJk 
+
+> π
+
+lies in LJk
+
+:= ⋂ 
+
+> z∈I\Jk
+
+Hz , which has codimension at most |I \ Jk| = n − k in Rd (and equals n − k if the normals {xz }z∈I\Jk are linearly independent). Similarly to the codimension zero case, we denote by 
+
+ΘJk
+
+:= {π ∈ { 0, 1}n : RJk
+
+> π
+
+̸ = ∅} 
+
+the set of sign patterns for which the stratum RJk 
+
+> π
+
+is non-empty. For simplicity, we are going to call RJk 
+
+> π
+
+again a dual region. 
+
+Remark 3.5 (Boundary stratification) . Let RJk 
+
+> π
+
+denote the closure of RJk 
+
+> π
+
+in the relative topology of LJk
+
+. Here and below, ∂ denotes the boundary taken in the same relative topology. Note that the topological boundary of a region Rπ can be simply rewritten as 
+
+∂R π = ⋃
+
+> Jn−1⊂I
+
+RJn−1 
+
+> π
+
+,
+
+that is, the union of the closures of its codimension 1 faces. Lower dimensional strata are contained in these closures. More generally, for k = 1 , . . . , n − 2, the topological boundary of 
+
+RJk 
+
+> π
+
+becomes: 
+
+∂R Jk 
+
+> π
+
+= ⋃
+
+> Jk−1⊂Jk
+
+RJk−1 
+
+> π
+
+,
+
+where |Jk−1| = k − 1.93.2 Sparse characterization and upper bounds on the number of Dirac deltas 
+
+The derivation of an exact reconstruction result for the interpolation hard-constrained problem 
+
+P0(y0) is based on the behaviour of the dual certificate in the dual regions, determined by the input data {x1, . . . , x n}. For this, it is crucial to choose the ReLU as activation function σ. First, it is easy to see that since σ(z) = ReLU( z), for every i = 1 , . . . , n , we can write 
+
+σ(⟨w, x i⟩) = πi⟨w, x i⟩ for every w ∈ Rπ. (3.2) As a consequence the minimal-norm dual certificate can be written as a linear function in each dual region Rπ as stated in the next lemma. When ⟨w, x i⟩ = 0 we have σ(⟨w, x i⟩) = 0 ; boundary cases will be treated via the strata RJk 
+
+> π
+
+.
+
+Lemma 3.6. Given a binary vector π, for every w ∈ Rπ, every dual certificate η0 can be rewritten as 
+
+η0(w) = 
+
+> n
+
+∑
+
+> i=1
+
+pi
+
+> 0
+
+πi⟨w, x i⟩.
+
+Proof. The lemma follows directly from Lemma 3.1 and (3.2). In particular, every dual certificate η0 ∈ C(Sd−1) is the restriction to Sd−1 of a function that is linear on each cone Rπ and thus globally piecewise linear. This enables us to use the dual certificate theory summarized in Section 2.1 to obtain information about the support of the minimizers of P0(y0) and Pλ(yζ ). Indeed, in the next lemma, we use the piecewise linear structure of the dual certificate to show that the number of points where its absolute value achieves one is finite. Thanks to the optimality conditions in (2.2) , this will imply that the support of the minimizers of P0(y0) is a discrete set (see Corollary 3.10). 
+
+Lemma 3.7. Let p0 be a solution to D0(y0) and let η0 = K∗p0 be a dual certificate. Fix 
+
+π ∈ { 0, 1}n, Jk ⊂ I with |Jk| = k, and set 
+
+z0 := ∑
+
+> i∈Jk
+
+pi
+
+> 0
+
+πixi, ˜z0 := PLJk z0,
+
+where PLJk denotes the orthogonal projection onto LJk
+
+. If there exists w0 ∈ RJk 
+
+> π
+
+∩ Sd−1 such that |η0(w0)| = 1 , then ˜z0̸ = 0 and 
+
+w0 = sign( η0(w0)) ˜z0
+
+∥˜z0∥ .
+
+Moreover, |η0(w)| < 1 for every w ∈ (RJk 
+
+> π
+
+∩ Sd−1) \ { w0}.Proof. First, note that on RJk 
+
+> π
+
+∩ Sd−1 the dual certificate η0 can be written as 
+
+η0(w) = ∑
+
+> i∈Jk
+
+pi
+
+> 0
+
+πi⟨w, x i⟩ = ⟨z0, w ⟩, z0 := ∑
+
+> i∈Jk
+
+pi
+
+> 0
+
+πixi.
+
+Since w ∈ LJk
+
+, we also have ⟨z0, w ⟩ = ⟨PLJk z0, w ⟩ = ⟨˜z0, w ⟩, where ˜z0 := PLJk z0. Assume there exists w0 ∈ RJk 
+
+> π
+
+∩ Sd−1 such that |η0(w0)| = 1 . Then ˜z0̸ = 0 (otherwise η0 ≡ 0 on LJk
+
+∩ Sd−1). By Cauchy–Schwarz, for every w ∈ LJk
+
+∩ Sd−1,
+
+|η0(w)| = |⟨ ˜z0, w ⟩| ⩽ ∥˜z0∥,
+
+with equality if and only if w = ±˜z0/∥˜z0∥. Since |η0(w0)| = 1 , necessarily ∥˜z0∥ ⩾ 1, and equality in Cauchy–Schwarz implies 
+
+w0 = sign( η0(w0)) ˜z0
+
+∥˜z0∥ .
+
+10 To prove uniqueness inside RJk 
+
+> π
+
+∩ Sd−1, suppose that |η0( ¯w)| = 1 for some ¯w ∈ RJk 
+
+> π
+
+∩ Sd−1. Then by the same argument ¯w = ±˜z0/∥˜z0∥. The choice ¯w = −w0 is incompatible with belonging to RJk 
+
+> π
+
+. Indeed, for any index i ∈ Jk with πi = 1 we have ⟨w0, x i⟩ ⩾ 0 on the closure, hence 
+
+⟨− w0, x i⟩ ⩽ 0, which would force −w0 to lie in the opposite half-space (or on the hyperplane), contradicting ¯w ∈ RJk 
+
+> π
+
+unless all such scalar products vanish (which cannot occur if |η0(w0)| = 1 ). Therefore ¯w = w0, and the statement follows. 
+
+Remark 3.8. Note that the previous lemma put constraints on the points where the absolute value of the dual certificate reaches one. In particular, under the assumption of the previous proposition it also holds that |η0(w)| < 1 for every w ∈ ⋃ 
+
+> Jk−1⊂Jk
+
+RJk−1 
+
+> π
+
+∩ Sd−1. Moreover, if w0
+
+belongs to a region of 0-codimension, that is if k = n, then ˜z0 = z0.A similar statement holds for the dual certificate associated with Pλ(yζ ).
+
+Lemma 3.9. Let pλ,ζ ∈ Rn be the solution to Dλ(yζ ) and let ηλ,ζ = K∗pλ,ζ be the dual certificate for Pλ(yζ ). Fix π ∈ { 0, 1}n, Jk ⊂ I with |Jk| = k, and set 
+
+zλ,ζ = ∑
+
+> i∈Jk
+
+piλ,ζ πixi, ˜zλ,ζ = PLJk zλ,ζ . (3.3) 
+
+If there exists wλ,ζ ∈ RJk 
+
+> π
+
+∩ Sd−1 such that |ηλ,ζ (wλ,ζ )| = 1 , then ˜zλ,ζ ̸ = 0 and 
+
+wλ,ζ = sign( ηλ,ζ (wλ,ζ )) ˜zλ,ζ 
+
+∥˜zλ,ζ ∥ . (3.4) 
+
+Moreover, |ηλ,ζ (w)| < 1 for every w ∈ (RJk 
+
+> π
+
+∩ Sd−1) \ { wλ,ζ }.
+
+From the previous lemmas it follows directly the mentioned sparse characterization of minimizers of P0(y0) and Pλ(yζ ).
+
+Theorem 3.10 (Sparsity of minimizers) . The following two statements hold: 
+
+• There exists N ∈ N such that all the solutions to P0(y0) are of the form 
+
+μ0 =
+
+> N
+
+∑
+
+> i=1
+
+ci
+
+> 0
+
+δwi 
+
+> 0
+
+,
+
+where ci 
+
+> 0
+
+∈ R and wi 
+
+> 0
+
+= sign (η0(w0)) z0 
+
+> |z0|
+
+with z0 = ∑ 
+
+> i∈Jk
+
+pi
+
+> 0
+
+πixi for some binary vector π
+
+and Jk ⊂ I.
+
+• There exists M ∈ N such that all the solutions to Pλ(yζ ) are of the form 
+
+μλ,ζ =
+
+> M
+
+∑
+
+> i=1
+
+ciλ,ζ δwiλ,ζ ,
+
+where ciλ,ζ ∈ R and wiλ,ζ = sign (ηλ,ζ (wiλ,ζ )) zλ,ζ   
+
+> ∥zλ,ζ ∥
+
+with zλ,ζ = ∑ 
+
+> i∈Jk
+
+piλ,ζ πixi for some binary vector π and Jk ⊂ I.Proof. The proof follows from Lemma 3.7 and Lemma 3.9 together with the optimality conditions for P0(y0) and Pλ(yζ ) summarized in Lemma 2.3. 11 From a rough estimate one can upper bound both N and M (we denote by Nmax a common upper bound depending only on n and d) in the previous theorem by 
+
+Nmax ⩽ 3n. (3.5) This is obtained as all possible ways to choose the sign of each scalar product ⟨w, x i⟩ for 
+
+i = 1 , . . . , n (⟨w, x i⟩ > 0, ⟨w, x i⟩ < 0 or ⟨w, x i⟩ = 0 in correspondence with regions of higher codimension). We are counting the ternary activation patterns for each i ∈ { 1, . . . , n }.However, finer estimates are possible, as described in the remaining part of this subsection. 
+
+Lemma 3.11. The absolute value of the dual certificate η0 (resp. ηλ,ζ ) for P0(y0) (resp. Pλ(yζ ))achieves its maximum in at most 
+
+max 
+
+> 0⩽k⩽n
+> (
+
+nk
+
+> )
+
+Ξ(n − k, d − k)
+
+points, where Ξ(n − k, d − k) denotes the number of non-empty regions induced in Rd−k by an arrangement of n − k hyperplanes and we use the convention that Ξ(n − k, d − k) = 0 when 
+
+d − k < 0.Proof. The proof of the statement is the same for the interpolation problem P0(y0) and for the training problem Pλ(yζ ). The proof is based on the observation that if |η| is maximized at some point in a given stratum RJk 
+
+> π
+
+for Jk ⊂ I, then it cannot be maximized at any other point in lower dimensional strata RJk−1 
+
+> π
+
+for Jk−1 ⊂ Jk. Moreover, distinct strata correspond to disjoint ternary patterns, so maximizers are counted by enumerating all the strata. In particular, we have (nk
+
+> )
+
+ways of choosing k’s xi such that ⟨xi, w ⟩ = 0 . This intersection of planes determines a set of dimension Rd−k. In such a set, we are allowed to choose the intersection of n − k hyperplanes that leads to the factor Ξ(n − k, d − k).
+
+Remark 3.12. The previous lemma gives a sharper estimate with respect to the rough bound in (3.5). Indeed, since Ξ(n − k, d − k) ⩽ 2n−k, then by the binomial theorem we obtain that 
+
+max 
+
+> 0⩽k⩽n
+> (
+
+nk
+
+> )
+
+Ξ(n − k, d − k) ⩽ max 
+
+> 0⩽k⩽n
+> (
+
+nk
+
+> )
+
+2n−k ⩽
+
+> n∑
+> k=0
+> (
+
+nk
+
+> )
+
+2n−k = 3 n
+
+Therefore, if n ⩽ d the best bound we can get is 
+
+max 
+
+> 0⩽k⩽n
+> (
+
+nk
+
+> )
+
+2n−k
+
+that can be estimated grossly by 3n. Even if slightly more precise estimates can be obtained, we will not enter into these details here. Instead, if n > d it holds that 
+
+Ξ(n − k, d − k) ⩽ O(( n − k)d−k).
+
+Hence, taking into account that Ξ(n − k, d − k) = 0 when d − k < 0, it holds that 
+
+max 
+
+> 0⩽k⩽n
+> (
+
+nk
+
+> )
+
+Ξ(n − k, d − k) ⩽ max 
+
+> 0⩽k⩽n
+> (
+
+nk
+
+> )
+
+O(( n − k)d−k) = max  
+
+> 0⩽k⩽n
+> (
+
+nn − k
+
+> )
+
+O(kd−(n−k))
+
+⩽ max  
+
+> 0⩽k⩽n
+> (
+
+nn − k
+
+> )
+
+O(nd−(n−k)) ⩽ nn−k
+
+(n − k)! O(nd−(n−k)) ⩽ O(nd).
+
+Note that this bound, in the case n > d , is actually equal to O(Ξ(n, d )) , that is, proportional to the number of dual regions. This yields a sharper estimate than the one provided in [15]. 12 3.3 Linear independence and uniqueness of the minimizers 
+
+In the previous subsection we proved that both problems P0(y0) and Pλ(yζ ) admit sparse minimizers and we provided an upper bound on the number of Dirac deltas in any such represen-tation. We now address uniqueness. As common in the available literature on TV-regularized optimization problems in the space of measures, uniqueness follows from a combination of (i) a localization property of the dual certificate and (ii) a linear independence condition on the measurement vectors {Kδ wi }. We provide sufficient conditions ensuring (ii) in our ReLU setting. We caution that our conditions are likely not sharp and that a complete characterization lies beyond the scope of this work. We begin by recalling several definitions from linear algebra. 
+
+Definition 3.13 (Hadamard product) . The Hadamard or entry-wise product of two matrices 
+
+M and N of the same dimension is defined as M ⊙ N := ( Mij · Nij ).We will also need the definition of transversal given for example in [10]. 
+
+Definition 3.14 (Transversal) . A transversal of an m × n matrix is a set of m entries, one from each row and no two from the same column. We also recall that the determinant of a square matrix M = ( mij ) ∈ Rn×n can be computed as 
+
+det( M ) := ∑
+
+> p∈P n
+
+(
+
+sign( p)
+
+> n
+
+∏
+
+> i=1
+
+mi,p (i)
+
+)
+
+,
+
+where the sum is over all permutations p ∈ P n of n elements. 
+
+Definition 3.15 (Permanent) . Given a square matrix M = (mij ) ∈ Rn×n, the permanent of M
+
+is defined as 
+
+perm( M ) := ∑
+
+> p∈P n
+> n
+
+∏
+
+> i=1
+
+mi,p (i).
+
+Let μ0 = ∑Ni=1 ci
+
+> 0
+
+δwi 
+
+> 0
+
+with ci 
+
+> 0
+
+∈ R and wi 
+
+> 0
+
+∈ Rπi for i = 1 , . . . , N . Let w0 := ( w10, . . . , w N 
+
+> 0
+
+). We define the N × n evaluation matrix 
+
+K(w0) := 
+
+
+
+σ(⟨w10, x 1⟩) · · · σ(⟨w10, x n⟩)
+
+... · · · ...... . . . ...
+
+σ(⟨wN 
+
+> 0
+
+, x 1⟩) · · · σ(⟨wN 
+
+> 0
+
+, x n⟩)
+
+
+
+=
+
+
+
+π11 ⟨w10, x 1⟩ · · · π1
+
+> n
+
+⟨w10, x n⟩
+
+... · · · ...... . . . ...
+
+πN 
+
+> 1
+
+⟨wN 
+
+> 0
+
+, x 1⟩ · · · πNn ⟨wN 
+
+> 0
+
+, x n⟩
+
+
+
+,
+
+where πij := 1⟨wi  
+
+> 0,x j⟩>0
+
+so that σ(⟨wi
+
+> 0
+
+, x j ⟩) = πij ⟨wi
+
+> 0
+
+, x j ⟩. Its i-th row is exactly the measurement vector (Kδ wi 
+
+> 0
+
+)⊤ ∈ R1×n. Moreover, if we denote 
+
+Π := 
+
+
+
+π11 · · · π1
+
+> n
+
+... · · · ...... . . . ...
+
+πN 
+
+> 1
+
+· · · πNn
+
+
+
+, X := 
+
+
+
+x11 · · · xn
+
+> 1
+
+... · · · ...... . . . ...
+
+x1 
+
+> d
+
+· · · xnd
+
+
+
+, W := 
+
+
+
+w10,1 · · · wN
+
+> 0,1
+
+... · · · ...... . . . ...
+
+w10,d · · · wN
+
+> 0,d
+
+
+
+,
+
+where wi 
+
+> 0
+
+= ( wi
+
+> 0,1
+
+, . . . , w i
+
+> 0,d
+
+) and xi = ( xi
+
+> 1
+
+, . . . , x id) then we can rewrite K(w0) = Π ⊙ W ⊤X. 
+
+In the following lemma we will prove that {Kδ wi 
+
+> 0
+
+}Ni=1 are linearly independent under certain assumptions on Π and supposing that N ⩽ n. Note that such condition is necessary, since otherwise the vectors {Kδ wi 
+
+> 0
+
+}Ni=1 cannot be linearly independent. 13 Lemma 3.16. Let μ0 = ∑Ni=1 ci
+
+> 0
+
+δwi 
+
+> 0
+
+with ci 
+
+> 0
+
+∈ R and wi 
+
+> 0
+
+∈ Rπi , N ⩽ n. Suppose that the following conditions are satisfied: i) Some N × N minor of Π, called ΠN , has full rank; ii) perm( ΠN ) = | det( ΠN )|.Then, the vectors {Kδ wi 
+
+> 0
+
+}Ni=1 are linearly independent. Proof. By the definition of K we have to prove that {σ(⟨wi
+
+> 0
+
+, x 1⟩), . . . , σ (⟨wi
+
+> 0
+
+, x n⟩)}Ni=1 are linearly independent. We will equivalently prove that K(w0) has rank N , that is it has an N × N minor with nonzero determinant. Let ΠN be an N × N minor of Π which is nonsingular by assumption 
+
+i) , and let (W ⊤X)N be the corresponding N × N minor of W ⊤X (same rows and columns). Set 
+
+B := ( W ⊤X)N , A := ΠN ∈ { 0, 1}N ×N .
+
+Then the corresponding minor of K(w0) = Π ⊙ (W ⊤X) is A ⊙ B and 
+
+det( A ⊙ B) = ∑
+
+> p∈P N
+
+sign( p)
+
+> N
+
+∏
+
+> i=1
+
+Ai,p (i) Bi,p (i).
+
+By assumption i) , there exists at least one permutation ¯p such that ∏ 
+
+> i
+
+Ai, ¯p(i) = 1 (a transversal of ones). Moreover, by assumption ii) , or equivalently perm (A) = | det (A)|, all permutations p
+
+with ∏ 
+
+> i
+
+Ai,p (i) = 1 have the same parity, hence the same sign sign (p) = s ∈ {± 1}. For those p,we also have Bi,p (i) = ⟨wi
+
+> 0
+
+, x p(i)⟩ > 0, since Ai,p (i) = 1 means ⟨wi
+
+> 0
+
+, x p(i)⟩ > 0 in the associated dual region. Therefore, every nonzero term in the expansion of det (A ⊙ B) has the same sign s
+
+and is strictly positive in magnitude, and in particular the term corresponding to ¯p is nonzero due to the fact that ∏ 
+
+> i
+
+Ai, ¯p(i) = 1 . Hence, det (A ⊙ B)̸ = 0 , implying that K(w0) has rank N .
+
+Remark 3.17. Note that in the proof we are using that the second assumption, that is 
+
+perm (ΠN ) = | det (ΠN )| for 0-1 matrices, is equivalent to all transversals of ΠN , i.e. all per-mutations p with ∏Ni=1 (ΠN )i,p (i) = 1 , having the same parity. The previous lemma provides easy scenarios where the linear independence of {Kδ wi 
+
+> 0
+
+}Ni=1 is ensured. For example if ΠN is a permutation matrix, then i) and ii ) are automatically verified. To the best of our knowledge, these conditions have not been explored in the literature. Extending this line of results is left for future research. We are now ready to examine uniqueness for the sparse solutions to P0(y0) and Pλ(yζ ). We first treat the interpolation problem P0(y0), since the analysis for the training problem Pλ(yζ )
+
+follows the same strategy. Let μ0 = ∑Ni=1 σici 
+
+> 0
+
+δwi 
+
+> 0
+
+with ci 
+
+> 0
+
+> 0, σi ∈ {− 1, +1 } and wi 
+
+> 0
+
+∈ Sd−1 satisfy the hard constraint 
+
+Kμ 0 = y0 of P0(y0). If μ0 is a minimizer, the dual certificate η0 satisfies η0(wi
+
+> 0
+
+) = σi by Lemma 2.3. To conclude uniqueness, we require that |η0| attains its maximum 1 only at the atoms 
+
+{wi
+
+> 0
+
+}Ni=1 and that the measurements {Kδ wi 
+
+> 0
+
+}Ni=1 are linearly independent (ensured by (i), (ii ) in Lemma 3.16). 
+
+Theorem 3.18. Let μ0 = ∑Ni=1 ci
+
+> 0
+
+σiδwi 
+
+> 0
+
+be such that y0 = Kμ 0, with ci 
+
+> 0
+
+> 0, σi ∈ {− 1, 1} and 
+
+wi 
+
+> 0
+
+∈ Rπi for all i = 1 , . . . , N . Let η0 be the dual certificate for μ0, and suppose that {Kδ wi 
+
+> 0
+
+}Ni=1 
+
+are linearly independent and 
+
+(LC) |η0(w)| < 1 for all w ∈ Sd−1 \ { w10, . . . w N 
+
+> 0
+
+}.Then, μ0 is the unique solution to P0(y0).Proof. The proof follows directly by applying [12, Lemma 4.5]. 14 A verbatim statement holds for the training problem when the dual certificate for Pλ(yζ ) plays the role of η0.
+
+Theorem 3.19. Let μλ,ζ = ∑Ni=1 ciλ,ζ σiδwiλ,ζ , with ciλ,ζ > 0, σi ∈ {− 1, 1} and wiλ,ζ ∈ Rπi for all 
+
+i = 1 , . . . , N . Let ηλ,ζ be the dual certificate for μλ,ζ , and suppose that {Kδ wiλ,ζ }Ni=1 are linearly independent and 
+
+(˜LC) |ηλ,ζ (w)| < 1 for all w ∈ Sd−1 \ { w1 
+
+> λ,ζ
+
+, . . . w Nλ,ζ }.Then, μλ,ζ is the unique solution to Pλ(yζ ).
+
+Remark 3.20. The localization condition (LC), together with the optimality conditions ensures that the dual certificate is maximized only at the Dirac deltas locations {wi
+
+> 0
+
+}Ni=1 (and similarly for ηλ,ζ ). By Lemmas 3.7–3.9, for each dual region RJk 
+
+> π
+
+∩ Sd−1 the function |η| has at most one point where it can possibly attain its maximum (when the region is nonempty). In particular, in the interior of a region there cannot be two distinct maximizers. Consequently, to check the localization condition it is not necessary to control |η| everywhere on Sd−1 but it suffices to inspect the finite collection of candidate maximizers and verify that |η| = 1 only on the support of the sparse measure, while all the remaining candidates satisfy |η| < 1. The size of this candidate set is finite and is bounded as in Lemma 3.11 and Remark 3.12. 
+
+# 4 Sparse stability for noisy labels under regularization 
+
+In this section, we aim to show that for sufficiently small regularization parameter λ and in a low noise regime, every solution to Pλ(yζ ) has the same number of Dirac deltas as the (unique) solution to P0(y0). Moreover, the locations and weights are continuous perturbations of those of μ0 as (λ, ζ ) → (0 , 0) within the admissible set Nα,λ 0 defined below. Such results are typically referred to as exact support recovery [20]. We consider the following set of admissible parameters/noise levels for λ0 > 0 and α > 0:
+
+Nα,λ 0 = {(λ, ζ ) ∈ R+ × Rn : 0 < λ ⩽ λ0 and ∥ζ∥ ⩽ αλ } .
+
+This set was introduced in [ 20 ] and describes the regime in which one expects exact support recovery. Let us also define the extended support as introduced in [20]. 
+
+Definition 4.1 (Extended support [ 20 ]) . Let μ0 ∈ M (Sd−1) be such that y0 = Kμ 0 and let 
+
+η0 ∈ C(Sd−1) denote the minimal-norm dual certificate associated with P0(y0). The extended support of the measure μ0 is defined as 
+
+Ext( μ0) := 
+
+{
+
+w ∈ Sd−1 : |η0(w)| = 1 
+
+}
+
+.
+
+Note that Supp (μ0) ⊂ Ext (μ0) by Lemma 2.3. Analogously, for μλ,ζ with dual certificate ηλ,ζ ,set Ext (μλ,ζ ) := {w ∈ Sd−1 : |ηλ,ζ (w)| = 1 }. We now recall a fundamental result, [ 20 , Lemma 1], regarding the support of solutions to Pλ(yζ ) in the low noise regime and for small regularization parameters. 
+
+Lemma 4.2. Let p0 be the minimal norm solution to D0(y0), pλ,ζ the solution to Dλ(yζ ) and 
+
+μλ,ζ ∈ M (Sd−1) any solution to Pλ(yζ ). Given ε, δ > 0, there exist α > 0, λ 0 > 0 such that, for all (λ, ζ ) ∈ Nα,λ 0 , we have 
+
+∥pλ,ζ − p0∥ ⩽ δ and supp μλ,ζ ⊂ Ext ε (μ0) ,
+
+where Ext ε (μ0) := ⋃ 
+
+> w∈Ext( μ0)
+
+Bε(w).
+
+15 Proof. The proof can be adapted straightforwardly from [ 20 , Lemma 1] by taking into account Proposition 3.2. We now prove that the solutions to Pλ(yζ ) are sparse, for small enough parameters/noise levels in the set Nα,λ 0 . In particular, the number of atoms equals the cardinality of the support of the measure μ0 and their locations are uniquely determined. Note that this statement does not imply uniqueness of the corresponding coefficients and consequently of the representation. This problem will be addressed in the next section. Before stating the next proposition, we introduce an auxiliary set that describes the common boundary between two different regions. 
+
+Definition 4.3. Let π ∈ { 0, 1}n and let Jk ⊂ I. Define the compatible family of strata as 
+
+FJk 
+
+> π
+
+:= 
+
+{
+
+RJ 
+
+> ¯π
+
+: RJ
+
+> ¯π
+
+̸ = ∅, J k ⊂ J, and ¯πj = πj ∀j ∈ Jk}
+
+. (4.1) As typical in super-resolution problems, we will need to impose a further non-degeneracy con-dition for the dual certificate that is related with its strong convexity (resp. concavity) in the minimum (resp. maximum) points. 
+
+Assumption 4.4 (Boundary non-degeneracy condition) . We define the following non-degeneracy condition on points that belongs to the boundary of the dual regions: (ND) Let μ0 = ∑Ni=1 ci
+
+> 0
+
+σiδwi 
+
+> 0
+
+, with ci 
+
+> 0
+
+> 0, σi ∈ {− 1, +1 }, and assume wi 
+
+> 0
+
+∈ RJk 
+
+> π
+
+∩ Sd−1 for some 
+
+k < n . Given p0 the minimal norm solution of D0(y0), for any RJ 
+
+> ¯π
+
+∈ F Jk 
+
+> π
+
+, define 
+
+z0(J, ¯π) := ∑
+
+> j∈J
+
+pj 
+
+> 0
+
+¯πj xj , ˜z0(J, ¯π) := PJ z0(J, ¯π).
+
+We say that μ0 satisfies (ND) if for any two distinct strata RJ1 
+
+> π1
+
+, R J2 
+
+> π2
+
+∈ F Jk 
+
+> π
+
+such that 
+
+˜z0(Jℓ, π ℓ)̸ = 0 , it holds that 
+
+˜z0(J1, π 1)
+
+∥˜z0(J1, π 1)∦ = ˜z0(J2, π 2)
+
+∥˜z0(J2, π 2)∥ .
+
+We are now ready to state and prove the main result of this section. 
+
+Proposition 4.5. Let N ⩽ n. Assume that μ0 = ∑Ni=1 ci
+
+> 0
+
+σiδwi 
+
+> 0
+
+, where ci 
+
+> 0
+
+> 0, σi ∈ {− 1, +1 } and 
+
+wi 
+
+> 0
+
+∈ RJi 
+
+> πi
+
+for all i = 1 , . . . , N , satisfies (LC) and (ND) . Let {Kδ wi 
+
+> 0
+
+}Ni=1 be linearly independent and μλ,ζ ∈ M (Sd−1) be any solution to Pλ(yζ ). Then, there exist α > 0, λ 0 > 0 such that, for all (λ, ζ ) ∈ Nα,λ 0 , there exists a unique collection of wiλ,ζ ∈ Sd−1 such that 
+
+μλ,ζ =
+
+> N
+
+∑
+
+> i=1
+
+ciλ,ζ σiδwiλ,ζ , (4.2) 
+
+where ciλ,ζ > 0 and ηλ,ζ (wiλ,ζ ) = σi for every i = 1 , . . . , N . Moreover, as λ → 0 with ∥ζ∥ ⩽ αλ ,it holds 
+
+wiλ,ζ → wi
+
+> 0
+
+, ciλ,ζ → ci
+
+> 0
+
+.
+
+Proof. Without loss of generality, assume that σi = 1 for all i. The argument is local around each wi
+
+> 0
+
+, and the case σi = −1 is handled in the same way by replacing η with −η on the corresponding subset of indices. By (LC), |η0(w)| < 1 for every w̸ = wi
+
+> 0
+
+, hence for sufficiently small ε0 > 0,
+
+Ext( μ0) ∩ Bε0 (wi
+
+> 0
+
+) = {wi
+
+> 0
+
+} for every i = 1 , . . . , N. 
+
+16 Moreover, by Lemma 3.7, if wi 
+
+> 0
+
+∈ RJi 
+
+> πi
+
+then 
+
+wi 
+
+> 0
+
+= ˜zi
+
+> 0
+
+∥˜zi
+
+> 0
+
+∥ , ˜zi 
+
+> 0
+
+:= PJi
+
+( ∑ 
+
+> j∈Ji
+
+pj
+
+> 0
+
+πij xj )
+
+,
+
+where p0 is the dual maximizer in D0(y0).Fix i and let RJk 
+
+> π
+
+= RJki 
+
+> πi
+
+be the Jk-stratum such that wi 
+
+> 0
+
+∈ RJk 
+
+> π
+
+with k ⩽ n. We want to prove that for (λ, ζ ) ∈ Nα,λ 0 with α, λ 0 sufficiently small, the set Ext (μλ,ζ ) ∩ Bε0 (wi
+
+> 0
+
+) contains at most one point. Indeed, by Lemma 4.2 the support of μλ,ζ lies in ⋃Nm=1 Bε0 (wm 
+
+> 0
+
+) for (λ, ζ ) ∈ Nα,λ 0
+
+with α, λ 0 sufficiently small. Thus, showing that Ext (μλ,ζ ) ∩ Bε0 (wi
+
+> 0
+
+) has at most one point implies that μλ,ζ has at most one atom in Bε0 (wi
+
+> 0
+
+).Note that with this choice of Jk and π, shrinking ε0 if necessary, the ball Bε0 (wi
+
+> 0
+
+) can intersect only strata in the compatible family FJk 
+
+> π
+
+as defined in (4.1). Arguing as in Lemma 3.6, we can write the dual certificate ηλ,ζ on the dual region RJ 
+
+> ¯π
+
+∈ F Jk 
+
+> π
+
+as 
+
+ηλ,ζ (w) = ∑
+
+> j∈J
+
+pjλ,ζ ¯πj ⟨w, x j ⟩, w ∈ RJ 
+
+> ¯π
+
+,
+
+where pλ,ζ ∈ Rn is the solution to the dual problem Dλ(yζ ). Since RJ 
+
+> ¯π
+
+⊂ LJ , for w ∈ RJ 
+
+> ¯π
+
+∩ Sd−1
+
+we have 
+
+ηλ,ζ (w) = ⟨PJ
+
+( ∑ 
+
+> j∈J
+
+pjλ,ζ ¯πj xj )
+
+, w ⟩ = ⟨˜zλ,ζ (J, ¯π), w ⟩.
+
+Hence, |ηλ,ζ (w)| ⩽ ∥˜zλ,ζ (J, ¯π)∥ and equality can hold only if w = ±˜zλ,ζ (J, ¯π)/∥˜zλ,ζ (J, ¯π)∥. At most one of these two points belongs to the fixed sign region RJ 
+
+> ¯π
+
+. Therefore, following the computation made in the proof of Lemma 3.7 for η0, in each region RJ 
+
+> ¯π
+
+∩ Sd−1 with RJ 
+
+> ¯π
+
+∈ F Jk 
+
+> π
+
+,the set Ext (μλ,ζ ) contains at most one point, and whenever it is nonempty it must be of the form 
+
+wλ,ζ (J, ¯π) = ˜zλ,ζ (J, ¯π)
+
+∥˜zλ,ζ (J, ¯π)∥ .
+
+Now we want to prove that there exists α, λ 0 sufficiently small such that for all (λ, ζ ) ∈ Nα,λ 0
+
+there exists at most one point w ∈ Bε0 (wi
+
+> 0
+
+) with |ηλ,ζ (w)| = 1 . Assume by contradiction that this does not hold. Then, also recalling the first step of the proof, there exist a vanishing sequence 
+
+(αn, λ 0,n ), (λ, ζ ) ∈ Nαn,λ 0,n and two distinct regions RJ1 
+
+> π1
+
+, R J2 
+
+> π2
+
+∈ F Jk 
+
+> π
+
+with points w1 ∈ RJ1 
+
+> π1
+
+,
+
+w2 ∈ RJ2 
+
+> π2
+
+such that w1, w 2 ∈ Ext (μλ,ζ ) ∩ Bε0 (wi
+
+> 0
+
+), w1̸ = w2 (note that for easing the notation we are omitting the dependence of n in (λ, ζ ) and in the selected dual regions). Since RJ1 
+
+> π1
+
+and RJ2
+
+> π2
+
+are assumed distinct, we have that (J1, π 1)̸ = ( J2, π 2). For ℓ ∈ { 1, 2} set 
+
+zℓλ,ζ := ∑
+
+> j∈Jℓ
+
+pjλ,ζ πℓj xj , ˜zℓλ,ζ := PJℓ zℓλ,ζ .
+
+Applying the previous step of the proof again and taking αn, λ0,n small enough, ˜zℓλ,ζ ̸ = 0 and 
+
+wℓ = ˜zℓλ,ζ 
+
+∥˜zℓλ,ζ ∥ , ℓ = 1 , 2.
+
+For ℓ ∈ { 1, 2} define the linear map ˜zℓ(p) := PJℓ
+
+( ∑ 
+
+> j∈Jℓ
+
+pj πℓj xj )
+
+and fix an arbitrary 0 < ε < ε 0.Since ˜zℓ(p0)̸ = 0 , the map p 7 → ˜zℓ(p)/∥˜zℓ(p)∥ is continuous at p0. Hence, there exists δ > 0 such that 
+
+∥p − p0∥ ⩽ δ =⇒
+
+∥∥∥∥∥
+
+˜zℓ(p)
+
+∥˜zℓ(p)∥ − ˜zℓ(p0)
+
+∥˜zℓ(p0)∥
+
+∥∥∥∥∥ ⩽ ε, ℓ = 1 , 2.
+
+17 Applying Lemma 4.2 with this δ, there exist n sufficiently big such that ∥pλ,ζ −p0∥ ⩽ δ. Therefore, 
+
+∥∥∥∥∥
+
+˜zℓλ,ζ 
+
+∥˜zℓλ,ζ ∥ − ˜zℓ
+
+> 0
+
+∥˜zℓ
+
+> 0
+
+∥
+
+∥∥∥∥∥ ⩽ ε, ℓ = 1 , 2,
+
+where ˜zℓ 
+
+> 0
+
+:= PJℓ
+
+( ∑  
+
+> j∈Jℓ
+
+pj 
+
+> 0
+
+πℓj xj ). Moreover, by again applying Lemma 4.2 with n sufficiently big, it holds that w1, w 2 ∈ Bε(wi
+
+> 0
+
+) and thus ∥w2 − w1∥ ⩽ 2ε.Therefore, we obtain 
+
+∥∥∥∥∥
+
+˜z10
+
+∥˜z10 ∥ − ˜z20
+
+∥˜z20 ∥
+
+∥∥∥∥∥ ⩽
+
+∥∥∥∥∥
+
+˜z10
+
+∥˜z10 ∥ − ˜z1
+
+> λ,ζ
+
+∥˜z1 
+
+> λ,ζ
+
+∥
+
+∥∥∥∥∥ +
+
+∥∥∥∥∥
+
+˜z1
+
+> λ,ζ
+
+∥˜z1 
+
+> λ,ζ
+
+∥ − ˜z2
+
+> λ,ζ
+
+∥˜z2 
+
+> λ,ζ
+
+∥
+
+∥∥∥∥∥ +
+
+∥∥∥∥∥
+
+˜z2
+
+> λ,ζ
+
+∥˜z2 
+
+> λ,ζ
+
+∥ − ˜z20
+
+∥˜z20 ∥
+
+∥∥∥∥∥
+
+⩽ ε + ∥w1 − w2∥ + ε ⩽ ε + 2 ε + ε = 4 ε. 
+
+Since (ND) states that the normalized vectors ˜z0(J, ¯π)/∥˜z0(J, ¯π)∥ are pairwise distinct for distinct strata in FJk 
+
+> π
+
+, there exists 
+
+c := min   
+
+> RJ1
+> π1,R J2
+> π2∈F Jkπ
+> (J1,π 1)̸=( J2,π 2)
+
+∥∥∥∥∥
+
+˜z0(J1, π 1)
+
+∥˜z0(J1, π 1)∥ − ˜z0(J2, π 2)
+
+∥˜z0(J2, π 2)∥
+
+∥∥∥∥∥ > 0.
+
+Choosing ε such that ε < c/ 4 yields a contradiction. Hence, for each i the following holds: for (λ, ζ ) ∈ Nα,λ 0 with λ0, α small enough there exists at most one point w ∈ Bε0 (wi
+
+> 0
+
+) with 
+
+|ηλ,ζ (w)| = 1 .This also shows that μλ,ζ admits the representation (4.2) with ciλ,ζ ⩾ 0 and ηλ,ζ (wiλ,ζ ) = 1 for all 
+
+i. Indeed, By Lemma 4.2, the support of the measure μλ,ζ is contained in Ext ε0 (μ0). Moreover, optimality implies supp μλ,ζ ⊂ Ext (μλ,ζ ) = {w : |ηλ,ζ (w)| = 1 }. Hence, μλ,ζ is a finite sum of Dirac masses, with at most one atom in each ball, that is 
+
+μλ,ζ =
+
+> N
+
+∑
+
+> i=1
+
+ciλ,ζ δwiλ,ζ . (4.3) For each i either supp μλ,ζ ∩ Bε0 (wi
+
+> 0
+
+) = ∅, or there exists a unique point wiλ,ζ ∈ Bε(wi
+
+> 0
+
+) such that 
+
+supp μλ,ζ ∩ Bε0 (wi
+
+> 0
+
+) = Ext( μλ,ζ ) ∩ Bε0 (wi
+
+> 0
+
+) = {wiλ,ζ }.
+
+In the latter case, wiλ,ζ ∈ Ext (μλ,ζ ) and ηλ,ζ (wiλ,ζ ) = 1 . In particular, we may write (4.3) , where 
+
+ciλ,ζ ⩾ 0 and ciλ,ζ > 0 if and only if supp μλ,ζ ∩ Bε(wi
+
+> 0
+
+)̸ = ∅. Thus, it remains to prove that 
+
+ciλ,ζ > 0 for all i when (λ0, α ) is sufficiently small. By the minimality of μλ,ζ for Pλ(yζ ),
+
+λ ∥μλ,ζ ∥TV ⩽ 12 ∥Kμ λ,ζ − y0 − ζ∥2 + λ ∥μλ,ζ ∥TV ⩽ ∥ζ∥2
+
+2 + λ ∥μ0∥TV ,
+
+where in the second inequality, we used that Kμ 0 − y0 = 0 . Dividing by λ > 0 and using 
+
+∥ζ∥ ⩽ αλ for (λ, ζ ) ∈ Nα,λ 0 , we obtain a uniform bound 
+
+∥μλ,ζ ∥TV =
+
+> N
+
+∑
+
+> i=1
+
+ciλ,ζ ⩽ ∥μ0∥TV + α2
+
+2 λ0,
+
+and since ∥μλ,ζ ∥TV = ∑Ni=1 ciλ,ζ is uniformly bounded, each coefficient ciλ,ζ is uniformly bounded on Nα,λ 0 . Assume by contradiction that there exist some j and a sequence (λk, ζ k) ∈ Nαk ,λ 0,k 
+
+with λ0,k → 0 and αk → 0, such that 
+
+cjλk ,ζ k → 0 as k → ∞ .
+
+18 By the compactness of the sphere and the boundedness of the coefficients, we can extract a subsequence (not relabelled) such that, for each i,
+
+δwiλk ,ζ k
+
+> ∗
+
+⇀ δ ˆwi 
+
+> 0
+
+, ciλk ,ζ k → ˆci
+
+> 0
+
+,
+
+with ˆcj 
+
+> 0
+
+= 0 . In particular, it holds that 
+
+μλk ,ζ k =
+
+> N
+
+∑
+
+> i=1
+
+ciλk ,ζ k δwiλk ,ζ k
+
+> ∗
+
+⇀
+
+> N
+
+∑
+
+> i=1
+
+ˆci
+
+> 0
+
+δ ˆwi 
+
+> 0
+
+=: ˆ μ0.
+
+On the other hand, by the stability result [ 27 , Theorem 3.5] we know that μλk ,ζ k
+
+> ∗
+
+⇀ μ 0 as k → ∞ .By Theorem 3.18, the minimizer μ0 of Pλ(yζ ) is unique, hence necessarily ˆμ0 = μ0. Since the balls {Bε0 (wi
+
+> 0
+
+)}Ni=1 are pairwise disjoint and supp μλk ,ζ k ⊂ ⋃ 
+
+> i
+
+Bε0 (wi
+
+> 0
+
+) for k large, the labeling of atoms is fixed by the balls. Since μ0 is uniquely representable (i.e., both the coefficients ci 
+
+> 0
+
+and the points wi 
+
+> 0
+
+are unique), we deduce, thanks to the complementarity assumption, that 
+
+ˆci 
+
+> 0
+
+= ci 
+
+> 0
+
+> 0, ˆwi 
+
+> 0
+
+= wi
+
+> 0
+
+, i = 1 , . . . , N, 
+
+which contradicts ˆcj 
+
+> 0
+
+= 0 . Therefore, for (λ0, α ) sufficiently small, we have that for all (λ, ζ ) ∈
+
+Nα,λ 0
+
+ciλ,ζ > 0 for all i = 1 , . . . , N 
+
+obtaining the representation (4.2). Finally, let (λk, ζ k) ∈ Nα,λ 0 with (λk, ζ k) → (0 , 0) . By [ 27 , Theorem 3.5] we have μλk ,ζ k
+
+> ∗
+
+⇀ μ 0.Since for every k the ball Bε0 (wi
+
+> 0
+
+) contains exactly one atom wiλk ,ζ k of μλk ,ζ k with mass ciλk ,ζ k > 0,and the balls are pairwise disjoint we obtain that 
+
+wiλk ,ζ k → wi
+
+> 0
+
+, ciλk ,ζ k → ci
+
+> 0
+
+, i = 1 , . . . , N. 
+
+Remark 4.6. Note that due to Theorem 3.18 that ensures uniqueness of solutions, the empirical measure μ0 is precisely the solution obtained by the application of the representer theorem [ 6 , 7, 8 ]. This justifies once more why the assumption N ⩽ n is unavoidable. A similar observation can also be made regarding Theorem 4.7. 
+
+4.1 Rates of convergence and uniqueness of the coefficients 
+
+In this section we derive quantitative rates for the convergences 
+
+wiλ,ζ → wi
+
+> 0
+
+, ciλ,ζ → ci
+
+> 0
+
+, i = 1 , . . . , N, 
+
+obtained in the previous section. We will show that, locally, 
+
+|ciλ,ζ − ci
+
+> 0
+
+| + ∥wiλ,ζ − wi
+
+> 0
+
+∥ = O(|λ| + ∥ζ∥),
+
+and in particular, along Nα,λ 0 , we get O(λ). Note that 
+
+K(w0) = 
+
+
+
+K∗e1(w10) · · · K∗en(w10)
+
+... · · · ...... . . . ...
+
+K∗e1(wN 
+
+> 0
+
+) · · · K∗en(wN 
+
+> 0
+
+)
+
+
+
+∈ RN ×n,
+
+19 where ej ∈ Rn is the j-th vector of the canonical base of Rn. Given the operator K′∗ : Rn →
+
+C(Sd−1; Rd) defined as 
+
+K′∗(p1, . . . , p n)( w) = 
+
+> n
+
+∑
+
+> i=1
+
+pi∇Sd−1 σ(⟨w, x i⟩),
+
+where ∇Sd−1 is the Riemannian gradient on the manifold Sd−1, we can also define the N (d−1) ×n
+
+matrix of first derivatives as 
+
+K′(w0) := 
+
+
+
+∇Sd−1 σ(⟨w10, x 1⟩) · · · ∇Sd−1 σ(⟨w10, x n⟩)
+
+... · · · ...... . . . ...
+
+∇Sd−1 σ(⟨wN 
+
+> 0
+
+, x 1⟩) · · · ∇Sd−1 σ(⟨wN 
+
+> 0
+
+, x n⟩)
+
+
+
+=
+
+
+
+K′∗e1(w10) · · · K′∗en(w10)
+
+... · · · ...... . . . ...
+
+K′∗e1(wN 
+
+> 0
+
+) · · · K′∗en(wN 
+
+> 0
+
+)
+
+
+
+,
+
+(4.4) whose entries are tangent vectors in Rd. In particular, we note that K′∗p(w) ∈ TwSd−1 ⊂ Rd for every p ∈ Rn and w ∈ Sd−1. Therefore, the natural way to interpret (4.4) is as the linear map 
+
+K′(w0) : Rn →
+
+> N
+
+# ×i=1 
+
+Twi 
+
+> 0
+
+Sd−1.
+
+Theorem 4.7 (Interior Recovery) . Let N ⩽ n. Assume that μ0 = ∑Ni=1 ci
+
+> 0
+
+σiδwi 
+
+> 0
+
+, where ci 
+
+> 0
+
+> 0,
+
+σi ∈ {− 1, +1 }, and wi 
+
+> 0
+
+∈ Rπi ∩ Sd−1 for every i = 1 , . . . , N , satisfies the (LC ). Moreover, suppose that {Kδ wi 
+
+> 0
+
+} are linearly independent and 
+
+[
+
+K(w0)
+
+K′(w0)
+
+]
+
+∈ RN d ×n has full rank N d. (4.5) 
+
+Then, there exists α > 0, λ 0 > 0, such that, for all (λ, ζ ) ∈ Nα,λ 0 , the solution μλ,ζ to Pλ(yζ ) is unique and admits a unique representation of the form: 
+
+μλ,ζ =
+
+> N
+
+∑
+
+> i=1
+
+ciλ,ζ σiδwiλ,ζ ,
+
+where wiλ,ζ ∈ Rπi ∩ Sd−1 such that ηλ,ζ (wiλ,ζ ) = σi, c iλ,ζ > 0. Moreover, for every i = 1 , . . . , N 
+
+and all (λ, ζ ) ∈ Nα,λ 0 , it holds: ∣∣∣ciλ,ζ − ci
+
+> 0
+
+∣∣∣ = O(λ),
+
+∥∥∥wiλ,ζ − wi
+
+> 0
+
+∥∥∥ = O(λ).
+
+(4.6) 
+
+Proof. Since the (LC) holds for μ0 and the measurements are linearly independent, we can apply Proposition 4.5. Once again we will carry out the proof considering σi = 1 for simplicity. Therefore, there exist α > 0, λ 0 > 0 such that, for all (λ, ζ ) ∈ Nα,λ 0 , any solution μλ,ζ is composed of exactly N Dirac deltas, i.e. 
+
+μλ,ζ =
+
+> N
+
+∑
+
+> i=1
+
+ciλ,ζ δwiλ,ζ ,
+
+where ciλ,ζ > 0 and wiλ,ζ ∈ Rπi ∩ Sd−1 such that ηλ,ζ (wiλ,ζ ) = 1 for every i = 1 , . . . , N . In Proposition 4.5 we also obtained the uniqueness of the locations wiλ,ζ inside each region Rπi . To conclude uniqueness of μλ,ζ it remains to show the uniqueness of the coefficients ciλ,ζ , and to obtain the quantitative estimate (4.6) . We work in a neighborhood where each wi 
+
+> 0
+
+is interior to 20 its activation region, so πi is fixed. In particular, we choose ε > 0 such that Bε(wi
+
+> 0
+
+) ∩ Sd−1 ⊂
+
+Rπi ∩ Sd−1 for all i. Now, we define 
+
+R(c, w, ζ ) := K
+
+> N
+
+∑
+
+> i=1
+
+ciδwi − y0 − ζ ∈ Rn, R(c0, w 0, 0) = 0 ,
+
+for c ∈ RN and w = ( w1, . . . , w N ) ∈ ∏Ni=1 
+
+(Bε(wi
+
+> 0
+
+) ∩ Sd−1). Since μλ,ζ satisfies the optimality conditions, ηλ,ζ reaches its maximum at wjλ,ζ , i.e. K∗pλ,ζ (wjλ,ζ ) = ηλ,ζ (wjλ,ζ ) = 1 . Moreover, since wjλ,ζ lies in the interior of Rπj , the map ηλ,ζ is C1 near wjλ,ζ , hence ∇Sd−1 ηλ,ζ (wjλ,ζ ) = 0 .Recalling −λp λ,ζ = Kμ λ,ζ − y0 − ζ and ηλ,ζ = K∗pλ,ζ , we obtain 
+
+K∗
+
+(R(cλ,ζ , w λ,ζ , ζ ))(wjλ,ζ ) + λ = 0 , j = 1 , . . . , N, (4.7) and 
+
+K′∗
+
+(R(cλ,ζ , w λ,ζ , ζ ))(wjλ,ζ ) = 0 in Twjλ,ζ 
+
+Sd−1, j = 1 , . . . , N. (4.8) Moreover, for (λ, ζ ) = (0 , 0) we have Kμ 0 = y0, hence the same equations hold at (c0, w 0). To apply the implicit function theorem, we introduce local charts around wj 
+
+> 0
+
+and express the second equation (4.8) in tangent coordinates. For each j, we choose a smooth chart φj : Uj ⊂ Rd−1 → Sd−1 such that φj (0) = wj 
+
+> 0
+
+and 
+
+φj (Uj ) ⊂ Bε(wj
+
+> 0
+
+) ∩ Sd−1, and write u = ( u1, . . . , u N ) ∈ U := U1 × · · · × UN ⊂ RN (d−1) such that 
+
+w(u) := (φ1(u1), . . . , φ N (uN )). We can then choose, for each j, a C1 family of linear isometries 
+
+Πj (uj ) : Tφj (uj )Sd−1 → Rd−1, Πj (uj ) is an isometry for every uj ∈ Uj .
+
+Then, we can define F = ( F 1, . . . , F N ) : ( RN × U ) × Nα,λ 0 → RN d by 
+
+F j (c, u ; λ, ζ ) := 
+
+ K∗
+
+(R(c, w (u), ζ ))( φj (uj )) + λΠj (uj ) K′∗
+
+(R(c, w (u), ζ ))( φj (uj )) ∈ R1+( d−1) = Rd.
+
+Since the activation pattern is fixed on φj (Uj ) ⊂ Rπj and the maps φj , Π j are C1, the map 
+
+(c, u, λ, ζ ) 7 → F (c, u ; λ, ζ ) is C1 near (c0, 0; 0 , 0) . Moreover, (4.7)–(4.8) are equivalent to 
+
+F (cλ,ζ , u λ,ζ ; λ, ζ ) = 0 , (4.9) where uλ,ζ is defined by wjλ,ζ = φj (ujλ,ζ ) (for (λ, ζ ) small). It also holds that F (c0, 0; 0 , 0) = 0 .Now, we differentiate F with respect to (c, u ) and we check the invertibility of D(c,u )F (c0, 0; 0 , 0) .First, note that for fixed w = ( w1, . . . , w N ), we have 
+
+p 7 → K(w) p = ((K∗p)( w1), . . . , (K∗p)( wN )) ∈ RN ,
+
+and, in tangent coordinates defined by Πj (uj ),
+
+p 7 → K′ 
+
+> T
+
+(w(u)) p := (Π1(u1)K′∗p(φ1(u1)) , . . . , Π N (uN )K′∗p(φN (uN )) ) ∈ RN (d−1) .
+
+At u = 0 this gives the coordinate representation of K′(w0), which we denote by K′ 
+
+> T
+
+(w0). With this notation, we can define 
+
+AT (w(u)) := 
+
+[
+
+K(w(u)) 
+
+K′ 
+
+> T
+
+(w(u)) 
+
+]
+
+∈ RN d ×n.
+
+If we differentiate in (c, u ), we get an N d × N d matrix: 
+
+D(c,u )F = DuAT (w(u)) R(c, w (u), ζ ) + AT (w(u)) D(c,u )R(c, w (u), ζ ),
+
+21 where the first term vanishes when evaluated at (c0, 0; 0 , 0) , that is 
+
+D(c,u )F (c0, 0; 0 , 0) = AT (w0)D(c,u )R (c0, w 0, 0) . (4.10) Therefore, the Jacobian depends only on the first order variation of R. Next, differentiating 
+
+R(c, w (u), ζ ) at (c0, 0, 0) yields the block form 
+
+D(c,u )R(c0, w 0, 0) = 
+
+[
+
+K(w0)⊤ K′ 
+
+> T
+
+(w0)⊤ diag d−1(c0) M
+
+]
+
+, (4.11) where diag d−1(c0) ∈ RN (d−1) ×N (d−1) is the block-diagonal matrix with (d − 1) copies of each ci
+
+> 0
+
+,and M ∈ RN (d−1) ×N (d−1) is the block-diagonal matrix 
+
+M := diag( M1, . . . , M N ), Mj := Πj (0) ◦ Dφ j (0) ∈ R(d−1) ×(d−1) .
+
+Since each φj is a local chart and each Πj (0) is an isometry, every Mj (hence M ) is invertible. Substituting (4.11) into (4.10) we obtain the following factorization 
+
+D(c,u )F (c0, 0; 0 , 0) = AT (w0) AT (w0)⊤
+
+[
+
+IN 00 diag d−1(c0) M
+
+]
+
+. (4.12) Fix the linear isometries Πj (0) : Twj
+
+> 0
+
+Sd−1 → Rd−1 for j = 1 , . . . , N , and consider the following linear map 
+
+J : RN N
+
+# ×j=1 
+
+Twj
+
+> 0
+
+Sd−1 → RN × RN (d−1) J(a; v1, . . . , v N ) = ( a; Π1(0) v1, . . . , Π N (0) vN ).
+
+Then, J is an isomorphism and the matrix AT (w0) is precisely the coordinate representation of the linear map J ◦
+
+[ K(w0)
+
+> K′(w0)
+
+]
+
+. Since after the composition with an isomorphism the rank does not change, 
+
+rank( AT (w0)) = rank 
+
+([ 
+
+K(w0)
+
+K′(w0)
+
+]) 
+
+.
+
+In particular, by (4.5) we have rank (AT (w0)) = N d (full row rank), hence AT (w0)AT (w0)⊤
+
+is symmetric positive definite. Moreover, since ci 
+
+> 0
+
+> 0 and M is invertible, the block diagonal matrix in (4.12) is invertible. Therefore, D(c,u )F (c0, 0; 0 , 0) is invertible. The implicit function theorem applies. Hence, there exist neighborhoods Br(c0, 0) ⊂ RN × U and Bs((0 , 0)) ⊂ R × Rn,and a unique C1 map 
+
+g : Bs((0 , 0)) → Br(c0, 0) , (λ, ζ ) 7 → (c(λ, ζ ), u (λ, ζ )) ,
+
+such that g(0 , 0) = ( c0, 0) and F (g(λ, ζ ); λ, ζ ) = 0 for all (λ, ζ ) ∈ Bs((0 , 0)) . In particular, since 
+
+g is C1 at (0 , 0) , there exists C > 0 such that, for (λ, ζ ) sufficiently small, 
+
+∥(c(λ, ζ ), u (λ, ζ )) − (c0, 0) ∥ ⩽ C(|λ| + ∥ζ∥). (4.13) Mapping back to the sphere by wi(λ, ζ ) := φi(ui(λ, ζ )) and using that φi is C1, (4.13) implies 
+
+∣∣∣ciλ,ζ − ci
+
+> 0
+
+∣∣∣ +
+
+∥∥∥wiλ,ζ − wi
+
+> 0
+
+∥∥∥ ⩽ C(|λ| + ∥ζ∥). (4.14) Finally, by Proposition 4.5 the locations wiλ,ζ are uniquely determined inside each region Rπi
+
+and satisfy wiλ,ζ → wi
+
+> 0
+
+, together with ciλ,ζ → ci
+
+> 0
+
+. Therefore, for (λ, ζ ) small enough, we have 
+
+(cλ,ζ , u λ,ζ ) ∈ Br(c0, 0) . Since F (cλ,ζ , u λ,ζ ; λ, ζ ) = 0 by (4.9), uniqueness in the IFT implies 
+
+(cλ,ζ , u λ,ζ ) = g(λ, ζ ),
+
+which proves that cλ,ζ is unique and therefore μλ,ζ is unique. The rates (4.6) follow from (4.14) ,since on Nα,λ 0 it holds ∥ζ∥ ⩽ αλ .22 Remark 4.8. Note that the condition (4.5) forces n ⩾ N d . Moreover, the linear independence of 
+
+{Kδ wi 
+
+> 0
+
+}Ni=1 is not implied by (4.5) in general; it is assumed here in order to invoke Proposition 4.5 and obtain the localization of the reconstructed Dirac deltas. We note that (4.5) can be seen as a finite-dimensional analogue of the condition used in the infinite-dimensional measurement setting of [ 20 ], where one works with an observation operator having L2 measurements (heuristically 
+
+n = + ∞). Regarding the non-degeneracy condition we remark that we do not impose (ND), since the locations lie in the interior of the dual regions; in this case, (LC) is sufficient to apply Proposition 4.5. Finally, we remark that a similar argument would provide a linear decay of both the location and the coefficient errors for fixed λ0 and a vanishing sequence of noise levels ζ. In this case, the assumptions concerning the linear independence of the measurements and (4.5) should clearly be understood with respect to the zero-noise reconstruction with λ = λ0.
+
+# 5 Numerical experiments 
+
+This section shows simple numerical simulations confirming the theoretical findings of this paper. For simplicity, we focus on the two-dimensional setting ( d = 2 ), where the weight domain is the unit circle S1. The experiments are designed to display the dual-region partition, the behaviour of the dual certificate ηλ,ζ on S1, and of the optimal solution μλ,ζ depending on noise level and regularization parameter. In particular, we show the sparsity of the recovered measure (Theorem 3.10), the relationship between the number of atoms and the regularization parameter (Lemma 3.11), and the linear convergence rates for the weights and locations under label noise (Theorem 4.7). These examples are representative, since the aim here is not to optimize predictive performance but to isolate and visualize the results discussed in the previous sections. 
+
+5.1 Model and experimental setup 
+
+Given inputs x1, . . . , x n ∈ R2 and targets y ∈ Rn, we consider the operator 
+
+(Kμ )j =
+
+> ∫
+> S1
+
+σ(⟨w, x j ⟩) dμ (w), σ(t) = ReLU( t),
+
+and the TV-regularized empirical risk problem: 
+
+min  
+
+> μ∈M(S1)
+
+12
+
+> n∑
+> j=1
+
+(( Kμ )j − yj )2 + λ∥μ∥TV , λ > 0.
+
+Numerically, we approximate μ by an empirical measure with m Dirac deltas: 
+
+μ =
+
+> m∑
+> i=1
+
+ci δwi , wi ∈ S1, ci ∈ R,
+
+which yields the finite-dimensional objective 
+
+min 
+
+> {(ci,w i)}mi=1
+
+12 
+
+> n∑
+> j=1
+> (m∑
+> i=1
+
+ci σ(⟨wi, x j ⟩) − yj
+
+> )2
+
++ λ
+
+> m∑
+> i=1
+
+|ci|. (5.1) We enforce the constraint wi ∈ S1 by parametrizing wi = ui/∥ui∥ with unconstrained ui ∈ R2
+
+and optimizing over (ci, u i).23 5.2 Simulations 
+
+We train the model by optimizing (5.1) with ADAM using m = 10 5 and random initialization for c and u. In all the experiments reported in Figures 2–6, we use a fixed set of n = 5 data points in R2:
+
+x1 = (0 .2, −0.1) , x2 = (1 .0, 0.3) , x3 = (1 .0, 0.0) , x4 = ( −0.4, 0.9) , x5 = (0 .5, 0.5) (5.2) and targets 
+
+y = (0 .8, −0.1, 0.3, −1.2, 1.0) .
+
+We recall that in the first three experiments the labels are not corrupted by noise ( ζ = 0 ), while in the final experiment we vary the noise level to verify the convergence rates of Theorem 4.7. The data points xi are non-collinear and span multiple directions, so the hyperplane constraints ⟨w, x j ⟩ = 0 generate a nontrivial arrangement on S1 with multiple dual regions (see Figure 2). As a regularization parameter, we choose λ = 0 .03 . Every 200 iterations we prune the sequence by removing the atoms corresponding to coefficients with magnitude under the threshold τprune = 10 −2. The result is represented in Figure 2 and it corresponds to the solution 
+
+μλ,ζ =
+
+> 3∑
+> i=1
+
+ci
+
+> ∗
+
+δwi 
+
+> ∗
+
+, (5.3) where 
+
+w1 
+
+> ∗
+
+= ( −0.163 , 0.987) , w 2 
+
+> ∗
+
+= (0 .287 , −0.958) , w 3 
+
+> ∗
+
+= ( −0.708 , 0.706) ,c1 
+
+> ∗
+
+= 1 .312 , c 2 
+
+> ∗
+
+= 1 .256 , c 3 
+
+> ∗
+
+= −2.577 .
+
+Figure 2: Dual region decomposition of S1 and optimal solution μλ,ζ . The dashed diameters correspond to the boundaries ⟨w, x j ⟩ = 0 induced by the five inputs (5.2) , partitioning 
+
+S1 into sectors on which (1{⟨ w, x j ⟩ > 0})5 
+
+> j=1
+
+is constant. We display the recovered atoms {wi}3
+
+> i=1
+
+of μλ,ζ . The arrow corresponds to the vector ˜zλ,ζ   
+
+> ∥˜zλ,ζ ∥
+
+as in (3.4) with ˜zλ,ζ defined in (3.3) . As predicted by Lemma 3.9, this vector aligns with the location of the Dirac delta of the solution 
+
+μλ,ζ belonging to the interior of a dual region. 24 Figure 3: Dual certificate ηλ,ζ on S1. The dashed circles (orange and green) show the locations where ηλ,ζ = ±1. As expected by the optimality conditions, the dual certificate is always between 
+
+−1 and +1 . The points where ηλ = 1 (resp. ηλ = −1) correspond exactly to the location of positive (resp. negative) Dirac deltas in the TV-regularized solution (5.3). We also study the behaviour of the dual certificate ηλ,ζ ∈ C(Sd−1) corresponding to the computed solution μλ,ζ . In particular, we show that it reaches the maximum ηλ,ζ = 1 at the location of the positive Dirac deltas of the optimal solution; similarly, it reaches the minimum ηλ,ζ = −1 at the location of the negative Dirac deltas. Such behaviour is a clear indication that the optimization procedure has reached a minimizer of the problem. Moreover, we note that the dual certificate aligns with the unique (positive) Dirac delta of μλ,ζ 
+
+lying in the interior of a dual region, which we denote by w∗ ∈ Rπ. As described in Lemma 3.9, it holds that, for pλ,ζ = − 1 
+
+> λ
+
+(Kμ λ,ζ − yζ ) (see (2.1)) and ˜zλ = ∑ 
+
+> i
+
+piλπixi (see (3.3)), 
+
+ηλ,ζ = sign( w∗) ˜zλ,ζ 
+
+∥˜zλ,ζ ∥ .
+
+In Figure 4, while keeping fixed the data and labels, we modify the value of the regularization parameter to observe how the number of reconstructed Dirac deltas varies in the solution 
+
+μλ,ζ . We note that when the regularization parameter decreases, the number of Dirac deltas increases, while staying below the geometric upper bound given by Lemma 3.11, which in this case corresponds to 10 .Finally, in the last experiment, we verify the decay of the coefficients and locations of the Dirac deltas in the optimal solution μλ,ζ predicted by Theorem 4.7 (see also Remark 4.8). We again work in dimension d = 2 and we consider n = 5 data points in R2:
+
+x1 = (0 .2, −0.1) , x2 = (1 .0, −2) , x3 = (1 .0, 0.2) , x4 = ( −0.4, −0.2) , x5 = (0 .5, 0.5) 
+
+and targets 
+
+y = (0 .8, −0.1, 0.3, −1.2, 1.0) .
+
+We fix λ = 0 .2 and we compute the solution μλ,ζ = ∑2 
+
+> i=1
+
+ci
+
+> ∗
+
+δwi 
+
+> ∗
+
+with no noise. The result is depicted in Figure 5, where we observe that both wi 
+
+> ∗
+
+lie in the interior of a dual region. While keeping λ fixed, we perturb y by increasingly large noise ζ, ranging from 5 · 10 −4 to 
+
+2.4 · 10 −3. We compute the optimal solution μλ,ζ = ∑2 
+
+> i=1
+
+ciζ δwiζ for all values of ζ and in Figure 25 Figure 4: Size of the support depending on the regularization parameter. For λ in the interval ( λmax = 1 , λmin = 5 · 10 −7, 11 values), we compute the cardinality of the support of the solution. As expected, the number of Dirac deltas increases with the decrease of the regularization parameter λ. The maximum number of Dirac deltas is, however, still below the theoretical bound determined by the number of regions: R(X) = 10 .
+
+Figure 5: Unperturbed solution and dual certificate for λ = 0 .2. Left: Dual region decomposition of S1 and recovered atoms {wi
+
+> ∗
+
+}2 
+
+> i=1
+
+of the solution μλ,ζ = ∑2 
+
+> i=1
+
+ci 
+
+> ∗
+
+δwi 
+
+> ∗
+
+with ζ = 0 .Both atoms lie in the interior of a dual region. Right: Corresponding dual certificate ηλ,ζ on S1.As in Figure 3, it satisfies |ηλ,ζ | ⩽ 1 everywhere and attains ±1 exactly at the support of μλ,ζ .6 we plot the quantities 
+
+Lic(ζ) = |ciλ,ζ − ci
+
+> ∗
+
+| and Liw(ζ) = ∥wiλ,ζ − wi
+
+> ∗
+
+∥ for i = 1 , 2.
+
+As predicted by Theorem 4.7, we observe that these quantities decay linearly in ∥ζ∥, consistently with the bound O(λ) along Nα,λ 0 where ∥ζ∥ ⩽ αλ . In particular, we have Lic(ζ) ⩽ Cic∥ζ∥ and 
+
+Liw(ζ) ⩽ Ciw∥ζ∥ for constants Cic and Ciw with i = 1 , 2.One can also verify that the assumptions of Theorem 4.7 are indeed satisfied. Since both atoms w1
+
+> ∗
+
+, w 2 
+
+> ∗
+
+lie in the interior of their respective dual regions Rπ1 , R π2 , the non-degeneracy condition (ND) is not required (cf. Remark 4.8). The localization condition (LC) is verified by inspecting the dual certificate ηλ,ζ in Figure 5 (right), where we observe that |ηλ,ζ (w)| < 1 for all 
+
+w ∈ S1 \{ w1
+
+> ∗
+
+, w 2
+
+> ∗
+
+}. To verify the linear independence of {Kδ w1 
+
+> ∗
+
+, Kδ w2 
+
+> ∗
+
+} we apply Lemma 3.16. The activation patterns of the two atoms are π1 = (1 , 0, 1, 0, 1) and π2 = (1 , 1, 0, 1, 0) . The 2×2 minor 26 of Π corresponding to columns 1 and 2 equals ( 1 0 1 1 ), which satisfies perm (ΠN ) = | det (ΠN )| = 1 ,so conditions (i) and (ii) of Lemma 3.16 are fulfilled. Finally, we verify condition (4.5) . Since 
+
+d = 2 , the tangent space Twi 
+
+> ∗
+
+S1 is one-dimensional, spanned by (−wi
+
+> ∗,2
+
+, w i
+
+> ∗,1
+
+). We numerically evaluate the matrix [
+
+K(w∗)
+
+K′(w∗)
+
+> ]
+
+∈ R4×5
+
+and obtain singular values approximately 2.243 , 1.204 , 0.472 , 0.365 , confirming that its rank is 
+
+4 = N d . Hence, all hypotheses of Theorem 4.7 are fulfilled. 
+
+Figure 6: Linear decay of coefficients and locations under label noise. Left: Coefficient mismatch Lic(ζ) = |ciλ,ζ − ci
+
+> ∗
+
+| as a function of the noise level ∥ζ∥ for i = 1 , 2, together with linear fits. Right: Location mismatch Liw(ζ) = ∥wiλ,ζ − wi
+
+> ∗
+
+∥ for i = 1 , 2. Both quantities exhibit the linear dependence on ∥ζ∥ predicted by Theorem 4.7. 
+
+# References 
+
+[1] J. M. Azais, Y. De Castro, and F. Gamboa. Spike detection from inaccurate samplings. 
+
+Applied and Computational Harmonic Analysis , 38(2):177–195, 2015. [2] F. Bach. Breaking the curse of dimensionality with convex neural networks. The Journal of Machine Learning Research , 18(1):629–681, 2017. [3] A. R. Barron. Approximation and estimation bounds for artificial neural networks. Machine learning , 14(1):115–133, 1994. [4] A. R. Barron. Universal approximation bounds for superpositions of a sigmoidal function. 
+
+IEEE Transactions on Information theory , 39(3):930–945, 2002. [5] F. Bartolucci, M. Carioni, J. A. Iglesias, Y. Korolev, E. Naldi, and S. Vigogna. A Lipschitz spaces view of infinitely wide shallow neural networks. arXiv preprint arXiv:2410.14591 ,2024. [6] F. Bartolucci, E. De Vito, L. Rosasco, and S. Vigogna. Understanding neural networks with reproducing kernel banach spaces. Applied and Computational Harmonic Analysis ,62:194–236, 2023. [7] C. Boyer, A. Chambolle, Y. De Castro, V. Duval, F. de Gournay, and P. Weiss. On representer theorems and convex regularization. SIAM Journal on Optimization , 29(2):1260– 1281, 2019. 27 [8] K. Bredies and M. Carioni. Sparsity of solutions for variational inverse problems with finite-dimensional data. Calculus of Variations and Partial Differential Equations , 59(1):14, 2020. [9] K. Bredies and H.K. Pikkarainen. Inverse problems in spaces of measures. ESAIM: Control, Optimisation and Calculus of Variations , 19(1):190–218, 2013. [10] R. A. Brualdi and H. J. Ryser. Combinatorial matrix theory , volume 39. Springer, 1991. [11] E. J. Candès and C. Fernandez-Granda. Towards a mathematical theory of super-resolution. 
+
+Communications on pure and applied Mathematics , 67(6):906–956, 2014. [12] M. Carioni and L. Del Grande. A general theory for exact sparse representation recovery in convex optimization. arXiv preprint arXiv:2311.08072 , 2023. [13] T. M. Cover. Geometrical and statistical properties of systems of linear inequalities with applications in pattern recognition. IEEE Transactions on Electronic Computers , EC-14(3):326–334, 1965. [14] Y. De Castro and F. Gamboa. Exact reconstruction using beurling minimal extrapolation. 
+
+Journal of Mathematical Analysis and applications , 395(1):336–354, 2012. [15] J. de Dios and J. Bruna. On sparsity in overparametrised shallow relu networks. arXiv preprint arXiv:2006.10225 , 2020. [16] Q. Denoyelle, V. Duval, and G. Peyré. Support recovery for sparse super-resolution of positive measures. Journal of Fourier Analysis and Applications , 23:1153–1194, 2017. [17] Q. Denoyelle, V. Duval, G. Peyré, and E. Soubies. The sliding Frank–Wolfe algorithm and its application to super-resolution microscopy. Inverse Problems , 36(1):014001, 2019. [18] S. Dummer, T. J. Heeringa, and J. A. Iglesias. Vector-valued reproducing kernel banach spaces for neural networks and operators. arXiv preprint arXiv:2509.26371 , 2025. [19] V. Duval. A characterization of the non-degenerate source condition in super-resolution. 
+
+Information and Inference: A Journal of the IMA , 9(1):235–269, 2020. [20] V. Duval and G. Peyré. Exact support recovery for sparse spikes deconvolution. Foundations of Computational Mathematics , 15(5):1315–1355, 2014. [21] W. E, C. Ma, and L. Wu. The barron space and the flow-induced function spaces for neural network models. Constructive Approximation , 55(1):369–406, 2022. [22] W. E and S. Wojtowytsch. Representation formulas and pointwise properties for barron functions. Calculus of Variations and Partial Differential Equations , 61(2):46, 2022. [23] W. E and S. Wojtowytsch. Some observations on high-dimensional partial differential equations with barron data. In Mathematical and Scientific Machine Learning , pages 253– 269. PMLR, 2022. [24] I. Ekeland and R. Temam. Convex analysis and variational problems . SIAM, 1999. [25] J.-J. Fuchs. On sparse representations in arbitrary redundant bases. IEEE transactions on Information theory , 50(6):1341–1344, 2004. [26] T. J. Heeringa, L. Spek, F. L. Schwenninger, and C. Brune. Embeddings between bar-ron spaces with higher-order activation functions. Applied and Computational Harmonic Analysis , 73:101691, 2024. 28 [27] B. Hofmann, B. Kaltenbacher, C. Poschl, and O. Scherzer. A convergence rates result for Tikhonov regularization in Banach spaces with non-smooth operators. Inverse Problems ,23(3):987, 2007. [28] K. Karhadkar, M. Murray, H. Tseran, and G. F. Montufar. Mildly overparameterized relu networks have a favorable loss landscape. Transactions of Machine Learning Research , 2024. [29] S. Kim, A. Mishkin, and M. Pilanci. Exploring the loss landscape of regularized neural networks via convex duality. arXiv preprint arXiv:2411.07729 , 2024. [30] H. Maennel, O. Bousquet, and S. Gelly. Gradient descent quantizes relu network features. 
+
+arXiv:1803.08367 , 2018. [31] G. F. Montufar, R. Pascanu, K. Cho, and Y. Bengio. On the number of linear regions of deep neural networks. Advances in neural information processing systems , 27, 2014. [32] M. Najaf and G. Ongie. Sampling theory for super-resolution with implicit neural represen-tations. arXiv preprint arXiv:2506.09949 , 2025. [33] I. Neitzel, K. Pieper, B. Vexler, and D. Walter. A sparse control approach to optimal sensor placement in PDE-constrained parameter estimation problems. Numerische Mathematik ,143(4):943–984, December 2019. [34] G. Ongie, R. Willett, D. Soudry, and N. Srebro. A function space view of bounded norm infinite width relu nets: The multivariate case. arXiv preprint arXiv:1910.01635 , 2019. [35] R. Parhi and R. D. Nowak. Banach space representer theorems for neural networks and ridge splines. Journal of Machine Learning Research , 22(43):1–40, 2021. [36] R. Parhi and R. D. Nowak. What kinds of functions do deep neural networks learn? insights from variational spline theory. SIAM Journal on Mathematics of Data Science , 4(2):464–489, 2022. [37] C. Poon, N. Keriven, and G. Peyré. The geometry of off-the-grid compressed sensing. 
+
+Foundations of Computational Mathematics , 23(1):241–327, 2023. [38] P. Savarese, I. Evron, D. Soudry, and N. Srebro. How do infinite width bounded norm networks look in function space? In Conference on Learning Theory , pages 2667–2690. PMLR, 2019. [39] G. Schiebinger, E. Robeva, and B. Recht. Superresolution without separation. Information and Inference: A Journal of the IMA , 7(1):1–30, 2018. [40] A. Shevchenko, V. Kungurtsev, and M. Mondelli. Mean-field analysis of piecewise linear solutions for wide relu networks. Journal of Machine Learning Research , 23(130):1–55, 2022. [41] L. Spek, T. J. Heeringa, F. L. Schwenninger, and C. Brune. Duality for neural networks through reproducing kernel banach spaces. Applied and Computational Harmonic Analysis ,78:101765, 2025. 29

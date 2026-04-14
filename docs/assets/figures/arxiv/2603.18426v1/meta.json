@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.18426v1/fig-001.webp",
+      "caption": "Figure 12: The compression order advantage A ( Q → P ) increases monotonically with the CER difference C∗ P − CQ also for Mistral herd models. See Appendix D.1 for details.",
+      "page": 21,
+      "index": 1,
+      "width": 744,
+      "height": 361
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18426v1/fig-002.webp",
+      "caption": "Figure 1: The Progressive Intensity Hypothesis: Given two compression techniques, we conjecture that compressed models perform better if the stronger method is applied after the weaker one. That said, the optimal order between pruning and quantization varies with their compression ratios.",
+      "page": 2,
+      "index": 2,
+      "width": 831,
+      "height": 351
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18426v1/fig-003.webp",
+      "caption": "Figure 3: Across diverse language models, the compression order advantage A ( Q → P ) increases monotonically with the CER difference C∗ P − CQ. See Section 5.2 for details.",
+      "page": 7,
+      "index": 3,
+      "width": 795,
+      "height": 331
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18426v1/fig-004.webp",
+      "caption": "Figure 14: Commonsense reasoning task performance of a LLaMA 3 8B model for SparseGPT and QuaRot. See Appendix D.3 for details.",
+      "page": 22,
+      "index": 4,
+      "width": 744,
+      "height": 1020
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18426v1/fig-005.webp",
+      "caption": "Table 4: WikiText-2 perplexity comparison of a LLaMA 3 8B model pruned by SLEB (Song et al., 2024) and SparseGPT (Frantar & Alistarh, 2023) under varying pruning ratios, with and without rotation following QuaRot (Ashkboos et al., 2024b). See Section D.4 for details.",
+      "page": 23,
+      "index": 5,
+      "width": 835,
+      "height": 302
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18426v1/fig-006.webp",
+      "caption": "Figure 15: Two cases of errors when pruning rotated units. See Section D.4 for details.",
+      "page": 23,
+      "index": 6,
+      "width": 825,
+      "height": 262
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18426v1/fig-007.webp",
+      "caption": "Table 3: Baseline methods covered in our experiments across different settings.",
+      "page": 19,
+      "index": 7,
+      "width": 840,
+      "height": 635
+    }
+  ]
+}

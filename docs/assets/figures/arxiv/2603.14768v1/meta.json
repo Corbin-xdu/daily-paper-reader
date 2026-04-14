@@ -1,0 +1,102 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.14768v1/fig-001.webp",
+      "caption": "Figure 6. Value of the bound given in equation (13) over varying dimensions in the case of 100 cubes for each dimension, with curves for varying sizes of ζ between 0.1 and 0.9. The bound consistently vanishes for even modestly high dimensions.",
+      "page": 15,
+      "index": 1,
+      "width": 1043,
+      "height": 367
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14768v1/fig-002.webp",
+      "caption": "Figure 1. The volumes of a simpler decision boundary (orange) and its tubular neighborhood (yellow) should be smaller than the volumes of a more complex decision boundary and its tubular neighbourhood (purple) when measured in the vicinity of two data manifolds (red and blue).",
+      "page": 2,
+      "index": 2,
+      "width": 498,
+      "height": 332
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14768v1/fig-003.webp",
+      "caption": "Figure 10. Boundary volume and test accuracy over varying dropout rates applied to fully connected neural networks. The top two rows are trained on MNIST with the SGD and Adam optimisers, respectively. The third row is trained on Fashion MNIST, and the bottom row is trained on CIFAR-10, both with the Adam optimiser. Optimal test accuracy is achieved around a critical point of either TrainBvol or LAdvBvol, while the other of the two measurements changes monotonically.",
+      "page": 22,
+      "index": 3,
+      "width": 1027,
+      "height": 1001
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14768v1/fig-004.webp",
+      "caption": "Figure 8. Values of ε-neighbourhood boundary volume measurements over a range of ε values for 10 networks trained on MNIST. The stability of the measurements appears good over the entire range of ε. We expect the rate of growth of the neighbourhood boundary volume measurements to decrease slightly for large values of ε, as the adversarial attack becomes less accurate at a greater distance. This feature is clearly apparent in the Bvol and LAdvBvol plots. However, in the TrainBvol plot there is an initial increase in the rate of growth as ε increases. Following the discussion in Sections 4.1 and 4.2, we would expect this to occur if curvature is present in this region of the decision boundary since the lower degree terms in Weyl’s tube formula are curvature dependent.",
+      "page": 18,
+      "index": 4,
+      "width": 1004,
+      "height": 273
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14768v1/fig-005.webp",
+      "caption": "Figure 7. Values of Bvol, TrainBvol, and LAdvBvol over a range of sample sizes plotted alongside 95% confidence intervals obtained treating the Monte Carlo method as an estimation of a Bernoulli parameter (see Section 6.1). The network used was fully connected and trained on MNIST with the Adam optimiser for 100 epochs. In each plot the boundary volume measurements stabilise with reasonably sized confidence intervals when about 6000 or more samples are taken.",
+      "page": 18,
+      "index": 5,
+      "width": 994,
+      "height": 281
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14768v1/fig-006.webp",
+      "caption": "Figure 5. The points sampled on the boundary linearly between data classes in the first step (orange) within a δ neighbourhood of which the second step estimate of LAdvBvol, the ε-neighbourhood volume of the network decision boundary is made.",
+      "page": 13,
+      "index": 6,
+      "width": 417,
+      "height": 418
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14768v1/fig-007.webp",
+      "caption": "Table 4. Number of training epochs and increase in the number of training epochs per increase of 0.1 of dropout rate on the final hidden layer. Epochs are given for fully connected and convolutional neural networks for each data set used in experiments in this section.",
+      "page": 19,
+      "index": 7,
+      "width": 890,
+      "height": 247
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14768v1/fig-008.webp",
+      "caption": "Table 3. Statistics on the minimal d∞ distances between pairs of 10000 linear adversarial points sampled using the method described in Sections 6.4 for constructing points lying linearly between two training examples as part of the LAdvBvolmethod. For networks trained with each combination of data sets and network architecture, the minimum distance and average minimum distances between pairs of the linear adversarial points are given alongside the fraction of those pairs of points that were less than 0.2, 0.1, or 0.05 apart.",
+      "page": 17,
+      "index": 8,
+      "width": 776,
+      "height": 220
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14768v1/fig-009.webp",
+      "caption": "Table 2. The parameter values of ε and δ for each neighbourhood boundary volume measurement using the FGSM introduced in Section 2.5.",
+      "page": 17,
+      "index": 9,
+      "width": 406,
+      "height": 550
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14768v1/fig-010.webp",
+      "caption": "Figure 4. Sample space of δ-neighbourhoods about training points in which to estimate the TrainBvol ε-neighbourhood volume of the network decision boundary.",
+      "page": 12,
+      "index": 10,
+      "width": 416,
+      "height": 418
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14768v1/fig-011.webp",
+      "caption": "Figure 9. Boundary volume over varying dropout rate in the final fully connected layer applied to convolutional neural networks. The top two rows are trained on MNIST with the SGD and Adam optimisers, respectively. The third row is trained on Fashion MNIST, and the bottom row on CIFAR-10, both with the Adam optimiser. We see a local minima in TrainBvol around or just before the optimal test accuracy, while the LAdvBvol measurements generally increase.",
+      "page": 20,
+      "index": 11,
+      "width": 1027,
+      "height": 998
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14768v1/fig-012.webp",
+      "caption": "Table 1. Convolutional architectures used for training on data sets MNIST, Fashion MNIST, and CIFAR-10. The notation Conv a, b × b + 1 means a 2-dimensional convolutional layer with a square filters of size b, a stride of 1, and same padding. All pooling layers Pool 2 × 2 + 2 used square filters of size 2, a stride of 2, and had no padding. The notation FC c denotes a fully connected layer with c hidden units.",
+      "page": 16,
+      "index": 12,
+      "width": 627,
+      "height": 221
+    }
+  ]
+}

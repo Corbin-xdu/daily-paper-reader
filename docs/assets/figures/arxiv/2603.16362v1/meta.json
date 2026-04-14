@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.16362v1/fig-001.webp",
+      "caption": "Figure 1: The difference between D3-RSMDE and Marigold. Compared to the multiple denoising reconstructions of Marigold, our D3-RSMDE firstly adopts efficient ViT to regression coarse depth map and then obtain finegrained high-fidelity depth map with fewer denoising steps.",
+      "page": 1,
+      "index": 1,
+      "width": 500,
+      "height": 398
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16362v1/fig-002.webp",
+      "caption": "Table 2: Ablation study of D3-RSMDE. The best result is highlighted in bold and the second best result is underlined.",
+      "page": 6,
+      "index": 2,
+      "width": 1044,
+      "height": 331
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16362v1/fig-003.webp",
+      "caption": "Figure 3: Comparison of model efficiency.",
+      "page": 6,
+      "index": 3,
+      "width": 500,
+      "height": 268
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16362v1/fig-004.webp",
+      "caption": "Figure 4: Comparison of our D3-RSMDE and some SOTA methods in different categories of remote sensing images.",
+      "page": 7,
+      "index": 4,
+      "width": 1054,
+      "height": 669
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16362v1/fig-005.webp",
+      "caption": "Figure 2: The framework of our D3-RSMDE. During the training process, ViT first performs regression on the input original remote sensing images x to obtain the coarse depth map construction dc, and then together with Ground Truth d0 and the x, obtains the samples for training Refiner Diffusion through PLBR. In the inference process, the d0 is replaced by the output of each step of Refiner Diffusion to obtain a refined and high-fidelity remote sensing depth estimation map.",
+      "page": 4,
+      "index": 5,
+      "width": 1052,
+      "height": 344
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16362v1/fig-006.webp",
+      "caption": "Table 1: Quantitative analysis of SOTA methods. The best result is highlighted in bold and the second best result is underlined.",
+      "page": 5,
+      "index": 6,
+      "width": 1052,
+      "height": 319
+    }
+  ]
+}

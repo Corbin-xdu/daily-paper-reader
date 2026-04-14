@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.16444v1/fig-001.webp",
+      "caption": "Figure 1: Real-time monocular 3D hand mesh reconstruction using lightweight student networks. We present a Knowledge Distillation approach for training lightweight networks that accelerate 3D hand reconstruction without compromising quality. Our best-performing network achieves real-time inference with only a modest drop in reconstruction quality. The Figure showcases qualitative results across challenging scenarios, including mutual occlusion, complex hand poses, and interactions with various objects.",
+      "page": 1,
+      "index": 1,
+      "width": 432,
+      "height": 323
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16444v1/fig-002.webp",
+      "caption": "Table 3: Output-level Distillation: Evaluating different backbones trained with KD loss applied on the outputs of the student and teacher models. λKD refers to the weight of the KD loss.",
+      "page": 6,
+      "index": 2,
+      "width": 468,
+      "height": 392
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16444v1/fig-003.webp",
+      "caption": "Figure 3: Trade-off between model accuracy (PA-MPJPE), speed (FPS), and parameter size (circle size). The Figure shows that the most accurate model is HaMeR; however, it shows that other alternatives give close performance with fewer resources and better runtime. ConvNeXt-L with feature distillation falls right behind HaMeR in our experiments with 1.48x FPS boost and 64% reduction in size.",
+      "page": 6,
+      "index": 3,
+      "width": 438,
+      "height": 500
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16444v1/fig-004.webp",
+      "caption": "Figure 4: Qualitative results on images from the internet, the scenes represent hands interacting with the environment. We compare our results of the best configuration (ConvNext-L with feature-level distillation) with HaMeR both in 2D and 3D.",
+      "page": 7,
+      "index": 4,
+      "width": 829,
+      "height": 484
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16444v1/fig-005.webp",
+      "caption": "Table 4: Feature-level Distillation: Evaluating different backbones trained with KD loss applied on the feature maps produced by the backbones of student and teacher models. λKD refers to the weight of the total KD loss, while γFD refers to a scalar used to scale only the feature-distillation loss.",
+      "page": 8,
+      "index": 5,
+      "width": 465,
+      "height": 354
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16444v1/fig-006.webp",
+      "caption": "Table 5: Combined Distillation: Evaluating different backbones trained with KD loss applied on the outputs and the feature maps produced by the backbones of student and teacher models. λKD refers to the weight of the total KD loss, while γFD refers to a scalar used to scale only the feature-distillation loss.",
+      "page": 8,
+      "index": 6,
+      "width": 465,
+      "height": 352
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16444v1/fig-007.webp",
+      "caption": "Figure 2: High-level overview of the teacher-student architecture, only relevant distillation losses are used depending on the KD level. φ(FT ) refers to a 1x1 convolution to project the dimensions of the teacher’s features to match those of the student’s for feature-level distillation. The teacher network is used only during training; at inference time, only the trained student network is used.",
+      "page": 4,
+      "index": 7,
+      "width": 891,
+      "height": 433
+    }
+  ]
+}

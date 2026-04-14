@@ -1,0 +1,110 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.16063v1/fig-001.webp",
+      "caption": "Table 2. mIoU fine-tuning comparison on ADE20K under different vision foundation models with multiple linear attention baselines. We reproduce all baselines to ensure a fair comparison. The segmentation head is Mask2former for all the methods.",
+      "page": 7,
+      "index": 1,
+      "width": 925,
+      "height": 482
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16063v1/fig-002.webp",
+      "caption": "Figure 12. Stage 1 loss comparison across linear-attention activation functions. We compare four activations: softmax, softplus, ReLU, and ELU+1.",
+      "page": 14,
+      "index": 2,
+      "width": 532,
+      "height": 350
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16063v1/fig-003.webp",
+      "caption": "Table 10. Top-1 fine-tuning accuracy comparison on ImageNet-1K under CLIP-L with multiple linear attention baselines. We reproduce all baselines to ensure a fair comparison. The classification head is a single linear layer for all the methods.",
+      "page": 18,
+      "index": 3,
+      "width": 979,
+      "height": 302
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16063v1/fig-004.webp",
+      "caption": "Table 4. mIoU fine-tuning comparison on Cityscapes under different input resolutions (512 vs. 1024) based on DINOv2-L. We reproduce all baselines to ensure a fair comparison. The segmentation head is Mask2former for all the methods.",
+      "page": 8,
+      "index": 4,
+      "width": 929,
+      "height": 513
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16063v1/fig-005.webp",
+      "caption": "Figure 9. Resolution scalability analysis on the Cityscapes dataset in terms of (a) mIoU, (b) throughput, and (c) peak memory.",
+      "page": 8,
+      "index": 5,
+      "width": 1011,
+      "height": 221
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16063v1/fig-006.webp",
+      "caption": "Figure 4. ViT-AdaLA consists of three stages: attention alignment, feature alignment, and supervised fine-tuning. First, softmax attention is approximated by tuning only the linear attention modules. Second, to mitigate residual approximation errors that accumulate across layers, the feature alignment stage finetunes the entire linearized model by aligning its final-layer representations with those of the original softmax-based teacher. Finally, supervised fine-tuning is performed to transfer the adapted prior knowledge to downstream tasks.",
+      "page": 4,
+      "index": 6,
+      "width": 892,
+      "height": 267
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16063v1/fig-007.webp",
+      "caption": "Figure 5. Linear attention architecture and Stage 1 training loss comparison with LoLCATS (SM : softmax; ⊕: concatenation). LoLCATS approximates the attention output based on Hedgehog (Zhang et al., 2024) by tuning only two additional mapping modules applied to the queries and keys individually. In contrast, we tune all query, key, and value weights to approximate the attention output, which is both more efficient and more effective than the original LoLCATS approach.",
+      "page": 4,
+      "index": 7,
+      "width": 379,
+      "height": 436
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16063v1/fig-008.webp",
+      "caption": "Table 11. mIoU fine-tuning comparison on Cityscapes under different input resolutions (512 vs. 1024) based on IN1K ViT-L and SigLIP-L. We reproduce all baselines to ensure a fair comparison. The segmentation head is Mask2former for all the methods.",
+      "page": 19,
+      "index": 8,
+      "width": 995,
+      "height": 1028
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16063v1/fig-009.webp",
+      "caption": "Figure 14. Visualization of PCA-projected features from the final layer of DINOv2-L. We ablate the Stages 1 and 2 training procedures and visualize the resulting PCA features for comparison. The results indicate that Stage 2 is crucial for extracting prior knowledge from VFMs, while the inclusion of Stage 1 further enhances this knowledge transfer.",
+      "page": 17,
+      "index": 9,
+      "width": 1004,
+      "height": 1256
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16063v1/fig-010.webp",
+      "caption": "Table 5. Hyperparameters of different training stages and VFMs.",
+      "page": 12,
+      "index": 10,
+      "width": 813,
+      "height": 462
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16063v1/fig-011.webp",
+      "caption": "Table 12. mIoU fine-tuning comparison on ADE20K under ViT-IN1K and SigLIP with multiple linear attention baselines. We reproduce all baselines to ensure a fair comparison. The segmentation head is Mask2former for all the methods.",
+      "page": 20,
+      "index": 11,
+      "width": 979,
+      "height": 544
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16063v1/fig-012.webp",
+      "caption": "Figure 6. Visualization of PCA-projected features from the final layer of DINOv2-L. We compare the original softmax-based features with those produced by ViT-AdaLA and Monarch attention (Yaras et al., 2025) by projecting them to three channels using PCA. The results indicate that ViT-AdaLA better preserves the prior feature knowledge of the VFM. We provide more visualization results in the App. B.",
+      "page": 5,
+      "index": 12,
+      "width": 915,
+      "height": 489
+    },
+    {
+      "url": "assets/figures/arxiv/2603.16063v1/fig-013.webp",
+      "caption": "Figure 13. Visualization of PCA-projected features from the final layer of DINOv2-L. Original softmax features, ViT-AdaLA (ours) and Monarch Attention features are compared by projecting to three channels using PCA. These results indicate that ViT-AdaLA can learn more prior knowledge from the original VFM.",
+      "page": 16,
+      "index": 13,
+      "width": 1017,
+      "height": 1194
+    }
+  ]
+}

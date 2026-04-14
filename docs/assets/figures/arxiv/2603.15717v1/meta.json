@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.15717v1/fig-001.webp",
+      "caption": "Fig. 1: (a) GLANCE overview: DWN-based gaze estimation drives union-of-ROIs attention; a periodic/conditional policy ships a single mosaic crop to the detector. (b) MCU/host dataflow. The host forms a per-frame spatial union to produce one unionof-ROIs mosaic and maintains a temporal state Ut to trigger YOLO under a periodic/budget policy.",
+      "page": 2,
+      "index": 1,
+      "width": 1068,
+      "height": 425
+    }
+  ]
+}

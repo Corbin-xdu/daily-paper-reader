@@ -1,0 +1,102 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.19563v1/fig-001.webp",
+      "caption": "TABLE III COMPARISON OF QUANTITATIVE RESULTS ON KITTI EIGEN-SPLIT. (↑ INDICATES HIGHER IS BETTER, ↓ INDICATES LOWER IS BETTER.)",
+      "page": 15,
+      "index": 1,
+      "width": 516,
+      "height": 244
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19563v1/fig-002.webp",
+      "caption": "Fig. 6. Qualitative comparisons of results on ADE20K dataset.",
+      "page": 15,
+      "index": 2,
+      "width": 486,
+      "height": 283
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19563v1/fig-003.webp",
+      "caption": "Fig. 3. Overview of the EvoNAS pipeline. The framework integrates distributed multi-model parallel evaluation with multi-objective evolutionary search, enabling efficient validation of candidate architectures across GPUs and progressive approximation of the Pareto frontier in terms of accuracy, latency, and computational complexity.",
+      "page": 10,
+      "index": 3,
+      "width": 1002,
+      "height": 583
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19563v1/fig-004.webp",
+      "caption": "Fig. 4. Performance–efficiency trade-offs of EvoNAS across four benchmarks: (a) COCO, (b) ADE20K, (c) KITTI, and (d) NYU v2. The x-axis denotes MACs, the y-axis represents task-specific accuracy metrics (mAP, mIoU, or AbsRel), bubble size indicates parameter count, and color encodes inference latency.",
+      "page": 14,
+      "index": 4,
+      "width": 488,
+      "height": 378
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19563v1/fig-005.webp",
+      "caption": "Fig. 5. Qualitative comparisons of results on COCO dataset.",
+      "page": 14,
+      "index": 5,
+      "width": 484,
+      "height": 260
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19563v1/fig-006.webp",
+      "caption": "TABLE I OBJECT DETECTION ON COCO WITH MASK R-CNN [40]. LATENCY AND THROUGHPUT ARE MEASURED AT A TEST RESOLUTION OF 800× 1280. (↑ INDICATES HIGHER IS BETTER, ↓ INDICATES LOWER IS BETTER.)",
+      "page": 14,
+      "index": 6,
+      "width": 537,
+      "height": 338
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19563v1/fig-007.webp",
+      "caption": "TABLE II SEMANTIC SEGMENTATION ON ADE20K WITH UPERNET [41]. LATENCY AND THROUGHPUT ARE MEASURED AT A TEST RESOLUTION OF 512× 2048. (↑ INDICATES HIGHER IS BETTER, ↓ INDICATES LOWER IS BETTER.)",
+      "page": 14,
+      "index": 7,
+      "width": 538,
+      "height": 316
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19563v1/fig-008.webp",
+      "caption": "Fig. 9. Evolutionary trajectories of EvoNAS on COCO, ADE20K, KITTI, and NYU v2. Top: 3D distribution of candidate architectures across generations in the accuracy–latency–MACs space. Bottom: normalized hypervolume curves showing the convergence behavior of the Pareto front over 200 generations.",
+      "page": 18,
+      "index": 8,
+      "width": 1076,
+      "height": 415
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19563v1/fig-009.webp",
+      "caption": "Fig. 2. Overview of the two-stage supernet optimization with dual-domain knowledge distillation. Stage 1 pretrains the VSS-ViT supernet encoder on ImageNet-1K to establish a stable initialization. Stage 2 adapts the supernet to the target task by aligning student VSS/ViT features with teacher ViT features through spatial- and frequency-domain distillation, while jointly applying prediction-level and ground-truth supervision.",
+      "page": 8,
+      "index": 9,
+      "width": 483,
+      "height": 308
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19563v1/fig-010.webp",
+      "caption": "TABLE V EFFICIENCY VALIDATION OF THE PROPOSED PARALLEL EVALUATION FRAMEWORK. PWS DENOTES Persistent Workers. Config IS REPORTED AS (Proc./GPU, Models/Proc.).",
+      "page": 17,
+      "index": 10,
+      "width": 488,
+      "height": 281
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19563v1/fig-011.webp",
+      "caption": "Fig. 1. The EvoNAS unified visual architecture, featuring a searchable hybrid VSS-ViT encoder, a Spatial Mamba decoder, and optional task heads for detection, segmentation, and MDE. Searchable components within the Evo-Mamba and Evo-Transformer blocks define the encoder’s supernet search space, enabling flexible and general-purpose architecture optimization across diverse vision tasks.",
+      "page": 5,
+      "index": 11,
+      "width": 846,
+      "height": 317
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19563v1/fig-012.webp",
+      "caption": "TABLE IV COMPARISON OF QUANTITATIVE RESULTS ON NYU DEPTH V2 DATASET. (↑ INDICATES HIGHER IS BETTER, ↓ INDICATES LOWER IS BETTER.)",
+      "page": 16,
+      "index": 12,
+      "width": 516,
+      "height": 259
+    }
+  ]
+}

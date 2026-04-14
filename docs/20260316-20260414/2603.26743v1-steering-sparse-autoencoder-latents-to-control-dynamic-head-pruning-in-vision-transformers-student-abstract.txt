@@ -1,0 +1,110 @@
+Title: Steering Sparse Autoencoder Latents to Control Dynamic Head Pruning in Vision Transformers (Student Abstract)
+
+URL Source: https://arxiv.org/pdf/2603.26743v1
+
+Published Time: Tue, 31 Mar 2026 00:05:43 GMT
+
+Number of Pages: 3
+
+Markdown Content:
+# Steering Sparse Autoencoder Latents to Control Dynamic Head Pruning in Vision Transformers (Student Abstract) 
+
+## Yousung Lee 1, Dongsoo Har 1
+
+> 1
+
+Korea Advanced Institute of Science and Technology, Daejeon 34051, Korea yslee410@kaist.ac.kr, dshar@kaist.ac.kr 
+
+Abstract 
+
+Dynamic head pruning in Vision Transformers (ViTs) im-proves efficiency by removing redundant attention heads, but existing pruning policies are often difficult to interpret and control. In this work, we propose a novel framework by inte-grating Sparse Autoencoders (SAEs) with dynamic pruning, leveraging their ability to disentangle dense embeddings into interpretable and controllable sparse latents. Specifically, we train an SAE on the final-layer residual embedding of the ViT and amplify the sparse latents with different strategies to al-ter pruning decisions. Among them, per-class steering reveals compact, class-specific head subsets that preserve accuracy. For example, bowl improves accuracy (76% →82%) while re-ducing head usage (0.72 →0.33) via heads h2 and h5. These results show that sparse latent features enable class-specific control of dynamic pruning, effectively bridging pruning ef-ficiency and mechanistic interpretability in ViTs. 
+
+## Introduction 
+
+Vision Transformers (ViTs) leverage multi-head self-attention to capture diverse token interactions. However, many attention heads are redundant, increasing computa-tion without proportional performance gain. To address this, adaptive frameworks such as AdaViT (Meng et al. 2022) have been introduced, which use auxiliary networks to select which heads to prune. This input-dependent pruning sub-stantially reduces computation while preserving accuracy. However, a key limitation remains: since these pruning policies rely on residual embeddings, the decision process is often opaque and difficult to control at the latent level. As a result, while dynamic head pruning improves efficiency, its mechanism lacks interpretability. If pruning decisions could be explained or controlled at the latent level, head selection would become both interpretable and controllable. Sparse Autoencoders (SAEs) offer a natural tool for this purpose, as they disentangle dense, polysemantic embed-dings into sparse latent features that tend to encode more monosemantic and interpretable concepts in transformer representations (Cunningham et al. 2023; Lim et al. 2025). Recent studies have shown that this disentanglement enables steering specific SAE latent dimensions to control model be-
+
+Copyright © 2026, Association for the Advancement of Artificial Intelligence (www.aaai.org). All rights reserved. 
+
+Figure 1: Comparison of dynamic head pruning before (left) and after (right) SAE latent steering, where x denotes the 
+
+CLS token from the final-layer residual stream input, and ˜x
+
+denotes the steered embedding. havior in a desired direction (Kang, Wang, and Xiong 2024; Chatzoudis et al. 2025). In this work, we propose a novel framework that in-tegrates k-sparse autoencoders (Makhzani and Frey 2013) with dynamic head pruning in ViTs to make pruning deci-sions controllable at the latent level. This framework also en-hances interpretability by revealing class-specific head sub-sets. As illustrated in Figure 1, we amplify selected SAE latent dimensions, reconstruct the steered embedding, and feed it into the decision network to observe how pruning behavior changes. Our experiments show that per-class la-tent steering is particularly effective, reducing head usage while largely maintaining accuracy. Overall, these results suggest that sparse latents provide an effective way to inter-pret and control dynamic pruning, bridging the gap between efficiency and mechanistic interpretability in ViTs. 
+
+## Method 
+
+In this work, we adopt AdaViT as the baseline dynamic pruning framework, with a particular focus on head prun-ing. We first train a Vision Transformer with layer-wise de-cision networks. In this setup, each lightweight network re-ceives the class ( CLS ) token from the residual stream in-put and outputs head importance logits aℓ ∈ RH , where 
+
+ℓ denotes the layer index and H the number of attention heads. We use the CLS token as input for the decision net-work since it encodes global context relevant for classifica-
+
+> arXiv:2603.26743v1 [cs.CV] 23 Mar 2026
+
+tion. Binary masks Mℓ,i ∈ { 0, 1} are obtained via Gumbel-Sigmoid sampling from aℓ,i , where i denotes the head index. The masked attention is computed as follows: 
+
+hℓ,i = Mℓ,i Attn( Q, K, V )ℓ,i . (1) The Vision Transformer and the decision network are trained jointly to preserve accuracy while enforcing head sparsity toward a target head usage ratio. After training, we extract x ∈ Rd, the CLS token from the final layer’s residual input and use it to train a k-sparse autoencoder. Formally, the encoder and decoder are given by 
+
+z = TopK( Wenc (x − bdec )) , Wenc ∈ Rn×d, (2) 
+
+ˆx = Wdec z + bdec , Wdec ∈ Rd×n, (3) where z is the sparse latent representation of x, ˆx is its recon-struction, and bdec denotes the decoder bias. The parameters 
+
+n and d represent the SAE latent and input embedding di-mensions, respectively. Sparsity is enforced through a top-k
+
+activation, which preserves only the k largest dimensions. The SAE is trained with the following mean squared error (MSE) reconstruction objective: 
+
+Lrec = ∥x − ˆx∥22, (4) which encourages ˆx to remain close to x. After training the SAE, we amplify the selected latent dimensions S by 
+
+z′ 
+
+> i
+
+=
+
+(zi + α, i ∈ S, zi, i / ∈ S, ˜z = TopK( z′), (5) where α is the amplification strength and ˜z denotes the steered sparse latent vector obtained after amplification and top-k activation. The steered embedding is then recon-structed as ˜x = Wdec ˜z + bdec , which is finally fed into the decision network to obtain the steered pruning mask. 
+
+## Experiments 
+
+Dynamic pruning baseline. We fine-tune an ImageNet-pretrained ViT-Small ( 12 layers, 6 heads per layer, 384 -d embeddings) on CIFAR-100 , reaching 91 .27% accuracy. Each layer employs a single decision network for head se-lection, as described in the Method section. The final model prunes 30% of heads while maintaining 89 .79% accuracy. 
+
+Sparse autoencoder. The SAE expands the 384 -d residual embedding into the 3072 -d latent space ( 8×) with top-k ac-tivation ( k = 64 ). It is trained for 100 epochs, achieving an MSE loss of 0.0228 . Replacing the original embedding with its reconstruction yields only minor differences in accuracy (−0.12% ) and head usage ratio ( +0 .025 ), showing that the SAE preserves essential information for effective pruning. 
+
+Steering dynamic pruning. Inspired by the top-k mask-ing experiments in PatchSAE (Lim et al. 2025), we adapt this idea to dynamic head pruning using the latent steer-ing defined in Eq. (5), which amplifies selected SAE latent dimensions. For each sample, we evaluate three strategies for defining the index set S based on training-set activation frequency statistics: (1) Per-class frequent — top-k most frequently activated latents within each class, (2) Global 
+
+Figure 2: Accuracy (%) and head usage ratio in the final layer under different strategies as α increases from 0 to 1.5.
+
+Figure 3: Effect of per-class steering ( α = 1 .2) on head ac-tivation patterns. Columns indicate the top-5 classes ranked by accuracy gain, and rows correspond to heads ( h0–h5). 
+
+frequent — top-k most frequently activated latents across all classes, and (3) Random . Figure 2 shows that per-class steering reduces head usage while largely preserving accu-racy, whereas global and random strategies lead to larger ac-curacy drops as α increases. The low overlap between global and per-class top-k frequent latent dimensions ( 0.1641 ) in-dicates that the SAE captures class-discriminative concepts. Figure 3 further illustrates head usage patterns in the fi-nal layer under per-class steering. For bowl , accuracy rises (76% → 82% ) while head usage falls ( 0.72 → 0.33 ), mainly relying on h2 and h5. pine tree shows a similar pattern (79% → 84% , 0.93 → 0.35 ), relying on h2 and h3. In-terestingly, semantically related classes such as bowl and 
+
+plate share similar head subsets h2 and h5, indicating that per-class steering reveals class-level semantic relationships among heads. These examples suggest that amplifying per-class top-k frequent activations enriches class-specific sig-nals in the decision network input, leading to class-specific pruning behaviors. Overall, these results demonstrate that the Sparse Autoencoder provides an effective way to inter-pret and control dynamic head pruning in ViTs. 
+
+## Conclusion 
+
+This paper introduces a novel Sparse Autoencoder-based framework that makes dynamic head pruning interpretable and controllable at the latent level in Vision Transform-ers. By amplifying per-class frequent activations, we reveal class-specific pruning behaviors that are both efficient and interpretable. Our current work focuses on the final layer and small datasets, and future work will extend the framework to earlier layers and foundation models. Acknowledgments 
+
+This work was supported by the Technology Innovation Pro-gram (RS-2025-02613131) funded by the Ministry of Trade, Industry & Energy (MOTIE, Korea). 
+
+## References 
+
+Chatzoudis, G.; Li, Z.; Moran, G. E.; Wang, H.; and Metaxas, D. N. 2025. Visual Sparse Steering: Improving Zero-shot Image Classification with Sparsity Guided Steer-ing Vectors. arXiv preprint arXiv:2506.01247 .Cunningham, H.; Ewart, A.; Riggs, L.; Huben, R.; and Sharkey, L. 2023. Sparse autoencoders find highly in-terpretable features in language models. arXiv preprint arXiv:2309.08600 .Kang, H.; Wang, T.; and Xiong, C. 2024. Interpret and con-trol dense retrieval with sparse latent features. arXiv preprint arXiv:2411.00786 .Lim, H.; Choi, J.; Choo, J.; and Schneider, S. 2025. Sparse Autoencoders Reveal Selective Remapping of Visual Con-cepts during Adaptation. In Proceedings of the 13th Inter-national Conference on Learning Representations (ICLR) .Makhzani, A.; and Frey, B. 2013. K-sparse autoencoders. 
+
+arXiv preprint arXiv:1312.5663 .Meng, L.; Li, H.; Chen, B.-C.; Lan, S.; Wu, Z.; Jiang, Y.-G.; and Lim, S.-N. 2022. Adavit: Adaptive vision trans-formers for efficient image recognition. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , 12309–12318. 
+
+## Appendix: Additional Analysis of SAE Latents 
+
+We provide additional analysis of SAE latents, focusing on those extracted from the final-layer residual embedding, to study their role in controlling dynamic head pruning. We examine (1) the effect of negative steering, (2) reconstruc-tion behavior, and (3) the semantic structure of SAE latents. These results indicate that SAE latents disentangle class-specific information into sparse dimensions, which are re-flected in pruning decisions in the final layer. 
+
+Effect of Negative Steering 
+
+We observe that negative steering ( α < 0) increases head usage primarily for the per-class strategy, while global and random strategies show minimal change in head usage. In contrast, positive steering ( α > 0) reduces head usage. This suggests that negative steering suppresses class-specific la-tent features, weakening the pruning signal in the residual embedding, while positive steering amplifies them and leads to more selective head activation. As a result, this change modifies the input to the decision network, leading to differ-ent head activation patterns. 
+
+Reconstruction Effect 
+
+To isolate the effect of latent steering, we replace the original residual embedding with its SAE reconstruction. Replacing the original residual embedding with its SAE reconstruction results in minimal changes in head usage (average < 0.03 )
+
+Figure 4: Negative steering ( α < 0) increases head usage by suppressing pruning signals. 
+
+Figure 5: Semantic structure of SAE latents, showing class-wise overlap and distinct latent usage patterns. and accuracy ( −0.12% ), suggesting that SAE reconstruction preserves pruning-relevant information. These results show that the observed effects are primarily due to latent steering rather than reconstruction artifacts. 
+
+Semantic Structure of SAE Latents 
+
+As shown in Figure 5, semantically similar object classes such as bowl and plate exhibit high latent overlap ( ≈ 0.38 ), while unrelated classes show near-zero overlap. A similar pattern is observed for beaver and squirrel (≈ 0.39 ). The figure also shows that each class relies on distinct sparse la-tent dimensions. These results demonstrate that SAE latents encode class-specific semantic structure, which is reflected in pruning decisions in the final layer.

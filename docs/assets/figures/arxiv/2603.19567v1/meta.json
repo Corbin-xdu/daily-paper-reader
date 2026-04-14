@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.19567v1/fig-001.webp",
+      "caption": "Figure 1. Efficiency v.s. accuracy on the ImageNet-1K benchmark. The proposed ConvNeur family establishes a new state-ofthe-art frontier, delivering superior TOP-1 Acc while demanding significantly fewer FLOPs and parameters than existing methods.",
+      "page": 1,
+      "index": 1,
+      "width": 493,
+      "height": 306
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19567v1/fig-002.webp",
+      "caption": "Figure 3. Qualitative results on the ADE20K [80] dataset. All examples are from the validation set. In the figure, B represents Boundary F1 score, T represents Trimap-based mIoU, and H represents Hausdorff distance.",
+      "page": 6,
+      "index": 2,
+      "width": 1032,
+      "height": 482
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19567v1/fig-003.webp",
+      "caption": "Table 5. Ablation studies on the ImageNet-1K [15] dataset.",
+      "page": 7,
+      "index": 3,
+      "width": 496,
+      "height": 471
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19567v1/fig-004.webp",
+      "caption": "Figure 2. The overall architecture of ConvNeur. On the left, a locality-preserving convolutional branch extracts fine-grained features. In parallel, a compressed global branch performs chunked neural memory aggregation, and produces a gating map to modulate the local features. On the right, we show the neural-memory module: each chunk is linearly mapped to {qt, kt, vt}. qt reads from the previous memory state Mt−1, while kt and vt compute a surprise loss to update the memory to Mt.",
+      "page": 3,
+      "index": 4,
+      "width": 1032,
+      "height": 317
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19567v1/fig-005.webp",
+      "caption": "Figure 4. Stage-wise visualization of global to local modulation. Columns correspond to the four stages from shallow to deep. Row 1 shows local-only features Floc produced by the localitypreserving branch without the global path. Row 2 shows the local features in ConvNeur before gating. Row 3 shows the gated features Fout. Green arrows mark the gating step.",
+      "page": 8,
+      "index": 5,
+      "width": 492,
+      "height": 327
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19567v1/fig-006.webp",
+      "caption": "Table 3. Comparison results of object detection and instance segmentation performance on the COCO 2017 [42] validation set using Cascade Mask R-CNN [5] under the 1x schedule. All methods share the same detector, training recipe, and data pipeline.",
+      "page": 5,
+      "index": 6,
+      "width": 496,
+      "height": 435
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19567v1/fig-007.webp",
+      "caption": "Table 2. Comparison results of vision backbone performance on the ImageNet-1K [15] dataset pre-training.",
+      "page": 5,
+      "index": 7,
+      "width": 496,
+      "height": 1141
+    }
+  ]
+}

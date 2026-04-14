@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.06893v1/fig-001.webp",
+      "caption": "Figure 1: Energy-Based Information Preservation. ERSM adaptively retains semantically relevant features while suppressing background noise.",
+      "page": 1,
+      "index": 1,
+      "width": 525,
+      "height": 366
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06893v1/fig-002.webp",
+      "caption": "Figure 4: Robustness to Feature Removal on ResNet-50 Res 256 Patch 1. Comparison of classification accuracy under progressive patch deletion using Energy-based ranking (red) versus Random selection (blue).",
+      "page": 6,
+      "index": 2,
+      "width": 549,
+      "height": 331
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06893v1/fig-003.webp",
+      "caption": "Figure 5: ERSM Improvements. Left: The original image with baseline prediction (Wrong). Right: The ERSM prediction (Correct), showing the learned mask fading out the misleading background.",
+      "page": 6,
+      "index": 3,
+      "width": 359,
+      "height": 845
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06893v1/fig-004.webp",
+      "caption": "Figure 6: Failure Mode. (a) The model correctly finds the bird but misclassifies it (fine-grained error). (b) The model fails to mask the background, leading to confusion.",
+      "page": 7,
+      "index": 4,
+      "width": 549,
+      "height": 385
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06893v1/fig-005.webp",
+      "caption": "Figure 2: Overview of the Energy-Regularized Spatial Masking (ERSM) framework. (a) A frozen feature extractor encodes the input image. (b–c) The feature map is partitioned into latent tokens. (d) Unary and 8-neighbor pairwise interactions define a token-wise energy. (e) The resulting spatial energy map suppresses redundant background regions. (f) The refined features are passed to the prediction head for classification.",
+      "page": 3,
+      "index": 5,
+      "width": 1014,
+      "height": 300
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06893v1/fig-006.webp",
+      "caption": "Figure 3: Accuracy under progressive patch removal on the experimental CNN. ERSM preserves more accuracy than random deletion, peaking after removing 20%–25% of patches, highlighting its implicit featureselection ability.",
+      "page": 4,
+      "index": 6,
+      "width": 549,
+      "height": 333
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06893v1/fig-007.webp",
+      "caption": "Table 2: Comparison of Baseline (frozen backbone) against ERSM with different Patch Sizes (P) and Input Resolutions (Res). The – symbol denotes cases where the patch size does not divide the feature map. Baseline results are grouped as they only depend on resolution. Peak results are reported.",
+      "page": 5,
+      "index": 7,
+      "width": 552,
+      "height": 607
+    }
+  ]
+}

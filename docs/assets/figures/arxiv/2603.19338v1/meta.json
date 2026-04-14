@@ -1,0 +1,78 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.19338v1/fig-001.webp",
+      "caption": "Figure 4: DAPA functions generated from distributions with different numbers of images are evaluated on the ViTSmall.",
+      "page": 7,
+      "index": 1,
+      "width": 555,
+      "height": 343
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19338v1/fig-002.webp",
+      "caption": "Table 2: Performance of Vision and NLP Transformer models with different approximation methods",
+      "page": 7,
+      "index": 2,
+      "width": 976,
+      "height": 333
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19338v1/fig-003.webp",
+      "caption": "Figure 1: The relationship between MSE/DWMSE and the difference in Top-1 ImageNet-1K classification accuracy relative to the FP32 baseline, evaluated across three Vision Transformer variants.",
+      "page": 3,
+      "index": 3,
+      "width": 564,
+      "height": 359
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19338v1/fig-004.webp",
+      "caption": "Figure 2: The relationship between MSE/DWMSE and the difference in WikiText2 PPL relative to the FP32 baseline, evaluated on GPT2.",
+      "page": 3,
+      "index": 4,
+      "width": 564,
+      "height": 357
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19338v1/fig-005.webp",
+      "caption": "Figure 5: Training loss curves for three ViT variants comparing standard PyTorch GELU activation with the DAPA(16) approximation function across epochs.",
+      "page": 8,
+      "index": 5,
+      "width": 464,
+      "height": 390
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19338v1/fig-006.webp",
+      "caption": "Table 4.3 summarizes the GLUE results. As different works report slightly varing baseline scores due to variations in checkpoints, fine-tuning and hyperparameters, we explicitly list the baselines used in prior work to ensure a fair comparison. Our PyTorch FP32 run (i.e., (PyTorch, F)) serves as our own reference baseline for all DAPA experiments. In this context, applying DAPA(16) to both softmax and GELU in full precision (i.e., (D(16), S&A, F)) delivers good performance, yielding a higher average score of 89.06. After applying quantization (i.e., (D(16), S&A, Q9.4)), the average score remains at 88.94, showing a very small amount of difference from the baseline. It is worth noting that our approximation scheme, combined with quantization, is more hardware-friendly, significantly reducing power and latency while improving area efficiency, which will be elaborated on later.",
+      "page": 8,
+      "index": 6,
+      "width": 940,
+      "height": 273
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19338v1/fig-007.webp",
+      "caption": "Table 1: Comparison of correlation coefficients and 95% Fisher CIs.",
+      "page": 4,
+      "index": 7,
+      "width": 586,
+      "height": 287
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19338v1/fig-008.webp",
+      "caption": "Table 4: Comparison of FPGA Hardware Implementations for Activation Functions.",
+      "page": 9,
+      "index": 8,
+      "width": 608,
+      "height": 351
+    },
+    {
+      "url": "assets/figures/arxiv/2603.19338v1/fig-009.webp",
+      "caption": "Figure 3: The DAPA method approximates the GELU function and its derivative by partitioning the probability density function (PDF) into N quantile regions.",
+      "page": 5,
+      "index": 9,
+      "width": 518,
+      "height": 535
+    }
+  ]
+}

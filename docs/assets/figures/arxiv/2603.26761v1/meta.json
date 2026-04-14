@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.26761v1/fig-001.webp",
+      "caption": "TABLE IV SUMMARY OF MODEL ACCURACY AND LIMITATIONS",
+      "page": 6,
+      "index": 1,
+      "width": 516,
+      "height": 459
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26761v1/fig-002.webp",
+      "caption": "TABLE I DESCRIPTION OF CLASSES IN THE DATASET WITH SAMPLE IMAGES",
+      "page": 3,
+      "index": 2,
+      "width": 498,
+      "height": 398
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26761v1/fig-003.webp",
+      "caption": "Fig. 2. Visualization of Dataset Splitting. The dataset is divided into 75% for training, 10% for validation, and 15% for testing, ensuring an appropriate distribution for model training and evaluation.",
+      "page": 3,
+      "index": 3,
+      "width": 474,
+      "height": 400
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26761v1/fig-004.webp",
+      "caption": "Fig. 4. Mean Test Accuracies from 5-Fold Cross-Validation for Various Models in Potato Leaf Disease Classification",
+      "page": 4,
+      "index": 4,
+      "width": 468,
+      "height": 381
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26761v1/fig-005.webp",
+      "caption": "Fig. 6. Comparison of inference times (in seconds) for various models during training, validation, and testing phases.",
+      "page": 5,
+      "index": 5,
+      "width": 474,
+      "height": 287
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26761v1/fig-006.webp",
+      "caption": "Fig. 7. Confusion matrix for the Proposed TinyViT model.",
+      "page": 5,
+      "index": 6,
+      "width": 470,
+      "height": 327
+    }
+  ]
+}
