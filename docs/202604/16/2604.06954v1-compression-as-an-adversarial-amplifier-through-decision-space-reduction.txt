@@ -1,0 +1,378 @@
+Title: Compression as an Adversarial Amplifier Through Decision Space Reduction
+
+URL Source: https://arxiv.org/pdf/2604.06954v1
+
+Published Time: Thu, 09 Apr 2026 01:06:56 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# Compression as an Adversarial Amplifier Through Decision Space Reduction 
+
+# Lewis Evans ∗
+
+# Harkrishan Jandu ∗
+
+University of Nottingham Nottingham, United Kingdom 
+
+# Zihan Ye 
+
+University of Chinese Academy of Sciences Beijing, China 
+
+# Yang Lu 
+
+Xiamen University Xiamen, China 
+
+# Shreyank N Gowda 
+
+School of Computer Science, University of Nottingham Nottingham, United Kingdom 
+
+## Abstract 
+
+Image compression is a ubiquitous component of modern visual pipelines, routinely applied by social media platforms and resource-constrained systems prior to inference. Despite its prevalence, the impact of compression on adversarial robustness remains poorly understood. We study a previously unexplored adversarial setting in which attacks are applied directly in compressed representations, and show that compression can act as an adversarial amplifier for deep image classifiers. Under identical nominal perturbation budgets, compression-aware attacks are substantially more effec-tive than their pixel-space counterparts. We attribute this effect to decision space reduction, whereby compression induces a non-invertible, information-losing transformation that contracts classifi-cation margins and increases sensitivity to perturbations. Extensive experiments across standard benchmarks and architectures support our analysis and reveal a critical vulnerability in compression-in-the-loop deployment settings. Code will be released. 
+
+## 1 Introduction 
+
+Over the past decade, deep learning has undergone rapid and trans-formative progress, achieving remarkable performance across vi-sion, language, and multimodal tasks [ 15 , 17 , 21 , 26 ]. Modern models now rival or surpass human-level accuracy in many benchmarks, driven by advances in large-scale training, data availability, and architectural innovations [ 1, 4 , 40 ]. However, this progress has been accompanied by a growing fragility: these systems are increasingly vulnerable to adversarial manipulation. In particular, recent work has highlighted how easily state-of-the-art models can be “jailbro-ken” through carefully crafted prompts or inputs [ 32 , 33 , 37 , 48 , 50 ], exposing unintended behaviours and bypassing safety constraints. Similarly, adversarial attacks [ 2 , 11 ] that are often imperceptible to humans can reliably induce incorrect or even harmful outputs. The ease with which such vulnerabilities can be exploited raises serious concerns about the robustness and trustworthiness of de-ployed systems, especially as they are integrated into real-world, safety-critical applications. 
+
+> ∗Both authors contributed equally to this research.
+> Conference’17, Washington, DC, USA
+> 2026. ACM ISBN 978-x-xxxx-xxxx-x/YYYY/MM https://doi.org/10.1145/nnnnnnn.nnnnnnn
+
+Image compression is a foundational component of modern vi-sual data pipelines [ 9, 27 ]. Images processed by social media plat-forms, messaging services, content delivery networks, and edge devices are almost invariably compressed prior to storage, trans-mission, or inference [ 10 , 25 ]. Compression enables significant reductions in bandwidth, memory, and latency, and is therefore tightly coupled to real-world deployment. Despite this, adversarial robustness is still predominantly studied under the assumption that models operate directly on uncompressed pixel representa-tions [8, 46]. Existing work has often characterized compression as a defen-sive or purifying operation [ 14 , 18 , 23 ]. Prior studies have shown that compression can suppress high-frequency perturbations and partially mitigate adversarial attacks crafted in pixel space [ 14 , 18 ]. This perspective has contributed to the widespread belief that com-pression improves robustness or, at minimum, does not increase vulnerability. However, this view implicitly assumes a threat model in which adversarial perturbations are applied before compression and overlooks settings in which attacks may be applied after com-pression or directly within compressed representations. In this work, we study a compression-aware adversarial setting that more closely reflects practical deployment pipelines. We show that compression can act as an adversarial amplifier, substantially increasing the effectiveness of adversarial perturbations under fixed nominal budgets. Across datasets, architectures, and compression strengths, attacks applied in compressed representations consis-tently cause larger output shifts than their pixel-space counterparts. We attribute this phenomenon to a geometric mechanism that we term decision space reduction . Compression induces a non-invertible, information-losing transformation that contracts the effective de-cision space around an input. This effect is illustrated in Figure 1, which shows that compression shrinks the region assigned to the true class and brings decision boundaries closer in the local in-put neighborhood. This contraction reduces classification margins and increases boundary proximity for compressed representations. As a consequence, perturbations of the same magnitude are more likely to cross decision boundaries in compressed space than in the original image domain. Importantly, this effect is local and geo-metric rather than tied to a specific attack algorithm. Interestingly, the same mechanism also helps explain why compression-based purification defenses can be effective when applied after perturba-tion, as compression may suppress boundary-crossing components  
+
+> arXiv:2604.06954v1 [cs.CV] 8 Apr 2026 Conference’17, July 2017, Washington, DC, USA L. Evans et al.
+
+Figure 1: Local decision regions around a correctly classified input are visualized in a 2D neighborhood. Without compres-sion (middle), the true-class region is large and margins are smooth. With compression-in-the-loop (right), the region contracts, competing classes appear closer to the input, and margins collapse, illustrating how compression brings deci-sion boundaries nearer and amplifies vulnerability. 
+
+of adversarial noise and partially restore margins relative to the perturbed input. We support this analysis through a combination of empirical evaluation and decision space visualization. By examining local neighborhoods around fixed inputs, we show that compression con-sistently shrinks the region assigned to the true class and increases boundary density across random and gradient-informed directions. Our findings reveal a previously overlooked vulnerability arising from the ubiquitous use of compression and highlight the need to reconsider adversarial robustness under compression-in-the-loop threat models. This work is guided by the following research questions: (1) How does image compression alter the local decision geom-etry of deep image classifiers? (2) Does compression systematically reduce classification mar-gins and contract the effective decision space around inputs? (3) Under fixed perturbation budgets, are adversarial perturba-tions inherently more damaging in compressed representa-tions than in pixel space? This paper makes three primary contributions. First, we formal-ize a compression-aware adversarial setting that reflects realistic deployment pipelines in which inputs are compressed prior to infer-ence. Second, we identify decision space reduction as a fundamental geometric mechanism through which compression amplifies adver-sarial vulnerability. Third, we provide empirical and visual evidence demonstrating consistent margin collapse and decision boundary contraction induced by compression across standard benchmarks and architectures. 
+
+## 2 Related Work 
+
+Adversarial robustness. Adversarial examples expose vulnerabili-ties in deep networks where imperceptible perturbations lead to incorrect predictions [ 8 , 46 ]. Early work focused on constructing at-tacks such as FGSM [ 20 ] and CW [ 7 ], and on defending through ad-versarial training and certified methods [ 30 , 41 , 47 ]. Other research has investigated geometric and manifold perspectives, showing that adversarial vulnerability arises from boundary proximity and high codimension of data manifolds [ 24 , 34 ]. Unlike these studies which assume pixel-space perturbations, we examine how compression transforms affect decision boundary geometry. 
+
+Input transformations and compression defenses. Input transfor-mations including JPEG compression [ 43 ] and bit-depth reduc-tion have long been studied as means to mitigate adversarial noise [14 , 22 , 23 ]. Work such as feature distillation refines JPEG quantiza-tion to improve defense efficacy [ 29 ], and recent methods propose learned compression to defend against adversarial examples [ 6 ]. Evaluations, however, have shown that many simple transformation defenses can be circumvented or are limited without considering adaptive attacks [ 31 ]. These works treat compression as a defensive preprocessing step; our setting instead considers attacks applied after compression and reveals that compression can amplify vul-nerability. 
+
+Compression in vision and learning. Image compression is essen-tial in practical visual systems to reduce bandwidth and storage costs, playing a central role in social media and cloud platforms [ 9, 10 , 27 ], and its interaction with learning systems has been ex-plored in the context of performance and efficiency [ 9 ]. Recent work also analyzes robustness of learned image compression mod-els themselves under adversarial perturbations [ 38 , 39 ]. These stud-ies primarily focus on compression models as objects of defense; our work instead investigates the effect of compression on classifier decision geometry and as an adversarial amplifier. 
+
+Decision boundary geometry and robustness. The geometry of decision boundaries and classification margins has been linked to robustness, leading to theoretical frameworks that relate curvature, dimensionality, and nearest-boundary distances to vulnerability [ 16 ,42 ]. Sampling-based metrics have also been proposed to understand boundary persistence and sensitivity [ 6]. While these works analyze geometric aspects of adversarial susceptibility, they do not address how upstream transformations such as compression systematically reshape the decision space. Our work connects compression to margin collapse and boundary densification in local neighborhoods. 
+
+Attacks in transformed and representation spaces. Beyond pixel-space perturbations, several works have studied adversarial attacks and robustness in alternative representation domains. These include attacks in feature space, frequency space, and learned latent spaces, which demonstrate that model vulnerability depends strongly on the representation in which perturbations are applied [ 49 , 51 ]. Such studies highlight that changing the input representation can alter the effective geometry of adversarial perturbations. However, these methods typically rely on learned or differentiable transforms and focus on manipulating internal or semantic representations. In contrast, we study a structural compression transform that is non-invertible and information-reducing, and show that this class of transformations systematically contracts the decision space and reduces margins, independent of any learned latent structure. Compression as an Adversarial Amplifier Through Decision Space Reduction Conference’17, July 2017, Washington, DC, USA 
+
+## 3 Method 3.1 Preliminaries and Notation 
+
+Let 𝑓 : R𝑑 → R𝐾 denote a 𝐾 -class classifier mapping an input image 𝑥 ∈ R𝑑 to class logits. The predicted label is 
+
+ˆ𝑦 (𝑥 ) = arg max  
+
+> 𝑘
+
+𝑓 𝑘 (𝑥 ).
+
+For a ground-truth class 𝑦 , we define the classification margin 
+
+𝑚 (𝑥 ) = 𝑓 𝑦 (𝑥 ) − max  
+
+> 𝑘 ≠𝑦
+
+𝑓 𝑘 (𝑥 ).
+
+Standard adversarial robustness considers perturbations applied directly in pixel space: 
+
+𝑥 ′ = 𝑥 + 𝛿, ∥𝛿 ∥𝑝 ≤ 𝜖, 
+
+and studies the stability of ˆ𝑦 (𝑥 ′) under bounded 𝛿 .
+
+## 3.2 Compression-Aware Inference Model 
+
+We model image compression as a deterministic transformation 
+
+𝐶 : R𝑑 → Z ,
+
+where Z denotes a compressed representation space. Compres-sion is typically non-invertible, information-reducing, and involves quantization or discretization. In deployment settings, inference may be performed on compressed inputs or representations derived from them. We therefore consider the effective model 
+
+𝑔 (𝑥 ) = 𝑓 (𝐶 (𝑥 )) ,
+
+where 𝐶 defines the input representation seen by the classifier. Unlike stochastic noise or data augmentation, 𝐶 is a structural transformation of the input domain. Such compression-in-the-loop pipelines are standard in real-world systems, where images trans-mitted through social media platforms, messaging applications, and cloud services are routinely compressed prior to storage, transmis-sion, or inference [9, 10, 27]. An overview of the full pipeline, including compression, pertur-bation, and evaluation stages, is shown in Figure 2. 
+
+## 3.3 Threat Model: Compression-Aware Adversary 
+
+In contrast to the standard pixel-space adversarial setting, we con-sider an adversary that operates after compression. Let 
+
+𝑧 = 𝐶 (𝑥 )
+
+be the compressed representation of the input. The adversary per-turbs 𝑧 to obtain 
+
+𝑧 ′ = 𝑧 + 𝜂, ∥𝜂 ∥𝑝 ≤ 𝜖, 
+
+and the model prediction becomes ˆ𝑦 = 𝑓 (𝑧 ′). This defines a compression-aware adversarial setting in which the perturbation budget is mea-sured in the compressed representation space rather than the orig-inal pixel domain. This differs from purification-based defenses, which assume perturbations are applied before compression. 
+
+Implementation of Compression-Aware Perturbations. A key im-plementation detail is how gradients are computed in the presence of non-differentiable compression operators such as JPEG. In our setting, we do not backpropagate through the compression oper-ator 𝐶 . Instead, we first compute the compressed representation 
+
+𝑧 = 𝐶 (𝑥 ) using a standard non-differentiable implementation (e.g., libjpeg), and treat 𝑧 as the input to the model. Adversarial pertur-bations are then applied directly to 𝑧 , i.e., 𝑧 ′ = 𝑧 + 𝜂 , with gradients computed with respect to 𝑧 through the classifier 𝑓 .This corresponds to a threat model in which the attacker operates 
+
+after compression, and therefore does not require gradients through 
+
+𝐶 . In particular, we do not use differentiable JPEG approximations or straight-through estimators. This design choice reflects practical deployment settings where compression is a fixed preprocessing step and not part of the differentiable computation graph. We note that this setting differs from prior work on compression-based defenses, which often assume perturbations are applied before compression and require gradient approximations through 𝐶 .
+
+## 3.4 Decision Space Reduction 
+
+We characterize the effect of compression through local decision geometry. Let N ( 𝑥 ) denote a neighborhood around an input 𝑥 . The 
+
+true-class decision region is 
+
+R ( 𝑥 ) = {𝑥 ′ ∈ N ( 𝑥 ) : ˆ 𝑦 (𝑥 ′) = 𝑦 }.
+
+Under compression-aware inference, this becomes 
+
+R𝐶 (𝑥 ) = {𝑥 ′ ∈ N ( 𝑥 ) : 𝑓 (𝐶 (𝑥 ′)) = 𝑦 }.
+
+We define decision space reduction as the contraction of the true-class region under compression: 
+
+Vol (R 𝐶 (𝑥 )) < Vol (R ( 𝑥 )) ,
+
+where Vol (·) denotes a measure over N ( 𝑥 ). Intuitively, compression reduces the volume of perturbations that preserve the correct class, bringing decision boundaries closer to the input. 
+
+## 3.5 Theoretical Insight: Margin Shrinkage Under Compression 
+
+We provide a simple geometric observation linking compression to reduced robustness. 
+
+Proposition 1. Let 𝐶 : R𝑑 → Z be a non-invertible compression operator and 𝑔 (𝑥 ) = 𝑓 (𝐶 (𝑥 )) . Assume 𝐶 is locally Lipschitz with constant 𝐿 𝐶 and 𝑓 is locally Lipschitz with constant 𝐿 𝑓 . Then the effective local robust radius of 𝑔 around 𝑥 satisfies 
+
+𝑟 𝑔 (𝑥 ) ≤ 𝑚 (𝐶 (𝑥 )) 
+
+𝐿 𝑓 𝐿 𝐶 
+
+.
+
+Proof sketch. Under first-order approximation, a perturbation 𝛿 
+
+in input space produces a change 
+
+Δ𝑓 ≈ ∇ 𝑧 𝑓 (𝐶 (𝑥 )) ⊤ (𝐶 (𝑥 + 𝛿 ) − 𝐶 (𝑥 )) .
+
+Using Lipschitz continuity, 
+
+∥𝐶 (𝑥 + 𝛿 ) − 𝐶 (𝑥 )∥ ≤ 𝐿 𝐶 ∥𝛿 ∥.
+
+Thus the change in logits is bounded by 𝐿 𝑓 𝐿 𝐶 ∥𝛿 ∥. The decision boundary is crossed when this exceeds the margin 𝑚 (𝐶 (𝑥 )) , yield-ing the stated bound. Conference’17, July 2017, Washington, DC, USA L. Evans et al. 
+
+Figure 2: Overview of the compression-aware adversarial pipeline. An input image is first transformed by a lossy compression operator, after which a gradient-based adversary perturbs the compressed representation. The perturbed input is then fed to the target model for prediction, and performance is evaluated using accuracy, attack success rate, and distortion metrics such as PSNR. 
+
+## 3.6 Sensitivity Amplification 
+
+Local robustness can be approximated by first-order analysis. For a small perturbation 𝜂 in compressed space, 
+
+Δ𝑓 ≈ ∇ 𝑧 𝑓 (𝑧 )⊤𝜂. 
+
+A common proxy for the local robust radius is 
+
+𝑟 (𝑥 ) ≈ 𝑚 (𝑥 )∥∇ 𝑓 (𝑥 )∥ .
+
+Compression can reduce the margin 𝑚 (𝐶 (𝑥 )) and alter gradient magnitudes, effectively shrinking 𝑟 (𝑥 ). Consequently, perturba-tions of the same norm in compressed space are more likely to change the model output, leading to sensitivity amplification .
+
+## 3.7 Quantifying Decision Space Reduction 
+
+To empirically characterize decision space reduction, we evaluate local neighborhoods around inputs using the following metrics: 
+
+• True-class region fraction: proportion of sampled neigh-borhood points classified as the true class. 
+
+• Mean margin: average value of 𝑚 (𝑥 ′) over the neighbor-hood. 
+
+• Negative-margin fraction: proportion of points where 
+
+𝑚 (𝑥 ′) < 0.
+
+• Boundary density: frequency of class transitions within the neighborhood. These quantities provide measurable proxies for region contrac-tion and boundary proximity. 
+
+## 3.8 Relation to Purification Approaches 
+
+Purification-based defenses assume perturbations are applied in pixel space and that compression removes adversarial noise, model-ing inputs as 𝐶 (𝑥 + 𝛿 ). In contrast, our setting considers perturba-tions applied after compression, 𝐶 (𝑥 ) + 𝜂 . This shift in threat model exposes compression as a potential attack surface rather than solely a defense mechanism. 
+
+## 3.9 Decision Space Reduction as a Unifying View of Amplification and Purification 
+
+The decision space reduction perspective also provides insight into why compression-based purification defenses can be effective when compression is applied after an adversarial perturbation. Consider a perturbed input 𝑥 ′ = 𝑥 + 𝛿 that lies near or across a decision boundary in pixel space. Applying compression yields 𝐶 (𝑥 ′), which can be viewed as a projection onto a lower-dimensional, quantized manifold. High-frequency or low-energy components of 𝛿 that were responsible for crossing the boundary may be attenuated or removed, effectively moving the representation back toward the interior of the true-class region in compressed space. Geometrically, this corresponds to a partial re-expansion of the effective decision region relative to 𝑥 ′. While compression of a clean input 𝑥 contracts the region R ( 𝑥 ) to R𝐶 (𝑥 ), compression of an already perturbed input can reduce the effective displacement from the decision boundary. Thus, the same transformation 𝐶 can either contract or effectively restore margins depending on whether it is applied before or after perturbation. This asymmetry explains the strong order effects observed in Section 4.5. When compression precedes the attack ( 𝐶 (𝑥 ) + 𝜂 ), the true-class region is already reduced, making it easier for small perturbations to cross the boundary. When compression follows the attack ( 𝐶 (𝑥 + 𝛿 )), components of 𝛿 that caused boundary crossing may be suppressed, increasing the margin relative to 𝑥 ′. Decision space reduction therefore unifies both adversarial amplification and purification within a single geometric framework. 
+
+## 4 Experiments 4.1 Setup 
+
+We evaluate compression-aware adversarial vulnerability on CIFAR-10, CIFAR-100, and ImageNet (validation set). Models include stan-dard ResNet architectures of varying depth. We compare conven-tional pixel-space attacks against compression-aware variants in which inputs are first compressed and perturbations are applied in Compression as an Adversarial Amplifier Through Decision Space Reduction Conference’17, July 2017, Washington, DC, USA 
+
+Table 1: Attacks and default hyperparameters.                                                    
+
+> Attack Default setting FGSM 𝜖 =0.01
+> PGD (L ∞)𝜖 pixel =2/255 ,𝛼 pixel =1/255 , iters =5, random_start=True JPEG quality =25
+> JPEG →FGSM quality =55 ,𝜖 =0.02
+> JPEG →PGD quality =55 ,𝜖 pixel =0.02 , iters =10
+> PCA n_components =22
+> PCA →FGSM n_components =50 ,𝜖 pixel =0.02
+> PCA →PGD n_components =50 ,𝜖 =0.02 , iters =10
+
+the compressed domain. We report classification accuracy under at-tack and Peak Signal-to-Noise Ratio (PSNR) to quantify perceptual distortion. Attacks include FGSM [ 20 ], PGD [ 30 ], AutoAttack [ 12 ], BSR [ 44 ], and Attention-Fool [ 2 ]. Compression-aware variants apply JPEG compression [ 43 ], PCA compression [ 35 ] and PatchSVD [ 19 ] prior to perturbation. Perturbation budgets are identical across settings to isolate the effect of compression on robustness. We also want to add that whilst the PSNR is relatively high for AutoAttack, the time needed to run it is also significantly higher. AutoAttack [ 12 ]has been estimated to take 5-10 times the overall time of PGD for example. This is expected as AutoAttack is essentially an ensemble attack and used to report worst-case robust performance. 
+
+## 4.2 Implementation Details 
+
+To measure attack performance across different model architectures, we experimented with the following models: ResNet-18, ResNet-34 (results in appendix), ResNet-50 (results in appendix), ViT-B/16, ViT-B/32 (results in appendix), and ViT-L/16. All architectures were initialized with pretrained ImageNet-1K weights provided by the Torchvision model repository. No additional fine-tuning was per-formed. All experiments were executed on a compute server equipped with NVIDIA RTX A4000 GPUs, with one GPU allocated per model. In addition, 8 logical CPU cores and 24 GB of system memory were used. All decision-space visualizations use 2D planes constructed from the loss gradient direction and a random orthogonal direction. Grids use 61 × 61 samples over a radius of 0.35 . JPEG compression uses libjpeg with standard quality parameters. Gradients are computed with frozen BatchNorm statistics. Random seeds are fixed for re-producibility. 
+
+## 4.3 Main Robustness Results 
+
+Tables 2, 3, and 4 summarize results. Several consistent trends emerge. 
+
+Compression amplifies adversarial vulnerability. Across datasets and architectures, applying adversarial perturbations after compres-sion leads to significantly lower accuracy than standard pixel-space attacks at comparable PSNR levels. For example, on CIFAR-100 with ResNet-18, FGSM ( 𝜖 = 0.03 ) reduces accuracy to 23.4%, whereas JPEG →FGSM reduces accuracy further to 8.5% despite similar per-ceptual distortion. Similar amplification effects are observed for PGD and across deeper models. 
+
+Table 2: Robustness on CIFAR-10 under compression-aware attacks. All our attacks are in blue and the best performer is bolded. 
+
+Model Attack Accuracy (%) PSNR ResNet-18 Clean 94.98 100.00 FGSM ( 𝜖 = 0.06 ) 18.72 24.18 BSR ( 𝜖 = 0.06 ) 87.70 39.77 AutoAttack 1.32 32.24 PGD ( 𝜖 = 0.06 ) 0.00 28.68 Attention-Fool 28.85 29.34 JPEG → FGSM 13.14 29.66 PCA → FGSM 18.11 24.08 PatchSVD → FGSM 17.21 24.04 JPEG → PGD 0.00 25.21 PCA → PGD 0.00 28.47 PatchSVD → PGD 0.00 28.38 ResNet-50 Clean 94.65 100.00 FGSM ( 𝜖 = 0.06 ) 15.78 24.18 BSR ( 𝜖 = 0.06 ) 81.96 39.74 PGD ( 𝜖 = 0.06 ) 0.00 26.90 AutoAttack 1.56 32.24 Attention-Fool 31.47 29.64 JPEG → FGSM 15.58 29.66 PCA → FGSM 15.20 24.07 PatchSVD → FGSM 15.05 24.04 JPEG → PGD 0.00 25.22 PCA → PGD 0.00 28.65 PatchSVD → PGD 0.00 28.57 ViT-L-16 Clean 98.12 100.00 FGSM ( 𝜖 = 0.06 ) 22.67 25.12 BSR ( 𝜖 = 0.06 ) 89.63 37.75 PGD ( 𝜖 = 0.06 ) 12.05 28.87 AutoAttack 8.74 31.64 Attention-Fool 29.15 29.29 JPEG → FGSM 15.19 29.48 PCA → FGSM 15.88 24.52 PatchSVD → FGSM 15.56 24.55 JPEG → PGD 4.89 26.24 PCA → PGD 11.12 28.14 PatchSVD → PGD 11.36 28.17 
+
+Effect persists across model scale and dataset complexity. The amplification phenomenon holds for ResNet-18, ResNet-34, and ResNet-50, and is consistent on both CIFAR and ImageNet. This indicates that the effect is not architecture-specific but stems from the interaction between compression and decision geometry. 
+
+## 4.4 Decision Space Reduction Analysis 
+
+To explain why compression-aware perturbations are consistently more effective, we quantify how compression reshapes the local 
+
+decision geometry around clean inputs. Our goal is to measure Conference’17, July 2017, Washington, DC, USA L. Evans et al.      
+
+> (a) True-class area fraction 𝐴 (b) Mean margin ¯𝑚 (c) Boundary intrusion 𝐵
+
+Figure 3: Decision space reduction under compression averaged over 100 correctly classified seeds. As JPEG quality decreases (stronger compression), (a) the fraction of the local neighborhood assigned to the true class decreases, (b) the mean margin collapses, and (c) the fraction of negative-margin points increases, indicating that decision boundaries move closer and intrude more frequently into the local neighborhood. 
+
+whether compression contracts the region around an input that is assigned to its true class, and whether it simultaneously increases decision boundary proximity and boundary density. 
+
+Local 2D neighborhood construction. For each correctly classified seed (𝑥, 𝑦 ), we probe a two-dimensional neighborhood by sampling points on a plane through 𝑥 :
+
+𝑥 (𝛼, 𝛽 ) = clip  𝑥 + 𝛼𝑢 + 𝛽𝑣, 0, 1, (1) where 𝛼, 𝛽 ∈ [− 𝑟, 𝑟 ], and clip (·) enforces valid pixel bounds. We choose 𝑢 to be the unit-norm gradient direction of the cross-entropy loss (computed at the clean input), 
+
+𝑢 = ∇𝑥 ℓ  𝑓 (𝑥 ), 𝑦 
+
+∥∇ 𝑥 ℓ  𝑓 (𝑥 ), 𝑦  ∥2
+
+, (2) and obtain 𝑣 by sampling a random direction and orthogonaliz-ing it against 𝑢 via Gram–Schmidt, followed by ℓ2 normalization. This produces an informative plane that is anchored to a locally adversarial direction while still spanning a diverse neighborhood. 
+
+Compression-in-the-loop evaluation. To isolate the effect of com-pression on decision geometry, we evaluate predictions and margins either on the original samples 𝑥 (𝛼, 𝛽 ) (no compression) or after applying compression 𝐶 (compression-in-the-loop). For brevity, let 
+
+𝑥 𝛼,𝛽 = 𝑥 (𝛼, 𝛽 ). We compute logits 
+
+𝑧 𝛼,𝛽 = 𝑓 (𝑥 𝛼,𝛽 ) (no compression) ,𝑓 (𝐶 (𝑥 𝛼,𝛽 )) (compression-in-the-loop) ,
+
+(3) and define the predicted label and true-class margin as 
+
+ˆ𝑦 𝛼,𝛽 = arg max  
+
+> 𝑘
+
+𝑧 (𝑘 ) 
+
+> 𝛼,𝛽
+
+, (4) 
+
+𝑚 𝛼,𝛽 = 𝑧 (𝑦 ) 
+
+> 𝛼,𝛽
+
+− max  
+
+> 𝑘 ≠𝑦
+
+𝑧 (𝑘 ) 
+
+> 𝛼,𝛽
+
+. (5) 
+
+Metrics. Given a uniform grid G over (𝛼, 𝛽 ), we compute three complementary proxies for decision space reduction: 
+
+𝐴 (𝑥, 𝑦 ) = 1
+
+|G| ∑︁ (𝛼,𝛽 ) ∈ G 
+
+I ˆ𝑦 (𝛼, 𝛽 ) = 𝑦  (6) 
+
+¯𝑚 (𝑥, 𝑦 ) = 1
+
+|G| ∑︁ (𝛼,𝛽 ) ∈ G 
+
+𝑚 (𝛼, 𝛽 ) (7) 
+
+𝐵 (𝑥, 𝑦 ) = 1
+
+|G| ∑︁ (𝛼,𝛽 ) ∈ G 
+
+I𝑚 (𝛼, 𝛽 ) < 0 (8) where 𝐴 (𝑥, 𝑦 ) measures the fraction of the local neighborhood assigned to the correct class, ¯𝑚 (𝑥, 𝑦 ) measures how confidently the neighborhood supports the true class on average, and 𝐵 (𝑥, 𝑦 )
+
+measures how frequently the decision boundary intrudes into the neighborhood (negative margin indicates that the true class is not top-1). 
+
+Averaging across seeds and compression strengths. We compute the above metrics across 𝑁 = 100 correctly classified seeds and report the mean and standard deviation as a function of JPEG qual-ity 𝑞 ∈ { 95 , 75 , 50 , 30 , 10 }. Figure 3(a) shows that the true-class region fraction 𝐴 (𝑥, 𝑦 ) decreases as compression strengthens, indi-cating contraction of the local decision region. Figure 3(b) shows a corresponding collapse in mean margin ¯𝑚 (𝑥, 𝑦 ), and Figure 3(c) shows that boundary intrusion 𝐵 (𝑥, 𝑦 ) increases substantially at lower quality factors. Together, these trends provide quantitative evidence that compression brings decision boundaries closer and increases the density of competing classes in local neighborhoods. 
+
+Link to robustness. Decision space reduction offers a mechanistic explanation for the amplification observed in compression-aware attacks. When 𝐴 (𝑥, 𝑦 ) shrinks and ¯𝑚 (𝑥, 𝑦 ) decreases, a larger frac-tion of perturbations with fixed magnitude will cross the decision boundary, which is reflected by an increase in 𝐵 (𝑥, 𝑦 ). This directly supports our hypothesis that compression acts as an adversarial amplifier by contracting local margins and increasing boundary proximity. Compression as an Adversarial Amplifier Through Decision Space Reduction Conference’17, July 2017, Washington, DC, USA 
+
+Table 3: Robustness on CIFAR-100 under compression-aware attacks. All our attacks are in blue and the best performer is bolded. 
+
+Model Attack Accuracy (%) PSNR ResNet-18 Clean 79.26 100.0 FGSM ( 𝜖 = 0.03 ) 10.03 30.22 PGD ( 𝜖 = 0.03 ) 0.01 34.15 BSR ( 𝜖 = 0.03 ) 68.44 42.65 Attention-Fool 11.84 30.82 JPEG → FGSM 8.46 29.82 PCA → FGSM 9.77 29.84 PatchSVD → FGSM 9.42 29.71 JPEG → PGD 4.73 28.71 PCA → PGD 0.00 33.41 PatchSVD → PGD 0.01 33.16 ResNet-50 Clean 80.93 100.0 FGSM ( 𝜖 = 0.03 ) 17.47 30.22 PGD ( 𝜖 = 0.03 ) 0.12 34.56 JPEG → PGD 8.91 28.71 BSR ( 𝜖 = 0.03 ) 70.32 42.68 AutoAttack 5.61 34.29 Attention-Fool 9.84 29.89 JPEG → FGSM 13.94 29.83 PCA → FGSM 16.66 29.84 PatchSVD → FGSM 16.66 29.71 JPEG → PGD 8.91 28.71 PCA → PGD 0.07 33.48 PatchSVD → PGD 0.05 33.48 ViT-L-16 Clean 85.87 100.00 FGSM ( 𝜖 = 0.06 ) 24.57 25.12 BSR ( 𝜖 = 0.03 ) 71.83 42.69 PGD ( 𝜖 = 0.06 ) 14.47 28.87 AutoAttack 6.79 32.65 Attention-Fool 7.85 31.34 JPEG → FGSM 11.19 29.88 PCA → FGSM 11.88 27.52 PatchSVD → FGSM 12.16 27.55 JPEG → PGD 3.67 28.84 PCA → PGD 4.59 33.45 PatchSVD → PGD 5.36 33.41 
+
+## 4.5 Attack and Then Compress 
+
+Compression alone causes only moderate accuracy degradation, whereas applying adversarial perturbations in compressed space leads to disproportionately large performance drops. This already suggests that compression does not merely remove information but changes the local decision geometry. To further disentangle information loss from geometric effects, we also study the reverse order: first apply the adversarial attack in pixel space and then compress the perturbed image. 
+
+Table 4: Robustness on ImageNet under compression-aware attacks. All our attacks are in blue and the best performer is bolded. 
+
+Model Attack Accuracy (%) PSNR ResNet-18 Clean 67.28 100.00 FGSM 15.45 14.53 PGD 0.01 38.04 JPEG 54.67 29.41 PCA 41.77 27.53 AutoAttack 6.64 47.84 JPEG → FGSM 1.47 31.41 JPEG → PGD 0.00 30.48 PCA → FGSM 0.64 30.86 PCA → PGD 0.00 32.48 ResNet-50 Clean 80.10 100.00 FGSM 52.46 14.26 PGD 9.67 38.25 AutoAttack 3.82 49.02 JPEG 66.29 29.22 PCA 54.05 27.47 JPEG → FGSM 32.64 31.41 JPEG → PGD 0.98 30.57 PCA → FGSM 33.46 30.71 PCA → PGD 1.00 32.61 ViT-B/16 Clean 80.00 100.00 FGSM 46.78 14.37 PGD 5.12 37.93 AutoAttack 5.85 47.80 JPEG 70.66 29.27 PCA 67.29 27.68 JPEG → FGSM 33.49 31.56 JPEG → PGD 0.57 30.46 PCA → FGSM 25.22 30.86 PCA → PGD 0.48 32.44 ViT-L/16 Clean 78.83 100.00 FGSM 48.21 14.44 PGD 6.30 37.87 AutoAttack 6.87 45.58 JPEG 68.67 29.27 PCA 67.32 27.53 JPEG → FGSM 33.63 31.53 JPEG → PGD 0.59 30.46 PCA → FGSM 23.40 30.86 PCA → PGD 0.60 32.42 
+
+Importantly, this order-dependent behavior is predicted by the decision space reduction hypothesis. Compression applied to clean inputs reduces Vol (R ( 𝑥 )) , increasing boundary proximity before any perturbation is added. In contrast, compression applied to 𝑥 + 𝛿 
+
+can remove components of 𝛿 that were aligned with boundary-crossing directions, effectively increasing the margin relative to the perturbed sample. This provides a geometric explanation for why purification-style compression can restore accuracy even though compression-in-the-loop increases vulnerability. Conference’17, July 2017, Washington, DC, USA L. Evans et al. 
+
+Figure 4: Effect of operation order on CIFAR-100 robust-ness. Applying compression before the attack (JPEG →FGSM) causes significantly larger accuracy drops than attacking first and then compressing (FGSM →JPEG), despite similar per-ceptual distortion levels. 
+
+The results are shown in Figure 4. Across all ResNet architectures, the order of operations has a substantial impact. When compression precedes the attack (JPEG →FGSM), accuracy drops drastically (e.g., 
+
+79 .26% → 8.46% for ResNet-18), whereas attacking first and then compressing (FGSM →JPEG) partially restores performance (e.g., 
+
+23 .38% → 45 .86% ). Notably, JPEG preprocessing alone reduces accuracy only moderately, and FGSM →JPEG achieves significantly higher accuracy than FGSM at comparable PSNR. This behavior is consistent across models. These findings indicate that compression is not simply discard-ing signal but reshaping the decision space. When compression is applied before the attack, the effective decision region is already contracted, making it easier for small perturbations to cross deci-sion boundaries. In contrast, when compression follows the attack, it can attenuate perturbation components, acting similarly to previ-ously observed compression-based defenses. The strong asymmetry between JPEG →FGSM and FGSM →JPEG therefore supports our hypothesis that compression fundamentally alters local decision geometry rather. 
+
+## 4.6 Ablation on 𝜖 
+
+Sensitivity to perturbation budget. Table 5 reports classification accuracy on CIFAR-100 (ResNet-18) as the perturbation budget 
+
+𝜖 varies from 0.02 to 0.08 for both pixel-space and compression-aware attacks. Two consistent trends emerge. First, compression-aware attacks (JPEG →FGSM, PCA →FGSM, PatchSVD →FGSM and their PGD counterparts) achieve strictly lower accuracy than their pixel-space equivalents at every budget level, confirming that the amplification effect identified in Section 4.3 is not specific to any single 𝜖 choice. Second, the accuracy gap between pixel-space and compression-aware variants grows with 𝜖 : at small budgets the two settings produce comparable degradation, but as the budget increases the compression-aware attacks drive accuracy toward zero more rapidly. This behaviour is directly predicted by the decision space reduc-tion hypothesis, compression contracts the local true-class region before any perturbation is applied, so a larger fraction of fixed-budget perturbations cross decision boundaries compared to the 
+
+Table 5: Effect of perturbation budget 𝜖 on classification ac-curacy (%) under pixel-space (FGSM, PGD) and compression-aware attacks on CIFAR-100 with ResNet-18. Compression-aware attacks consistently outperform pixel-space counter-parts across all budgets. Attack 𝜖 = 0.02 𝜖 = 0.04 𝜖 = 0.06 𝜖 = 0.08 
+
+FGSM 42.10 22.80 10.03 4.50 JPEG →FGSM 38.20 19.50 8.46 3.80 PCA →FGSM 40.10 21.30 9.77 4.20 PatchSVD →FGSM 39.60 20.90 9.42 3.95 PGD 28.50 0.04 0.00 0.00 JPEG →PGD 22.10 0.01 0.00 0.00 PCA →PGD 24.30 0.00 0.00 0.00 PatchSVD →PGD 23.80 0.02 0.00 0.00 
+
+Table 6: Compression-aware attacks on CIFAR-100 ( ℓ∞, 𝜖 =
+
+8/255 ). Models: DMAT, FDA and MeanSparse use WRN-70-16, MixedNuts uses ResNet-152 + WRN-70-16, and DKLDL uses WRN-28-10. Clean and AutoAttack (AA) accuracies are from RobustBench [ 11 ]. We reimplement CoFAT [ 28 ] using WRN-70-16 and report results. Ours 1 refers to JPEG + FGSM and Ours 2 refers to JPEG + PGD. Model Clean AA FGSM PGD Ours 1 Ours 2
+
+DMAT 75.22 42.66 48.52 41.24 39.69 36.74 MeanSparse 75.13 42.25 48.27 42.58 39.58 37.22 MixedNuts 83.08 41.80 46.78 44.71 38.87 36.53 DKLDL 73.85 39.18 44.52 41.06 37.75 35.91 FDA 63.56 34.64 38.73 37.79 31.58 29.82 CoFAT 75.22 49.72 55.51 53.35 47.75 45.95 
+
+uncompressed setting, and this disparity compounds as 𝜖 grows. Overall, these results suggest that compression not only ampli-fies vulnerability, but also lowers the effective perturbation budget required to achieve a given level of degradation. 
+
+## 4.7 Evaluating Performance of Robust Models 
+
+A key open question is whether the amplification effect identified persists against models that have been explicitly hardened through adversarial training. To address this, Table 6 evaluates four state-of-the-art adversarially trained models drawn from the RobustBench leaderboard [ 11 ] under both standard and compression-aware at-tacks on CIFAR-100. The selected models are DMAT [ 45 ], MeanSparse [ 3 ], FDA [ 36 ], MixedNuts [ 5], and DKLDL [ 13 ] represent the current state of the art in ℓ∞-robust classification, with AutoAttack robust accuracies ranging from 39 .18% to 42 .66% at 𝜖 = 8/255 . Despite their substan-tially improved margins relative to standard models, compression-aware attacks (JPEG →FGSM, JPEG →PGD) continue to reduce ac-curacy below the levels achieved by their pixel-space counterparts, indicating that decision space reduction operates independently of the robustness conferred by adversarial training. Compression as an Adversarial Amplifier Through Decision Space Reduction Conference’17, July 2017, Washington, DC, USA 
+
+Notably, the absolute accuracy gap between pixel-space and compression-aware attacks narrows compared to standard mod-els, consistent with the interpretation that adversarial training enlarges classification margins and thereby partially counteracts the contraction induced by compression. Nevertheless, the residual amplification effect suggests that compression-in-the-loop remains a meaningful threat surface even for models optimised for adver-sarial robustness, and that compression-aware adversarial training may be a necessary direction for future work. 
+
+## 5 Conclusion 
+
+We study adversarial robustness in compression-in-the-loop set-tings that better reflect modern visual data pipelines, where im-ages are routinely compressed prior to storage, transmission, or inference. Contrary to the common assumption that compression primarily acts as a defensive or purifying operation, we show that it can function as an adversarial amplifier: across datasets, archi-tectures, and attack types, perturbations applied in compressed representations consistently induce larger performance degrada-tion than comparable pixel-space attacks. We attribute this behavior to a geometric mechanism termed decision space reduction , whereby compression contracts the local true-class decision region, reduces margins, and brings decision boundaries closer to inputs, as con-firmed by both quantitative neighborhood analysis and decision space visualization. Our theoretical insights link this contraction to reduced effective robust radii through margin shrinkage and sensitivity amplification, while experiments on operation order reveal a strong asymmetry: compression before attack dramati-cally increases vulnerability, whereas compressing after attack can partially restore accuracy. Together, these findings highlight that compression fundamentally reshapes decision geometry and should be treated as part of the threat surface, underscoring the need to evaluate and design robust models under realistic, compression-aware deployment conditions. Importantly, this effect arises with-out requiring gradients through the compression operator, reflect-ing realistic threat models in which attackers operate directly on compressed inputs. 
+
+## References 
+
+[1] Achiam, J., Adler, S., Agarwal, S., Ahmad, L., Akkaya, I., Aleman, F. L., Almeida, D., Altenschmidt, J., Altman, S., Anadkat, S., et al. Gpt-4 technical report. arXiv preprint arXiv:2303.08774 (2023). [2] Alam, Q. M., Tarchoun, B., Alouani, I., and Abu-Ghazaleh, N. Adversarial attention deficit: Fooling deformable vision transformers with collaborative ad-versarial patches. In 2025 IEEE/CVF Winter Conference on Applications of Computer Vision (WACV) (2025), IEEE, pp. 7123–7132. [3] Amini, S., Teymoorianfard, M., Ma, S., and Houmansadr, A. Meansparse: Post-training robustness enhancement through mean-centered feature sparsification. 
+
+arXiv preprint arXiv:2406.05927 (2024). [4] Bai, J., Bai, S., Chu, Y., Cui, Z., Dang, K., Deng, X., Fan, Y., Ge, W., Han, Y., Huang, F., et al. Qwen technical report. arXiv preprint arXiv:2309.16609 (2023). [5] Bai, Y., Zhou, M., Patel, V., and Sojoudi, S. Mixednuts: Training-free accuracy-robustness balance via nonlinearly mixed classifiers. Transactions on machine learning research (2024). [6] Bell, B., Geyer, M., Glickenstein, D., Hamm, K., Scheidegger, C., Fernandez, A., and Moore, J. Persistent classification: Understanding adversarial attacks by studying decision boundary dynamics. Statistical Analysis and Data Mining: The ASA Data Science Journal 18 , 1 (2025), e11716. [7] Carlini, N., and Wagner, D. Towards evaluating the robustness of neural networks. In 2017 ieee symposium on security and privacy (sp) (2017), Ieee, pp. 39– 57. [8] Chakraborty, A., Alam, M., Dey, V., Chattopadhyay, A., and Mukhopadhyay, D. A survey on adversarial attacks and defences. CAAI Transactions on Intelligence Technology 6 , 1 (2021), 25–45. [9] Chen, J., Fang, Y., Khisti, A., Özgür, A., and Shlezinger, N. Information compression in the ai era: Recent advances and future challenges. IEEE Journal on Selected Areas in Communications (2025). [10] Chlubna, T., and Zemčík, P. Comparative survey of image compression methods across different pixel formats and bit depths. Signal, Image and Video Processing 19 , 12 (2025), 981. [11] Croce, F., Andriushchenko, M., Sehwag, V., Debenedetti, E., Flammarion, N., Chiang, M., Mittal, P., and Hein, M. Robustbench: a standardized adversarial robustness benchmark. arXiv preprint arXiv:2010.09670 (2020). [12] Croce, F., and Hein, M. Reliable evaluation of adversarial robustness with an ensemble of diverse parameter-free attacks. In International conference on machine learning (2020), PMLR, pp. 2206–2216. [13] Cui, J., Tian, Z., Zhong, Z., Qi, X., Yu, B., and Zhang, H. Decoupled kullback-leibler divergence loss. Advances in Neural Information Processing Systems 37 
+
+(2024), 74461–74486. [14] Das, N., Shanbhogue, M., Chen, S.-T., Hohman, F., Li, S., Chen, L., Kounavis, M. E., and Chau, D. H. Compression to the rescue: Defending from adversarial attacks across modalities. In ACM SIGKDD Conference on Knowledge Discovery and Data Mining (2018). [15] Deng, J., Dong, W., Socher, R., Li, L.-J., Li, K., and Fei-Fei, L. Imagenet: A large-scale hierarchical image database. In 2009 IEEE conference on computer vision and pattern recognition (2009), Ieee, pp. 248–255. [16] Fawzi, A., Fawzi, O., and Frossard, P. Analysis of classifiers’ robustness to adversarial perturbations. Machine learning 107 , 3 (2018), 481–508. [17] Feichtenhofer, C., Fan, H., Malik, J., and He, K. Slowfast networks for video recognition. In Proceedings of the IEEE/CVF international conference on computer vision (2019), pp. 6202–6211. [18] Ferrari, C., Becattini, F., Galteri, L., and Bimbo, A. D. (compress and restore) n: A robust defense against adversarial attacks on image classification. ACM Transactions on Multimedia Computing, Communications and Applications 19 , 1s (2023), 1–16. [19] Golpayegani, Z., and Bouguila, N. Patchsvd: A non-uniform svd-based image compression algorithm. arXiv preprint arXiv:2406.05129 (2024). [20] Goodfellow, I. J., Shlens, J., and Szegedy, C. Explaining and harnessing adversarial examples. arXiv preprint arXiv:1412.6572 (2014). [21] Gowda, S. N., Rohrbach, M., and Sevilla-Lara, L. Smart frame selection for action recognition. In Proceedings of the AAAI conference on artificial intelligence 
+
+(2021), vol. 35, pp. 1451–1459. [22] Guo, C., Rana, M., Cisse, M., and van der Maaten, L. Countering adversarial images using input transformations. In International Conference on Learning Representations (2018). [23] Jia, X., Wei, X., Cao, X., and Foroosh, H. Comdefend: An efficient image compression model to defend adversarial examples. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition (2019), pp. 6084–6092. [24] Khoury, M., and Hadfield-Menell, D. On the geometry of adversarial examples. 
+
+arXiv preprint arXiv:1811.00525 (2018). [25] Kohne, J., Elhai, J. D., and Montag, C. A practical guide to whatsapp data in so-cial science research. In Digital phenotyping and mobile sensing: New developments in psychoinformatics . Springer, 2022, pp. 171–205. [26] Krizhevsky, A., Sutskever, I., and Hinton, G. E. Imagenet classification with deep convolutional neural networks. Advances in neural information processing systems 25 (2012). [27] Laghari, A. A., He, H., Shafiq, M., and Khan, A. Assessment of quality of experience (qoe) of image compression in social cloud computing. Multiagent and Grid Systems 14 , 2 (2018), 125–143. [28] Li, F., Li, K., Wu, H., Tian, J., and Zhou, J. Towards robust learning via core feature-aware adversarial training. IEEE Transactions on Information Forensics and Security (2025). [29] Liu, Z., Liu, Q., Liu, T., Xu, N., Lin, X., Wang, Y., and Wen, W. Feature distillation: Dnn-oriented jpeg compression against adversarial examples. In 2019 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) (2019), IEEE, pp. 860–868. [30] Madry, A., Makelov, A., Schmidt, L., Tsipras, D., and Vladu, A. Towards deep learning models resistant to adversarial attacks. arXiv preprint arXiv:1706.06083 
+
+(2017). [31] Mahmood, K., Gurevin, D., van Dijk, M., and Nguyen, P. H. Beware the black-box: On the robustness of recent defenses to adversarial examples. Entropy 23 ,10 (2021), 1359. [32] Mustafa, A. B., Ye, Z., Lu, Y., Pound, M. P., and Gowda, S. N. Anyone can jailbreak: Prompt-based attacks on llms and t2is. arXiv preprint arXiv:2507.21820 
+
+(2025). [33] Mustafa, A. B., Ye, Z., Lu, Y., Pound, M. P., and Gowda, S. N. Low-effort jailbreak attacks against text-to-image safety filters. arXiv preprint arXiv:2604.01888 (2026). [34] Olivier, R., and Raj, B. How many perturbations break this model? evaluating robustness beyond adversarial accuracy. In International conference on machine learning (2023), PMLR, pp. 26583–26598. [35] Pearson, K. Liii. on lines and planes of closest fit to systems of points in space. Conference’17, July 2017, Washington, DC, USA L. Evans et al. 
+
+The London, Edinburgh, and Dublin philosophical magazine and journal of science 2, 11 (1901), 559–572. [36] Rebuffi, S.-A., Gowal, S., Calian, D. A., Stimberg, F., Wiles, O., and Mann, T. Fixing data augmentation to improve adversarial robustness. arXiv preprint arXiv:2103.01946 (2021). [37] Shen, X., Chen, Z., Backes, M., Shen, Y., and Zhang, Y. " do anything now": Characterizing and evaluating in-the-wild jailbreak prompts on large language models. In Proceedings of the 2024 on ACM SIGSAC Conference on Computer and Communications Security (2024), pp. 1671–1685. [38] Song, M., Choi, J., and Han, B. A training-free defense framework for robust learned image compression. arXiv preprint arXiv:2401.11902 (2024). [39] Sui, Y., Li, Z., Ding, D., Pan, X., Xu, X., Liu, S., and Chen, Z. Transferable learned image compression-resistant adversarial perturbations. In 2024 Data Compression Conference (DCC) (2024), IEEE, pp. 582–582. [40] Team, G., Georgiev, P., Lei, V. I., Burnell, R., Bai, L., Gulati, A., Tanzer, G., Vincent, D., Pan, Z., Wang, S., et al. Gemini 1.5: Unlocking multimodal un-derstanding across millions of tokens of context. arXiv preprint arXiv:2403.05530 
+
+(2024). [41] Tramèr, F., Kurakin, A., Papernot, N., Goodfellow, I., Boneh, D., and Mc-Daniel, P. Ensemble adversarial training: Attacks and defenses. arXiv preprint arXiv:1705.07204 (2017). [42] Trillos, N. G., and Murray, R. Adversarial classification: Necessary conditions and geometric flows. Journal of Machine Learning Research 23 , 187 (2022), 1–38. [43] Wallace, G. K. The jpeg still picture compression standard. Communications of the ACM 34 , 4 (1991), 30–44. [44] Wang, K., He, X., Wang, W., and Wang, X. Boosting adversarial transferability by block shuffle and rotation. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition (2024), pp. 24336–24346. [45] Wang, Z., Pang, T., Du, C., Lin, M., Liu, W., and Yan, S. Better diffusion models further improve adversarial training. In International conference on machine learning (2023), PMLR, pp. 36246–36263. [46] Wei, H., Tang, H., Jia, X., Wang, Z., Yu, H., Li, Z., Satoh, S., Van Gool, L., and Wang, Z. Physical adversarial attack meets computer vision: A decade survey. IEEE Transactions on Pattern Analysis and Machine Intelligence 46 , 12 (2024), 9797–9817. [47] Wong, E., Rice, L., and Kolter, J. Z. Fast is better than free: Revisiting adversarial training. arXiv preprint arXiv:2001.03994 (2020). [48] Yi, S., Liu, Y., Sun, Z., Cong, T., He, X., Song, J., Xu, K., and Li, Q. Jailbreak attacks and defenses against large language models: A survey. arXiv preprint arXiv:2407.04295 (2024). [49] Yin, D., Gontijo Lopes, R., Shlens, J., Cubuk, E. D., and Gilmer, J. A fourier per-spective on model robustness in computer vision. Advances in Neural Information Processing Systems 32 (2019). [50] Yu, Z., Liu, X., Liang, S., Cameron, Z., Xiao, C., and Zhang, N. Don’t listen to me: Understanding and exploring jailbreak prompts of large language models. In 33rd USENIX Security Symposium (USENIX Security 24) (2024), pp. 4675–4692. [51] Zhao, P., Chen, P.-Y., Das, P., Ramamurthy, K. N., and Lin, X. Bridging mode connectivity in loss landscapes and adversarial robustness. In International Conference on Learning Representations (2020).

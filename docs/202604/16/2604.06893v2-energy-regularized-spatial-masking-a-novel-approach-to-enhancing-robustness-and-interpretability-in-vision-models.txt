@@ -1,0 +1,382 @@
+Title: Energy-Regularized Spatial Masking: A Novel Approach to Enhancing Robustness and Interpretability in Vision Models
+
+URL Source: https://arxiv.org/pdf/2604.06893v2
+
+Published Time: Wed, 15 Apr 2026 01:29:38 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Energy-Regularized Spatial Masking: A Novel Approach to Enhancing Robustness and Interpretability in Vision Models 
+
+## Tom Devynck 1 Bilal Faye 2 Djamel Bouchaffra 1 Nadjib Lazaar 3 Hanane Azzag 2 Mustapha Lebbah 11 DAVID Lab, UVSQ, Paris-Saclay University, Versailles, France  
+
+> 2
+
+## LIPN, UMR CNRS 7030, Sorbonne Paris Nord University, Villetaneuse, France  
+
+> 3
+
+## LISN, Paris-Saclay University, Saclay, France 
+
+## tom.devynck@uvsq.fr , faye@lipn.univ-paris13.fr , djamel.bouchaffra@gmail.com ,
+
+## lazaar@lisn.fr , azzag@lipn.univ-paris13.fr , mustapha.lebbah@uvsq.fr 
+
+# Abstract 
+
+Deep convolutional neural networks achieve remarkable perfor-mance by exhaustively processing dense spatial feature maps, yet this brute-force strategy introduces significant computational re-dundancy and encourages reliance on spurious background corre-lations. As a result, modern vision models remain brittle and diffi-cult to interpret. We propose Energy-Regularized Spatial Masking (ERSM), a novel framework that reformulates feature selection as a differentiable energy minimization problem. By embedding a lightweight Energy-Mask Layer inside standard convolutional backbones, each visual token is assigned a scalar energy composed of two competing forces: an intrinsic Unary importance cost and a Pairwise spatial coherence penalty. Unlike prior pruning meth-ods that enforce rigid sparsity budgets or rely on heuristic impor-tance scores, ERSM allows the network to autonomously discover an optimal information-density equilibrium tailored to each input. We validate ERSM on convolutional architectures and demon-strate that it produces emergent sparsity, improved robustness to structured occlusion, and highly interpretable spatial masks, while preserving classification accuracy. Furthermore, we show that the learned energy ranking significantly outperforms magnitude-based pruning in deletion-based robustness tests, revealing ERSM as an intrinsic denoising mechanism that isolates semantic object re-gions without pixel-level supervision. 
+
+# 1 Introduction 
+
+The success of deep learning in visual recognition has been driven by dense architectures that process all spatial locations uniformly. While effective, this exhaustive computation introduces signifi-cant redundancy and encourages models to rely on spurious back-ground correlations rather than learning semantically meaningful structure. This limitation is especially pronounced in fine-grained classification, where models frequently overfit to contextual cues instead of object-specific features. To address this issue, recent work has explored dynamic infer-ence, enabling input-adaptive computation. Methods such as Dy-namicViT [16], EViT [12], and ToMe [1] demonstrate the benefits of adaptivity through token pruning or merging. However, these approaches typically depend on heuristic importance estimates and predefined sparsity schedules, which can discard subtle semantic information in favor of computational efficiency. 
+
+Figure 1: Energy-Based Information Preservation. ERSM adaptively re-tains semantically relevant features while suppressing background noise. 
+
+Beyond efficiency, interpretability has become a central con-cern in modern vision systems. Prototype-based models such as ProtoPNet and its deformable extension [5] provide human-interpretable explanations by matching latent image regions to learned visual prototypes, explicitly modeling geometric variabil-ity. However, these methods remain inherently similarity-driven: relevance is inferred from proximity to stored exemplars rather than from an intrinsic principle of information preservation. As a result, they do not directly address a more fundamental question: how much of the visual signal is truly required for correct reason-ing? In contrast, we argue that efficient and interpretable visual rep-resentations emerge naturally from a principle of energy minimiza-tion. Inspired by statistical mechanics and recent connections be-tween game theory and deep learning [3], we introduce Energy-Regularized Spatial Masking (ERSM), a physics-inspired frame-work that embeds a differentiable energy system within standard convolutional backbones. Our first contribution is to adapt energy-based modeling from global image generation to internal feature selection, allowing spatial relevance to be inferred from an intrinsic information-preservation principle rather than heuristic importance scores. Second, we model spatial tokens as an interacting system whose forward pass corresponds to an implicit energy-minimization tra-jectory, eliminating the need for predefined sparsity budgets and 1
+
+> arXiv:2604.06893v2 [cs.CV] 14 Apr 2026
+
+enabling input-adaptive computation. Third, we demonstrate that this energy regularization induces emergent, contiguous, and se-mantically aligned spatial masks that improve robustness and in-terpretability without segmentation supervision, while remaining lightweight and fully compatible with conventional convolutional architectures. 
+
+# 2 Related Work 
+
+A large body of work seeks to reduce spatial redundancy to lower computational costs. DynamicViT [16] enforces fixed token keep-rates via a Gumbel-Softmax predictor, EViT [12] prunes tokens using class-attention scores, and ToMe [1] further merges sim-ilar tokens. While effective for inference speed, these methods treat redundancy purely as a computational concern. In contrast, our ERSM considers redundancy a representational liability: in-stead of physically removing tensors for wall-clock gains, it masks features to maximize the signal-to-noise ratio. This approach preserves the dense tensor structure of standard CNNs such as ResNet, while conferring the robustness and interpretability bene-fits typically associated with sparse representations. Energy-Based Models (EBMs) have regained attention for mod-eling complex data distributions [10, 8] and improving out-of-distribution detection. However, conventional EBMs assign en-ergy at the global input level, primarily for generative modeling. In contrast, our ERSM applies EBM principles to internal feature selection, interpreting the forward pass as an energy-minimization trajectory. This perspective bridges generative, physics-inspired principles with discriminative representation learning, enabling the network to selectively preserve semantically relevant features. While post-hoc methods like Grad-CAM [17] visualize impor-tance, they do not influence the model’s reasoning. Learnable masking approaches, such as Double-Win Quant [6], integrate se-lection during training but often produce scattered, noisy activa-tion maps due to a lack of spatial constraints. To address this, we draw inspiration from classical computer vision, where Graph-Cut–based energy minimization enforces spatial continuity [11]. Our ERSM adapts this principle to deep feature space: by intro-ducing an explicit pairwise interaction term, we enforce spatial coherence as a core modeling principle, yielding compact, object-aligned masks that are more interpretable than unstructured gating mechanisms. 
+
+# 3 Method 
+
+We propose Energy-Regularized Spatial Masking (ERSM), a framework that reformulates feature pruning as a physics-inspired energy minimization problem. Unlike heuristic approaches that impose hard sparsity constraints, ERSM allows the network to au-tonomously discover an input-adaptive sparsity pattern. We in-troduce a differentiable Energy-Mask Layer in which retaining a visual token incurs an explicit energy cost. During training, the network balances task performance against the energetic cost of processing redundant spatial features, converging toward an equi-librium that maximizes information density. Notably, ERSM does not seek the exact equilibrium of classical Energy-Based Models, as the energy function does not fully encode all particle interac-tions; rather, it provides a tractable, discriminative approximation tailored to representation learning. 
+
+## 3.1 Feature Representation 
+
+To operationalize the energy formulation, we first discretize the continuous spatial feature map into a set of decision units. Given an intermediate feature map F ∈ RC×H×W produced by the con-volutional backbone, we apply a spatial unfolding operation that partitions the grid into non-overlapping d×d patches. This yields a sequence of N = HW/d 2 tokens, each encoding the local texture and semantic content of its corresponding region. Let P ∈ RN ×D
+
+denote the resulting token matrix, where D = C ·d2 is the flattened feature dimension. To stabilize energy computation across varying feature magnitudes, each token pi ∈ RD is L2-normalized, yield-ing ˆpi = pi/∥pi∥2.
+
+## 3.2 Energy Formulation 
+
+We define the energy Ei of a token as the cost of retaining it in the active set. Under the principle of energy minimization, the network is encouraged to suppress tokens with high retention cost. For a feature token pi ∈ RD , the total energy Ei is defined as: 
+
+Ei =λunary · softplus  W⊤ 
+
+> mask
+
+ˆpi + bi
+
+| {z }
+
+> Eunary
+> i
+
++ λpair · softplus 
+
+ X 
+
+> j∈N (i)
+
+ˆp⊤ 
+
+> i
+
+ˆpj
+
+| {z }
+
+> Epair
+> i
+
+= Eu+ 
+
+> i
+
++ Ep+
+
+> i
+
+(1) The first term, Eu+ 
+
+> i
+
+, corresponds to the unary potential EUnary  
+
+> i
+
+,passed through a softplus function to enforce positivity and scaled by λunary . The vector Wmask ∈ RD is a learned noise tem-plate that captures dominant directions of background redundancy rather than object-specific features. Tokens that align strongly with 
+
+Wmask incur a large positive unary energy, increasing their reten-tion cost. In contrast to attention mechanisms that promote aligned features, this alignment penalizes tokens resembling background patterns. Tokens that are semantically distinct (i.e., weakly aligned with the noise template) incur low energy and are therefore inex-pensive to retain, allowing informative content to be preserved. The second term, Ep+ 
+
+> i
+
+, corresponds to the pairwise potential 
+
+Epair  
+
+> i
+
+, passed through a softplus function to enforce positivity and scaled by λpair . This term explicitly penalizes spatial redundancy, encouraging coherent spatial selection. We define N (i) as the Moore (8-connected) neighborhood of token i on the token grid. The pairwise term aggregates the cosine similarity between the central token pi and its spatial neighbors. In visually homoge-neous regions, neighbor similarity is high, yielding a large positive energy penalty and increasing the cost of retaining redundant fea-ture clusters. Minimizing this potential encourages the model to suppress spatially redundant tokens while preserving distinctive, low-cost signals. 
+
+## 3.3 Differentiable Gating Policy 
+
+To enable end-to-end optimization, we relax the discrete token selection problem into a continuous, differentiable formulation. Unlike standard attention mechanisms that learn to attend based 2Figure 2: Overview of the Energy-Regularized Spatial Masking (ERSM) framework. (a) A frozen feature extractor encodes the input image. (b–c) The feature map is partitioned into latent tokens. (d) Unary and 8-neighbor pairwise interactions define a token-wise energy. (e) The resulting spatial energy map suppresses redundant background regions. (f) The refined features are passed to the prediction head for classification. 
+
+Algorithm 1 Energy Mask (Unary and Full Variants) 
+
+Require: Feature map X ∈ RC×H×W , patch size D, weights 
+
+λunary , λ pair 
+
+Ensure: Masked feature map ˜X and diagnostics 
+
+(m, z, E u+, E p+) 
+
+> 1:
+
+{pi}Ni=1 ← Unfold (X; D, D ) // extract N = HW/D 2
+
+patches  
+
+> 2:
+
+ˆpi = pi/(∥pi∥2 + ε) ∀i // normalize  
+
+> 3:
+
+zi = w⊤ ˆpi + bi ∀i // importance score  
+
+> 4:
+
+mi ← σ(−zi) ∀i // keep prob.  
+
+> 5:
+
+Eu+ 
+
+> i
+
+← λunary · softplus (zi) ∀i 
+
+> 6:
+
+if λpair > 0 then  
+
+> 7:
+
+Epair i ← P
+
+> j∈N 8(i)
+
+⟨ˆpi, ˆpj ⟩ ∀i 
+
+> 8:
+
+Ep+ 
+
+> i
+
+← λpair · softplus (Epair i ) ∀i 
+
+> 9:
+
+else  
+
+> 10:
+
+Ep+ 
+
+> i
+
+← 0 ∀i 
+
+> 11:
+
+end if  
+
+> 12:
+
+˜pi ← mi · pi ∀i 
+
+> 13:
+
+˜X ← Fold ({˜pi}; H, W, D, D ) 
+
+> 14:
+
+return ˜X and (m, z, E u+, E p+)
+
+solely on task performance, our framework learns a gating policy guided by energy minimization. 
+
+Training Objective: Emergent Sparsity. A key advantage of our approach is that, unlike methods enforcing a fixed sparsity budget ρ (e.g., retaining exactly k patches), we impose a cost on feature retention. The network can retain as many tokens as needed, as long as their contribution to classification performance justifies their energy cost. The regularization loss is defined as the expected energy of the active system. For a batch of N tokens, this corresponds to the mean energy of the retained set: 
+
+Lreg = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+mi · Ei (2) where mi = σ(−Eunary  
+
+> i
+
+) ∈ [0 , 1] is the token’s continuous re-tention probability, and Ei its energy cost. The total training objective combines the task-specific loss with the energy regularization term: 
+
+Ltotal = L(y, ˆy) + Lreg (3) Minimizing this objective leads to an autonomous trade-off: gradient descent drives mi → 1 (retain) only if the reduction in classification loss L outweighs the token’s energy cost Ei. This produces emergent sparsity, where the number of retained tokens adapts dynamically to the semantic complexity of each input rather than being fixed by a hyperparameter. 
+
+Amortized Inference via Implicit Distillation. While the global energy Etotal = P 
+
+> i
+
+Ei (including pairwise interactions) guides token selection during training, computing it at inference is costly. To address this, we employ amortized inference, where gating decisions rely solely on the local unary potential. Token ac-tivation is interpreted as a stochastic equilibrium process. For each token i, the retention decision is driven by the unary penalty: 
+
+Eunary  
+
+> i
+
+= W⊤ 
+
+> mask
+
+ˆpi + bi.
+
+where Wmask serves as a learned redundancy prototype. Tokens aligned with this vector incur high energy and are likely sup-pressed. The probability of retaining a token is therefore: 
+
+σ(−Eunary  
+
+> i
+
+) = e−Eunary 
+
+> i
+
+1 + e−Eunary 
+
+> i
+
+.
+
+The logic is consistent: low energy implies stability. Tokens that poorly match the noise template (low Eunary  
+
+> i
+
+) have σ(−Eunary  
+
+> i
+
+) →
+
+1, while high-energy tokens are unstable and likely dropped. Al-though decisions are local, the weights Wmask are shaped by the full energy objective during training, effectively distilling global constraints into a fast, local inference policy. While we refer to Etotal = P 
+
+> i
+
+Ei as an energy function, it does not define an explicit energy-based probabilistic model; rather, it serves as a training-time regularizer inspired by energy-based prin-ciples. 
+
+## 3.4 Gradient Dynamics 
+
+Our framework decouples the decision policy from energy evalu-ation, functioning as a differentiable mechanism embedded within the layer. The forward pass is efficient, producing gating decisions using only the local unary projection zi = w⊤ ˆpi, while the back-ward pass evaluates decision quality by incorporating the costly pairwise interactions into the loss. For a token with high spatial 3redundancy, the pairwise energy Epair  
+
+> i
+
+is large. Minimizing the loss drives the retention mask mi toward zero. Mechanically, this negative gradient pressure aligns the weights 
+
+w more closely with ˆpi, increasing the noise projection zi. Over training, the unary filter w effectively memorizes redundant tex-tures, distilling global neighborhood constraints into a local linear projection. This enables future forward passes to suppress redun-dant features without explicitly computing pairwise interactions. 
+
+# 4 Experiments 
+
+We first validate ERSM in a controlled pilot setting before integrat-ing it into standard deep learning backbones. Specifically, we eval-uate its behavior and robustness on both shallow CNNs and larger architectures (e.g., ResNet variants [9]), enabling us to isolate its effect independently of backbone depth and capacity. Importantly, these experiments are not intended to push state-of-the-art perfor-mance, but to cleanly quantify the contribution of the ERSM layer by comparing otherwise identical models with and without ERSM under controlled conditions. 
+
+## 4.1 Controlled Proof of Concept 
+
+In this study, ERSM is implemented as a lightweight Energy-Mask Layer inserted after the final convolutional stage of a compact CNN trained on the Food-101 dataset [2]. Input images are re-sized and center-cropped to 224 × 224 .The backbone produces a feature map of size C ×H ×W (256 ×
+
+14 × 14 in our setting), which is partitioned into non-overlapping 
+
+d × d patches ( d = 2 ), yielding a 7 × 7 grid of N = 49 tokens. Each token is represented by a vector of dimension D = C · d2.ERSM computes a per-token unary score zi = w⊤ ˆpi + bi and retains tokens with probability mi = σ(−zi). Training minimizes the classification loss augmented with the expected energy of re-tained tokens, Ltotal = LCE + LReg .We perform a two-dimensional sensitivity analysis over the en-ergy coefficients λunary and λpair using grid search. For each 
+
+(λunary , λ pair ) pair, the model is trained for 20 epochs on a 20% subset of Food-101, and evaluated in terms of test accuracy and emergent sparsity. The configuration λunary = λpair = 10 −3 con-sistently yields the best accuracy–sparsity trade-off and is used in all subsequent experiments. 
+
+## 4.2 Results 
+
+We compare the following variants: (i) a baseline CNN (four con-volutional layers with ReLU and max-pooling) without masking; (ii) ERSM-Unary, using only the unary energy term ( λpair = 0 ); (iii) ERSM-Full, combining unary and pairwise energies ( λpair >
+
+0); (iv) DropBlock [7]; (v) Spatial Dropout [19]; and (vi) L0 gat-ing [14], a patch-wise gating baseline with an L0 sparsity penalty. All models are trained for 100 epochs using AdamW with cosine learning-rate scheduling. ERSM layer is inserted after the final convolutional block, op-erating on 14 × 14 feature maps with 2 × 2 spatial patches and 256 channels. All models are trained for 100 epochs with identical op-timization settings. Table 1 reports the peak test accuracy for each method. ERSM-Unary achieves performance comparable to the state-of-the-art L0-Gating ( 69 .76% vs 69 .86% ), while learning a sparse Model Acc. (%) ↑ E[mi]
+
+Baseline CNN 69.14 ± 0.22 –DropBlock 69.53 ± 0.22 –Spatial Dropout 68.88 ± 0.34 –L0-Gating 69.86 ± 0.30 0.65 ERSM-Unary (ours) 69.76 ± 0.15 0.65 ERSM-Full (ours) 69.73 ± 0.36 0.64   
+
+> Table 1: Classification performance on Food-101 (Mean ±Std over 5 seeds).
+
+soft gating over spatial patches, with an average keep probabil-ity of ≈ 0.65 . This indicates consistent suppression of redun-dant spatial features while maintaining strong generalization. No-tably, ERSM-Unary exhibits lower variance across random initial-izations than L0 gating, suggesting more stable and robust conver-gence under the energy-based formulation. This structured behavior emerges solely from the optimization objective, without explicit supervision or heuristic saliency mecha-nisms, highlighting ERSM’s ability to discover meaningful spatial organization within convolutional feature maps. 
+
+> Figure 3: Accuracy under progressive patch removal on the experimen-tal CNN. ERSM preserves more accuracy than random deletion, peak-ing after removing 20%–25% of patches, highlighting its implicit feature-selection ability.
+
+To assess whether the learned energy scores capture meaningful spatial importance, we conduct a controlled deletion study on the test set. For each input, patches are ranked by their energy scores 
+
+zi, and the top-k patches are progressively removed at the feature-map level. After deletion, global average pooling is rescaled by the ratio of total to remaining patches to preserve activation mag-nitude. This counterfactual evaluation differs from standard in-ference, which uses soft gating, but enables direct probing of the learned importance ranking. As a baseline, random deletion is performed by sampling a ran-dom permutation of patch indices for each input and removing the first k patches. The same hard suppression and pooling rescal-ing are applied in both cases, ensuring a fair comparison between energy-based and random deletion. Figure 3 shows classification accuracy as a function of the num-ber of removed patches. Energy-guided deletion consistently pre-serves higher accuracy than random deletion across all removal levels. Interestingly, the ERSM curve initially increases, peaking 4after removing roughly 20%–25% of patches, before gradually de-clining. This suggests that the model identifies and discards not only redundant but also mildly harmful features, acting as an im-plicit feature-selection mechanism that improves generalization. ERSM thus learns a structured, semantically meaningful ordering of spatial features rather than relying on brittle or redundant acti-vations. 
+
+# 5 Scaling the Mechanism 
+
+Having validated ERSM in a controlled setting, we next examine its scalability and generalization in deep, industry-standard archi-tectures on complex real-world images. 
+
+## 5.1 General Integration Strategy 
+
+The core hypothesis of ERSM is that energy minimization pro-vides a general principle for representation selection, independent of the underlying feature extractor. To test this, we evaluate ERSM as a modular, “plug-and-play” gating mechanism that can be in-serted into standard convolutional backbones without architectural changes. Scaling from small models to modern backbones introduces two challenges: (1) high-dimensional feature spaces with distributed semantic signals, and (2) maintaining robust energy rankings de-spite complex texture biases in real-world data. To isolate ERSM’s ability to identify intrinsic, relevant features, we adopt a frozen-backbone protocol: pretrained backbone weights are fixed up to the insertion point, and only the lightweight ERSM parameters and final classifier are trained. This setup treats the backbone as a fixed semantic sensor, forcing ERSM to act as a post-hoc attentional fil-ter that distinguishes signal from noise based solely on existing feature correlations. ERSM is inserted at the final feature layer of the backbone, just before pooling and classification. At this stage, representations en-code high-level semantic parts rather than low-level textures, mak-ing energy-based ranking more reliable and task-relevant. Late insertion also minimizes computational cost by operating on the smallest feature map. Empirically, earlier insertion produced less stable energy scores and weaker gains, supporting the choice of a late-stage integration. 
+
+# 6 Fine-Grained Benchmark Experiments 
+
+To evaluate the generality of ERSM across semantic domains, we extend our experiments from generic classification to fine-grained visual recognition (FGVC). FGVC provides a challenging testbed for spatial masking, as correct recognition often relies on subtle, localized cues (e.g., facial patterns, fur texture, or vehicle part de-tails) rather than global shape. We evaluate ERSM on both generic and fine-grained bench-marks. For generic classification, we use Food-101 [2]; for fine-grained tasks include Oxford-IIIT Pet [15] (37 classes) and CUB-200-2011 [20] (200 bird species). ERSM is integrated into multiple ImageNet-pretrained backbones, including ResNet-50 [9], ConvNeXt-Tiny [13], and EfficientNetV2-S [18]. For each dataset, we report accuracy, masking, deletion robustness, and qualitative analyses. 
+
+Quantitative Results. Table 2 summarizes the performance of ERSM-equipped backbones versus frozen baselines. We report test accuracy and total loss. All backbones are pretrained on Im-ageNet [4] and fine-tuned for 20 epochs under the same settings used in the sensitivity analysis. We also explore the impact of in-put resolution and different patch sizes, while ensuring consistent tokenization.                                                                                                 
+
+> Baseline ERSM (Ours) Dataset Backbone Res PAcc % Loss Acc % Loss CUB-200
+> ResNet-50 224 160.20 0.343 60.59 0.263 2--ResNet-50 256 159.82 0.374 60.67 0.274 260.15 0.238 ResNet-50 448 145.81 0.880 47.67 0.611 247.38 0.581 ConvNeXt-Tiny 224 169.83 1.450 69.73 1.415 2––ConvNeXt-Tiny 256 168.88 1.609 69.69 1.483 270.62 1.342 EfficientNetV2-S 224 151.93 0.765 50.59 0.879 2––EfficientNetV2-S 448 161.63 0.654 61.75 0.726 263.29 0.730
+> Food-101
+> ResNet-50 224 168.47 0.910 68.42 0.920 2––ConvNeXt-Tiny 224 178.23 0.922 78.37 0.925 2––
+> Oxford Pet
+> ResNet-50 224 191.14 0.098 89.45 0.134 2––ConvNeXt-Tiny 256 193.32 0.215 93.21 0.967 2––
+> Table 2: Comparison of Baseline (frozen backbone) against ERSM with different Patch Sizes (P) and Input Resolutions (Res). The – symbol de-notes cases where the patch size does not divide the feature map. Baseline results are grouped as they only depend on resolution. Peak results are re-ported.
+
+Across all backbones and datasets, ERSM provides competitive performance compared to frozen baselines, particularly on CUB-200 and Food-101 where localized discriminative cues are critical. When no result is reported for a given patch size, this corresponds to cases where the chosen patch dimension does not divide the backbone feature map, preventing valid tokenization. 
+
+## 6.1 Ablation Study 
+
+We perform a deeper analysis of ERSM dynamics using ResNet-50 on CUB-200 with input size 256 and patch size 1, isolating the effects of spatial resolution and token granularity on energy minimization. The model is trained for 20 epochs with the dual objective of classification loss and energy regularization, converg-ing stably to a peak test accuracy of 60 .67% and loss of 0.2737 .Importantly, it autonomously reaches a sparsity equilibrium with an average mask value of 0.60 , effectively suppressing roughly 40% of the spatial field while preserving high classification per-formance. To verify that discarded features are less informative, we ana-lyze the robustness curve (Figure 4), which plots test accuracy as 5a function of the number of deleted patches, ranked by learned en-ergy (highest first). This evaluation uses deterministic hard prun-ing, distinct from the soft gating in training. At each step k, the top-k highest-energy patches are set to zero. To ensure accuracy degradation reflects information loss rather than reduced activation magnitude, we apply dynamic rescaling of the remaining features proportional to the retained token count, preventing the classifier from being biased by simple energy scaling. 
+
+> Figure 4: Robustness to Feature Removal on ResNet-50 Res 256 Patch 1. Comparison of classification accuracy under progressive patch deletion using Energy-based ranking (red) versus Random selection (blue).
+
+The resulting robustness profiles in Figure 4 reveal three key phenomena validating the effectiveness of energy-based ranking: 
+
+(1) Unlike the Random Deletion baseline, which shows immedi-ate and monotonic accuracy loss, Energy-Guided Deletion exhibits a convex trajectory. Removing the first 30–40 highest-energy patches actually improves accuracy, indicating that the model as-signs high energy to background clutter and spurious correlations. Discarding these distractor patches effectively denoises the rep-resentation before any object-relevant features are affected; (2) 
+
+Performance remains well above baseline even after removing up to 50 of the 64 patches. The gap of up to 15 percentage points between energy-guided and random deletion quantifies the strong semantic alignment of the learned energy potential; (3) Accuracy plateaus until a sharp “semantic cliff” occurs after patch 55, where performance collapses. This indicates that the essential discrimi-native features are concentrated in the final 10–15 lowest-energy tokens, while most of the feature map contributes little or nega-tively to classification. 
+
+## 6.2 Qualitative analysis 
+
+To understand the decision-making of the ERSM layer, we exam-ine visual examples from inference, categorizing test samples into 
+
+Improvements (where ERSM corrects baseline errors) and Failure Modes (where ERSM misclassifies), providing a detailed view of model behavior. Figure 5 shows cases where the frozen ResNet-50 fails but the ERSM-augmented model predicts correctly. These examples of-ten illustrate the “context trap” where the baseline relies on spuri-ous background correlations. ERSM mitigates this by effectively masking misleading context (rightmost column), forcing the clas-sifier to rely solely on intrinsic object features and thereby correct-ing predictions. 
+
+> Figure 5: ERSM Improvements. Left: The original image with baseline prediction (Wrong). Right: The ERSM prediction (Correct), showing the learned mask fading out the misleading background.
+
+Notably, the faded visualizations are not post-hoc saliency maps but direct projections of the model’s active decision bottleneck. Token-level keep probabilities m ∈ [0 , 1] H×W from the ERSM layer are upsampled via bilinear interpolation and applied multi-plicatively to the input image. Dark regions correspond to features physically zeroed out in latent space ( mi ≈ 0), confirming that the classifier made predictions without access to those visual cues. 
+
+## 6.3 Failure Modes of ERSM 
+
+We categorize ERSM’s failure modes into two types (Figure 6): 
+
+(a) Correct masking, misclassification. The energy mechanism isolates the object and suppresses background, but the classifier fails to distinguish fine-grained traits. This highlights a limitation of the frozen backbone’s expressivity rather than the masking pol-icy. 
+
+(b) Masking failure. The model retains substantial background because the energy potential cannot clearly separate object from environment. Such failures often occur in low-contrast images or when background textures resemble the object, confusing the clas-sifier. 6(a) Focused Failure (Correct Mask, Wrong Class) 
+
+(b) Distracted Failure (Poor Mask, Background Noise)  
+
+> Figure 6: Failure Mode. (a) The model correctly finds the bird but mis-classifies it (fine-grained error). (b) The model fails to mask the back-ground, leading to confusion.
+
+# 7 Conclusion 
+
+We introduced Energy-Regularized Spatial Masking (ERSM), a lightweight plug-and-play module that frames spatial feature se-lection as differentiable energy minimization. By combining unary and pairwise terms, ERSM produces input-adaptive, contiguous masks without segmentation supervision. Experiments show it preserves accuracy while improving interpretability and robust-ness: energy-guided patch removal outperforms random deletion and can even enhance performance by discarding distracting fea-tures. ERSM provides a simple, generalizable framework for energy-based feature selection in vision models. 
+
+# References 
+
+[1] Daniel Bolya, Cheng-Yang Fu, Xiaoliang Dai, Peizhao Zhang, Christoph Feichtenhofer, and Judy Hoffman. Token merging: Your vit but faster. In International Conference on Learning Representations (ICLR) , 2023. [2] Lukas Bossard, Matthieu Guillaumin, and Luc Van Gool. Food-101 – mining discriminative components with random forests. In Proceedings of the European Conference on Com-puter Vision (ECCV) , 2014. [3] Djamel Bouchaffra, Fayc ¸al Ykhlef, Bilal Faye, Mustapha Lebbah, and Hanene Azzag. Redesigning deep neural net-works: Bridging game theory and statistical physics. Neural Networks , 191:107807, 2025. [4] Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li, and Li Fei-Fei. Imagenet: A large-scale hierarchical image database. In Proceedings of the IEEE Conference on Com-puter Vision and Pattern Recognition (CVPR) , pages 248– 255, 2009. [5] Jon Donnelly, Alina Jade Barnett, and Chaofan Chen. De-formable protopnet: An interpretable image classifier using deformable prototypes. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , 2022. [6] Yonggan Fu, Qixuan Yu, Meng Li, Vikas Chandra, and Yingyan Lin. Double-win quant: Aggressively winning ro-bustness of quantized deep neural networks via random pre-cision training and inference. In Marina Meila and Tong Zhang, editors, Proceedings of the 38th International Con-ference on Machine Learning , volume 139 of Proceedings of Machine Learning Research , pages 3492–3504. PMLR, 18– 24 Jul 2021. [7] Golnaz Ghiasi, Tsung-Yi Lin, and Quoc V. Le. Dropblock: A regularization method for convolutional networks. In Ad-vances in Neural Information Processing Systems (NeurIPS) ,2018. [8] Will Grathwohl, Kuan-Chieh Wang, J¨ orn-Henrik Jacobsen, David Duvenaud, Mohammad Norouzi, and Kevin Swer-sky. Your classifier is secretly an energy based model and you should treat it like one. In International Conference on Learning Representations (ICLR) , 2020. [9] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. Deep residual learning for image recognition. In Proceed-ings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR) , 2016. [10] Yann LeCun, Sumit Chopra, Raia Hadsell, Marc’Aurelio Ranzato, and Fu Jie Huang. A tutorial on energy-based learn-ing. Predicting Structured Data , 2006. [11] Nicolas Lerm´ e, Franc ¸ois Malgouyres, and Lucas L´ etocart. Reducing graphs in graph cut segmentation. In 2010 IEEE International Conference on Image Processing , pages 3045– 3048, 2010. [12] Youwei Liang, Chongjian Ge, Zhan Tong, Yibing Song, Jue Wang, and Pengtao Xie. Evit: Expediting vision transform-ers via token reorganization. In International Conference on Learning Representations (ICLR) , 2022. [13] Zhuang Liu, Hanzi Mao, Chao-Yuan Wu, Christoph Feicht-enhofer, Trevor Darrell, and Saining Xie. A convnet for the 2020s. In Proceedings of the IEEE/CVF Conference on Com-puter Vision and Pattern Recognition (CVPR) , 2022. [14] Christos Louizos, Max Welling, and Diederik P. Kingma. Learning sparse neural networks through l0 regularization. In International Conference on Learning Representations (ICLR) , 2018. [15] Omkar M. Parkhi, Andrea Vedaldi, Andrew Zisserman, and C. V. Jawahar. Cats and dogs. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR) , 2012. [16] Yongming Rao, Wenliang Zhao, Benlin Liu, Jiwen Lu, Jie Zhou, and Cho-Jui Hsieh. Dynamicvit: Efficient vision trans-formers with dynamic token sparsification. In Advances in Neural Information Processing Systems (NeurIPS) , 2021. [17] Ramprasaath R Selvaraju, Michael Cogswell, Abhishek Das, Ramakrishna Vedantam, Devi Parikh, and Dhruv Batra. 7Grad-cam: Visual explanations from deep networks via gradient-based localization. In Proceedings of the IEEE In-ternational Conference on Computer Vision (ICCV) , 2017. [18] Mingxing Tan and Quoc V. Le. Efficientnetv2: Smaller mod-els and faster training. In Proceedings of the International Conference on Machine Learning (ICML) , 2021. [19] Jonathan Tompson, Ross Goroshin, Arjun Jain, Yann LeCun, and Christoph Bregler. Efficient object localization using convolutional networks. In Proceedings of the IEEE Confer-ence on Computer Vision and Pattern Recognition (CVPR) ,2015. [20] Catherine Wah, Steve Branson, Peter Welinder, Pietro Per-ona, and Serge Belongie. The caltech-ucsd birds-200-2011 dataset. Technical report, California Institute of Technology, 2011. 8

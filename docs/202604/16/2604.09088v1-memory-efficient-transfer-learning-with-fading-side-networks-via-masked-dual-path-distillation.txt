@@ -1,0 +1,646 @@
+Title: Memory-Efficient Transfer Learning with Fading Side Networks via Masked Dual Path Distillation
+
+URL Source: https://arxiv.org/pdf/2604.09088v1
+
+Published Time: Mon, 13 Apr 2026 00:38:44 GMT
+
+Number of Pages: 18
+
+Markdown Content:
+# Memory-Efficient Transfer Learning with Fading Side Networks via Masked Dual Path Distillation 
+
+# Yutong Zhang 1,2 , Jiaxin Chen 1,2* , Honglin Chen 1,2 , Kaiqi Zheng 1,2 , Shengcai Liao 3,
+
+# Hanwen Zhong 1,2 , Weixin Li 1,2 , Yunhong Wang 1,2 1State Key Laboratory of Virtual Reality Technology and Systems, Beihang University, China 
+
+> 2
+
+# School of Computer Science and Engineering, Beihang University, China 
+
+> 3
+
+# College of Information Technology, United Arab Emirates University, United Arab Emirates     
+
+> {ytzhang mq, jiaxinchen, weixinli, yhwang }@buaa.edu.cn, scliao@ieee.org
+
+# Abstract 
+
+Memory-efficient transfer learning (METL) approaches have recently achieved promising performance in adapting pre-trained models to downstream tasks. They avoid apply-ing gradient backpropagation in large backbones, thus sig-nificantly reducing the number of trainable parameters and high memory consumption during fine-tuning. However, since they typically employ a lightweight and learnable side network, these methods inevitably introduce additional memory and time overhead during inference, which contra-dicts the ultimate goal of efficient transfer learning. To ad-dress the above issue, we propose a novel approach dubbed Masked Dual Path Distillation (MDPD) to accelerate in-ference while retaining parameter and memory efficiency in fine-tuning with fading side networks. Specifically, MDPD develops a framework that enhances the performance by mutually distilling the frozen backbones and learnable side networks in fine-tuning, and discard the side network dur-ing inference without sacrificing accuracy. Moreover, we design a novel feature-based knowledge distillation method for the encoder structure with multiple layers. Extensive experiments on distinct backbones across vision/language-only and vision-and-language tasks demonstrate that our method not only accelerates inference by at least 25.2% while keeping parameter and memory consumption com-parable, but also remarkably promotes the accuracy com-pared to SOTA approaches. The source code is available at 
+
+> https://github.com/Zhang-VKk/MDPD
+
+.
+
+# 1. Introduction 
+
+Recently, large-scale pre-trained foundation models have demonstrated remarkable representation and generalization capabilities across diverse domains, including computer vi-sion [24, 35], natural language processing [75, 87, 119], 
+
+> *Corresponding Author.
+
+and multi-modal tasks [19, 54, 57, 83, 110]. To harness strengths of these well-established models and enhance their performance towards downstream tasks, one of the most commonly used strategies is fully fine-tuning param-eters of these models based on downstream datasets. How-ever, as the number of parameters continues to vastly grow, this straightforward method becomes prohibitively compu-tationally expensive and is prone to over-fitting, especially considering that the training data for downstream tasks is typically limited in scale. To deal with the above issues, parameter-efficient trans-fer learning (PETL) approaches [40, 41, 116] have been proposed by tuning a small number of parameters or insert-ing additional lightweight modules. Existing PETL meth-ods can be roughly divided into the following three cate-gories: 1) Partially Tuning [31, 84] updates a small subset of task-specific parameters while freezing the majority of the original backbone. 2) Prompt Tuning [43, 53, 55, 117] in-troduces a fixed number of learnable prompt vectors, which are subsequently optimized while all original parameters remain frozen. 3) Adapter Tuning [10, 13, 59, 101–103] incorporates additional bottleneck-shaped modules into the backbone, updating them while the backbone stays frozen. These methods significantly reduce the number of trainable parameters while achieving performance comparable to full fine-tuning. However, since the gradients are computed throughout almost the entire backbone, they still incur sub-stantial memory consumption during training, significantly restricting their practical applicability. Memory-efficient transfer learning (METL) [61, 63, 68, 85, 108] has recently emerged as a promising approach to achieve both parameters and memory efficiency dur-ing training. Typically, METL involves constructing a lightweight and learnable parallel side network alongside the backbone network [20, 21], with static intermediate fea-ture pairs integrated between the two at each layer. This 
+
+> arXiv:2604.09088v1 [cs.CV] 10 Apr 2026
+
+fine-tuning paradigm reduces memory overhead by updat-ing only the small-scale side network while freezing the 
+
+large-scale backbone, and computing gradients exclusively for the side network during back-propagation. However, the additional forward propagation introduced by the side net-work result in increased inference time and memory costs, which conflicts with the ultimate goal of achieving both ef-ficient fine-tuning and inference. To address the aforementioned limitations, we propose a novel approach dubbed Masked Dual Path Distillation (MDPD) for memory-efficient transfer learning based on the side network framework. Without compromising in-ference speed, MDPD distills intermediate features from the backbone and the final output of the side network sep-arately, while efficiently guiding and updating the back-bone through the lightweight side network, thereby reduc-ing training memory overhead. Specifically, during train-ing, feature- and logits-based knowledge distillation meth-ods are applied to the intermediate features of the backbone and the final logits output of the side network. In a dual-path framework, alternating optimization of the backbone and the side network minimizes their discrepancy in feature distributions. During inference, only the optimized back-bone is utilized, eliminating additional inference time while maintaining the performance, thus achieving efficiency in both training memory and inference speed. Furthermore, previous feature distillation strategies often require the stu-dent model to directly mimic the intermediate features of the teacher model. Nevertheless, the feature distributions of these two models typically differ, particularly in the atten-tive areas of the input, making direct imitation challenging. Additionally, existing methods usually only distill a subset of the layers or even just the final layer of the teacher or stu-dent network. For backbones with multiple encoding layers such as ViT and BERT, where deep and shallow layers fo-cus on different tokens, it is equally important to perform distillation in the deep and shallow layers. Therefore, We also propose a novel feature-based distillation strategy by applying direct imitation in the shallow layer of the back-bone, while employing mask generation in the deep layers, ensuring more effective and balanced distillation. The main contributions of this work lie in three-fold: (1) We propose Masked Dual Path Distillation (MDPD), a novel approach designed to accelerate current METL frameworks, which introduces the side networks to guide backbone optimization with mutual distillation during train-ing, while discarding them during inference to enhance ef-ficiency without compromising accuracy. (2) We develop a Hierarchical Feature-based Distillation method by employing tailored distillation strategies for dis-tinct layers to mitigate the discrepancies between the back-bone and side networks. (3) We extensively evaluate our method across multi-ple visual-language and vision/language-only tasks based on distinct backbones, demonstrating that our approach re-markably reduces the inference time by at least 22.5%, while maintaining accuracy as well as memory and param-eter efficiency. 
+
+# 2. Related Work 
+
+2.1. Parameter-Efficient Transfer Learning 
+
+Pre-trained foundation models have achieved remarkable success across various domains [18, 23, 27, 62, 76, 96]. However, their application to downstream tasks encoun-ters challenges in computational efficiency and adaptabil-ity, sparking significant interest in parameter-efficient trans-fer learning (PETL) techniques. Existing PETL meth-ods roughly fall into the following categories. 1) Selec-tive tuning methods update only a subset of parameters, such as bias [4, 106], weights [86, 114] and normaliza-tion layers [49], while freezing the rest. 2) Additive meth-ods introduce additional parameters and focus on train-ing them instead of backbones, including Adapter-based ones [14, 33, 34, 36, 40, 118] and Prompt tuning based ones [32, 52, 55, 74, 89]. (3) Re-parameterized methods [37, 41, 82, 94, 95, 115] employ extra trainable parameters with low-rank structures to reduce computational cost. 
+
+2.2. Memory-Efficient Transfer Learning 
+
+Different from PETL that aims to reduce trainable param-eters, memory-efficient transfer learning (METL) focuses on decreasing memory consumption during training. Typ-ically, [20, 21, 44, 85, 108, 113] accomplish memory-efficient tuning by introducing learnable side network par-allel to the backbone [20, 21, 44, 85, 108], which confine back-propagation to side network. It avoids storing gra-dients of large-scale backbones, thereby reducing memory overhead. Alternatively, [58], leverages reversible models [28, 109] by enabling activations to be recomputed during back-propagation rather than being stored during the for-ward pass. Some works [65, 73] attempt to avoid back-propagation. Besides, [12, 28] reconstruct discarded activa-tions from backward layers or perform gradient checkpoint operation without storing all intermediate activations, and [28]. Despite memory efficient, these methods significantly limit the model capacity and lag far behind the performance of full fine-tuning. 
+
+2.3. Knowledge Distillation 
+
+Knowledge distillation (KD) [39, 71] trains a smaller stu-dent model to mimic the larger teacher model, which can be categorized into logits-based, feature-based and relation-based methods. 1) Logits-based methods [67, 93] focus on mimicing the final output of the teacher model. 2) 
+
+Feature-based methods [1, 7, 79] leverage the intermediate representations of teacher networks to guide the learning process of student networks. 3) Relation-based methods [8, 11, 100] explore relationships between different layers of teacher models as knowledge, which is utilized to facili-tate learning of student models. 
+
+# 3. Methodology 
+
+3.1. Framework Overview 
+
+Generally, previous METL methods significantly reduce training memory overhead by constructing a lightweight, trainable side network to avoid gradients directly passing through a large backbone. Similar to the structure of back-bone, side network is usually composed of several interme-diate layers and initialized by pre-trained weights. How-ever, the corresponding layers of two networks cannot be fully forward propagated parallelly, as the input of the side network branch is guided by the output of the intermedi-ate layer or final layer of backbone. Therefore, during the forward pass of the model, the side branch inevitably in-troduces additional computational overhead in both train-ing and inference, ultimately reducing the overall efficiency. To address this issue, we propose a novel method dubbed Masked Dual Path Distillation (MDPD) as shown in Fig. 1. Specifically, given a single modality input X , a pre-trained backbone Φ1: L containing L layers is used to ex-tract L token sequences b1, · · · , bL ∈ RN ×DB , each con-sisting of N tokens with a hidden dimensionality of DB .After obtaining final output bL of backbone, it is fused with each intermediate sequences bl, l ∈ 1, 2, · · · , L − 1
+
+and regarded as corresponding layer input of side network, which also contains L layers Θ1: L, to extract side token se-quences s1, · · · , sL ∈ RN ×DS , usually consisting of NDS -dimensional ( DS < D B ) tokens. Subsequently, in or-der to utilize powerful model representation ability of pre-trained network, backbone and side network is regarded as teacher Tf ea and student Sf ea model respectively, and in-termediate features of corresponding layers bl and sl are distilled to enhance feature extraction ability of side branch. In particular, when performing feature-based distillation on an encoder structure which containing multiple layers, we find that there are significant differences in attention pattern of teacher-student network at different layers. For shallow layers of the network, attention map of students and teach-ers is diagonal, showing a self-attention pattern; while for deep layers, attention patterns gradually diverge, and begin to focus on different sparse key tokens respectively. This difference makes it difficult for students to directly imi-tate distribution of teacher’s final features. Therefore, in response to above findings, we fine-grain knowledge distil-lation strategies for different layers. Specifically, for shal-low layers with smaller differences, students are forced to directly mimic features of corresponding layers of teacher and learn how to focus on the tokens themselves; for deep layers with larger differences and stronger semantic infor-mation, students are forced to generate features of teacher rather than directly imitate them. In addition, since only final layer features of side network are used as the final output of the model during the training stage, and back-bone is not considered ( i.e. , the backbone is not followed by a task-specific head), we manually design a new output layer, while regard backbone and side network as a student 
+
+Slog and teacher Tlog model respectively for logits-based distillation, which is performed on final outputs of two net-works bL and sL and transfer knowledge of side network to backbone to optimize latter’s model output performance. At training stage, most of parameters in backbone remain frozen to prevent a large amount of gradients from flowing through, and only scaling and shifting coefficients of Layer Normalization in each block and parameters of final output layer are updated, while all parameters in side network are learnable as well. In inference stage, backbone equipped with a task-specific head is directly used to perform in-ference operations, while side branch is discarded directly, thereby achieving parameter- and memory-efficient training and time-efficient inference, and gain better performance. 
+
+3.2. Dual Path Knowledge Distillation 
+
+In order to enable backbone to have the ability of indepen-dent inferring, we propose a Dual Path Knowledge Distilla-tion (DPKD) strategy, which aims to distill the downstream task-specific knowledge learned by the side network into backbone, so as to be efficiently guided and updated. In or-der to make full use of prior knowledge of pre-trained back-bone and enable side network to obtain a stronger model representation capacity, based on knowledge distillation, we first adopt feature-based distillation to calculate distillation loss for corresponding intermediate layer features of back-bone and side network. Specifically, backbone B and side network S are regarded as teacher Tf ea and student Sf ea ,respectively. After obtaining l-th layer features of backbone 
+
+bl ∈ RN ×DB and side branch sl ∈ RN ×DS (DS < D B ),hidden dimensions need to be aligned firstly in order to per-form distillation operation. However, if a 1 × 1 convolu-tional layer is used to implement alignment operation, ap-proximately (1 + DB ) × DS parameters will be introduced, which violates the goal of parameter-efficiency. Therefore, we consider using two low-rank matrices Mdown ∈ RDS ×d
+
+and Mup ∈ Rd×DB in the form of a bottleneck, first reduc-ing DS to a lower dimension d(d ≪ min( DB , D S )) , and then increasing it to DB :
+
+ϕ(sl) = slMdown Mup ⇒ bl, (1) where l ∈ 1, 2, · · · , 12 represents the layer index, ϕ(·)
+
+is the bottleneck module used to reshape the dimension of sl to the same as bl. This will only introduce about Input        
+
+> Network Layer 1
+> Layer Norm.
+> Network Layer L
+> …
+> … …
+> Network Layer 1
+> …
+> …
+> Proj.
+> Output
+> Proj.
+> Training Stage
+> Inference Stage
+> Proj.
+> (Image)
+> (Text)
+> (Image  © Text )
+> Tunable Frozen
+> Tunable  Frozen
+> Tunable  Frozen
+> Tunable  Frozen
+> Layer Norm. Tunable  Frozen
+> Input
+> Tunable Frozen
+> Tunable  Frozen  Tunable  Frozen
+> Tunable Frozen
+> Output
+> ……
+> Proj. Proj.
+> Imitating
+> Generating
+> Feature KD
+> Logits KD
+> Input
+> (Ⅱ)(Ⅰ)
+> Features
+> Teacher
+> Model
+> Forward
+> Student
+> Model
+> Backward
+> Knowledge
+> Distillation
+> Masks
+> Tunable Frozen
+
+Tunable Frozen   
+
+> Frozen /
+> Tunable
+> /
+> Tunable Frozen
+> Network Layer L
+> Tunable Frozen
+
+Figure 1. Illustration on our method. Part (I) shows the pipeline of Masked Dual Path Distillation. During training, the backbone and side networks mutually act as teacher and student for effective distillation, where side networks are abandoned after training for inference efficiency. Part (II) displays Hierarchical Feature-based Distillation that adopt distinct strategies across different layers. It particularly selects a set of masked features, making them learnable with guidance of backbones in deep layers. 
+
+(1 + DS + DB ) × d + DB parameters, but still be able to obtain comparable or even better experimental results than a single convolutional layer, while ensuring parameter- and memory-efficiency. Then, we calculate the distillation loss 
+
+Lfea for the intermediate features of each layer: 
+
+Ll 
+
+> fea
+
+=
+
+> N
+
+X
+
+> i=1
+> DB
+
+X
+
+> j=1
+
+(bli,j − ϕ(sl)i,j )2, (2) where N ,DB represent the number of tokens and hidden dimensions of teacher’s feature, respectively. After feature-based distillation, side branch obtains stronger representa-tion capability under the guidance of pre-trained backbone, thus can mine richer and more important features. In addition, as the output of side network is final out-put of the model without the contribution of backbone, so as to ensure that only the backbone is used for inferring, a strong task-related mapping layer is required to obtain fi-nal logits. We first use global average pooling (GAP) on final feature maps of backbone and side branch bL and sL,then adopt linear mapping layers WB and WS to get out-put logits of two networks YB ∈ RD′ 
+
+> B
+
+and YS ∈ RD′ 
+
+> S
+
+,respectively. Successively, side network and backbone are regarded as teacher Tlog and student Slog respectively, and we adopt logits-based distillation strategy to calculate loss 
+
+Llog for YB and YS :
+
+Llog =
+
+> D′
+> S
+
+X
+
+> i=1
+
+(YSi − ϕ(YB )i)2, (3) After logits-based distillation, the output layer of the back-bone can independently obtain stronger mapping ability in the inference stage under the guidance of the side branch, thereby showing better model performance. In the above process, the backbone B and the side net-work S take turns as teacher or student models. Through the Dual Path Knowledge Distillation method, they teach each other the knowledge of their own strong parts and learn from each other the knowledge of their own weak parts. The two guide each other and achieve alternating optimiza-tion. Therefore, in the inference stage, only the backbone is used for inferring and the side network is discarded. While avoiding introducing additional inference time, the model can still maintain a better performance, thereby achieving a balance between performance, parameters, memory, and time. 
+
+3.3. Hierarchical Feature-based Distillation 
+
+As teacher and student networks typically exhibit similar at-tention patterns in shallow layers, we guide student to align with teacher’s distribution. Specifically, we adopt the fol-lowing loss in shallow layers: 
+
+Ll 
+
+> sha
+
+=
+
+> N
+
+X
+
+> i=1
+> DB
+
+X
+
+> j=1
+
+(bli,j − ϕ(sl)i,j )2. (4) In deep layers, features of teacher and student networks often have significantly varying attention patterns, making direct distillation infeasible. Therefore, we try to force the student to fit the distribution of the teacher’s features through generation. Generally, deep features contain rich semantic information. At the same time, the tokens of such features also contain information about adjacent tokens. Therefore, we use the student’s masked features to gener-ate the teacher’s features, which only use partial tokens to represent the complete original attention map. This can not only retain some of the original student feature information, but also obtain a better feature representation through gen-eration. Similarly, we first use a bottleneck module to align the hidden dimensions of the student’s and teacher’s fea-tures. Then, we set a set of shared random mask values 
+
+m ∈ RN ×1 to specify the coordinates of the student’s orig-inal feature tokens replaced by the learnable mask tokens: 
+
+mi =
+
+(
+
+1, if ri < λ, 
+
+0, otherwise , (5) where ri ∈ [0 , 1] is a random number deciding whether the 
+
+i-th token is masked. λ is the ratio controlling the propor-tion of masking, which is unitarily applied to all deep layers of side network. Based on mi, we update features of stu-dent network as below: 
+
+¯si =
+
+(
+
+fmask , if mi,
+
+fori , otherwise , (6) where fori is the the original features and fmask is the learnable masked feature. Then, we utilize ¯s to generate the teacher’s features with a generation block G(·), which is a projector with two 3 ×3 convolutional layers and one ReLU activation layer. Finally, the loss of feature-based distillation in deep layers Ldeep is expressed as: 
+
+Ll 
+
+> deep
+
+=
+
+> N
+
+X
+
+> i=1
+> DB
+
+X
+
+> j=1
+
+mi · (bli,j − G ( ¯sl)i,j )2. (7) 
+
+# 4. Experimental Results and Analysis 
+
+4.1. Experimental Setup 
+
+Dataset. We primarily evaluate performance of our method on various vision-language (VL) tasks , includ-ing: (1) Image-Text Retrieval ( ITR ) on Flickr30K [104] and MSCOCO [60]; (2) Video-Text Retrieval ( VTR ) on MSVD [6] and MSR-VTT [99]; (3) Question Answering (VQA&GQA ) on VQAv2 [29] and GQA [42]; and (4) Vi-sual Grounding ( VG ) on RefCOCO, RefCOCO+ [105] and RefCOCOg [66]. Additionally, we evaluate our approach on vision-only and language-only tasks on VTAB-1K [107] and GLUE benchmark [90], respectively. 
+
+Evaluation Metrics. We report Recall@1 and Rsum on ITR and VTR tasks, overall Accuracy on QA tasks, and mean Average Precision on VG tasks. For GLUE bench-mark, we present Accuracy Metric, F1 Score, Matthew’s Correlation, Pearson-Spearman Correlation as the evalua-tion metrics for various datasets respectively. Besides, we state Top-1 Accuracy on 19 datasets in VTAB-1K. More details are in Supplementary Material . Besides, we report GPU memory usage (G) during training, number of train-able parameters (M), and inference latency (ms per run), FPS (frames per second) or QPS (queries per second) as ef-ficiency metrics. 
+
+Implementation Details. To ensure fair comparisons, we follow [20, 21] by aligning most settings with the origi-nal pre-trained models, including the optimizer, warm-up scheduler, batch size, training epochs, etc . More details are provided in Supplementary Material .
+
+4.2. Main Results 
+
+Following [21], we compare MDPD against state-of-the-art PETL and METL methods, while Fully Fine-Tuning (Fully-FT) and Partially tuning baselines without comparison. 
+
+4.2.1. Our Method vs. PETL Approaches 
+
+We compare to the following approaches without adopting memory reduction strategies: 1) Selective Tuning methods including BitFit [106], and FacT [45]; 2) Additive Tuning methods including Prompt [55], Adapter [40], AdaptFormer [10], NOAH [112], Convpass [46], Res-Tuning [44]; 3) Re-parameterized Tuning methods including LoRA [41], SSF [56], AdaLoRA [111]. On VTAB-1K benchmark, we addi-tionally compare with VPT [43]. 
+
+Results on VL Tasks. We employ two structures from 
+
+VSE ∞ [9] with BERT-base+BUTD regions and ResNeXt-101+BiGRU for ITR, and one structure from CLIP4Clip 
+
+[64] with ViT-base+Text Transformer for VTR. As shown in Table 1, our method promotes accuracy of compared PETL approaches in most cases. Despite adopting slightly more learnable parameters, our method substantially re-duces training memory overhead, by least 59.5%, 90.4% and 64.3% with various backbones respectively, through op-timizing lightweight side networks instead of backbones. It also yields the highest retrieval rate and the fastest inference time by abandoning side networks after training. 
+
+Results on Language-only Tasks. Table 2 shows the performance on GLUE with T5-base [77] by default. Our method decreases training memory by at least 68.2% and reaches the minimal inference latency compared to PEFT approaches, while maintaining competitive accuracy with comparable trainable parameters. When incorporating T5-large, our method promotes accuracy of PETL methods by a large margin with lower memory usage. 
+
+Results on Vision-only Tasks. We evaluate the perfor-mance of our method for vision-only tasks on VTAB-1K benchmark by adopting a ViT-B pre-trained on ImageNet-21K. As summarized in Table 3, our method achieves a new SOTA performance on average across 19 datasets. Bene-fiting from side network with dual path knowledge distil-lation, our method is clearly more memory efficient than compared PETL approaches, reducing the training memory usage, while maintaining the least inference time cost. Table 1. Comparison results with PETL (Middle) and METL (Bottom) approaches across distinct network architectures. Best results are in bold , and second best results are underlined. Method Params. Mem. QPS BERT+BUTD Params. Mem. QPS ResNeXt+BiGRU Params. Mem. QPS ViT+Text Transf. (M) ↓ (G) ↓ ↑ I-T ↑ T-I ↑ Rsum ↑ (M) ↓ (G) ↓ ↑ I-T ↑ T-I ↑ Rsum ↑ (M) ↓ (G) ↓ ↑ T-V ↑ V-T ↑ Rsum ↑
+
+Fully-FT 109.5 9.9 24.14 79.7 62.1 513.5 90.9 174.4 30.80 85.6 70.2 539.0 151.3 48.8 44.07 42.8 42.1 389.2 Partially 0.8 1.0 24.19 74.8 57.3 485.5 2.1 14.9 31.26 75.2 58.2 505.8 0.7 7.6 44.48 36.4 37.0 353.9 Adapter [40] 2.6 8.8 22.44 79.1 60.5 511.3 3.5 176.8 28.65 66.8 62.9 493.3 5.2 41.2 39.17 38.3 39.6 364.3 LoRA [41] 1.1 8.8 23.37 78.8 59.6 508.2 – – – – – – 1.3 40.8 41.55 38.8 39.9 366.8 BitFit [106] 0.9 8.6 23.70 77.3 57.8 503.9 2.2 168.0 30.53 83.4 67.4 530.6 0.1 42.0 43.12 38.1 40.6 370.8 Prompt [55] 10.7 9.4 17.64 78.7 59.0 508.5 – – – – – – 0.2 42.8 33.74 36.8 37.5 358.8 SSF [56] 0.2 8.4 22.23 80.0 60.4 512.8 0.1 163.2 27.63 83.7 66.8 528.5 0.5 39.2 37.91 40.2 41.8 376.6 
+
+FacT [45] 0.6 8.7 – 79.2 59.3 508.8 – – – – – – 0.8 40.8 – 38.7 39.8 367.2 AdaLoRA [111] 1.0 8.8 23.03 79.8 60.1 510.3 – – – – – – 1.2 42.0 40.06 39.2 39.6 368.5 LST [85] 7.5 4.6 10.73 77.9 57.3 501.9 2.3 15.0 13.86 82.3 66.1 526.7 11.2 32.0 19.85 37.0 37.8 356.7 UniPT [59] 5.9 3.1 12.75 80.2 59.8 510.5 6.4 15.0 17.83 84.0 67.7 532.1 9.6 13.6 27.03 38.9 39.3 361.3 
+
+Ours 5.9 3.4 24.05 81.9 61.1 516.2 6.5 15.7 30.62 85.3 69.8 539.1 9.7 14.0 43.52 40.2 40.7 365.8 Table 2. Comparison results with PETL (Top) and METL (Middle, Bottom) methods on GLUE. Ours ♡ and Ours ♠ indicate our method implemented based on UniPT and SHERL, respectively. Best results are in bold , and second best results are underlined. 
+
+Method Params. Memory (G) ↓ Time CoLA SST-2 MRPC QQP MNLI QNLI RTE STS-B Mean (%) ↓ Train Test (ms) ↓
+
+Fully-FT 100 17.6 0.86 232.5 62.8 93.9 91.9 89.9 86.2 92.5 74.1 90.3 85.2 Adapter [40] 1.63 13.0 0.87 247.3 64.4 94.2 88.9 88.9 86.4 93.1 75.1 91.1 85.3 LoRA [41] 1.71 12.6 0.86 238.1 63.3 94.3 90.1 89.0 86.3 93.2 75.5 90.9 85.3 BitFit [106] 0.13 10.7 0.86 236.9 61.8 94.3 91.0 88.7 85.6 93.1 67.6 90.8 84.1 Prompt [55] 0.03 22.2 0.87 291.4 0 90.3 74.6 88.5 82.5 92.5 59.5 90.1 72.2 LST [85] 1.74 5.5 0.88 462.7 58.1 94.1 90.4 88.8 85.6 93.3 71.9 90.7 84.1 UniPT [59] 1.36 2.9 0.86 423.6 62.2 94.2 90.8 88.9 85.5 93.3 69.8 89.7 84.3 SHERL [20] 0.85 2.9 0.87 350.4 61.1 93.7 89.4 88.8 85.3 93.3 71.9 90.9 84.3 
+
+Ours ♡ 1.48 3.3 0.86 235.2 62.9 94.4 91.2 89.0 85.2 93.4 70.5 90.2 84.6 
+
+Ours ♠ 1.02 3.4 0.87 234.8 62.0 94.1 89.8 89.2 85.7 93.5 72.6 91.2 84.8 
+
+LST (T5-large) [85] 1.23 12.2 2.88 832.9 65.3 95.7 91.6 89.7 88.6 94.1 79.9 92.4 87.1 UniPT (T5-large) [59] 0.92 9.1 2.82 795.1 65.7 95.8 92.0 89.7 88.2 94.2 79.6 92.0 87.2 SHERL (T5-large) [20] 0.64 7.1 2.80 667.4 65.6 95.8 92.9 89.6 88.6 94.2 80.8 92.1 87.5 
+
+Ours ♡(T5-large) 1.02 10.2 2.82 418.7 66.3 96.3 92.8 90.0 88.4 94.5 79.9 92.3 87.6 
+
+Ours ♠(T5-large) 0.81 8.0 2.80 415.3 66.2 96.5 93.5 90.2 88.9 94.7 81.5 92.4 88.0 
+
+4.2.2. Our Method vs. METL Approaches 
+
+We further compare with SOTA METL approaches, includ-ing LST [85], UniPT [21], SHERL [20], HST [61] and LoSA [68]. It is worth noting that not all compared meth-ods are fully evaluated on the selected benchmarks. Partic-ularly, UniPT and SHERL did not report results on VTAB-1K. We therefore reproduce their results by using the re-leased source code, while adopting the reported results for the others. As shown in Tables 1-3, our method consistently promotes accuracy of existing METL methods through mu-tually distilling backbones and side networks across multi-ple layers with fine-grained distillation strategies. For in-stance, in Table 1, we suppresses LST/UniPT by average gains of 3.4%/1.4% in R@1 and 11.9%/5.7% in Rsum on cross-model retrieval. Additionally, we expand evaluations for VL tasks on more downstream datasets and network architectures in-cluding VSE ∞ [9], CLIP4Clip [64], CLIP-ViL [80] and MDETR [48], of which details are depicted in Supplemen-tary Material . As shown in Table 4, MDPD clearly pro-motes accuracy of compared METL method across vari-ous VL tasks by maintaining almost same training mem-ory overhead. Particularly, based on UniPT/SHERL, our method achieves an average improvement of 1.0/0.7% in R@1 and 3.6/2.4% in Rsum for cross-modal retrieval, about 0.86/0.96% improvements on QA task, and total benefits of 3.92/3.38% for VG task, respectively. Moreover, benefit-ing from the design of our side branch that is utilized only for training and is abandoned during inference, our method remarkably accelerates the inference speed. Notably, our Table 3. Comparison results with PETL (Top) and METL (Bottom) methods on VTAB-1K. Best results are in bold , and second best results are underlined. 
+
+Natural Specialized Structured Method 
+
+> Params. (M)  ↓
+> Memory (G)  ↓
+> FPS  ↑
+> Cifar100
+> Caltech101
+> DTD
+> Flower102
+> Pets
+> SVHN
+> Sun397
+> Camelyon
+> EuroSAT
+> Resisc45
+> Retinopathy
+> Clevr-Count
+> Clevr-Dist
+> DMLab
+> KITTI-Dist
+> dSpr-Loc
+> dSpr-Ori
+> sNORB-Azim
+> sNORB-Ele
+> Mean
+
+Fully-FT 85.8 6.1 89.21 68.9 87.7 64.3 97.2 86.9 87.4 38.8 79.7 95.7 84.2 73.9 56.3 58.6 41.7 65.5 57.5 46.7 25.7 29.1 68.9 BitFiT 0.10 3.8 87.95 72.8 87.0 59.2 97.5 85.3 59.9 51.4 78.7 91.6 72.9 69.8 61.5 55.6 32.4 55.9 66.6 40.0 15.7 25.1 65.2 VPT 0.53 5.6 72.10 78.8 90.8 65.8 98.0 88.3 78.1 49.6 81.8 96.1 83.4 68.4 68.5 60.0 46.5 72.8 73.6 47.9 32.9 37.8 72.0 RS-Bypass. 0.42 2.4 47.53 64.5 88.8 73.2 99.4 90.6 63.5 57.2 85.5 95.2 82.4 75.2 70.4 61.0 40.2 66.8 79.2 52.6 26.0 49.3 72.3 Adapter 0.16 3.9 82.78 69.2 90.1 68.0 98.8 89.9 82.8 54.3 84.0 94.9 81.9 75.5 80.9 65.3 48.6 78.3 74.8 48.5 29.9 41.6 73.9 LoRA 0.29 3.9 85.03 67.1 91.4 69.4 98.8 90.4 85.3 54.0 84.9 95.3 84.4 73.6 82.9 69.2 49.8 78.5 75.7 47.1 31.0 44.0 74.5 AdaptFormer 0.16 4.1 80.84 70.8 91.2 70.5 99.1 90.9 86.6 54.8 83.0 95.8 84.4 76.3 81.9 64.3 49.3 80.3 76.3 45.7 31.7 41.1 74.7 NOAH 0.36 5.2 56.78 69.6 92.7 70.2 99.1 90.4 86.1 53.7 84.4 95.4 83.9 75.8 82.8 68.9 49.9 81.7 81.8 48.3 32.8 44.2 75.5 FacT 0.06 4.8 – 70.6 90.6 70.8 99.1 90.7 88.6 54.1 84.8 96.2 84.5 75.7 82.6 68.2 49.8 80.7 80.8 47.4 33.2 43.0 75.6 Res-Tuning 0.55 4.9 57.70 75.2 92.7 71.9 99.3 91.9 86.7 58.5 86.7 95.6 85.0 74.6 80.2 63.6 50.6 80.2 85.4 55.7 31.9 42.0 76.3 Convpass 0.33 2.6 67.02 72.3 91.2 72.2 99.2 90.9 91.3 54.9 84.2 96.1 85.3 75.6 82.3 67.9 51.3 80.0 85.9 53.1 36.4 44.4 76.6 HST 0.78 2.8 44.17 76.7 94.1 74.8 99.6 91.1 91.2 52.3 87.1 96.3 88.6 76.5 85.4 63.7 52.9 81.7 87.2 56.8 35.8 52.1 78.1 LoSA 0.05 2.1 68.92 82.7 93.0 76.2 99.7 89.8 80.0 56.1 86.3 96.7 86.7 76.3 78.8 61.4 48.0 82.6 91.7 58.4 46.9 47.6 77.8 UniPT 5.19 2.1 45.72 77.4 92.9 74.8 99.6 91.6 89.7 54.9 87.0 96.5 86.9 73.8 83.8 63.7 50.9 81.4 86.5 56.4 35.9 46.8 77.4 SHERL 5.08 2.0 48.70 78.8 93.2 75.4 99.5 91.6 90.4 55.6 86.8 96.7 87.2 75.3 84.2 63.5 51.8 81.7 86.9 57.5 36.9 48.2 77.9 
+
+Ours 5.50 2.1 88.89 79.8 93.6 75.7 99.5 91.8 91.5 56.1 86.9 96.8 87.5 75.9 84.6 64.6 52.4 81.3 87.2 57.1 37.7 47.9 78.3 
+
+Table 4. Comparison results with METL approaches across various architectures and distinct VL tasks. Ours ♡ and Ours ♠ denote our implementations based on UniPT and SHERL, respectively. Best results are in bold , and second best results are underlined.                                                                                                                                
+
+> Method Params.Mem. QPS Flickr30K MSCOCO1K MSCOCO5K ParamsMem. QPS MSR-VTT MSVD (M) ↓(G) ↓↑I-T ↑T-I ↑Rsum ↑I-T ↑T-I ↑Rsum ↑I-T ↑T-I ↑Rsum ↑(M) ↓(G) ↓↑T-V ↑V-T ↑Rsum ↑T-V ↑V-T ↑Rsum ↑
+> Fully-FT 201.2 176.8 -85.6 73.3 546.6 83.1 71.7 542.7 64.2 51.2 468.9 151.3 48.8 -42.8 42.1 389.2 45.2 57.1 425.5 LST [85] 9.7 24.4 -82.1 66.5 529.5 78.2 64.8 525.8 57.8 43.1 434.5 11.2 32.0 -37.0 37.8 356.7 35.5 55.4 407.2 UniPT [59] 12.4 24.4 8.61 84.8 69.1 537.4 80.6 67.5 532.9 61.1 45.9 445.3 9.6 13.6 27.03 38.9 39.3 361.3 40.9 59.7 432.1 SHERL [20] 11.3 24.4 10.24 86.1 71.1 542.3 81.8 69.2 537.5 62.5 47.3 450.8 9.6 13.6 32.53 39.2 40.6 363.7 40.9 60.2 429.7
+> Ours ♡12.4 25.1 14.71 85.9 70.7 541.2 81.3 68.8 536.4 61.9 46.8 448.1 9.7 14.0 43.65 40.2 40.7 365.8 42.3 60.0 435.7
+> Ours ♠11.4 25.2 14.83 86.4 71.6 543.0 82.2 69.2 537.9 63.2 48.0 452.3 9.7 14.2 43.52 40.6 41.2 367.2 42.5 61.3 435.8
+
+Method Params.Mem. Time VQAv2 GQA Params.Mem. Time RefCOCO RefCOCO+ RefCOCOg (M) ↓ (G) ↓ (ms) ↓ Test D ↑Test S ↑Test D ↑Test S ↑ (M) ↓ (G) ↓ (ms) ↓ Val ↑ TestA ↑TestB ↑ Val ↑ TestA ↑TestB ↑ Val ↑ Test ↑
+
+Fully-FT 236.8 82.0 - 76.71 76.86 60.25 61.44 185.2 39.6 - 86.51 89.13 81.22 79.54 84.54 70.63 80.92 80.95 LST [85] 13.4 25.6 - 75.29 75.44 59.93 60.75 0.9 12.6 - 81.63 85.19 76.03 71.32 78.20 62.06 72.53 73.67 UniPT [59] 10.3 11.6 106.38 75.33 75.53 60.10 60.72 0.7 6.8 97.82 82.71 86.25 78.16 72.94 79.18 64.49 77.04 77.33 SHERL [20] 13.0 14.0 92.49 75.53 75.82 60.16 60.82 0.7 6.8 79.33 83.02 86.39 78.41 73.29 80.11 64.59 77.80 77.33 
+
+Ours ♡ 10.4 12.2 60.26 75.57 75.91 60.21 60.85 0.7 7.1 52.63 83.11 86.64 78.69 73.49 80.15 64.72 77.49 77.73 
+
+Ours ♠ 13.1 15.2 59.89 75.88 76.07 60.41 60.93 0.8 7.1 52.29 83.09 86.77 78.97 74.05 80.46 64.79 78.06 78.13 
+
+method decreases the inference time cost of SHERL by at least 25.2%, clearly showing the efficiency of our method. 
+
+4.3. Ablation Study 
+
+Effect of Dual Path Knowledge Distillation. Our method introduces a dual-path distillation framework that integrates both feature-based distillation from backbone to side net-work and logits-based distillation from side network to backbone. To validate the effectiveness of the approach, we compare different distillation strategies. As shown in Table 5, the combination of logits- and feature-based distil-lation consistently outperforms compared strategies, high-lighting their complementary benefits. Additionally, utiliz-Table 5. Ablation study on various distillation strategies that are applied to distinct structures ( i.e. ‘logits-based’ and ‘feature-based’) with different distillation directions, where ‘S’ and ‘B’ refer to side network and backbone, respectively. Best results are in bold , and the second best ones are underlined. 
+
+Method Params. Memory QPS Flickr30K MSCOCO1K (M) ↓ (G) ↓ ↑ I-T ↑ T-I ↑ Rsum ↑ I-T ↑ T-I ↑ Rsum ↑
+
+Baseline (UniPT) [59] 12.4 24.4 8.61 84.8 69.1 537.4 80.6 67.5 532.9 
+
+Logits-based (S →B) 12.4 24.7 14.71 81.2 66.1 529.7 77.2 65.0 526.2 Feature-based (B →S) 12.4 24.7 14.71 81.9 66.5 531.5 78.3 65.9 528.1 Feature-based (S →B) 12.4 24.7 14.71 78.9 63.0 518.2 73.1 60.9 508.3 
+
+Ours (B ⇆ S) 12.4 25.1 14.71 84.9 69.5 538.1 80.2 67.7 532.7  
+
+> Table 6. Ablation study on fading the side network during inference on distinct datasets for the ITR task. Best results are in bold , and the second best ones are underlined.
+
+Method Fading Params. Memory QPS Flickr30K MSCOCO1K Side Network (M) ↓ (G) ↓ ↑ I-T ↑ T-I ↑ Rsum ↑ I-T ↑ T-I ↑ Rsum ↑
+
+Fully-FT × 201.2 176.8 - 85.6 73.3 546.6 83.1 71.7 542.7 LST [85] × 9.7 24.4 - 82.1 66.5 529.5 78.2 64.8 525.8 UniPT [59] × 12.4 24.4 8.61 84.8 69.1 537.4 80.6 67.5 532.9 
+
+Ours ♡ × 12.4 25.1 7.98 86.2 70.9 541.9 81.8 69.4 537.6 
+
+✓ 12.4 25.1 14.71 85.9 70.7 541.2 81.3 68.8 536.4 SHERL [20] × 11.3 24.4 10.24 86.1 71.1 542.3 81.8 69.2 537.5 
+
+Ours ♠ × 11.4 25.2 9.76 87.0 71.4 543.9 82.5 69.8 539.0 
+
+✓ 11.4 25.2 14.83 86.4 71.6 543.0 82.2 69.2 537.9 ing a bottleneck for feature-based distillation significantly reduces the amount of learnable parameters and training memory without sacrificing the accuracy. The dual path dis-tillation, which combines both logits- and feature-based dis-tillation, proves essential for achieving SOTA performance while maintaining computational efficiency. 
+
+Effect of Fading the Side Network in Inference. To further clarify the influence of fading the side network on performance during inference, we conduct ablation study by comparing with state-of-the-art METL approaches. As shown in Table 6, when adopting both the backbone and side network, our method achieves improvements of 13.0%, 4.6% and 1.6% in Rsum compared to LST [85], UniPT [59] and SHERL [20], respectively, under comparable effi-ciency including the number of trainable parameters, mem-ory usage and inference time. Furthermore, by discarding the side network during inference, our method significantly gains at least 44.8% improvement in queries per second, with a slight performance decrease of about 0.9%. The re-sults clearly demonstrate the effectiveness of fading the side branch, when applying our proposed approach. We also extensively study the hierarchical feature-based distillation module, including influence of the mask ratio 
+
+λ in Eq. (5), effect of generation block G in Eq. (7) and im-pact of feature distillation loss on distinct layers. Due to space limitation, we summarize the detailed results in Sup-plementary Material .
+
+# 5. Conclusion 
+
+In this paper, we propose a novel approach dubbed Masked Dual Path Distillation (MDPD) to accelerate the memory-efficient transfer learning based on side networks. Specif-ically, MDPD leverages the features of side networks to efficiently guide the fine-tuning of a small number of pa-rameters of backbone during training, and abandons side networks during inference. To maintain the accuracy, we propose a Hierarchical Feature-based Distillation strategy to enhance the optimization of backbones. We extensively evaluate the performance of MDPD on various pre-trained models across the vision-language and vision/language-only tasks. The results reveal that our method remarkably reduce the inference time, while maintaining the accuracy as well as the memory and parameter efficiency. Acknowledgments 
+
+This work was partly supported by the Beijing Nat-ural Science Foundation (No. 4242044 and No. L259044), the CCF Baidu Open Fund, and the Fun-damental Research Funds for the Central Universities. 
+
+# References 
+
+[1] Yutong Bai, Zeyu Wang, Junfei Xiao, Chen Wei, Huiyun Wang, Alan Yuille, Yuyin Zhou, and Cihang Xie. Masked autoencoders enable efficient knowledge distillers. In Pro-ceedings of the IEEE Conference on Computer Vision and Pattern Recognition , pages 24256–24265, 2023. 2 [2] Charles Beattie, Joel Z Leibo, Denis Teplyashin, Tom Ward, Marcus Wainwright, Heinrich K¨ uttler, Andrew Lefrancq, Simon Green, V´ ıctor Vald´ es, Amir Sadik, et al. Deepmind lab. arXiv preprint arXiv:1612.03801 , 2016. 2 [3] Luisa Bentivogli, Peter Clark, Ido Dagan, and Danilo Gi-ampiccolo. The fifth pascal recognizing textual entailment challenge. TAC , 7(8):1, 2009. 1 [4] Han Cai, Chuang Gan, Ligeng Zhu, and Song Han. Tinytl: Reduce memory, not parameters for efficient on-device learning. In Proceedings of the Advances in Neural Infor-mation Processing Systems , pages 11285–11297, 2020. 2 [5] Daniel Cer, Mona Diab, Eneko Agirre, Inigo Lopez-Gazpio, and Lucia Specia. Semeval-2017 task 1: Seman-tic textual similarity-multilingual and cross-lingual focused evaluation. arXiv preprint arXiv:1708.00055 , 2017. 1 [6] David Chen and William B Dolan. Collecting highly par-allel data for paraphrase evaluation. In Proceedings of the Annual Meeting of the Association for Computational Lin-guistics , pages 190–200, 2011. 5, 1, 3 [7] Defang Chen, Jian-Ping Mei, Yuan Zhang, Can Wang, Zhe Wang, Yan Feng, and Chun Chen. Cross-layer distillation with semantic calibration. In Proceedings of the AAAI Con-ference on Artificial Intelligence , pages 7028–7036, 2021. 2[8] Hanting Chen, Yunhe Wang, Chang Xu, Chao Xu, and Dacheng Tao. Learning student networks via feature em-bedding. IEEE Transactions on Neural Networks Learning Systems , 32(1):25–35, 2021. 3 [9] Jiacheng Chen, Hexiang Hu, Hao Wu, Yuning Jiang, and Changhu Wang. Learning the best pooling strategy for vi-sual semantic embedding. In Proceedings of the IEEE Con-ference on Computer Vision and Pattern Recognition , pages 15789–15798, 2021. 5, 6, 3 [10] Shoufa Chen, Chongjian Ge, Zhan Tong, Jiangliu Wang, Yibing Song, Jue Wang, and Ping Luo. Adaptformer: Adapting vision transformers for scalable visual recogni-tion. In Proceedings of the Advances in Neural Information Processing Systems , pages 16664–16678, 2022. 1, 5 [11] Shidi Chen, Lili Wei, Liqian Liang, and Congyan Lang. Joint homophily and heterophily relational knowledge dis-tillation for efficient and compact 3d object detection. In 
+
+Proceedings of the ACM International Conference on Mul-timedia , pages 2127–2135, 2024. 3 [12] Tianqi Chen, Bing Xu, Chiyuan Zhang, and Carlos Guestrin. Training deep nets with sublinear memory cost. 
+
+arXiv preprint arXiv:1604.06174 , 2016. 2 [13] Zhe Chen, Yuchen Duan, Wenhai Wang, Junjun He, Tong Lu, Jifeng Dai, and Yu Qiao. Vision transformer adapter for dense predictions. arXiv preprint arXiv:2205.08534 , 2022. 1[14] Zhenghao Chen, Nan Zhou, Yi Fan, Lina Zhou, Yubao Xie, Jiaxin Chen, and Di Huang. Das-sam: fine-tuning sam to-wards drivable area segmentation via efficient multi-scale traffic scene-aware adaptation. Visual Intelligence , 4(1):6, 2026. 2 [15] Gong Cheng, Junwei Han, and Xiaoqiang Lu. Remote sens-ing image scene classification: Benchmark and state of the art. Proceedings of the IEEE , 105(10):1865–1883, 2017. 2 [16] Mircea Cimpoi, Subhransu Maji, Iasonas Kokkinos, Sammy Mohamed, and Andrea Vedaldi. Describing tex-tures in the wild. In Proceedings of the Computer Vision and Pattern Recognition Conference , pages 3606–3613, 2014. 2 [17] Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li, and Li Fei-Fei. Imagenet: A large-scale hierarchical im-age database. In Proceedings of the Computer Vision and Pattern Recognition Conference , pages 248–255, 2009. 3 [18] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. Bert: Pre-training of deep bidirectional trans-formers for language understanding. In Proceedings of the North American Chapter of the Association for Computa-tional Linguistics , pages 4171–4186, 2019. 2, 3 [19] Haiwen Diao, Yufeng Cui, Xiaotong Li, Yueze Wang, Huchuan Lu, and Xinlong Wang. Unveiling encoder-free vision-language models. arXiv preprint arXiv:2406.11832 ,2024. 1 [20] Haiwen Diao, Bo Wan, Xu Jia, Yunzhi Zhuge, Ying Zhang, Huchuan Lu, and Long Chen. Sherl: Synthesizing high accuracy and efficient memory for resource-limited transfer learning. In Proceedings of the European Conference on Computer Vision , pages 75–95, 2024. 1, 2, 5, 6, 7, 8 [21] Haiwen Diao, Bo Wan, Ying Zhang, Xu Jia, Huchuan Lu, and Long Chen. Unipt: Universal parallel tuning for trans-fer learning with efficient parameter and memory. In Pro-ceedings of the Computer Vision and Pattern Recognition ,pages 28729–28740, 2024. 1, 2, 5, 6 [22] Bill Dolan and Chris Brockett. Automatically constructing a corpus of sentential paraphrases. In Third international workshop on paraphrasing (IWP2005) , 2005. 1 [23] Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, and Neil Houlsby. An im-age is worth 16x16 words: Transformers for image recog-nition at scale. In Proceedings of the International Confer-ence on Learning Representations , 2021. 2, 3 [24] Yuxin Fang, Wen Wang, Binhui Xie, Quan Sun, Ledell Wu, Xinggang Wang, Tiejun Huang, Xinlong Wang, and Yue Cao. Eva: Exploring the limits of masked visual represen-tation learning at scale. In Proceedings of the Computer Vision and Pattern Recognition , pages 19358–19369, 2023. 1[25] Li Fei-Fei, Robert Fergus, and Pietro Perona. One-shot learning of object categories. IEEE Transactions on Pattern Analysis and Machine Intelligence , 28(4):594–611, 2006. 2 [26] Andreas Geiger, Philip Lenz, Christoph Stiller, and Raquel Urtasun. Vision meets robotics: The kitti dataset. The Inter-national Journal of Robotics Research , 32(11):1231–1237, 2013. 2 [27] Rohit Girdhar, Alaaeldin El-Nouby, Zhuang Liu, Mannat Singh, Kalyan Vasudev Alwala, Armand Joulin, and Ishan Misra. Imagebind one embedding space to bind them all. In Proceedings of the Computer Vision and Pattern Recog-nition , pages 15180–15190, 2023. 2 [28] Aidan N Gomez, Mengye Ren, Raquel Urtasun, and Roger B Grosse. The reversible residual network: Back-propagation without storing activations. In Proceedings of the Advances in Neural Information Processing Systems ,2017. 2 [29] Yash Goyal, Tejas Khot, Douglas Summers-Stay, Dhruv Batra, and Devi Parikh. Making the v in vqa matter: El-evating the role of image understanding in visual question answering. In Proceedings of the Computer Vision and Pat-tern Recognition Conference , pages 6904–6913, 2017. 5, 1, 3 [30] Ben Graham. Kaggle diabetic retinopathy detection com-petition report. University of Warwick , 22(9), 2015. 2 [31] Demi Guo, Alexander M Rush, and Yoon Kim. Parameter-efficient transfer learning with diff pruning. arXiv preprint arXiv:2012.07463 , 2020. 1 [32] Karen Hambardzumyan, Hrant Khachatrian, and Jonathan May. Warp: Word-level adversarial reprogramming. In 
+
+Proceedings of the Annual Meeting of the Association for Computational Linguistics , 2021. 2 [33] Haoyu He, Jianfei Cai, Jing Zhang, Dacheng Tao, and Bo-han Zhuang. Sensitivity-aware visual parameter-efficient fine-tuning. In Proceedings of the IEEE International Con-ference on Computer Vision , pages 11825–11835, 2023. 2 [34] Junxian He, Chunting Zhou, Xuezhe Ma, Taylor Berg-Kirkpatrick, and Graham Neubig. Towards a unified view of parameter-efficient transfer learning. In Proceedings of the International Conference on Learning Representations ,2022. 2 [35] Kaiming He, Xinlei Chen, Saining Xie, Yanghao Li, Piotr Doll´ ar, and Ross Girshick. Masked autoencoders are scal-able vision learners. In Proceedings of the Computer Vision and Pattern Recognition , pages 16000–16009, 2022. 1 [36] Shwai He, Liang Ding, Daize Dong, Miao Zhang, and Dacheng Tao. Sparseadapter: An easy approach for im-proving the parameter-efficiency of adapters. In Proceed-ings of the Conference on Empirical Methodsin Natural Language Processing , pages 2184–2190, 2022. 2 [37] Xuehai He, Chunyuan Li, Pengchuan Zhang, Jianwei Yang, and Xin Eric Wang. Parameter-efficient model adaptation for vision transformers. In Proceedings of the AAAI Con-ference on Artificial Intelligence , pages 817–825, 2023. 2 [38] Patrick Helber, Benjamin Bischke, Andreas Dengel, and Damian Borth. Eurosat: A novel dataset and deep learning benchmark for land use and land cover classification. IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing , 12(7):2217–2226, 2019. 2 [39] Geoffrey Hinton. Distilling the knowledge in a neural net-work. arXiv preprint arXiv:.02531 , 2015. 2 [40] Neil Houlsby, Andrei Giurgiu, Stanislaw Jastrzebski, Bruna Morrone, Quentin De Laroussilhe, Andrea Gesmundo, Mona Attariyan, and Sylvain Gelly. Parameter-efficient transfer learning for nlp. In Proceedings of the Interna-tional Conference on Machine Learning , pages 2790–2799, 2019. 1, 2, 5, 6, 3 [41] Edward J Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, and Weizhu Chen. Lora: Low-rank adaptation of large language models. In 
+
+Proceedings of the International Conference on Learning Representations , 2022. 1, 2, 5, 6, 3 [42] Drew A Hudson and Christopher D Manning. Gqa: Anew dataset for real-world visual reasoning and composi-tional question answering. In Proceedings of the Computer Vision and Pattern Recognition Conference , pages 6700– 6709, 2019. 5, 1, 3 [43] Menglin Jia, Luming Tang, Bor-Chun Chen, Claire Cardie, Serge Belongie, Bharath Hariharan, and Ser-Nam Lim. Vi-sual prompt tuning. In Proceedings of the European Con-ference on Computer Vision , pages 709–727, 2022. 1, 5 [44] Zeyinzi Jiang, Chaojie Mao, Ziyuan Huang, Ao Ma, Yil-iang Lv, Yujun Shen, Deli Zhao, and Jingren Zhou. Res-tuning: A flexible and efficient tuning paradigm via unbind-ing tuner from backbone. In Proceedings of the Advances in Neural Information Processing Systems , 2024. 2, 5 [45] Shibo Jie and Zhi-Hong Deng. Fact: Factor-tuning for lightweight adaptation on vision transformer. In Proceed-ings of the AAAI Conference on Artificial Intelligence ,pages 1060–1068, 2023. 5, 6 [46] Shibo Jie, Zhi-Hong Deng, Shixuan Chen, and Zhijuan Jin. Convolutional bypasses are better vision transformer adapters. In Proceedings of the European Conference on Artificial Intelligence , pages 202–209. 2024. 5 [47] Justin Johnson, Bharath Hariharan, Laurens Van Der Maaten, Li Fei-Fei, C Lawrence Zitnick, and Ross Girshick. Clevr: A diagnostic dataset for compositional language and elementary visual reasoning. In Proceed-ings of the Computer Vision and Pattern Recognition Conference , pages 2901–2910, 2017. 2 [48] Aishwarya Kamath, Mannat Singh, Yann LeCun, Gabriel Synnaeve, Ishan Misra, and Nicolas Carion. Mdetr-modulated detection for end-to-end multi-modal under-standing. In Proceedings of the IEEE International Con-ference on Computer Vision , pages 1780–1790, 2021. 6, 3[49] Konwoo Kim, Michael Laskin, Igor Mordatch, and Deepak Pathak. How to adapt your large-scale vision-and-language model. In Proceedings of the International Conference on Learning Representations , 2021. 2 [50] Alex Krizhevsky, Geoffrey Hinton, et al. Learning multiple layers of features from tiny images. 2009. 2 [51] Yann LeCun, Fu Jie Huang, and Leon Bottou. Learning methods for generic object recognition with invariance to pose and lighting. In Proceedings of the Computer Vision and Pattern Recognition Conference , pages II–104, 2004. 2 [52] Brian Lester, Rami Al-Rfou, and Noah Constant. The power of scale for parameter-efficient prompt tuning. In 
+
+Proceedings of the Conference on Empirical Methods in Natural Language Processing , pages 3045–3059, 2021. 2, 3[53] Guilin Li, Mengdan Zhang, Xiawu Zheng, Peixian Chen, Zihan Wang, Yunhang Shen, Mingchen Zhuge, Chenglin Wu, Fei Chao, Ke Li, et al. Multimodal inplace prompt tuning for open-set object detection. In Proceedings of the ACM International Conference on Multimedia , pages 8062–8071, 2024. 1 [54] Junnan Li, Dongxu Li, Silvio Savarese, and Steven Hoi. Blip-2: Bootstrapping language-image pre-training with frozen image encoders and large language models. In 
+
+Proceedings of the International Conference on Machine Learning , pages 19730–19742, 2023. 1 [55] Xiang Lisa Li and Percy Liang. Prefix-tuning: Optimiz-ing continuous prompts for generation. In Proceedings of the Annual Meeting of the Association for Computational Linguistics , pages 4582–4597, 2021. 1, 2, 5, 6 [56] Dongze Lian, Daquan Zhou, Jiashi Feng, and Xinchao Wang. Scaling & shifting your features: A new baseline for efficient model tuning. In Proceedings of the Advances in Neural Information Processing Systems , pages 109–123. 5, 6 [57] Ke Liang, Lingyuan Meng, Yue Liu, Meng Liu, Wei Wei, Suyuan Liu, Wenxuan Tu, Siwei Wang, Sihang Zhou, and Xinwang Liu. Simple yet effective: Structure guided pre-trained transformer for multi-modal knowledge graph rea-soning. In Proceedings of the ACM International Confer-ence on Multimedia , pages 1554–1563, 2024. 1 [58] Baohao Liao, Shaomu Tan, and Christof Monz. Make pre-trained model reversible: From parameter to memory effi-cient fine-tuning. In Proceedings of the Advances in Neural Information Processing Systems , 2023. 2 [59] Fangjian Liao, Xingxing Zou, and Waikeung Wong. Uni-dllora: Style fine-tuning for fashion image translation. In 
+
+Proceedings of the ACM International Conference on Mul-timedia , pages 6404–6413, 2024. 1, 6, 7, 8 [60] Tsung-Yi Lin, Michael Maire, Serge Belongie, James Hays, Pietro Perona, Deva Ramanan, Piotr Doll´ ar, and C Lawrence Zitnick. Microsoft coco: Common objects in context. In Proceedings of the European Conference on Computer Vision , pages 740–755, 2014. 5, 1, 3 [61] Weifeng Lin, Ziheng Wu, Wentao Yang, Mingxin Huang, Jun Huang, and Lianwen Jin. Hierarchical side-tuning for vision transformers. arXiv preprint arXiv:2310.05393 ,2023. 1, 6 [62] Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Man-dar Joshi, Danqi Chen, Omer Levy, Mike Lewis, Luke Zettlemoyer, and Veselin Stoyanov. Roberta: A ro-bustly optimized bert pretraining approach. arXiv preprint arXiv:.11692 , 364, 2019. 2, 3 [63] Yitao Liu, Chenxin An, and Xipeng Qiu. Y-tuning: An efficient tuning paradigm for large-scale pre-trained models via label representation learning. Frontiers of Computer Science , 18(4):184320, 2024. 1 [64] Huaishao Luo, Lei Ji, Ming Zhong, Yang Chen, Wen Lei, Nan Duan, and Tianrui Li. Clip4clip: An empirical study of clip for end to end video clip retrieval. arXiv preprint arXiv:2104.08860 , 2021. 5, 6, 3 [65] Sadhika Malladi, Tianyu Gao, Eshaan Nichani, Alex Damian, Jason D Lee, Danqi Chen, and Sanjeev Arora. Fine-tuning language models with just forward passes. In 
+
+Proceedings of the Advances in Neural Information Pro-cessing Systems , pages 53038–53075, 2023. 2 [66] Junhua Mao, Jonathan Huang, Alexander Toshev, Oana Camburu, Alan L Yuille, and Kevin Murphy. Generation and comprehension of unambiguous object descriptions. In 
+
+Proceedings of the Computer Vision and Pattern Recogni-tion , pages 11–20, 2016. 5, 1, 3 [67] Zhong Meng, Jinyu Li, Yong Zhao, and Yifan Gong. Condi-tional teacher-student learning. In Proceedings of the IEEE International Conference on Acoustics, Speech and Signal Processing , pages 6445–6449, 2019. 2 [68] Otniel-Bogdan Mercea, Alexey Gritsenko, Cordelia Schmid, and Anurag Arnab. Time-memory-and parameter-efficient visual adaptation. In Proceedings of the Computer Vision and Pattern Recognition Conference , pages 5536– 5545, 2024. 1, 6 [69] Yuval Netzer, Tao Wang, Adam Coates, Alessandro Bis-sacco, Baolin Wu, Andrew Y Ng, et al. Reading digits in natural images with unsupervised feature learning. In NIPS workshop on deep learning and unsupervised feature learn-ing , page 7. Granada, 2011. 2 [70] Maria-Elena Nilsback and Andrew Zisserman. Automated flower classification over a large number of classes. In 2008 Sixth Indian Conference on Computer Vision, Graphics & Image Processing , pages 722–729. IEEE, 2008. 2 [71] Yuchen Pan, Junjun Jiang, Kui Jiang, and Xianming Liu. Disentangled-multimodal privileged knowledge distillation for depression recognition with incomplete multimodal data. In Proceedings of the ACM International Conference on Multimedia , pages 5712–5721, 2024. 2 [72] Omkar M Parkhi, Andrea Vedaldi, Andrew Zisserman, and CV Jawahar. Cats and dogs. In Proceedings of the Com-puter Vision and Pattern Recognition Conference , pages 3498–3505. IEEE, 2012. 2 [73] Jason Phang, Yi Mao, Pengcheng He, and Weizhu Chen. Hypertuning: Toward adapting large language models with-out back-propagation. In Proceedings of the International Conference on Machine Learning , pages 27854–27875, 2023. 2 [74] Yujia Qin, Xiaozhi Wang, Yusheng Su, Yankai Lin, Ning Ding, Jing Yi, Weize Chen, Zhiyuan Liu, Juanzi Li, and Lei Hou. Exploring universal intrinsic task subspace via prompt tuning. In Proceedings of the Annual Meeting of the Association for Computational Linguistics , 2022. 2 [75] Alec Radford, Jeffrey Wu, Rewon Child, David Luan, Dario Amodei, Ilya Sutskever, et al. Language models are unsupervised multitask learners. OpenAI blog , 1(8):9, 2019. 1, 3 [76] Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sastry, Amanda Askell, Pamela Mishkin, and Jack Clark. Learn-ing transferable visual models from natural language super-vision. In Proceedings of the International Conference on Machine Learning , pages 8748–8763, 2021. 2, 3 [77] Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, and Peter J Liu. Exploring the limits of transfer learning with a unified text-to-text transformer. Journal of Machine Learning Research , 21(140):1–67, 2020. 5, 3 [78] Pranav Rajpurkar, Jian Zhang, Konstantin Lopyrev, and Percy Liang. Squad: 100,000+ questions for machine com-prehension of text. arXiv preprint arXiv:1606.05250 , 2016. 1[79] Adriana Romero, Nicolas Ballas, Samira Ebrahimi Kahou, Antoine Chassang, Carlo Gatta, and Yoshua Bengio. Fit-nets: Hints for thin deep nets. In Proceedings of the Inter-national Conference on Learning Representations , 2015. 2 [80] Sheng Shen, Liunian Harold Li, Hao Tan, Mohit Bansal, Anna Rohrbach, Kai-Wei Chang, Zhewei Yao, and Kurt Keutzer. How much can clip benefit vision-and-language tasks? arXiv preprint arXiv:2107.06383 , 2021. 6, 3 [81] Richard Socher, Alex Perelygin, Jean Wu, Jason Chuang, Christopher D Manning, Andrew Y Ng, and Christopher Potts. Recursive deep models for semantic compositional-ity over a sentiment treebank. In Proceedings of the 2013 conference on empirical methods in natural language pro-cessing , pages 1631–1642, 2013. 1 [82] Haobo Song, Hao Zhao, Soumajit Majumder, and Tao Lin. Increasing model capacity for free: A simple strategy for parameter efficient fine-tuning. In Proceedings of the Inter-national Conference on Learning Representations , 2024. 2 [83] Quan Sun, Qiying Yu, Yufeng Cui, Fan Zhang, Xiaosong Zhang, Yueze Wang, Hongcheng Gao, Jingjing Liu, Tiejun Huang, and Xinlong Wang. Generative pretraining in mul-timodality. arXiv preprint arXiv:2307.05222 , 2023. 1 [84] Yi-Lin Sung, Varun Nair, and Colin A Raffel. Training neu-ral networks with fixed sparse masks. In Proceedings of the Advances in Neural Information Processing Systems , pages 24193–24205, 2021. 1 [85] Yi-Lin Sung, Jaemin Cho, and Mohit Bansal. Lst: Lad-der side-tuning for parameter and memory efficient transfer learning. In Proceedings of the Advances in Neural Infor-mation Processing Systems , pages 12991–13005, 2022. 1, 2, 6, 7, 8, 3 [86] Hugo Touvron, Matthieu Cord, Alaaeldin El-Nouby, Jakob Verbeek, and Herv´ e J´ egou. Three things everyone should know about vision transformers. In Proceedings of the Eu-ropean Conference on Computer Vision , pages 497–515, 2022. 2 [87] Hugo Touvron, Thibaut Lavril, Gautier Izacard, Xavier Martinet, Marie-Anne Lachaux, Timoth´ ee Lacroix, Bap-tiste Rozi` ere, Naman Goyal, Eric Hambro, Faisal Azhar, et al. Llama: Open and efficient foundation language mod-els. arXiv preprint arXiv:2302.13971 , 2023. 1 [88] Bastiaan S Veeling, Jasper Linmans, Jim Winkens, Taco Cohen, and Max Welling. Rotation equivariant cnns for digital pathology. In International Conference on Medi-cal image computing and computer-assisted intervention ,pages 210–218. Springer, 2018. 2 [89] Tu Vu, Brian Lester, Noah Constant, Rami Al-Rfou, and Daniel Cer. Spot: Better frozen model adaptation through soft prompt transfer. In Proceedings of the Annual Meeting of the Association for Computational Linguistics , 2021. 2 [90] Alex Wang, Amanpreet Singh, Julian Michael, Felix Hill, Omer Levy, and Samuel R Bowman. Glue: A multi-task benchmark and analysis platform for natural language un-derstanding. arXiv preprint arXiv:1804.07461 , 2018. 5, 1, 3[91] Alex Warstadt, Amanpreet Singh, and Samuel R Bowman. Neural network acceptability judgments. Transactions of the Association for Computational Linguistics , 7:625–641, 2019. 1 [92] Adina Williams, Nikita Nangia, and Samuel R Bowman. A broad-coverage challenge corpus for sentence understand-ing through inference. arXiv preprint arXiv:1704.05426 ,2017. 1 [93] Kan Wu, Jinnian Zhang, Houwen Peng, Mengchen Liu, Bin Xiao, Jianlong Fu, and Lu Yuan. Tinyvit: Fast pretraining distillation for small vision transformers. In Proceedings of the European Conference on Computer Vision , pages 68– 85, 2022. 2 [94] Xun Wu, Shaohan Huang, and Furu Wei. Mixture of lora experts. arXiv preprint arXiv:.13628 , 2024. 2 [95] Zimeng Wu, Jiaxin Chen, and Yunhong Wang. Unified knowledge maintenance pruning and progressive recovery with weight recalling for large vision-language models. In 
+
+Proceedings of the AAAI Conference on Artificial Intelli-gence , pages 8550–8558, 2025. 2 [96] Zimeng Wu, Yunhong Wang, Donghao Wang, and Ji-axin Chen. Collaborative multi-mode pruning for vision-language models. In Proceedings of the Computer Vision and Pattern Recognition Conference , 2026. 2 [97] Jianxiong Xiao, James Hays, Krista A Ehinger, Aude Oliva, and Antonio Torralba. Sun database: Large-scale scene recognition from abbey to zoo. In 2010 IEEE Computer Society Conference on Computer Vision and Pattern Recog-nition , pages 3485–3492. IEEE, 2010. 2 [98] Saining Xie, Ross Girshick, Piotr Doll´ ar, Zhuowen Tu, and Kaiming He. Aggregated residual transformations for deep neural networks. In Proceedings of the Computer Vision and Pattern Recognition , pages 1492–1500, 2017. 3 [99] Jun Xu, Tao Mei, Ting Yao, and Yong Rui. Msr-vtt: A large video description dataset for bridging video and language. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition , pages 5288–5296, 2016. 5, 1, 3 [100] Junho Yim, Donggyu Joo, Jihoon Bae, and Junmo Kim. A gift from knowledge distillation: Fast optimization, net-work minimization and transfer learning. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition , pages 4133–4141, 2017. 3 [101] Dongshuo Yin, Yiran Yang, Zhechao Wang, Hongfeng Yu, Kaiwen Wei, and Xian Sun. 1% vs 100%: Parameter-efficient low rank adapter for dense predictions. In Pro-ceedings of the Computer Vision and Pattern Recognition Conference , pages 20116–20126, 2023. 1 [102] Dongshuo Yin, Xueting Han, Bin Li, Hao Feng, and Jing Bai. Parameter-efficient is not sufficient: Exploring param-eter, memory, and time efficient adapter tuning for dense predictions. In Proceedings of the ACM International Con-ference on Multimedia , pages 1398–1406, 2024. [103] Dongshuo Yin, Leiyi Hu, Bin Li, Youqun Zhang, and Xue Yang. 5%¿ 100%: Breaking performance shackles of full fine-tuning on visual recognition tasks. In Proceedings of the Computer Vision and Pattern Recognition Conference ,pages 20071–20081, 2025. 1 [104] Peter Young, Alice Lai, Micah Hodosh, and Julia Hock-enmaier. From image descriptions to visual denotations: New similarity metrics for semantic inference over event descriptions. Transactions of the Association for Computa-tional Linguistics , 2:67–78, 2014. 5, 1, 3 [105] Licheng Yu, Patrick Poirson, Shan Yang, Alexander C Berg, and Tamara L Berg. Modeling context in referring expres-sions. In Proceedings of the European Conference on Com-puter Vision , pages 69–85, 2016. 5, 1, 3 [106] Elad Ben Zaken, Shauli Ravfogel, and Yoav Goldberg. Bit-fit: Simple parameter-efficient fine-tuning for transformer-based masked language-models. In Proceedings of the An-nual Meeting of the Association for Computational Linguis-tics , pages 1–9, 2022. 2, 5, 6 [107] Xiaohua Zhai, Joan Puigcerver, Alexander Kolesnikov, Pierre Ruyssen, Carlos Riquelme, Mario Lucic, Josip Djo-longa, Andre Susano Pinto, Maxim Neumann, Alexey Dosovitskiy, et al. A large-scale study of representation learning with the visual task adaptation benchmark. arXiv preprint arXiv:1910.04867 , 2019. 5, 2, 3 [108] Jeffrey O Zhang, Alexander Sax, Amir Zamir, Leonidas Guibas, and Jitendra Malik. Side-tuning: A baseline for network adaptation via additive side networks. In Pro-ceedings of the European Conference on Computer Vision ,pages 698–714, 2020. 1, 2 [109] Longteng Zhang, Lin Zhang, Shaohuai Shi, Xiaowen Chu, and Bo Li. Lora-fa: Memory-efficient low-rank adapta-tion for large language models fine-tuning. arXiv preprint arXiv:.03303 , 2023. 2 [110] Mingfang Zhang, Yunhong Wang, Lu Wang, and Jiaxin Chen. Parameter-efficient adaptation for mllms via implicit modality decomposition. In Proceedings of the Computer Vision and Pattern Recognition Conference , 2026. 1 [111] Qingru Zhang, Minshuo Chen, Alexander Bukharin, Pengcheng He, Yu Cheng, Weizhu Chen, and Tuo Zhao. Adaptive budget allocation for parameter-efficient fine-tuning. In Proceedings of the International Conference on Learning Representations , 2023. 5, 6 [112] Yuanhan Zhang, Kaiyang Zhou, and Ziwei Liu. Neural prompt search. IEEE Transactions on Pattern Analysis and Machine Intelligence , 47(7):5268–5280, 2024. 5 [113] Yutong Zhang, Zimeng Wu, Shengcai Liao, Shujiang Wu, and Jiaxin Chen. Mp-ismoe: Mixed-precision interactive side mixture-of-experts for efficient transfer learning. In 
+
+Proceedings of the AAAI Conference on Artificial Intelli-gence , pages 28537–28545, 2026. 2 [114] Mengjie Zhao, Tao Lin, Fei Mi, Martin Jaggi, and Hinrich Sch¨ utze. Masking as an efficient alternative to finetuning for pretrained language models. In Proceedings of the Con-ference on Empirical Methods in Natural Language Pro-cessing , 2020. 2 [115] Hanwen Zhong, Jiaxin Chen, Yutong Zhang, Di Huang, and Yunhong Wang. Transforming vision transformer: Towards efficient multi-task asynchronous learner. In Proceedings of the Advances in Neural Information Processing Systems ,pages 81130–81156, 2024. 2 [116] Hanwen Zhong, Jiaxin Chen, Yutong Zhang, Di Huang, and Yunhong Wang. Parameter-efficient tuning for fine-grained recognition via channel-wise importance equalization and diversity navigation. IEEE Transactions on Image Process-ing , 2026. 1 [117] Kaiyang Zhou, Jingkang Yang, Chen Change Loy, and Zi-wei Liu. Learning to prompt for vision-language models. 
+
+International Journal of Computer Vision , 130(9):2337– 2348, 2022. 1 [118] Yaoming Zhu, Jiangtao Feng, Chengqi Zhao, Mingxuan Wang, and Lei Li. Counter-interference adapter for multi-lingual machine translation. In Proceedings of the Confer-ence on Empirical Methodsin Natural Language Process-ing , pages 2812–2823, 2021. 2 [119] Xianwei Zhuang, Xuxin Cheng, Zhihong Zhu, Zhan-peng Chen, Hongxiang Li, and Yuexian Zou. Towards multimodal-augmented pre-trained language models via self-balanced expectation-maximization iteration. In Pro-ceedings of the ACM International Conference on Multi-media , pages 4670–4679, 2024. 1 Memory-Efficient Transfer Learning with Fading Side Networks via Masked Dual Path Distillation 
+
+# Supplementary Material 
+
+In the Supplementary Material, more details and exper-iments are organized as follows, we additionally provide more introduction of Datasets and Metrics in Sec. A, the 
+
+Implementation Details in Sec. B, the rigorous proof of 
+
+Back-propagation through Large Backbone in Sec. C, the expanded explanation of Baselines in Sec. D, and More Ablation Studies on several modules in Sec. E. 
+
+# A. Datasets and Metrics 
+
+Image-Text Retrieval (ITR) : We employ Flickr30k [104] and MSCOCO [60] for image-text matching task. The Flickr30k dataset contains 31,783 colloquial images with 158,915 captions, partitioned into 29,783 training images, 1,000 validation images, and 1,000 test images. Its captions emphasize explicit compositional semantics ( e.g. , object-attribute-spatial relationships), posing fine-grained match-ing challenges. The MSCOCO dataset comprises 123,287 complex scene images annotated with 616,435 captions, and is divided into 113,287 training images, 5,000 valida-tion images, 5,000 test images, which is the standard Karpa-thy split. MSCOCO requires deeper relational reasoning due to contextual object interactions and scene dynamics. Both datasets evaluate Image-to-Text (I-T), Text-to-Image (T-I) retrieval using Recall@1, with additionally employ-ing RSum ( i.e. , sum of all six Recall@K scores where K=1,5,10) as the holistic metric reflecting their composi-tional complexity. 
+
+Video-Text Retrieval (VTR) : For video-text retrieval, we employ MSR-VTT [99] and MSVD [6]. The MSR-VTT (i.e. , Microsoft Research Video to Text) dataset contains 10,000 web video clips (total duration 41 hours) sourced from YouTube, with each video annotated with 20 English captions. Following the standard split, we employ the 1k-A protocol, where 9,000 videos with all corresponding cap-tions for training, and 1,000 pairs are for testing. Charac-terized by high diversity across 20 categories ( e.g. , sports, music, news), its captions describe complex temporal dy-namics and object interactions. Moreover, The MSVD ( i.e. ,Microsoft Video Description) dataset comprises 1,970 short video clips with approximately 80,000 multilingual cap-tions, partitioned into 1,200 training videos, 100 valida-tion videos, and 670 testing videos. Noted for fine-grained temporal alignment challenges, MSVD captions emphasize precise action-object localization. Both datasets evaluate Video-to-Text (V-T), Text-to-Video (T-V) retrieval using Recall@1 and RSum for evaluation. 
+
+Question Answering (VQA&GQA) : For question an-swering tasks, we evaluate on VQAv2 [29] and GQA [42]. The VQAv2 dataset addresses prior language bias issues by pairing 204,721 COCO images with 1,105,904 ques-tions. It employs the standard split: 82,783 images with 443,757 questions for training, 40,504 images with 214,354 questions for validation, and 81,434 images with 447,793 questions for testing. Questions require diverse reason-ing about object attributes, actions, and scene context. The GQA dataset features 113,018 images with 22,669,678 questions generated from scene graphs to ensure compo-sitional rigor. Its balanced split contains 943,000 training questions ( ∼70%), 132,062 validation questions ( ∼10%)), and 264,159 testing questions ( ∼20%), emphasizing struc-tural reasoning over 1,704 object categories. We evaluate performance on both Test-Dev and Test-Std splits via the official EvalAI system. 
+
+Visual Grounding (VG) : We utilize the RefCOCO, RefCOCO+ [105], and RefCOCOg [66] derived from MSCOCO images for visual grounding. RefCOCO con-tains 19,994 images with 50,000 bounding boxes annotated by 142,210 expressions, whose standard UNC split com-prises 120,624 training expressions, 10,834 validation ex-pressions, and 5,675/5,095 Test A/B expressions. Test A focuses on bounding boxes containing person instances, while Test B involves non-person objects. RefCOCO+ shares the same image set but introduces stricter constraints: 49,856 referred objects with 141,564 expressions that ex-plicitly prohibit location words, divided into 120,191 train-ing, 10,758 validation, and 5,726/4,889 Test A/B expres-sions. RefCOCOg differs substantially with 26,711 images, 54,822 referred objects, and 104,560 longer, grammatically complex expressions, while they are categorized into train, validation, and test, with 85,474, 7,323, and 9,592 samples. Primary evaluation uses precision@0.5 to measure localiza-tion accuracy of predicted bounding boxes against human annotations. 
+
+Language-only : For language-only task, we employ the General Language Understanding Evaluation (GLUE) benchmark [90] consolidates eight NLP tasks into four core categories, consisting of linguistic acceptability (CoLA [91]), sentiment analysis (SST-2 [81]), similarity and para-phrase (MRPC [22], QQP, STS-B [5]), and natural lan-guage inference (MNLI [92], QNLI [78], RTE [3]). Eval-uation employs task-specific metrics: classification Accu-racy metric for SST-2, MNLI, RTE, and QNLI; F1-score augmented with accuracy for MRPC and QQP; Matthew’s Correlation for the class-imbalanced data of CoLA; and Table A. Detailed Hyper-parameters of MDPD on ITR, VTR, VQA, GQA, and VG tasks. Among them, AdamW is adopted as the optimizer uniformly. 
+
+Task Model Learning Rate Optimizer ( β1, β2, Weight Decay) Batch Size Total Epochs Warmup Strategy ITR VSE ∞ 5 × 10 −4 0.9, 0.999 , 1 × 10 −2 112 25 linear VTR CLIP4Clip 1 × 10 −4 0.9, 0.98 , 1 × 10 −2 128 5 cosine VQA CLIP-ViL 5 × 10 −4 0.9, 0.999 , 1 × 10 −2 256 5 linear GQA CLIP-ViL 1 × 10 −4 0.9, 0.999 , 1 × 10 −2 256 5 linear VG MDETR 5 × 10 −4 0.9, 0.999 , 0 8 10 linear Pearson-Spearman Correlation for similarity scoring of STS-B. 
+
+Vision-only : For vision-only task, we employ the Visual Task Adaptation Benchmark (VTAB-1K) [107] systemati-cally evaluates transfer learning capabilities across 19 di-verse vision datasets unified under a standardized low-data regime, categorized into three distinct task types: (1) Nat-ural tasks (CIFAR-100 [50], Caltech101 [25], DTD [16], Flowers102 [70], Pets [72], SVHN [69], Sun397 [97]) fea-turing object-centric photographs with moderate complex-ity; (2) Specialized tasks (Patch Camelyon [88], EuroSAT [38], Resisc45 [15], Retinopathy) [30] comprising domain-specific imagery and medical images; (3) Structured tasks (Clevr/count [47], Clevr/distance [47], DMLab [2], KITTI-Dist [26], dSprites/location, dSprites/orientation, Small-NORB/azimuth [51], SmallNORB/elevation [51]) empha-sizing geometric relationships and spatial reasoning. Each dataset provides 1,000 training images with predefined vali-dation/test splits. Evaluation reports Top-1 Accuracy metric for classification tasks, with final performance aggregated via uniform averaging across all 19 datasets. 
+
+# B. Implementation Details 
+
+For vision-language (VL) tasks, Table A comprehensively details the hyper-parameter configurations. More specifi-cally, for ITR task using VSE ∞, we set the batch size to 112, and maintain consistency with pre-trained models for all other tasks, while scale learning rate by a factor of 10, and set the reduction factor and mask rate λ to 2 and 0.5, re-spectively. For GLUE benchmark evaluations, we set learn-ing rate, reduction factor and batch size to 3 × 10 −3, 8, and 100, respectively. Consistent with the methodology in LST [85], we implement the layer-dropping strategy: for the T5-base architecture, this entails removal of the 0th , 4th ,and 8th encoder/decoder layers; for T5-large, we omit all even-indexed encoder and decoder layers. Beyond task-specific hyper-parameters, we carefully cal-ibrate the weighting coefficients for multi-objective op-timization. Specifically, we assign the logits-based and feature-based distillation loss in deep or shallow layers with weights of 1 × 10 −4, 6 × 10 −5 and 4 × 10 −5, respec-tively, while 1 for the primary Supervised Fine-Tuning ob-jective. This balanced scheme ensures commensurate con-tribution from each optimization component during gradi-ent updates. All experiments are conducted on an NVIDIA GeForce RTX 3090Ti GPU. 
+
+# C. Back-propagation through Large Backbone 
+
+Consider a neural network comprising L sequential lay-ers, where the transformation at the ith layer is defined as 
+
+fi(x) = σi(Wix + bi). This composite function depends on the previous layer’s output, parameterized by the weight matrix Wi, bias vector bi, and nonlinear activation function 
+
+σi(·). We denote the pre-activation output as zi+1 and the post-activation output as ai+1 , establishing the layer-wise propagation: 
+
+ai+1 = σi(zi+1 ) = σi(Wiai + bi). (8) Network parameters are optimized via stochastic gradi-ent descent (SGD) by minimizing a scalar loss function L
+
+applied to the final layer output. The backpropagation algo-rithm computes gradients for Wi and bi through recursive application of the multivariate chain rule: 
+
+∂L
+
+∂Wi
+
+= ∂L
+
+∂ai+1 
+
+∂ai+1 
+
+∂zi+1 
+
+∂zi+1 
+
+∂Wi
+
+= ∂L
+
+∂ai+1 
+
+σ′
+
+> i
+
+a⊤ 
+
+> i
+
+,∂L
+
+∂bi
+
+= ∂L
+
+∂ai+1 
+
+∂ai+1 
+
+∂zi+1 
+
+= ∂L
+
+∂ai+1 
+
+σ′
+
+> i
+
+,
+
+(9) where σ′ 
+
+> i
+
+≡ dσ i 
+
+> dzi+1
+
+denotes the activation gradient, and  
+
+> ∂L
+> ∂ai+1
+
+represents the upstream gradient from subsequent layers. This upstream gradient is recursively computed via backward propagation from layer i + 2 :
+
+∂L
+
+∂ai+1 
+
+= ∂L
+
+∂ai+2 
+
+∂ai+2 
+
+∂zi+2 
+
+∂zi+2 
+
+∂ai+1 
+
+= ∂L
+
+∂ai+2 
+
+σ′
+
+> i+1
+
+W⊤
+
+> i+1
+
+.
+
+(10) As formalized in Equations (9) and (10), the backpropa-gation algorithm incurs substantial computational overhead due to floating-point operations (FLOPs) required for two critical gradient components: 1) The activation gradients 
+
+{a} corresponding to updated parameters {W}, and 2) The activation derivatives {σ′} that must be cached through-out the computational graph, where {·} denotes sets of activations, parameters, or gradients. Existing Parameter-Efficient Transfer Learning (PETL) techniques, including Adapter [40], Prompt-Tuning [52], and LoRA [41], mit-igate memory footprint by reducing the parameter update set |{ W}| through learning only sparse parameter subsets, where |{·}| means the size of set {·} . Consequently, the memory allocated for activation storage |{ a}| proportion-ally decreases. However, the dominant computational bur-den during backpropagation stems from computing gra-dient terms involving {σ′} - the derivatives of activation functions. Crucially, |{ σ′}| remains undiminished in these methods since: 
+
+|{ σ′}| =
+
+> L
+
+X
+
+> i=1
+
+dim( zi). (11) This persistence occurs because PETL methods typically introduce trainable parameters into network inputs or in-termediate structures while keeping the backbone frozen. Nevertheless, they still require full computation of σ′ across all backbone operations, necessitating: 1) Complete evalua-tion of activation gradients through the entire computational graph, 2) Storage of intermediate derivatives at each layer, and 3) Backpropagation through all nonlinear transforma-tions. Since activation dimensions generally satisfy |{ a}| =
+
+|{ σ′}| (barring dimensionality-altering activations), the the-oretical memory reduction ceiling becomes: 
+
+Memory BP = |{ a}| 
+
+| {z } 
+
+> reduced
+
++ |{ σ′}| 
+
+| {z } 
+
+> unchanged
+
+≤ 50% reduction . (12) Therefore, while PETL methods reduce parameter up-date costs, they still incur substantial FLOPs and mem-ory requirements proportional to backbone complexity, as full error backpropagation through frozen layers remains mandatory. Based on the foregoing computational analysis, side net-work is proposed as a memory-efficient alternative. This lightweight network maintains same structure to the back-bone network while scaling all weight matrices and hidden state dimensions by a reduction factor r ≥ 2. Thus, the original backpropagation memory footprint |{ a}| + |{ σ′}| 
+
+is fundamentally transformed in this paradigm. Crucially, the side network decouples from the backbone’s compu-tational graph during backpropagation, requiring gradient computation only through its own structure. Consequently, its memory consumption reduces to: 
+
+Memory side BP = |{ a}| + |{ σ′}| 
+
+r (13) This yields a critical comparative advantage: when 
+
+r > 2, the side network achieves strictly lower memory consumption than the theoretical minimum of Parameter-Efficient Transfer Learning (PETL) methods, which remain bounded by: 
+
+Memory PETL BP ≥ |{ a}| + |{ σ′}| 
+
+2 (14) Thus, side networks establish a new efficiency fron-tier for Memory-Efficient Transfer Learning (METL), with memory savings growing linearly with r while maintaining functional capacity. 
+
+# D. Baselines 
+
+We select various transfer paradigms for comprehensive and challenging validation: -VSE ∞ [9] with BERT-base [18] model and ResNeXt-101(32 ×8d) [98] backbone pre-trained on Insta-gram (WSL) on Flickr30K [104], MSCOCO1K and MSCOCO5K [60] for the ITR task; -CLIP4Clip [64] with the pre-trained CLIP [76] using Text Transformer [75] and ViT-B/32 [23] on MSR-VTT [99] and MSVD [6] for the VTR task; -CLIP-ViL [80] that applies the CLIP image backbone [76] and encodes the text into word embeddings, followed by a cross-modal Transformer on VQAv2 [29] and GQA [42] for the QA task; -MDETR [48] that integrates a pre-trained ResNet-101, RoBERTa-base [62] with an encoder-decoder Transformer on RefCOCO, RefCOCO+ [105] and RefCOCOg [66] for the VG task; -T5-series [77] that imports text encoder and auto-regressive decoder, while following [85], we drop 6, 24 lay-ers of side network (3, 12 layers each in encoder and de-coder) for T5-base and T5-large on GLUE benchmark [90] for the NLP task; 
+
+ViT-base [23] witch consists of 86 million parameters, while pre-trained on ImageNet-21K [17] is the most com-monly used backbone across prior works ( e.g. , image clas-sification, video classification, etc .), and is adopted on VTAB-1K [107] for the CV task. 
+
+# E. More Ablation Studies 
+
+We extensively conduct more ablation studies to verify the effectiveness of our proposed method and the selected hyper-parameters. 0.0 0.2 0.4 0.6 0.8     
+
+> 67.5
+> 70.0
+> 72.5
+> 75.0
+> 77.5
+> 80.0
+> 82.5
+> 85.0
+> R@1 Scores
+> Flickr30K I-T R@1
+> Flickr30K T-I R@1
+> MSCOCO1K I-T R@1
+> MSCOCO1K T-I R@1
+> 0.0 0.2 0.4 0.6 0.8
+> 530
+> 532
+> 534
+> 536
+> 538
+> 540
+> Rsum Scores
+> Flickr30K Rsum
+> MSCOCO1K Rsum
+
+Figure A. Ablation study on the effect of the mask rate λ in our method. ( Left ) The Rsum (%) performance on Flickr30K and MSCOCO1K datasets. ( Right ) The R@1 (%) performance for sentence retrieval (”I-T”) and image retrieval (”T-I”) on Flickr30K and MSCOCO1K datasets. Table B. Ablation results (%) on the generation blocks for feature transformation in the student network on distinct datasets for ITR task. The best results are highlighted in bold .
+
+Generation Blocks Params. Memory Flickr30K MSCOCO1K MSCOCO5K (M) ↓ (G) ↓ I-T ↑ T-I ↑ Rsum ↑ I-T ↑ T-I ↑ Rsum ↑ I-T ↑ T-I ↑ Rsum ↑
+
+Self-Attention 12.6 25.4 84.7 69.5 537.4 79.8 67.2 531.5 60.4 46.4 444.9 Convolution 12.4 25.1 85.9 70.7 541.2 81.3 68.8 536.4 61.9 46.8 448.1 
+
+Table C. Ablation results (%) on adopting Hierarchical Feature-based Distillation strategy across shallow (Top) , deep (Middle) , and all 
+
+(Bottom) layers on distinct datasets for ITR task. The best results are highlighted in bold . and the second best results are underlined. 
+
+Layers Params. Memory Flickr30K MSCOCO1K MSCOCO5K (M) ↓ (G) ↓ I-T ↑ T-I ↑ Rsum ↑ I-T ↑ T-I ↑ Rsum ↑ I-T ↑ T-I ↑ Rsum ↑
+
+> Imitation
+
+1 12.4 24.9 83.4 68.5 536.8 78.6 65.8 529.1 59.1 44.7 441.3 1,2 12.4 24.9 83.7 68.8 536.7 78.9 66.1 529.2 59.7 44.3 441.6 5,6 12.4 24.9 84.6 69.2 537.4 79.6 67.1 531.2 60.5 45.6 443.8 1 ∼ 6 12.4 25.1 84.5 69.5 537.6 79.4 67.3 530.9 60.8 45.5 444.0 All 12.4 25.1 84.9 69.7 538.3 80.0 67.8 532.6 61.4 45.8 445.7 Generation  7,8 12.4 25.0 84.6 69.2 537.6 79.3 66.5 530.2 60.8 44.5 442.9 11,12 12.4 25.0 85.0 69.5 538.4 79.8 67.1 531.3 61.4 44.8 444.3 12 12.4 25.0 85.2 69.8 538.6 80.2 67.4 532.6 61.2 45.4 445.2 7 ∼ 12 12.4 25.2 84.6 69.3 538.1 79.9 67.2 531.6 60.7 45.2 444.1 All 12.4 25.4 85.2 70.1 539.5 80.6 67.9 533.4 61.1 45.9 446.0 All 12.4 25.1 85.9 70.7 541.2 81.3 68.8 536.4 61.9 46.8 448.1 Influence of the mask ratio λ. To explore the impact of the mask ratio and verify the effectiveness of adopting 
+
+λ = 0 .5, we conduct an ablation study of λ on ITR task. As demonstrated in Figure A, the results reveal that the performance of our method is sensitive to λ. Specifically, the model achieves the highest accuracy when λ = 0 .5 on both Flickr30K and MSCOCO1K datasets, indicating that 
+
+λ = 0 .5 optimally balances the preservation of critical in-formation and the introduction of diversity during feature distillation. As λ increases beyond 0.5, the performance of our method gradually declines. This degradation can be at-tributed to the excessive masking, which leads to the loss of valuable information, thereby diminishing the effectiveness of feature distillation and impairing the student network’s ability to learn useful information from the teacher network. 
+
+Necessity of generation blocks. We adopt a convolu-tional projector as the generation module for feature trans-formation in the student network. In order to validate its effectiveness, we conduct an ablation study comparing it with the self-attention mechanism. As shown in Table B, the convolutional projector achieves superior performance on ITR task, demonstrating its effectiveness in mitigating the feature discrepancies between the teacher and student networks. Beyond its advantage in accuracy, the convolu-tional projector also incurs remarkable advantages in com-putational efficiency, as it requires fewer parameters and consumes less training memory. These benefits stem from their fundamental differences in computational design. The self-attention mechanism computes attention scores for all input element pairs, leading to quadratic complexity with respect to the input size. This design significantly increases memory consumption and computational overhead during training. In contrast, the convolutional module operates on local receptive fields, capturing spatially localized features with a linear computational complexity with respect to the input size. This efficiency makes the convolutional projec-tor computationally lightweight, thus being more suitable for applications on resource-constrained scenarios for large-scale tasks. 
+
+Necessity of distillation across all layers. To verify the necessity of performing feature distillation across all layers, we empirically investigate the performance of our method with different layer combinations when performing distilla-tion. As shown in Table C, the results indicate that perform-ing Hierarchical Feature-based Distillation strategy across all layers yields the highest accuracy on ITR task. Fur-thermore, when feature distillation is applied solely to the shallow layers ( i.e. , layer 1 ∼6), the performance is no-tably lower compared to distillation applied to the deep lay-ers ( i.e. , layer 7 ∼12). The performance degradation is at-tributed to the fact that shallow layers contain less semantic information, which limits their contribution to the overall task. In contrast, deeper layers encode semantically rich features, leading to superior results. To further demonstrate the effectiveness of HFD independently, we also conduct ablation experiments with imitation-only and generation-only (i.e., feature-based distillation is performed across all layers utilizing either imitation or generation methods), the results are indicated in gray. These results underscore the importance of leveraging features from all layers of the net-work during the distillation process, providing evidence that our approach effectively facilitates the knowledge transfer from the backbone to the side network.
