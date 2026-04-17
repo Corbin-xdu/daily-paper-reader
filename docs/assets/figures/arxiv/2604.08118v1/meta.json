@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.08118v1/fig-001.webp",
+      "caption": "Table 2: WikiText-2 perplexity before and after PVtuning at 2 bpp on Llama 3.2 3B.",
+      "page": 7,
+      "index": 1,
+      "width": 469,
+      "height": 333
+    }
+  ]
+}
