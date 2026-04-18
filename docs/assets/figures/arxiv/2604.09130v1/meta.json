@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.09130v1/fig-001.webp",
+      "caption": "Figure 3. Illustration of different activation functions. The colorful circles are grid features. One circle represents one channel, which contains Rϕ×Rθ grid points on S2. In the proposed SwiGLU-S2 activation, we apply both nonlinearity and multiplication to grid features as highlighted in red.",
+      "page": 6,
+      "index": 1,
+      "width": 466,
+      "height": 294
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09130v1/fig-002.webp",
+      "caption": "Table 9. Hyper-parameters for the OMat24 dataset.",
+      "page": 21,
+      "index": 2,
+      "width": 983,
+      "height": 746
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09130v1/fig-003.webp",
+      "caption": "Table 10. Hyper-parameters for the MPtrj dataset.",
+      "page": 22,
+      "index": 3,
+      "width": 983,
+      "height": 708
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09130v1/fig-004.webp",
+      "caption": "Table 5. Results on the body-order experiments in Joshi et al. (2023). The k-body counterexample contains two geometric graphs that are indistinguishable using k-body scalarization. “FFNs” denotes feedforward networks. We mark results where models successfully",
+      "page": 18,
+      "index": 4,
+      "width": 513,
+      "height": 327
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09130v1/fig-005.webp",
+      "caption": "Table 11. Hyper-parameters for fine-tuning OMat24-pretrained models on MPtrj and subsampled Alexandria datasets.",
+      "page": 23,
+      "index": 5,
+      "width": 715,
+      "height": 708
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09130v1/fig-006.webp",
+      "caption": "Figure 1. EquiformerV3 architecture. The proposed improvements are highlighted in red. We encode input 3D atomistic graphs with atom and edge-degree embeddings and process with Transformer blocks, which consist of equivariant merged layer normalization (LN), equivariant graph attention and feedforward networks.",
+      "page": 4,
+      "index": 6,
+      "width": 362,
+      "height": 773
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09130v1/fig-007.webp",
+      "caption": "Table 7. Equivariance errors when using different activations in attention. We consider maximum degree Lmax = 4, 6 and maximum order Mmax = 2. For each Lmax, we start with the minimal number of grid points (Rϕ, Rθ) that enables the SwiGLU-S2 activation to have comparable equivariance errors to the gate activation as in Table 6. Then, we further reduce Rϕ. We mark results achieving similar",
+      "page": 19,
+      "index": 7,
+      "width": 794,
+      "height": 318
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09130v1/fig-008.webp",
+      "caption": "Table 6. Equivariance errors when using different activations in feedforward networks. We consider maximum degree Lmax = 2, 4, 6. For each Lmax, we vary the numbers of grid points (Rϕ, Rθ) sampled along ϕ and θ and report the resulting equivariance errors. The equivariance errors of the gate activation are reported as the baseline of strict equivariance. We mark results achieving similar equivariance",
+      "page": 19,
+      "index": 8,
+      "width": 896,
+      "height": 488
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09130v1/fig-009.webp",
+      "caption": "Table 8. Hyper-parameters for the base model setting on OC20 S2EF-2M dataset.",
+      "page": 20,
+      "index": 9,
+      "width": 715,
+      "height": 608
+    },
+    {
+      "url": "assets/figures/arxiv/2604.09130v1/fig-010.webp",
+      "caption": "Figure 2. Illustration of how different normalizations calculate statistics. In the proposed equivariant merged layer normalization, we share the merged RMS across all degrees as highlighted in red.",
+      "page": 5,
+      "index": 10,
+      "width": 487,
+      "height": 254
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.10275v1/fig-001.webp",
+      "caption": "Figure 1. Latency-Quality Pareto Frontier. The FastSHADE model family establishes a highly efficient trade-off between ondevice inference time (measured in FP16 on a Qualcomm Adreno 840 GPU) and pixel-level restoration fidelity (PSNR). While ultralightweight methods like TLG operate faster, they suffer a noticeable degradation in image quality. In contrast, our scalable architecture significantly expands the state-of-the-art efficiency frontier, pushing the boundaries of visual fidelity while offering highly competitive, low-latency variants for real-world mobile denoising.",
+      "page": 1,
+      "index": 1,
+      "width": 482,
+      "height": 323
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10275v1/fig-002.webp",
+      "caption": "Figure 4. Qualitative results of FastSHADE model predictions.",
+      "page": 6,
+      "index": 2,
+      "width": 902,
+      "height": 400
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10275v1/fig-003.webp",
+      "caption": "Table 1. Performance metrics of FastSHADE compared to baselines and other methods. SSIM and PSNR values are reported for the MAI2021 test subset. Runtime, t, is reported for the Adreno 840. SSIM for SplitterNet was not reported because the test subset is not public.",
+      "page": 6,
+      "index": 3,
+      "width": 514,
+      "height": 261
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10275v1/fig-004.webp",
+      "caption": "Figure 2. Proposed model architecture",
+      "page": 3,
+      "index": 4,
+      "width": 932,
+      "height": 570
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10275v1/fig-005.webp",
+      "caption": "Figure 3. Frequency domain analysis of the internal features within the AFDB Block, averaged over 50 validation images. (Left, Center) The 2D FFT magnitude spectra exhibit a broader energy distribution in the 5 × 5 path compared to the 3 × 3 path. (Right) In the normalized radially averaged power spectrum spatial path (blue) retains significant energy in the low-to-mid spatial frequencies, indicating the preservation of structural details and edges. In contrast, the HF noise path (red) has a flat spectral response characteristic of isotropic, unstructured noise extraction.",
+      "page": 5,
+      "index": 5,
+      "width": 952,
+      "height": 242
+    }
+  ]
+}
