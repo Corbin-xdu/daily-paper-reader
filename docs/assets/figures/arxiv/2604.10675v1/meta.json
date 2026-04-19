@@ -1,0 +1,174 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-001.webp",
+      "caption": "Fig. 7: Image inpainting with object placement priors. We evaluate four object placement approaches on the OPA [31] and HiddenObjects backgrounds. Full Mask inpaints the entire image. Human Annot. uses ground-truths from OPA. Random BBox samples a uniformly random placement region, serving as a controlled baseline. Ours uses the top-ranked box of our dataset. Dashed boxes show the inpainting region (HiddenObject annotation (ours), OPA annotation, Random). Corner scores are ImgEdit-Judge [57]. Our pipeline consistently produces well-placed, photorealistic composites across object classes and image scenes, outperforming sparse human placement.",
+      "page": 11,
+      "index": 1,
+      "width": 715,
+      "height": 294
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-002.webp",
+      "caption": "Table 6: Assignment between COCO foreground and Places365 background classes.",
+      "page": 25,
+      "index": 2,
+      "width": 721,
+      "height": 886
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-003.webp",
+      "caption": "Fig. 14: Spatial Prior. Object placements are computed for the following classes: airplane, apple, bench, bicycle, boat, book, bottle, cake.",
+      "page": 26,
+      "index": 3,
+      "width": 725,
+      "height": 937
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-004.webp",
+      "caption": "Fig. 18: Inpainting with Object Placement Priors. We evaluate three object placement approaches on the OPA backgrounds. Human Annot. uses ground-truths from OPA. Random BBox samples a uniformly random placement region, serving as a controlled baseline. Ours uses the top-ranked box of our dataset. Dashed boxes show the inpainting region (HiddenObject annotation (ours), OPA annotation, Random).",
+      "page": 30,
+      "index": 4,
+      "width": 703,
+      "height": 923
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-005.webp",
+      "caption": "Fig. 4: Spatial Prior (HiddenObjects) aggregated as a heatmap. (Left) We visualize the mean aggregated spatial prior across all images of HiddenObjects for different classes listed on the left. Classes such as bench and boat tend to appear near the bottom of images, while kite occurs more frequently near the top. These patterns reflect both semantic regularities (e.g., kite in the sky) and inherent photographic biases in image datasets. (Right) We visualize per-instance random example of spatial priors.",
+      "page": 7,
+      "index": 5,
+      "width": 720,
+      "height": 598
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-006.webp",
+      "caption": "Fig. 17: Inpainting with Object Placement Priors. We evaluate three object placement approaches on the OPA backgrounds. Human Annot. uses ground-truths from OPA. Random BBox samples a uniformly random placement region, serving as a controlled baseline. Ours uses the top-ranked box of our dataset. Dashed boxes show the inpainting region (HiddenObject annotation (ours), OPA annotation, Random).",
+      "page": 29,
+      "index": 6,
+      "width": 703,
+      "height": 923
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-007.webp",
+      "caption": "Fig. 12: Speedup Analysis. Top: Distribution of ∆(xt,∅) for 10040 inpaintings. Bottom: Plotting recall versus time across time steps shows that using only the second denoising iteration seems to be sufficient to get a 2x speed-up improvement on an 80% recall. The dotted red line denotes the cost of skipping the first step all along N · τ20.",
+      "page": 22,
+      "index": 7,
+      "width": 723,
+      "height": 247
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-008.webp",
+      "caption": "Fig. 11: Placement Distillation Model. Given a background image and a target object class, the model predicts plausible insertion locations using a DETR-style architecture. The transformer decoder operates on a fixed set of learned queries that are conditioned on the target class embedding. Each query predicts a candidate bounding box with its plausibility score. During inference, predicted boxes are ranked by their plausibility scores to obtain the most likely placement locations for the target object.",
+      "page": 22,
+      "index": 8,
+      "width": 712,
+      "height": 274
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-009.webp",
+      "caption": "Table 3: Downstream image editing quality evaluated by ImgEdit-Judge [57] (1-5). We compare our annotation pipeline against various placement strategies.",
+      "page": 10,
+      "index": 9,
+      "width": 644,
+      "height": 264
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-010.webp",
+      "caption": "Fig. 2: Background artifacts in PIPE [52]. Object removal pipelines are effective at removing the requested object but leave visible traces that can facilitate shortcut learning, e.g., (left) blurry area and the shadow presence, or (right) larger artifacts.",
+      "page": 3,
+      "index": 10,
+      "width": 704,
+      "height": 206
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-011.webp",
+      "caption": "Fig. 13: Bounding Box Proposals. Left: The 12 × 12 anchor grid. Middle: Full coverage set for an interior anchor. Right: Pruned set for a corner anchor due to boundary constraints.",
+      "page": 23,
+      "index": 11,
+      "width": 719,
+      "height": 231
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-012.webp",
+      "caption": "Fig. 16: Spatial Prior. Object placements are computed for the following classes: horse, keyboard, laptop, motorcycle, person, pizza, potted plant, sandwich.",
+      "page": 28,
+      "index": 12,
+      "width": 725,
+      "height": 937
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-013.webp",
+      "caption": "Table 4: Comparison of object placement baselines on the HiddenObjects test set. Our baseline distilled model outperforms zero-shot VLMs and other methods for object placement trained on OPA.",
+      "page": 13,
+      "index": 13,
+      "width": 723,
+      "height": 365
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-014.webp",
+      "caption": "Fig. 5: Verifier Comparison. For each verifier, we display the inpainting generation of the highest-scoring location. CLIP Score often prefers insertions irrespective of global scene context. In contrast, Image and Vision Reward outperform aesthetic score in judging realism and semantic coherence, leading to more human-aligned spatial priors.",
+      "page": 8,
+      "index": 14,
+      "width": 725,
+      "height": 306
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-015.webp",
+      "caption": "Fig. 9: Image inpainting with object placement priors. We evaluate three object placement approaches on the OPA backgrounds. Human Annot. uses ground-truths from OPA. Random BBox samples a uniformly random placement region, serving as a controlled baseline. Ours uses the top-ranked box of our dataset. Dashed boxes show the inpainting region (HiddenObject annotation (ours), OPA annotation, Random).",
+      "page": 19,
+      "index": 15,
+      "width": 703,
+      "height": 593
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-016.webp",
+      "caption": "Fig. 20: Inpainting with Object Placement Priors. We evaluate three object placement approaches on the OPA backgrounds. Human Annot. uses ground-truths from OPA. Random BBox samples a uniformly random placement region, serving as a controlled baseline. Ours uses the top-ranked box of our dataset. Dashed boxes show the inpainting region (HiddenObject annotation (ours), OPA annotation, Random).",
+      "page": 32,
+      "index": 16,
+      "width": 703,
+      "height": 923
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-017.webp",
+      "caption": "Fig. 8: Analysis of Spatial and Scale Distributions. (a) Object center distributions across datasets: while traditional benchmarks like COCO [29], VOC [14], and ImageNet [11] exhibit a pronounced center-crop bias, our pipeline (evaluated on HiddenObjects and OPA backgrounds) yields a more diffuse distribution with higher spatial variance. (b) Distribution of bounding box areas: HiddenObjects and PIPE [52] lack small objects (0.01%–0.1% image area), which reveals a shared resolution bottleneck of underlying diffusion backbones in both generating or removing small objects.",
+      "page": 12,
+      "index": 17,
+      "width": 714,
+      "height": 223
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-018.webp",
+      "caption": "Fig. 15: Spatial Prior. Object placements are computed for the following classes: car, cat, chair, cow, cup, dog, elephant, fire hydrant.",
+      "page": 27,
+      "index": 18,
+      "width": 725,
+      "height": 937
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-019.webp",
+      "caption": "Fig. 6: Inpainter Comparison. We compare cross-attention-based inpainters with ControlNet-based variants. Cross-attention-based inpainters are prone to (i) inpainting artifacts or (ii) inpaint objects that don’t respect scene semantics. While ControlNetbased methods more reliably enforce scene constraints: they either (iii) refuse implausible insertions or generate (valid) semantically coherent, context-aware objects.",
+      "page": 9,
+      "index": 19,
+      "width": 725,
+      "height": 362
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-020.webp",
+      "caption": "Fig. 19: Inpainting with Object Placement Priors. We evaluate three object placement approaches on the OPA backgrounds. Human Annot. uses ground-truths from OPA. Random BBox samples a uniformly random placement region, serving as a controlled baseline. Ours uses the top-ranked box of our dataset. Dashed boxes show the inpainting region (HiddenObject annotation (ours), OPA annotation, Random).",
+      "page": 31,
+      "index": 20,
+      "width": 703,
+      "height": 923
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10675v1/fig-021.webp",
+      "caption": "Fig. 10: Composite Overlay of Inpaintings. Multiple valid inpaintings are aggregated into a single composite scene. Accepted objects are segmented and overlaid on the source background. Insertions are ordered by preference ranking so the highestranked object remains unoccluded at the top of the stack.",
+      "page": 20,
+      "index": 21,
+      "width": 725,
+      "height": 394
+    }
+  ]
+}

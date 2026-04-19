@@ -6,145 +6,136 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-18
-- 运行时间：2026-04-18 19:47:15 UTC
+- 最新运行日期：2026-04-19
+- 运行时间：2026-04-19 19:53:32 UTC
 - 运行状态：成功
-- 本次总论文数：41
-- 精读区：30
+- 本次总论文数：38
+- 精读区：27
 - 速读区：11
 
 ### 今日简报（AI）
-今日深度复盘 41 篇 AI 论文，聚焦移动端人脸识别与机器人高效操控的架构突破。
-满分佳作 FaceLiVTv2 与设备感知 NAS 重新定义了端侧性能，同时 VLM 图像 Token 的必要性引发理论反思。
-推荐优先攻读两篇 10 分论文，掌握从算法优化到硬件适配的落地实战指南。
-- 详情：[/202604/18/README](/202604/18/README)
+今日深度研读 38 篇 AI 论文，重点攻克了可穿戴医疗监测与卫星遥感图像分割的端到端优化难题。
+满分论文揭示了自动化神经架构搜索（NAS）在轻量化设备上的巨大潜力，实现了血压估算与地物识别的性能突破。
+建议关注 3D 高斯泼溅剪枝及长视频生成技术，把握三维重建与动态视觉领域的最新演进趋势。
+- 详情：[/202604/19/README](/202604/19/README)
 
 ### 精读区论文标签
-1. [FaceLiVTv2: An Improved Hybrid Architecture for Efficient Mobile Face Recognition](/202604/18/2604.09127v1-facelivtv2-an-improved-hybrid-architecture-for-efficient-mobile-face-recognition)  
+1. [End-to-end Automated Deep Neural Network Optimization for PPG-based Blood Pressure Estimation on Wearables](/202604/19/2604.10117v1-end-to-end-automated-deep-neural-network-optimization-for-ppg-based-blood-pressure-estimation-on-wearables)  
    标签：评分：10.0/10、query:cv
-   evidence：用于移动端人脸识别的轻量化CNN-Transformer混合架构
-2. [Device-Conditioned Neural Architecture Search for Efficient Robotic Manipulation](/202604/18/2604.10170v1-device-conditioned-neural-architecture-search-for-efficient-robotic-manipulation)  
+   evidence：针对资源受限可穿戴设备的硬件感知NAS、剪枝和混合精度搜索
+2. [SatReg: Regression-based Neural Architecture Search for Lightweight Satellite Image Segmentation](/202604/19/2604.10306v1-satreg-regression-based-neural-architecture-search-for-lightweight-satellite-image-segmentation)  
    标签：评分：10.0/10、query:cv
-   evidence：针对高效机器人的硬件约束架构搜索与量化感知训练
-3. [SatReg: Regression-based Neural Architecture Search for Lightweight Satellite Image Segmentation](/202604/18/2604.10306v1-satreg-regression-based-neural-architecture-search-for-lightweight-satellite-image-segmentation)  
+   evidence：基于回归的 NAS 和知识蒸馏用于轻量化视觉
+3. [Lightweight Low-Light Image Enhancement via Distribution-Normalizing Preprocessing and Depthwise U-Net](/202604/19/2604.11071v1-lightweight-low-light-image-enhancement-via-distribution-normalizing-preprocessing-and-depthwise-u-net)  
    标签：评分：10.0/10、query:cv
-   evidence：基于回归的硬件感知NAS，用于轻量级卫星图像分割
-4. [MOONSHOT : A Framework for Multi-Objective Pruning of Vision and Large Language Models](/202604/18/2604.13287v1-moonshot--a-framework-for-multi-objective-pruning-of-vision-and-large-language-models)  
+   evidence：用于图像增强的轻量化深度可分离U-Net
+4. [MOONSHOT : A Framework for Multi-Objective Pruning of Vision and Large Language Models](/202604/19/2604.13287v1-moonshot--a-framework-for-multi-objective-pruning-of-vision-and-large-language-models)  
    标签：评分：10.0/10、query:cv
-   evidence：针对视觉模型的多目标剪枝框架，优化重构误差与泰勒近似
-5. [DeFakeQ: Enabling Real-Time Deepfake Detection on Edge Devices via Adaptive Bidirectional Quantization](/202604/18/2604.08847v1-defakeq-enabling-real-time-deepfake-detection-on-edge-devices-via-adaptive-bidirectional-quantization)  
+   evidence：针对视觉和大型语言模型的多目标剪枝框架
+5. [What and Where to Adapt: Structure-Semantics Co-Tuning for Machine Vision Compression via Synergistic Adapters](/202604/19/2604.10017v1-what-and-where-to-adapt-structure-semantics-co-tuning-for-machine-vision-compression-via-synergistic-adapters)  
    标签：评分：9.0/10、query:cv
-   evidence：针对边缘设备实时深度伪造检测的自适应双向量化技术
-6. [Ge$^\text{2}$mS-T: Multi-Dimensional Grouping for Ultra-High Energy Efficiency in Spiking Transformer](/202604/18/2604.08894v1-getext2ms-t-multi-dimensional-grouping-for-ultra-high-energy-efficiency-in-spiking-transformer)  
+   evidence：机器视觉压缩的结构-语义协同微调
+6. [On The Application of Linear Attention in Multimodal Transformers](/202604/19/2604.10064v1-on-the-application-of-linear-attention-in-multimodal-transformers)  
    标签：评分：9.0/10、query:cv
-   evidence：脉冲Transformer中用于超高能效的多维分组计算
-7. [Modality-Aware Zero-Shot Pruning and Sparse Attention for Efficient Multimodal Edge Inference](/202604/18/2604.08971v1-modality-aware-zero-shot-pruning-and-sparse-attention-for-efficient-multimodal-edge-inference)  
+   evidence：线性注意力作为ViT架构的高效替代方案，旨在降低复杂度
+7. [MAVEN-T: Multi-Agent enVironment-aware Enhanced Neural Trajectory predictor with Reinforcement Learning](/202604/19/2604.10169v1-maven-t-multi-agent-environment-aware-enhanced-neural-trajectory-predictor-with-reinforcement-learning)  
    标签：评分：9.0/10、query:cv
-   evidence：针对多模态边缘推理的零样本剪枝与稀疏注意力技术
-8. [ELT: Elastic Looped Transformers for Visual Generation](/202604/18/2604.09168v1-elt-elastic-looped-transformers-for-visual-generation)  
+   evidence：用于轨迹预测的渐进式蒸馏和架构协同设计
+8. [Device-Conditioned Neural Architecture Search for Efficient Robotic Manipulation](/202604/19/2604.10170v1-device-conditioned-neural-architecture-search-for-efficient-robotic-manipulation)  
    标签：评分：9.0/10、query:cv
-   evidence：使用权重共享Transformer块和自蒸馏的参数高效视觉生成模型
-9. [ELT: Elastic Looped Transformers for Visual Generation](/202604/18/2604.09168v2-elt-elastic-looped-transformers-for-visual-generation)  
+   evidence：针对高效机器人操作的硬件约束架构搜索
+9. [FastSHADE: Fast Self-augmented Hierarchical Asymmetric Denoising for Efficient inference on mobile devices](/202604/19/2604.10275v1-fastshade-fast-self-augmented-hierarchical-asymmetric-denoising-for-efficient-inference-on-mobile-devices)  
    标签：评分：9.0/10、query:cv
-   evidence：利用权重共享Transformer块和自蒸馏实现的参数高效视觉生成模型
-10. [AsymLoc: Towards Asymmetric Feature Matching for Efficient Visual Localization](/202604/18/2604.09445v1-asymloc-towards-asymmetric-feature-matching-for-efficient-visual-localization)  
+   evidence：专为移动端GPU实时修复定制的轻量级U-Net风格网络
+10. [Lightweight Low-Light Image Enhancement via Distribution-Normalizing Preprocessing and Depthwise U-Net](/202604/19/2604.11071v2-lightweight-low-light-image-enhancement-via-distribution-normalizing-preprocessing-and-depthwise-u-net)  
    标签：评分：9.0/10、query:cv
-   evidence：将轻量级学生模型与大型教师模型对齐的非对称蒸馏框架，用于定位
-11. [What and Where to Adapt: Structure-Semantics Co-Tuning for Machine Vision Compression via Synergistic Adapters](/202604/18/2604.10017v1-what-and-where-to-adapt-structure-semantics-co-tuning-for-machine-vision-compression-via-synergistic-adapters)  
+   evidence：采用深度可分离卷积的轻量级 U-Net，用于资源受限的图像增强
+11. [Structured State-Space Regularization for Compact and Generation-Friendly Image Tokenization](/202604/19/2604.11089v1-structured-state-space-regularization-for-compact-and-generation-friendly-image-tokenization)  
    标签：评分：9.0/10、query:cv
-   evidence：针对机器视觉压缩的参数高效微调与结构-语义协同调整
-12. [On The Application of Linear Attention in Multimodal Transformers](/202604/18/2604.10064v1-on-the-application-of-linear-attention-in-multimodal-transformers)  
+   evidence：基于状态空间模型理论分析的紧凑图像标记化
+12. [Semantic-Geometric Dual Compression: Training-Free Visual Token Reduction for Ultra-High-Resolution Remote Sensing Understanding](/202604/19/2604.11122v1-semantic-geometric-dual-compression-training-free-visual-token-reduction-for-ultra-high-resolution-remote-sensing-understanding)  
    标签：评分：9.0/10、query:cv
-   evidence：用于高效多模态Transformer的线性注意力机制
-13. [End-to-end Automated Deep Neural Network Optimization for PPG-based Blood Pressure Estimation on Wearables](/202604/18/2604.10117v1-end-to-end-automated-deep-neural-network-optimization-for-ppg-based-blood-pressure-estimation-on-wearables)  
-   标签：评分：9.0/10、query:cv
-   evidence：结合NAS、剪枝和混合精度搜索的穿戴设备自动深度网络优化
-14. [MAVEN-T: Multi-Agent enVironment-aware Enhanced Neural Trajectory predictor with Reinforcement Learning](/202604/18/2604.10169v1-maven-t-multi-agent-environment-aware-enhanced-neural-trajectory-predictor-with-reinforcement-learning)  
-   标签：评分：9.0/10、query:cv
-   evidence：计算机视觉中高效轨迹预测的知识蒸馏与架构协同设计
-15. [FastSHADE: Fast Self-augmented Hierarchical Asymmetric Denoising for Efficient inference on mobile devices](/202604/18/2604.10275v1-fastshade-fast-self-augmented-hierarchical-asymmetric-denoising-for-efficient-inference-on-mobile-devices)  
-   标签：评分：9.0/10、query:cv
-   evidence：用于移动端GPU实时去噪的轻量级U-Net风格网络
-16. [Lightweight Low-Light Image Enhancement via Distribution-Normalizing Preprocessing and Depthwise U-Net](/202604/18/2604.11071v1-lightweight-low-light-image-enhancement-via-distribution-normalizing-preprocessing-and-depthwise-u-net)  
-   标签：评分：9.0/10、query:cv
-   evidence：采用深度可分离卷积的轻量级两阶段低光图像增强框架
-17. [Lightweight Low-Light Image Enhancement via Distribution-Normalizing Preprocessing and Depthwise U-Net](/202604/18/2604.11071v2-lightweight-low-light-image-enhancement-via-distribution-normalizing-preprocessing-and-depthwise-u-net)  
-   标签：评分：9.0/10、query:cv
-   evidence：使用深度可分离卷积的轻量级低光图像增强框架
-18. [Decoupled Similarity for Task-Aware Token Pruning in Large Vision-Language Models](/202604/18/2604.11240v1-decoupled-similarity-for-task-aware-token-pruning-in-large-vision-language-models)  
+   evidence：高分辨率遥感理解中的视觉Token削减
+13. [Decoupled Similarity for Task-Aware Token Pruning in Large Vision-Language Models](/202604/19/2604.11240v1-decoupled-similarity-for-task-aware-token-pruning-in-large-vision-language-models)  
    标签：评分：9.0/10、query:cv
    evidence：通过Token剪枝减少视觉语言模型的计算开销
-19. [S$^3$: Structured Sparsity Specification](/202604/18/2604.11315v1-s3-structured-sparsity-specification)  
+14. [S$^3$: Structured Sparsity Specification](/202604/19/2604.11315v1-s3-structured-sparsity-specification)  
    标签：评分：9.0/10、query:cv
-   evidence：用于定义和实现结构化稀疏模式的代数框架
-20. [SVD-Prune: Training-Free Token Pruning For Efficient Vision-Language Models](/202604/18/2604.11530v1-svd-prune-training-free-token-pruning-for-efficient-vision-language-models)  
+   evidence：结构化稀疏与剪枝的代数框架
+15. [SVD-Prune: Training-Free Token Pruning For Efficient Vision-Language Models](/202604/19/2604.11530v1-svd-prune-training-free-token-pruning-for-efficient-vision-language-models)  
    标签：评分：9.0/10、query:cv
-   evidence：使用SVD进行高效视觉语言模型的免训练Token剪枝
-21. [DA-PTQ: Drift-Aware Post-Training Quantization for Efficient Vision-Language-Action Models](/202604/18/2604.11572v1-da-ptq-drift-aware-post-training-quantization-for-efficient-vision-language-action-models)  
+   evidence：基于SVD的视觉语言模型免训练Token剪枝技术
+16. [DA-PTQ: Drift-Aware Post-Training Quantization for Efficient Vision-Language-Action Models](/202604/19/2604.11572v1-da-ptq-drift-aware-post-training-quantization-for-efficient-vision-language-action-models)  
    标签：评分：9.0/10、query:cv
-   evidence：将训练后量化建模为漂移感知优化问题
-22. [OFA-Diffusion Compression: Compressing Diffusion Model in One-Shot Manner](/202604/18/2604.12668v1-ofa-diffusion-compression-compressing-diffusion-model-in-one-shot-manner)  
+   evidence：漂移感知的训练后量化优化
+17. [HyperLiDAR: Adaptive Post-Deployment LiDAR Segmentation via Hyperdimensional Computing](/202604/19/2604.12331v1-hyperlidar-adaptive-post-deployment-lidar-segmentation-via-hyperdimensional-computing)  
    标签：评分：9.0/10、query:cv
-   evidence：针对扩散模型的Once-for-all压缩框架，以应对不同的资源限制
-23. [DroneScan-YOLO: Redundancy-Aware Lightweight Detection for Tiny Objects in UAV Imagery](/202604/18/2604.13278v1-dronescan-yolo-redundancy-aware-lightweight-detection-for-tiny-objects-in-uav-imagery)  
+   evidence：针对边缘系统的轻量化部署后LiDAR分割框架
+18. [OFA-Diffusion Compression: Compressing Diffusion Model in One-Shot Manner](/202604/19/2604.12668v1-ofa-diffusion-compression-compressing-diffusion-model-in-one-shot-manner)  
    标签：评分：9.0/10、query:cv
-   evidence：针对资源受限无人机的动态滤波器剪枝轻量化检测架构
-24. [MaMe & MaRe: Matrix-Based Token Merging and Restoration for Efficient Visual Perception and Synthesis](/202604/18/2604.13432v1-mame--mare-matrix-based-token-merging-and-restoration-for-efficient-visual-perception-and-synthesis)  
+   evidence：针对扩散模型的Once-for-all压缩框架，应对资源受限环境
+19. [DroneScan-YOLO: Redundancy-Aware Lightweight Detection for Tiny Objects in UAV Imagery](/202604/19/2604.13278v1-dronescan-yolo-redundancy-aware-lightweight-detection-for-tiny-objects-in-uav-imagery)  
    标签：评分：9.0/10、query:cv
-   evidence：基于矩阵的Vision Transformer令牌合并与恢复技术
-25. [Efficient Multi-View 3D Object Detection by Dynamic Token Selection and Fine-Tuning](/202604/18/2604.13586v1-efficient-multi-view-3d-object-detection-by-dynamic-token-selection-and-fine-tuning)  
+   evidence：针对无人机图像的冗余感知轻量化检测及动态滤波器剪枝
+20. [MaMe & MaRe: Matrix-Based Token Merging and Restoration for Efficient Visual Perception and Synthesis](/202604/19/2604.13432v1-mame--mare-matrix-based-token-merging-and-restoration-for-efficient-visual-perception-and-synthesis)  
    标签：评分：9.0/10、query:cv
-   evidence：通过ViT主干网络的动态Token选择实现高效多视图3D检测
-26. [Revisiting Token Compression for Accelerating ViT-based Sparse Multi-View 3D Object Detectors](/202604/18/2604.14563v1-revisiting-token-compression-for-accelerating-vit-based-sparse-multi-view-3d-object-detectors)  
+   evidence：基于矩阵的Token合并用于高效视觉Transformer
+21. [UHR-BAT: Budget-Aware Token Compression Vision-Language model for Ultra-High-Resolution Remote Sensing](/202604/19/2604.13565v1-uhr-bat-budget-aware-token-compression-vision-language-model-for-ultra-high-resolution-remote-sensing)  
    标签：评分：9.0/10、query:cv
-   evidence：针对ViT检测器的Token压缩与动态补丁大小调整
-27. [Switch-KD: Visual-Switch Knowledge Distillation for Vision-Language Models](/202604/18/2604.14629v1-switch-kd-visual-switch-knowledge-distillation-for-vision-language-models)  
+   evidence：针对资源受限遥感任务的Token压缩框架
+22. [Efficient Multi-View 3D Object Detection by Dynamic Token Selection and Fine-Tuning](/202604/19/2604.13586v1-efficient-multi-view-3d-object-detection-by-dynamic-token-selection-and-fine-tuning)  
    标签：评分：9.0/10、query:cv
-   evidence：资源受限场景下视觉语言模型的知识蒸馏框架
-28. [A Comparative Study of CNN Optimization Methods for Edge AI: Exploring the Role of Early Exits](/202604/18/2604.14789v1-a-comparative-study-of-cnn-optimization-methods-for-edge-ai-exploring-the-role-of-early-exits)  
+   evidence：通过ViT主干网络的动态Token选择实现高效多视图3D目标检测
+23. [One Token per Highly Selective Frame: Towards Extreme Compression for Long Video Understanding](/202604/19/2604.14149v1-one-token-per-highly-selective-frame-towards-extreme-compression-for-long-video-understanding)  
    标签：评分：9.0/10、query:cv
-   evidence：边缘AI静态压缩与动态早期退出机制的比较研究
-29. [VisPCO: Visual Token Pruning Configuration Optimization via Budget-Aware Pareto-Frontier Learning for Vision-Language Models](/202604/18/2604.15188v1-vispco-visual-token-pruning-configuration-optimization-via-budget-aware-pareto-frontier-learning-for-vision-language-models)  
+   evidence：视觉模型的极端视频Token压缩
+24. [Revisiting Token Compression for Accelerating ViT-based Sparse Multi-View 3D Object Detectors](/202604/19/2604.14563v1-revisiting-token-compression-for-accelerating-vit-based-sparse-multi-view-3d-object-detectors)  
    标签：评分：9.0/10、query:cv
-   evidence：通过帕累托前沿学习优化视觉语言模型的视觉标记剪枝配置
-30. [StreamCacheVGGT: Streaming Visual Geometry Transformers with Robust Scoring and Hybrid Cache Compression](/202604/18/2604.15237v1-streamcachevggt-streaming-visual-geometry-transformers-with-robust-scoring-and-hybrid-cache-compression)  
+   evidence：用于加速基于ViT的3D检测器的Token压缩和动态补丁大小调整
+25. [Switch-KD: Visual-Switch Knowledge Distillation for Vision-Language Models](/202604/19/2604.14629v1-switch-kd-visual-switch-knowledge-distillation-for-vision-language-models)  
    标签：评分：9.0/10、query:cv
-   evidence：流式视觉几何Transformer的混合缓存压缩与评分机制
+   evidence：视觉语言模型的知识蒸馏
+26. [A Comparative Study of CNN Optimization Methods for Edge AI: Exploring the Role of Early Exits](/202604/19/2604.14789v1-a-comparative-study-of-cnn-optimization-methods-for-edge-ai-exploring-the-role-of-early-exits)  
+   标签：评分：9.0/10、query:cv
+   evidence：边缘AI中静态压缩（剪枝、量化）与动态早期退出机制的对比研究
+27. [StreamCacheVGGT: Streaming Visual Geometry Transformers with Robust Scoring and Hybrid Cache Compression](/202604/19/2604.15237v1-streamcachevggt-streaming-visual-geometry-transformers-with-robust-scoring-and-hybrid-cache-compression)  
+   标签：评分：9.0/10、query:cv
+   evidence：用于流式视觉几何Transformer的混合缓存压缩和Token重要性评分
 
 ### 速读区论文标签
-1. [Expressivity of Transformers: A Tropical Geometry Perspective](/202604/18/2604.14727v1-expressivity-of-transformers-a-tropical-geometry-perspective)  
-   标签：评分：8.5/10、query:cv
-   evidence：Transformer表达能力与复杂性的数学基础
-2. [Sharp description of local minima in the loss landscape of high-dimensional two-layer ReLU neural networks](/202604/18/2604.09412v1-sharp-description-of-local-minima-in-the-loss-landscape-of-high-dimensional-two-layer-relu-neural-networks)  
+1. [Memory-efficient optimization of implicit neural representations for CT reconstruction](/202604/19/2604.09884v1-memory-efficient-optimization-of-implicit-neural-representations-for-ct-reconstruction)  
    标签：评分：8.0/10、query:cv
-   evidence：双层ReLU神经网络损失景观的数学表征
-3. [Do Vision Language Models Need to Process Image Tokens?](/202604/18/2604.09425v1-do-vision-language-models-need-to-process-image-tokens)  
+   evidence：神经表示的内存高效随机梯度近似
+2. [PointSplat: Efficient Geometry-Driven Pruning and Transformer Refinement for 3D Gaussian Splatting](/202604/19/2604.09903v1-pointsplat-efficient-geometry-driven-pruning-and-transformer-refinement-for-3d-gaussian-splatting)  
    标签：评分：8.0/10、query:cv
-   evidence：Transformer堆栈中视觉表示收敛和熵稳定的理论分析
-4. [Mosaic: Cross-Modal Clustering for Efficient Video Understanding](/202604/18/2604.10060v1-mosaic-cross-modal-clustering-for-efficient-video-understanding)  
+   evidence：针对3D高斯泼溅的几何驱动剪枝技术，减少内存和存储需求
+3. [Long-Horizon Streaming Video Generation via Hybrid Attention with Decoupled Distillation](/202604/19/2604.10103v1-long-horizon-streaming-video-generation-via-hybrid-attention-with-decoupled-distillation)  
    标签：评分：8.0/10、query:cv
-   evidence：用于高效流式长视频理解的集群驱动 VLM 推理系统
-5. [EquiformerV3: Scaling Efficient, Expressive, and General SE(3)-Equivariant Graph Attention Transformers](/202604/18/2604.09130v1-equiformerv3-scaling-efficient-expressive-and-general-se3-equivariant-graph-attention-transformers)  
-   标签：评分：7.5/10、query:cv
-   evidence：等变Transformer的高效设计与软件优化
-6. [Towards Lifelong Aerial Autonomy: Geometric Memory Management for Continual Visual Place Recognition in Dynamic Environments](/202604/18/2604.09038v1-towards-lifelong-aerial-autonomy-geometric-memory-management-for-continual-visual-place-recognition-in-dynamic-environments)  
+   evidence：将预训练视频扩散模型蒸馏为自回归模型
+4. [Bootstrapping Video Semantic Segmentation Model via Distillation-assisted Test-Time Adaptation](/202604/19/2604.10950v1-bootstrapping-video-semantic-segmentation-model-via-distillation-assisted-test-time-adaptation)  
+   标签：评分：8.0/10、query:cv
+   evidence：用于视频语义分割的蒸馏辅助测试时自适应
+5. [Mosaic: Cross-Modal Clustering for Efficient Video Understanding](/202604/19/2604.10060v1-mosaic-cross-modal-clustering-for-efficient-video-understanding)  
    标签：评分：7.0/10、query:cv
-   evidence：严格机载存储限制下的视觉地点识别内存管理框架
-7. [Generalization and Scaling Laws for Mixture-of-Experts Transformers](/202604/18/2604.09175v1-generalization-and-scaling-laws-for-mixture-of-experts-transformers)  
+   evidence：用于流式视频理解的集群驱动VLM推理系统
+6. [Visual Late Chunking: An Empirical Study of Contextual Chunking for Efficient Visual Document Retrieval](/202604/19/2604.10167v1-visual-late-chunking-an-empirical-study-of-contextual-chunking-for-efficient-visual-document-retrieval)  
    标签：评分：7.0/10、query:cv
-   evidence：基于活跃参数预算的MoE Transformer泛化与缩放理论
-8. [Beyond Segmentation: Structurally Informed Facade Parsing from Imperfect Images](/202604/18/2604.09260v1-beyond-segmentation-structurally-informed-facade-parsing-from-imperfect-images)  
+   evidence：通过层次聚类减少向量数量，实现高效的视觉文档检索
+7. [Sparse Hypergraph-Enhanced Frame-Event Object Detection with Fine-Grained MoE](/202604/19/2604.11140v1-sparse-hypergraph-enhanced-frame-event-object-detection-with-fine-grained-moe)  
    标签：评分：7.0/10、query:cv
-   evidence：为YOLOv8定制的轻量化对齐损失，在不增加推理开销的情况下提高结构规整性
-9. [Think Less, Know More: State-Aware Reasoning Compression with Knowledge Guidance for Efficient Reasoning](/202604/18/2604.09150v1-think-less-know-more-state-aware-reasoning-compression-with-knowledge-guidance-for-efficient-reasoning)  
+   evidence：用于高效多模态目标检测的稀疏超图建模
+8. [Winner-Take-All Spiking Transformer for Language Modeling](/202604/19/2604.11321v1-winner-take-all-spiking-transformer-for-language-modeling)  
+   标签：评分：7.0/10、query:cv
+   evidence：具有稀疏机制的高能效脉冲 Transformer
+9. [A3-FPN: Asymptotic Content-Aware Pyramid Attention Network for Dense Visual Prediction](/202604/19/2604.10210v1-a3-fpn-asymptotic-content-aware-pyramid-attention-network-for-dense-visual-prediction)  
    标签：评分：6.0/10、query:cv
-   evidence：建模冗余以实现高效推理的推理压缩框架
-10. [Multi-task Just Recognizable Difference for Video Coding for Machines: Database, Model, and Coding Application](/202604/18/2604.09421v1-multi-task-just-recognizable-difference-for-video-coding-for-machines-database-model-and-coding-application)  
+   evidence：用于密集视觉预测的渐进式内容感知金字塔注意力
+10. [HiddenObjects: Scalable Diffusion-Distilled Spatial Priors for Object Placement](/202604/19/2604.10675v1-hiddenobjects-scalable-diffusion-distilled-spatial-priors-for-object-placement)  
    标签：评分：6.0/10、query:cv
-   evidence：通过可见性阈值建模提高机器视觉的编码效率
-11. [Position-Agnostic Pre-Projection for Transformer Attention: Nonlinear Feature Construction and Content Skip Before Q/K/V](/202604/18/2604.10791v1-position-agnostic-pre-projection-for-transformer-attention-nonlinear-feature-construction-and-content-skip-before-qkv)  
+   evidence：将扩散模型中的隐式位置知识蒸馏为显式空间先验
+11. [Position-Agnostic Pre-Projection for Transformer Attention: Nonlinear Feature Construction and Content Skip Before Q/K/V](/202604/19/2604.10791v1-position-agnostic-pre-projection-for-transformer-attention-nonlinear-feature-construction-and-content-skip-before-qkv)  
    标签：评分：6.0/10、query:cv
-   evidence：对Transformer注意力模块进行改进，实现特征构建与内容跳跃连接
+   evidence：带有预投影和内容跳跃连接的Transformer注意力机制改进
 
 
 <div class="dpr-home-promo-card">
