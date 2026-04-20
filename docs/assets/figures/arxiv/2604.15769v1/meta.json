@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.15769v1/fig-001.webp",
+      "caption": "Fig. 3. Spike-error scaling law validation (log-log). Observed slope −0.48± 0.03 (R2 = 0.97, p < 0.001, n = 10 seeds) matches the theoretical −0.5 from Theorem 8, confirming the ε ∝ 1/ √ Ntotal relationship. Error bars show ±1 standard deviation.",
+      "page": 5,
+      "index": 1,
+      "width": 458,
+      "height": 263
+    }
+  ]
+}
