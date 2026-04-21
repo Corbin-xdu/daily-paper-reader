@@ -1,0 +1,399 @@
+Title: Sparse Hypergraph-Enhanced Frame-Event Object Detection with Fine-Grained MoE
+
+URL Source: https://arxiv.org/pdf/2604.11140v1
+
+Published Time: Tue, 14 Apr 2026 01:53:49 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# Sparse Hypergraph-Enhanced Frame-Event Object Detection with Fine-Grained MoE 
+
+## Wei Bao, Yuehan Wang, Tianhang Zhou, Siqi Li, and Yue Gao 
+
+## BNRist, THUIBCS, BLBCI, School of Software, Tsinghua University State Key Laboratory of Heavy Oil Processing, China University of Petroleum (Beijing), Beijing, 102249, China 
+
+## {baoweivvv, lisiqi19971013, kevin.gaoy }@gmail.com; wangyuehan@stu.xjtu.edu.cn; zhouth@cup.edu.cn 
+
+## Abstract 
+
+Integrating frame-based RGB cameras with event streams offers a promising solution for robust ob-ject detection under challenging dynamic condi-tions. However, the inherent heterogeneity and data redundancy of these modalities often lead to prohibitive computational overhead or suboptimal feature fusion. In this paper, we propose Hyper-FEOD, a high-performance and efficient detection framework, which synergistically optimizes multi-modal interaction through two core components. First, we introduce Sparse Hypergraph-enhanced Cross-Modal Fusion (S-HCF), which leverages the inherent sparsity of event streams to con-struct an event-guided activity map. By perform-ing high-order hypergraph modeling exclusively on selected motion-critical sparse tokens, S-HCF captures complex non-local dependencies between RGB and event data while overcoming the tradi-tional complexity bottlenecks of hypergraph com-putation. Second, we design a Fine-Grained Mix-ture of Experts (FG-MoE) Enhancement module to address the diverse semantic requirements of differ-ent image regions. This module employs special-ized hypergraph experts tailored for object bound-aries, internal textures, and backgrounds, utiliz-ing a pixel-level spatial gating mechanism to adap-tively route and enhance features. Combined with a load-balancing loss and zero-initialization strategy, FG-MoE ensures stable training and precise fea-ture refinement without disrupting the pre-trained backbone’s distribution. Experimental results on mainstream RGB-Event benchmarks demonstrate that Hyper-FEOD achieves a superior accuracy-efficiency trade-off, outperforming state-of-the-art methods while maintaining a lightweight footprint suitable for real-time edge deployment. 
+
+## 1 Introduction 
+
+Object detection is a fundamental and pivotal perceptual task in computer vision [Liu et al. , 2020; Oksuz et al. , 2020], serving as the technical foundation for numerous intelligent systems. Conventional frame-based object detection suffer RGB  
+
+> Encoder
+> Event
+> Encoder
+> Decoder &
+> Detection Head
+> RGB
+> Encoder
+> Event
+> Encoder
+> Distillation Loss
+> Pair -wise
+> Interaction -guided Fusion
+> Self -Distillation -
+> enhanced -Fusion
+> Distillation Loss
+> Decoder &
+> Detection Head
+> (b) Ours: Hypergraph -and Distillation -enhanced Fusion (a) Existing Cross -modal Fusion
+> Teacher
+> Student
+> Student
+> High -order Multi -to -Multi
+> Interaction -guided Fusion
+
+Figure 1: Comparison of our proposed Hyper-FEOD with exist-ing methods . Hyper-FEOD performs high-order non-local depen-dency modeling exclusively on motion-critical sparse tokens, as op-posed to the dense pairwise interaction adopted by existing methods. Moreover, Hyper-FEOD leverages a fine-grained mixture-of-experts enhancement with specialized hypergraph experts and pixel-level spatial gating to adaptively refine region-aware features, a novel de-sign that remains unexplored in existing approaches. 
+
+from fixed exposure time and limited dynamic range, re-sulting in substantial performance degradation in challeng-ing scenarios. By contrast, emerging biologically inspired event cameras (e.g., DAVIS) adopt an asynchronous operat-ing mode that only transmits local pixel-level changes caused by luminance variations [Li et al. , 2024]. The high tempo-ral resolution and high dynamic range characteristics provide a promising solution to overcome the inherent shortcomings of RGB cameras [Perot et al. , 2020; Gehrig and Scaramuzza, 2023]. However, the sparse event cameras inherently lack fine-grained visual details. The intrinsic complementary characteristics between frame and event data have spurred the rapid development of Frame-Event Object Detection (FEOD) methods [Gehrig and Scara-muzza, 2024; Zhou et al. , 2023; Li et al. , 2023; Cao et al. ,2024a; Zhang et al. , 2024]. DAGr [Gehrig and Scaramuzza, 2024] leverages the high temporal resolution and inherent sparsity of event data and the rich but low temporal resolution information of frame images to achieve efficient and high-performance object detection. RENet [Zhou et al. , 2023] proposes a bi-directional fusion design to better model multi-modal features and attentively form the shared representation. SODFormer [Li et al. , 2023] integrates events and frames via spatiotemporal transformer to continuously detect objects in an asynchronous manner. CAFR [Cao et al. , 2024a] de-sign bidirectional cross-modality interaction to facilitate the adaptive feature fusion in coarse-to-fine way. FAOD [Zhang 
+
+et al. , 2024] achieves feature and frequency alignment via 
+
+> arXiv:2604.11140v1 [cs.CV] 13 Apr 2026
+
+attention-based cross-modal interaction, which enhances the model’s generalizability to spatial and temporal shifts. How-ever, owing to the insufficient unimodal feature extraction and cross-modal fusion, the performance of existing FEOD meth-ods remains suboptimal in complex scenarios. On the one hand, the attention mechanism [Vaswani et al. , 2017] em-ployed in existing cross-modal fusion modules is restricted to limited information aggregation and pairwise correlation modeling, and lacks the capability to capture global multi-to-multi high-order correlations , as illustrated in Fig. 1(a). On the other hand, current FEOD methods typically adopt a two-stream feature extraction network and overlook the ef-fective extraction of unimodal features , which acts as the fundamental premise and cornerstone for multi-modal fusion, thereby leading to the insufficient exploitation of cross-modal information. To address the aforementioned limitations, this work presents a novel Hypergraph-Enhanced cross-modal Fusion 
+
+framework with self-Distillation for Frame-Event Object De-tection (HEDFusion), which enhances the performance of cross-modal fusion from two key perspectives: cross-modal interaction and unimodal information extraction, as depicted in Fig. 1(b). Regarding cross-modal interaction, we in-troduce Hypergraph-enhanced Intra-scale Feature-Interaction (HIFI) to simultaneously strengthen intra-modality and inter-modality high-order information interactions, leading to effi-cient high-level cross-modal feature fusion in an aggregation-and-distribution paradigm. Hyperedges are adaptively con-structed as intermediate bridges to aggregate features from all vertices and then disseminated back to the vertices for up-dating cross-modal representations. For unimodal informa-tion extraction, we present Self-Distillation-enhanced Cross-modal Fusion (SDCF), which exploits more robust and dis-criminative post-fusion features to guide the representation learning of pre-fusion unimodal features without extra super-vision signals, thus facilitating the optimization of the cross-modal fusion module. The distilled unimodal features benefit from the high-quality post-fusion features, which in turn fur-ther strengthens cross-modal feature interaction and fusion without compromising inference speed. By integrating the aforementioned two components into the FEOD framework, HEDFusion can better exploit the complementarity of multi-modal data, thereby effectively enhancing the overall detec-tion performance. Experimental results validate the superior detection capabilities and state-of-the-art performance of our proposed method. The main contributions of our paper are summarized as follows 1:• We propose Hyper-FEOD, a sparse hypergraph- and fine-grained MoE-enhanced efficient detection frame-work, to advance frame-event object detection via adap-tive multi-modal interaction and motion-aware feature refinement. • A Sparse Hypergraph-enhanced Cross-Modal Fusion (S-HCF) is proposed to model high-order non-local depen-dencies exclusively on event-guided sparse tokens, en-abling efficient cross-modal fusion and overcoming the 
+
+> 1Our code and models will be released after acceptance.
+
+inherent limitation of prior works restricted to dense pairwise correlation modeling. • A Fine-Grained Mixture of Experts (FG-MoE) Enhance-ment is proposed to adaptively refine region-aware fea-tures with boundary/texture/background-specialized ex-perts and pixel-level spatial gating, achieving precise feature enhancement without additional inference over-head or distribution shift. • We perform comprehensive experiments on mainstream RGB-event object detection benchmarks, and the re-sults demonstrate that Hyper-FEOD achieves a supe-rior accuracy-efficiency trade-off and sets state-of-the-art (SOTA) benchmarks. 
+
+## 2 Related Work 
+
+2.1 Frame-Event Object Detection 
+
+The inherent complementary properties between frame and event data have driven the rapid advancement of frame-event object detection research. Early works employ late fusion strategies to fuse multi-modal data, which yields relatively low fusion efficiency. For instance, the work in [Chen, 2018] leverages non-maximum suppression to integrate the object detection outputs of the two modalities. Recent works focus on mid-level fusion paradigms, which typically em-ploy attention mechanisms to conduct cross-modal interac-tion and fusion for improved detection performance [Gehrig and Scaramuzza, 2024; Zhou et al. , 2023; Li et al. , 2023; Cao et al. , 2024a; Zhang et al. , 2024]. SODFormer [Li et al. , 2023] integrates events and frames via spatiotemporal transformer to continuously detect objects in an asynchronous manner. CAFR [Cao et al. , 2024a] design bidirectional cross-modality interaction to facilitate the adaptive feature fusion in coarse-to-fine way. Unlike previous studies, this paper har-nesses hypergraph computation to enhance intra- and inter-modality high-order information interaction, thus further ex-panding the performance boundary of multi-modal fusion. 
+
+2.2 Visual Hypergraph Computation 
+
+Hypergraph is the extension of graph. A hypergraph G can be defined by the hyperedge set E and the vertex set V, i.e. , G =
+
+{E , V} . Different from traditional graphs, each hyperedge of a hypergraph can connect multiple vertices, and thus complex correlations between multiple vertices can be modeled. Hy-pergraph learning can facilitate the correlation-guided anal-ysis by capturing complex and higher-order correlations in data based on hypergraph structures. Gao [Gao et al. , 2023] propose a higher-order message spatial propagation method between vertices, which further enhance the capability of hy-pergraph learning. Recently, several works [Han et al. , 2023; Lei et al. , 2025b; Fixelle, 2025] have applied hypergraph computation to computer vision. HyperYOLO [Feng et al. ,2024] is the first work to apply hypergraph computation to object detection, proposing a semantic collecting and scat-tering framework and modeling hyperedges as ϵ-ball cen-tered at each feature point. YOLOv13 [Lei et al. , 2025a] advances hyperedge modeling by formulating them as global features, where each feature is generated via learnable pro-totypes combined with global offsets to facilitate hypergraph Figure 2: Overview of the proposed Hyper-FEOD framework . Hyper-FEOD takes event streams and RGB frames as input, and employs a two-stream encoder to extract multi-modal features. S-HCF leverages event-guided sparsity to perform high-order hypergraph interaction on motion-critical tokens, enabling efficient non-local cross-modal modeling and superior multi-modal fusion. FG-MoE utilizes region-specialized hypergraph experts and pixel-level gating to adaptively refine boundary, texture and background features, achieving stable training and precise end-to-end feature enhancement. 
+
+message propagation in a soft-connection manner. Notably, our method is the first work to apply hypergraph computa-tion to FEOD, designing hyper attention to enhance intra- and inter-modality high-order information interaction and enable efficient cross-modal fusion. 
+
+## 3 Method 
+
+In this section, we introduce our proposed Hyper-FEOD, a sparse hypergraph- and fine-grained MoE-enhanced efficient framework for FEOD task. The overview of our proposed method is first introduced in Sec. 3.1. Then, Sec. 3.2 and Sec. 3.3 introduces the S-HCF and FG-MoE modules, respec-tively. Finally, we give the overall loss in Sec. 3.4. 
+
+3.1 Overview 
+
+Fig. 2 depicts the overall pipeline of our proposed Hyper-FEOD, which takes event streams and RGB frames as in-puts, and then uses a two-stream encoder to extract frame and event features. Subsequently, our method deploys the Sparse Hypergraph-enhanced Cross-Modal Fusion (S-HCF) mod-ule to simultaneously strengthen intra-modality and inter-modality high-order information interactions between cross-modal features, while significantly reducing computational overhead by focusing only on motion-critical sparse tokens. Specifically, S-HCF leverages event-guided sparse hyper-graph construction and adaptive hypergraph attention to en-able efficient non-local high-order information flow. Next, Hyper-FEOD leverages addition and PAFPN [Liu et al. ,2018] to realize deep integration of multi-modal features. To further enhance the effective optimization process of cross-modal fusion, Hyper-FEOD incorporates the Fine-Grained Mixture of Experts (FG-MoE) Enhancement module, which employs region-specialized hypergraph experts and pixel-level spatial gating to adaptively refine object boundaries, in-ternal textures and background features. Specifically, FG-MoE utilizes a load-balancing loss and zero-initialization strategy to ensure stable training and precise feature refine-ment without disrupting the backbone distribution. Notably, the expert gating and auxiliary loss are only integrated during the model training phase and introduce no additional over-head to inference. 
+
+3.2 Sparse Hypergraph-enhanced Cross-Modal Fusion 
+
+Recent research has shown that attention-driven cross-modal feature interaction can substantially boost the performance of multi-modal fusion architectures. Nevertheless, the at-tention mechanism [Vaswani et al. , 2017] is fundamentally equivalent to modeling pairwise pixel-level correlations on a fully connected semantic graph, an inherent property that restricts it to capturing solely pairwise correlations. Our proposed HIFI leverages hypergraph frameworks to facili-tate global multi-to-multi high-order information interaction among high-level cross-modal features, mitigating this in-trinsic constraint. Hypergraphs constitute a generalization of conventional graphs and are formally defined by a hyperedge set E and the vertex set V, i.e. , G = {E , V} . In contrast to con-ventional graph edges, which are constrained to connecting exactly two vertices, a hyperedge can link multiple vertices through a single association. Thus, hypergraph could model high-order correlations between multiple vertices. As illus-trated in Fig. 3, HIFI employs the Cross-modal Hyperedges Construct (CHC) module to generate global modality-shared hyperedges, and designs the Adaptive Hypergraph Attention (AHA) module to simultaneously implement intra- and inter-modality high-order feature interaction. In the following sub-sections, we provide a detailed elaboration of the CHC and AHA modules, respectively. 
+
+Cross-modal Hyperedges Construct 
+
+Hyperedge constitutes the fundamental cornerstone of hyper-graph computation, as its quality directly determines the ef-fectiveness of subsequent hypergraph operations. HIFI con-structs cross-modal hyperedges through a carefully designed two-stage generation strategy. In the first stage, we adopt a global adaptive average pooling layer with an output size of k × k to extract spatially correlated unimodal hyperedges from frame and event features, respectively. This strategy ef-fectively preserves the spatial structural information of the original feature maps, making it highly suitable for visual hypergraph computation tasks. These unimodal hyperedges are then concatenated along the spatial dimension to gen-erate global modality-shared hyperedges. Given frame fea-ture F5 ∈ Rc×h×w and event feature S5 ∈ Rc×h×w in the high-level scale, the initial cross-modal hyperedge feature 
+
+ˆX E 
+
+> 5
+
+∈ Rm×c can be obtained formally as: 
+
+ˆX E 
+
+> 5
+
+= Concat (FE 
+
+> 5
+
+, SE 
+
+> 5
+
+)
+
+FE 
+
+> 5
+
+= Rc·k·k→k2·c  Avg k×k(F5)
+
+SE 
+
+> 5
+
+= Rc·k·k→k2·c  Avg k×k(S5)
+
+, (1) where Concat represents the concatenation operation along spatial dimension, Avg k×k denotes the global adaptive aver-age pooling, and Rc·k·k→k2·c is the reshape operation which convert the size of tensor from c · k · k to k2 · c. Here, c, h
+
+and w is the channel dimension, height and width of feature map. m = 2 k2c is number of hyperedges. In the second refinement stage, CHC leverages the fuzzy C-means (FCM) clustering algorithm [Han et al. , 2023] to iteratively optimize and evolve coarse-grained hyperedges into fine-grained ones. By virtue of FCM’s inherent capability to model ambiguous membership relationships between data points, this process effectively captures latent visual-semantic correlations (e.g., contextual dependencies between objects and scene seman-tics) within the scene, enabling hyperedges to encode more Cross -modal Hyperedge Construct      
+
+> Concat
+> Split
+> AHC
+> CHC →
+> Fuzzy -C-means
+> Concat
+> AvgPool
+> (k x k)
+> AvgPool
+> (k x k)
+> Concat
+> Fuzzy -C-means
+> Concat
+> AvgPool
+> (k x k)
+> AvgPool
+> (k x k)
+> Concat →
+> Cross Attn
+> Cross Attn
+> S.M.
+> WWW
+> W
+> Adaptive Hypergraph Attention 555
+> hg 5
+> hg
+> Figure 3: Overview of the proposed SHCF module .HIFI uses CHC to generate cross-modal hyperedges and AHA to simultane-ously perform intra- and inter-modality high-order feature interac-tion in a aggregation-and-distribution manner.
+
+discriminative cross-modal semantic information, i.e. ,
+
+X E 
+
+> 5
+
+= TCHC (X5) = FCM (t)( ˆX E 
+
+> 5
+
+, X5)
+
+X5 = Concat (Rc·h·w→hw ·c(F5), Rc·h·w→hw ·c(S5)) , (2) where FCM (t) represents denotes the fuzzy C-means (FCM) clustering operation with t iterative loops, and X5 ∈ R2hw ·c
+
+denotes the concatenated cross-modal features. With this, the cross-modal hyperedges incorporating spatial structural in-formation and high-level semantic correlations are success-fully constructed. 
+
+Adaptive Hypergraph Attention 
+
+After cross-modal hyperedges are generated, the adaptive hy-pergraph attention is conducted to achieve feature aggrega-tion and enhancement, which simultaneously results in intra-and inter-modality high-order information interaction. Hy-pergraph attention reconceptualizes hyperedges as interme-diate bridges that mediate the bidirectional information flow between individual vertices and their associated hyperedges. Specifically, each hyperedge first aggregates feature informa-tion from vertices to refine the hyperedge feature representa-tion, and then propagates them back to the associated vertices to enhance their vertex feature representations. Formally, this process can be defined as: 
+
+Z5 = TAHA (X5, X E 
+
+> 5
+
+) = TE→V (X5, TV→E (X5, X E 
+
+> 5
+
+)) 
+
+TV→E = X E 
+
+> 5
+
++
+
+
+
+SM 
+
+ X E 
+
+> 5
+
+Wq1 (X5Wk1)⊤
+
+√c
+
+
+
+X5Wv1
+
+
+
+Wo1
+
+TE→V = X5 +
+
+
+
+SM 
+
+ X5Wq2 (X E 
+
+> 5
+
+Wk2)⊤
+
+√c
+
+
+
+X E 
+
+> 5
+
+Wv2
+
+
+
+Wo2
+
+,
+
+(3) where TV→E represents the massage passing from vertices to hyperedges, while TE→V represents the massage passing from hyperedges to vertices. SM denotes the softmax func-tion. To enhance the diversity and comprehensiveness of cap-tured high-order relational correlations across cross-modal features, we incorporate the multi-head attention mechanism proposed in [Vaswani et al. , 2017] into the hypergraph at-tention. Finally, the refined high-order cross-modal feature representations are obtained by splitting the fused features back into frame-specific and event-specific feature branches, which are then fed into subsequent multi-scale fusion mod-ules, i.e. ,
+
+Fhg  
+
+> 5
+
+, Shg  
+
+> 5
+
+= Split (R2hw ·c→2·c·h·w(Z5)) , (4) where Split is the split operation along spatial demonsion to separate frame and event feature. Following the high-order cross-modal feature interaction enabled by the HIFI mod-ule, the specific implementation of multi-modal feature fu-sion will be elaborated in the subsequent section. 
+
+3.3 Fine-Grained Mixture of Experts 
+
+SDCF is designed to achieve more effective cross-modal fu-sion. Given the refined multi-scale multi-modal features 
+
+F = {F 3, F4, Fhg  
+
+> 5
+
+} and S = {S 3, S4, Shg  
+
+> 5
+
+}, we adopt the element-wise addition and PAFPN to generate the fused multi-scale features P = {P 3, P4, P5}, i.e. ,
+
+P = PAFPN (F + S). (5) Naturally, more sophisticated fusion approaches can be lever-aged to enhance multi-modal fusion performance. Neverthe-less, we argue that these fusion methods are still suboptimal, mainly owing to the inadequate representational power of unimodal features. In the backbone-based feature extraction stage, the intrinsic sparsity of event data and the low dynamic range of RGB frames jointly lead to deficient unimodal fea-ture representation. Therefore, we propose the SDCF module to enhance unimodal feature expression without sacrificing any inference efficiency. SDCF is a dual-branch self-feature distillation method that leverages more robust and discrim-inative fused features as the teacher to separately guide the learning of pre-fused multi-scale frame and event features. As for the feature distillation method, we select the MGD [Yang 
+
+et al. , 2022] method to force the student to generate the teacher’s feature with the masked feature. Specifically, we first set l-th random mask to cover the student’s l-th feature, which can be formulated as: 
+
+M i,j l =
+
+0, if Ri,j l < α 
+
+1, Otherwise , (6) where Rli,j is a random number in (0, 1) and i, j are the the horizontal and vertical coordinates of the feature map, respec-tively. α is a hyper-parameter that denotes the masked ratio. The l-th feature map is covered by the l-th random mask. Then we use the corresponding mask to cover the student’s feature map and try to generate teacher’s feature maps with the left pixels. The corresponding loss is 
+
+Lframe distill =
+
+> L
+
+X
+
+> l
+
+X(GF 
+
+> l
+
+(Fl · M F 
+
+> l
+
+) − P l)
+
+Levent distill =
+
+> L
+
+X
+
+> l
+
+X(GS 
+
+> l
+
+(Sl · M S 
+
+> l
+
+) − P l)
+
+, (7) where L = 3 , 4, 5 denotes the set of feature scales and G rep-resents the feature generation module. Specifically, we adopt the hypergraph attention to implement the reconstruction of masked unimodal features, i.e. ,
+
+G(x) = TAHA (x, TCHC (x)) , (8) The hypergraph attention mechanism not only enhances the feature reconstruction capability of the generation module but also enables the effective transfer of high-order relational knowledge. 
+
+3.4 Overall Loss 
+
+The overall loss function for our proposed HEDFusion can be formulated as: 
+
+L = Lbase + Ldistill = Lbase + λ1 · L frame distill + λ2 · L event distill , (9) where Lbase is the standard object detection loss function, which typically consists of classification loss, bounding box loss, and Intersection over Union (IoU) loss. 
+
+## 4 Experiments 
+
+In this section, we first elaborate on the experimental set-tings, including datasets, implementation details, and metrics, in Sec. 4.1. Subsequently, quantitative comparisons between our proposed method and state-of-the-art approaches are pre-sented in Sec. 4.2. In Sec. 4.3, ablation experiments are per-formed to verify the effectiveness of each proposed module and validate the generalizability of our method. Finally, sev-eral visualization results are provided in Sec. 4.4. 
+
+4.1 Experimental Settings 
+
+Datasets. We conduct experiments on three existing large-scale FEOD datasets, i.e. , DSEC dataset [Gehrig and Scara-muzza, 2024], NightDVS22 [Jiang et al. , 2023] , and PKU-DAVIS-SOD dataset [Li et al. , 2023]. • DSEC dataset [Gehrig and Scaramuzza, 2024] is a driving-centric dataset featuring two event cameras (640 × 480 pixels) and two RGB cameras ( 1440 × 1080 
+
+pixels). It provides 60 sequences (70379 frames, 390118 bounding boxes) across 8 object classes: Pedestrians, Riders, Cars, Buses, Trucks, Bicycles, and Motorcycles. • NightDVS22 dataset [Jiang et al. , 2023] is a multi-modal object detection benchmark acquired with a spa-tial resolution of 346 × 260 pixels. It consists of 533 training scenes and 59 test scenes, encompassing a total of 49,680 RGB frames with high-frequency annotations covering the vehicle and person categories. • PKU-DAVIS-SOD dataset [Li et al. , 2023] is a large-scale event-based detection dataset, which simultane-ously records event streams and RGB frames. The dataset contains 220 sequences, comprising over 1.08 million bounding boxes, and covering three categories, 
+
+i.e. , Cars, Pedestrians, and Two-Wheelers. 
+
+Implementation Details. We select D-FINE [Peng et al. ,2024] as the basic framework, and adopt two-stream back-bone to extract multi-modal features. Our model is imple-mented based on PyTorch and is trained on NVIDIA 4090 GPUs. We trained the model for 15 epochs with a batch size of 16 using an AdamW optimizer. The learning rate is Table 1: Comparison of detection performance on PKU-DAVIS-SOD and DSEC datasets. Runtime is measured in milliseconds for a batch size of 1 on an NVIDIA Tesla V100 GPU. Method PKU-DAVIS-SOD [Li et al. , 2023] DSEC [Gehrig and Scaramuzza, 2024] Params (M) mAP mAP50 Time (ms) mAP mAP50 Time (ms) JDF [Li et al. , 2019] - 44.2 8.3 - - - > 60 ∗                                                                                                                   
+
+> FPN-Fusion [Tomy et al. , 2022] 29.0 57.5 -----SFNet [Liu et al. , 2024] 25.7 50.3 -30.4 51.4 --EOLO [Cao et al. , 2024b] 19.4 44.8 -----NRE-Net [Liu et al. , 2025] 29.0 57.5 -----SODFormer [Li et al. , 2023] 20.7 50.4 39.7 ---82.5 DAGr [Gehrig and Scaramuzza, 2024] ---37.6 -16.8 19.0 EFNet [Sun et al. , 2022] 26.4 52.9 13.7 30.1 47.7 16.5 33.0 AFNet [Zhang et al. , 2023] 27.5 53.3 14.5 31.4 48.8 19.7 60.1 ReNet [Zhou et al. , 2023] 28.8 54.9 14.2 31.6 49.0 17.5 59.8 FF-KDT [Wang et al. , 2024] 28.5 54.2 18.0 33.6 52.5 19.6 38.0 FAOD [Zhang et al. , 2024] 30.5 57.5 13.6 42.5 63.5 14.6 20.3 Hyper-FEOD (Ours) 31.2 58.1 9.0 50.2 72.7 10.1 13.4
+> Table 2: Ablation experiments on the DSEC dataset. We validate the performance of Hyper-FEOD with and without SHCF and FG-MoE. SHCF FG-MoE mAP AP50 FLOPs (G) Params (M) 46.7 69.5 33.7 12.9
+> ✓47.6 70.2 34.2 13.4
+> ✓48.3 71.0 33.7 12.9
+> ✓✓50.2 72.7 34.2 13.4
+
+initialized at 0.0002 and kept constant throughout the entire training process. The input image resolution is configured as 
+
+640 ×640 for the DSEC dataset, and 320 ×320 for the FR and PKU datasets respectively. We fix the number of hyperedges 
+
+m = 32 , set the iteration steps of FCM to 30 for the training phase and 5 for the inference phase to guarantee inference ef-ficiency. For the FG-MoE module, we distill features in three scales, and the number of hyperedges in each scale is set as 16. The mask ratio α is set as 0.65. In terms of weight con-figuration, we set λ1 = 0 .00002 , λ 2 = 0 .00002 .
+
+Evaluation Metrics. We choose mean average precision (e.g. , COCO mAP [Lin et al. , 2014]) as the core evaluation metric, a standard benchmark extensively employed in object detection research. We give a comprehensive evaluation us-ing average precision with various IoUs ( e.g. , mAP, mAP50), inference time, and model parameters. 
+
+4.2 Quantitative Comparisons 
+
+Table 1 presents quantitative performance comparisons of various methods on the DSEC dataset [Gehrig and Scara-muzza, 2024] and PKU-DAVIS-SOD dataset [Li et al. ,2023]. We compare our method with 12 existing FEOD ap-proaches, such as SODFormer, DAGs and FAOD. It can be clearly observed that our Hyper-FEOD achieves state-of-the-art (SOTA) performance on both benchmark datasets, out-           
+
+> Table 3: Ablation experiments of the FG-MoE module. We validate the performance of Hyper-FEOD with frame or event distillation. Frame Distillation Event Distillation mAP AP50 47.6 70.2
+> ✓48.1 70.0
+> ✓48.4 70.1
+> ✓✓50.2 72.7
+
+performing all compared baselines by a significant margin. Specifically, on the DSEC dataset, Hyper-FEOD achieves an mAP of 50.2 and an mAP50 of 72.7, which outperforms the second-ranked FAOD by a substantial margin of 7.7 and 8.2, respectively. Moreover, our model has only 13.4M param-eters, approximately 6M fewer than FAOD, which results in an ultra-fast inference speed of merely 10ms for Hyper-FEOD. On the PKU-DAVIS-SOD dataset, our method also achieves SOTA performance with an mAP of 31.2 and an mAP50 of 58.1. Owing to the smaller input image res-olution of 320 × 320 for this dataset, Hyper-FEOD de-livers an even faster inference speed of only 9 ms here. These results fully validate the effectiveness and efficiency of our proposed Hyper-FEOD, as well as the superiority of the hypergraph-enhanced high-order interaction and self-distillation-enhanced unimodal feature learning strategies in boosting FEOD performance with lightweight model design. 
+
+4.3 Ablation Study 
+
+The Impact of SHCF and FG-MoE module . Table 2 presents the quantitative results of the ablation experiments on the DSEC dataset [Gehrig and Scaramuzza, 2024]. We uti-lize variants of the model with and without the SHCF and FG-MoE components to verify the effectiveness of Hyper-FEOD. Evidently, the standalone integration of SHCF and FG-MoE Table 4: Parameter sensitivity experiments of the SHCF module. We validate the performance with different number of hyperedge m.                    
+
+> mmAP AP50 FLOPs (G) Params (M) 849.7 72.5 34.18 13.4 16 49.3 71.3 34.19 13.4 32 50.2 72.7 34.21 13.4 50 50.0 73.1 34.24 13.4
+
+each brings about notable performance improvements. SHCF improves the mAP by 0.9, accompanied by a slight increase of 0.5M in model parameters. In contrast, FG-MoE achieves a cost-free performance gain of 1.6 mAP and 1.5 mAP50, in-troducing no additional parameters or inference speed over-head to the model. Interestingly, the joint adoption of SHCF and FG-MoE leads to a more significant performance im-provement, with mAP and mAP50 increased by 4.5 and 3.2 respectively. this phenomenon fully verifies our core hypoth-esis: insufficient unimodal feature extraction creates a perfor-mance bottleneck for cross-modal fusion, while our proposed self-distillation method can effectively utilize post-fusion fea-tures to guide unimodal feature expression, which in turn el-evates the performance upper bound of cross-modal fusion. 
+
+The Impact of Fine-grained MoE . Table 3 presents the quantitative results of the ablation experiments of FG-MoE module. We utilize variants of the model with and without distillation on frame and event branch. It can be clearly ob-served that performing self-distillation on either the frame or event branch individually yields performance improvements for the model, yet the gain margin is relatively modest. In detail, Frame Distillation only leads to a 1.4 mAP improve-ment, and Event Distillation results in a 1.7 mAP increase. Only when Frame Distillation and Event Distillation are ap-plied simultaneously does the model achieve a substantial performance boost, with the gain far exceeding that of single-branch distillation. This phenomenon can be attributed to the fact that single-branch self-distillation induces a modal feature imbalance, where the distilled branch dominates the cross-modal feature interaction and fusion process due to its enhanced representational capacity. In contrast, bilateral dis-tillation effectively balances the representation learning of multi-modal features, alleviating the modal dominance issue and thus enabling a more efficient and stable optimization process for cross-modal fusion.             
+
+> Table 5: Detection performance on NightDVS22 dataset. methods mAP AP50 AP75 Params (M) baseline 47.8 85.3 48.6 12.9 Hyper-FEOD 48.7 86.5 50.2 13.4
+
+Parameter Sensitivity Analysis for the SHCF module .Fig. 4 shows the performance of our proposed method using different number of hyperegdes. It can be observed that as 
+
+m increases from 5 to 50, the model’s mAP remains essen-tially stable, fluctuating slightly within the range of 49.3 to 50.2 with no significant variation. In addition, the FLOPs and model parameters increase progressively with the rise of m.
+
+> Figure 4: Visual comparison of detection results between the base-line and Hyper-FEOD on the DSEC dataset.
+
+Finally, we choose m = 32 to achieve a desirable trade-off between inference speed and detection performance. 
+
+Performance on Other Dataset . To further validate the generalization capability of our proposed Hyper-FEOD, we additionally conduct extensive experiments on an extra benchmark dataset, namely NightDVS22 [Jiang et al. , 2023]. The detailed detection performance results on this dataset are summarized in Table 5. It can be observed that our Hyper-FEOD still delivers significant performance gains on this dataset, with the mAP, mAP50 and mAP75 improved by 0.9, 1.2 and 1.6, respectively, validating the strong generalization capability of our proposed Hyper-FEOD. 
+
+4.4 Visualization Results 
+
+Fig. 4 presents a qualitative comparison of detection results, displaying the RGB image, baseline detection outputs, our method’s predictions, and the ground-truth annotations from left to right, respectively. It is evident that the baseline method suffers from significant object miss detections in traf-fic intersection scenarios. In contrast, our approach effec-tively leverages contextual scene information to enhance de-tection accuracy, rendering it highly promising for practical real-world applicability. 
+
+## 5 Conclusion 
+
+This paper presents Hyper-FEOD, a sparse hypergraph- and fine-grained MoE-enhanced efficient detection framework tailored for the FEOD task. Hyper-FEOD enhances cross-modal fusion performance by optimizing sparse high-order interaction and region-aware feature refinement. Specifi-cally, S-HCF enables efficient non-local high-order informa-tion interaction via event-guided sparse hypergraph attention, thus overcoming the limitation of prior methods restricted to dense pairwise correlation modeling. For adaptive feature en-hancement, we leverage specialized hypergraph experts and pixel-level spatial gating to refine object boundaries, tex-tures and backgrounds, yielding more effective cross-modal fusion with lightweight computation and no extra inference overhead. Extensive experiments verify the effectiveness and SOTA performance of our proposed Hyper-FEOD. Future re-search will focus on optimizing the sparse hypergraph mecha-nism for temporal high-order modeling, aiming to effectively capture spatiotemporal correlations in dynamic frame-event data. References 
+
+[Cao et al. , 2024a] Hu Cao, Zehua Zhang, Yan Xia, Xinyi Li, Jiahao Xia, Guang Chen, and Alois Knoll. Embracing events and frames with hierarchical feature refinement net-work for object detection. In Proceedings of the European Conference on Computer Vision , pages 161–177. Springer, 2024. [Cao et al. , 2024b] Jiahang Cao, Xu Zheng, Yuanhuiyi Lyu, Jiaxu Wang, Renjing Xu, and Lin Wang. Chasing Day and Night: Towards Robust and Efficient All-Day Object De-tection Guided by an Event Camera. In Proceedings of the IEEE International Conference on Robotics and Automa-tion , pages 9026–9032. IEEE, 2024. [Chen, 2018] Nicholas FY Chen. Pseudo-labels for super-vised learning on dynamic vision sensor data, applied to object detection under ego-motion. In Proceedings of the IEEE conference on computer vision and pattern recogni-tion workshops , pages 644–653, 2018. [Feng et al. , 2024] Yifan Feng, Jiangang Huang, Shaoyi Du, Shihui Ying, Jun-Hai Yong, Yipeng Li, Guiguang Ding, Rongrong Ji, and Yue Gao. Hyper-YOLO: When Vi-sual Object Detection Meets Hypergraph Computation. 
+
+IEEE Transactions on Pattern Analysis and Machine In-telligence , 2024. [Fixelle, 2025] Joshua Fixelle. Hypergraph vision transform-ers: Images are more than nodes, more than edges. In Pro-ceedings of the IEEE Conference on Computer Vision and Pattern Recognition , pages 9751–9761, 2025. [Gao et al. , 2023] Yue Gao, Yifan Feng, Shuyi Ji, and Ron-grong Ji. HGNN +: General Hypergraph Neural Networks. 
+
+IEEE Transactions on Pattern Analysis and Machine Intel-ligence , 45(3):3181–3199, 2023. [Gehrig and Scaramuzza, 2023] Mathias Gehrig and Davide Scaramuzza. Recurrent Vision Transformers for Object Detection with Event Cameras. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recog-nition , pages 13884–13893, 2023. [Gehrig and Scaramuzza, 2024] Daniel Gehrig and Davide Scaramuzza. Low-Latency Automotive Vision with Event Cameras. Nature , 629(8014):1034–1040, 2024. [Han et al. , 2023] Yan Han, Peihao Wang, Souvik Kundu, Ying Ding, and Zhangyang Wang. Vision HGNN: An Im-age is More than a Graph of Nodes. In Proceedings of the IEEE International Conference on Computer Vision , pages 19878–19888, 2023. [Jiang et al. , 2023] Yu Jiang, Yuehang Wang, Minghao Zhao, Yongji Zhang, and Hong Qi. Nighttime Traffic Ob-ject Detection via Adaptively Integrating Event and Frame Domains. Fundamental Research , 2023. [Lei et al. , 2025a] Mengqi Lei, Siqi Li, Yihong Wu, Han Hu, You Zhou, Xinhu Zheng, Guiguang Ding, Shaoyi Du, Zongze Wu, and Yue Gao. YOLOv13: Real-Time Ob-ject Detection with Hypergraph-Enhanced Adaptive Vi-sual Perception. arXiv preprint arXiv:2506.17733 , 2025. [Lei et al. , 2025b] Mengqi Lei, Yihong Wu, Siqi Li, Xinhu Zheng, Juan Wang, Yue Gao, and Shaoyi Du. Softhgnn: Soft hypergraph neural networks for general visual recog-nition. arXiv preprint arXiv:2505.15325 , 2025. [Li et al. , 2019] Jianing Li, Siwei Dong, Zhaofei Yu, Yonghong Tian, and Tiejun Huang. Event-based Vision Enhanced: A Joint Detection Framework in Autonomous Driving. In Proceedings of the IEEE International Con-ference on Multimedia and Expo , pages 1396–1401. IEEE, 2019. [Li et al. , 2023] Dianze Li, Yonghong Tian, and Jianing Li. SODFormer: Streaming Object Detection with Trans-former using Events and Frames. IEEE Transactions on Pattern Analysis and Machine Intelligence , 45(11):14020– 14037, 2023. [Li et al. , 2024] Siqi Li, Zhikuan Zhou, Zhou Xue, Yipeng Li, Shaoyi Du, and Yue Gao. 3D Feature Tracking via Event Camera. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition , pages 18974– 18983, 2024. [Lin et al. , 2014] Tsung-Yi Lin, Michael Maire, Serge Be-longie, James Hays, Pietro Perona, Deva Ramanan, Piotr Doll´ ar, and C Lawrence Zitnick. Microsoft COCO: Com-mon Objects in Context. In Proceedings of the European Conference on Computer Vision , pages 740–755. Springer, 2014. [Liu et al. , 2018] Shu Liu, Lu Qi, Haifang Qin, Jianping Shi, and Jiaya Jia. Path Aggregation Network for Instance Seg-mentation. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition , pages 8759– 8768, 2018. [Liu et al. , 2020] Li Liu, Wanli Ouyang, Xiaogang Wang, Paul Fieguth, Jie Chen, Xinwang Liu, and Matti Pietik¨ ainen. Deep learning for generic object detec-tion: A survey. International journal of computer vision ,128(2):261–318, 2020. [Liu et al. , 2024] Zhanwen Liu, Nan Yang, Yang Wang, Yuke Li, Xiangmo Zhao, and Fei-Yue Wang. Enhanc-ing Traffic Object Detection in Variable Illumination with Rgb-Event Fusion. 2024. [Liu et al. , 2025] Mingjie Liu, Hanqing Liu, and Chuang Zhu. Beyond RGB and Events: Enhancing Object De-tection under Adverse Lighting with Monocular Normal Maps. arXiv preprint arXiv:2508.02127 , 2025. [Oksuz et al. , 2020] Kemal Oksuz, Baris Can Cam, Sinan Kalkan, and Emre Akbas. Imbalance problems in object detection: A review. IEEE transactions on pattern analy-sis and machine intelligence , 43(10):3388–3415, 2020. [Peng et al. , 2024] Yansong Peng, Hebei Li, Peixi Wu, Yueyi Zhang, Xiaoyan Sun, and Feng Wu. D-FINE: Redefine Regression Task in DETRs as Fine-grained Distribution Refinement. arXiv preprint arXiv:2410.13842 , 2024. [Perot et al. , 2020] Etienne Perot, Pierre De Tournemire, Da-vide Nitti, Jonathan Masci, and Amos Sironi. Learning to detect objects with a 1 megapixel event camera. Pro-ceedings of the Advances in Neural Information Process-ing Systems , 33:16639–16652, 2020. [Sun et al. , 2022] Lei Sun, Christos Sakaridis, Jingyun Liang, Qi Jiang, Kailun Yang, Peng Sun, Yaozu Ye, Kai-wei Wang, and Luc Van Gool. Event-based Fusion for Motion Deblurring with Cross-modal Attention. In Pro-ceedings of the European Conference on Computer Vision ,pages 412–428. Springer, 2022. [Tomy et al. , 2022] Abhishek Tomy, Anshul Paigwar, Khushdeep S Mann, Alessandro Renzaglia, and Christian Laugier. Fusing event-based and rgb camera for robust object detection in adverse conditions. In IEEE Inter-national Conference on Robotics and Automation , pages 933–939. IEEE, 2022. [Vaswani et al. , 2017] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is All You Need. In Proceedings of the Advances in Neural Informa-tion Processing Systems , volume 30, 2017. [Wang et al. , 2024] Xiangyuan Wang, Huai Yu, Lei Yu, Wen Yang, and Gui-Song Xia. Towards Robust Keypoint De-tection and Tracking: A Fusion Approach with Event-aligned Image Features. IEEE Robotics and Automation Letters , 2024. [Yang et al. , 2022] Zhendong Yang, Zhe Li, Mingqi Shao, Dachuan Shi, Zehuan Yuan, and Chun Yuan. Masked Gen-erative Distillation. In Proceedings of the European Con-ference on Computer Vision , pages 53–69. Springer, 2022. [Zhang et al. , 2023] Jiqing Zhang, Yuanchen Wang, Wenxi Liu, Meng Li, Jinpeng Bai, Baocai Yin, and Xin Yang. Frame-Event Alignment and Fusion Network for High Frame Rate Tracking. In Proceedings of the IEEE Confer-ence on Computer Vision and Pattern Recognition , pages 9781–9790, 2023. [Zhang et al. , 2024] Haitian Zhang, Xiangyuan Wang, Chang Xu, Xinya Wang, Fang Xu, Huai Yu, Lei Yu, and Wen Yang. Frequency-Adaptive Low-Latency Object Detection Using Events and Frames. arXiv preprint arXiv:2412.04149 , 2024. [Zhou et al. , 2023] Zhuyun Zhou, Zongwei Wu, R´ emi Bout-teau, Fan Yang, C´ edric Demonceaux, and Dominique Gin-hac. Rgb-Event Fusion for Moving Object Detection in Autonomous Driving. Proceedings of the IEEE Interna-tional Conference on Robotics and Automation , 2023.

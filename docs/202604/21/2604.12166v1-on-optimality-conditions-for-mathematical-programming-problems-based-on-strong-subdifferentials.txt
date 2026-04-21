@@ -1,0 +1,1660 @@
+Title: On Optimality Conditions for Mathematical Programming Problems Based on Strong Subdifferentials
+
+URL Source: https://arxiv.org/pdf/2604.12166v1
+
+Published Time: Wed, 15 Apr 2026 00:20:00 GMT
+
+Number of Pages: 25
+
+Markdown Content:
+# On Optimality Conditions for Mathematical Programming Problems Based on Strong Subdifferentials 
+
+## Felipe Lara 1 and Alberto Ramos 2* †
+
+> 1
+
+Instituto de Alta Investigaci´ on (IA), Universidad de Tarapac´ a, Arica, Chile. 
+
+> 2*
+
+Facultad de Ciencias, Universidad de Tarapac´ a, Arica, Chile. *Corresponding author(s). E-mail(s): aramosf@academicos.uta.cl; Contributing authors: flarao@academicos.uta.cl; 
+
+> †
+
+These authors contributed equally to this work. 
+
+Abstract 
+
+We develop refined Karush-Kuhn-Tucker (KKT) and Fritz-John (FJ)-type optimality conditions for nonsmooth, nonconvex mathematical programming problems. We pay special attention in the case that the functional constraint belongs to a specific class of generalized convex functions known as strongly quasi-convex functions. After analyzing a specialized subdifferential, named the strong subdifferential, we compute the normal cone of the supremum function in terms of such subdifferentials, and apply this result to the mathematical programming problem. We illustrate our important results by examples. 
+
+Keywords: Nonconvex nonsmooth optimization; generalized convexity; KKT optimality; FJ optimality 
+
+# 1 Introduction 
+
+Quasiconvex functions are characterized by having convex sublevel sets, a fundamental property with significant implications in economic theory. This concept is particu-larly relevant in consumer preference theory, notably due to Gerard Debreu’s seminal work [9], where quasiconvexity mathematically formalizes the natural assumption of a tendency to diversification in consumer behavior. 1
+
+> arXiv:2604.12166v1 [math.OC] 14 Apr 2026
+
+From a mathematical perspective, functions with convex sublevel sets play a crucial role in ensuring existence of minimizers, deriving optimality conditions, and designing iterative algorithms. The key insight is that minimizing a function over the entire space is equivalent to minimizing it over any of its sublevel sets, provided that these sets are convex. This property simplifies optimization problems by restricting the search domain while preserving global optimality. In the differentiable case, quasiconvex functions exhibit another outstanding prop-erty: they are decreasing on their sublevel sets. This characteristic has significant implications, one of the most notable being that KKT optimality conditions become sufficient under quasiconvexity assumptions on both the constraint and objective func-tions. These foundational results were first established in the seminal work of Arrow and Enthoven [2] and later refined by various authors, including Mangasarian in [21]. For decades, quasiconvexity, KKT-type optimality conditions, and economic appli-cations have been closely intertwined, leading to widespread applications across diverse fields such as engineering, finance, management, and computer science, among others. However, a major limitation of quasiconvex functions is that they may exhibit flat regions outside their set of minimizers, posing challenges for optimization algorithms. In such cases, iterative methods often stagnate at critical points that are far from the true minimizers. To address this issue, several subclasses of quasiconvex functions have been proposed in the literature, but until now, linear convergence of standard first-order methods, such as gradient descent [19] and proximal-point-type algorithms [13, 14, 17], has only been guaranteed for strongly quasiconvex functions. This class, introduced by Polyak [25] in the context of minimizing sequences for extremum problems, has gained considerable attention in recent years (see, e.g., [23, 24, 28]). In this paper, we develop KKT and FJ optimality conditions for nonsmooth nonconvex mathematical programming problems under the assumption that the con-straint functions are strongly quasiconvex. Our KKT and FJ optimality conditions are described in terms of the strong subdifferential, a specialized tool introduced to ana-lyzing nonsmooth strongly quasiconvex functions see [15, 17], since it can be nonempty in situations where classical subdifferentials (as limiting, or regular) are empty sets, and thus provides some useful information. The structure of the paper is as follows. In Section 2, we recall basic notions from variational analysis and generalized convexity. In Section 3, we present new properties and calculus rules for the strong subdifferential and its relationship with other well-known subdifferentials for strongly quasiconvex functions. In Section 4, we establish a friendly description of the normal cone of the 0-level set of the supremum function, in terms of strong subdifferentials. In Section 5, we give our KKT and FJ type optimality conditions. Several examples are given to compare our results with the existing literature. Finally, conclusions and future research directions are described in Section 6. 22 Preliminaries 
+
+## 2.1 Basic tools on variational analysis 
+
+The inner product in Rn and the Euclidean norm are denoted by ⟨· , ·⟩ and ∥·∥ , respec-tively. The set ]0 , +∞[ is denoted by R++ . For a ∈ Rn, we denote a+ := max {a, 0} its non-negative part, where the maximum is taken componentwise. Set I a finite index set, the sum P 
+
+> j∈I
+
+bj = 0 if I = ∅. Given A and B subsets of Rn, A + B is the Minkowski sum. We set A + ∅ = ∅.For a set C ⊂ Rn, we use int C, cl C and co C to denote its interior, closure and convex hull respectively. We denote by δC the indicator function, i. e, δC (x) = 0, if x ∈ C and δC (x) = ∞ otherwise. For a cone K, its polar is K◦ is {z ∈ Rn |⟨z, y ⟩ ≤ 0, ∀ y ∈ K}. For a given subset C ⊂ Rn not necessarily convex, we set 
+
+C∞ := {v ∈ Rn | ∃ tk → 0+, ∃ { vk}k ⊂ C with tkvk → v}.Given an extended-valued function h : Rn → R := R ∪ {±∞} , the effective domain of h is dom h := {x ∈ Rn | h(x) < +∞} , and h is proper if dom h is nonempty and 
+
+h(x) > −∞ for all x ∈ Rn. We set by argmin Rn h the set of all minimal points of h.For a given set-valued mapping K : Rs ⇒ Rn, the sequential Painlev´ e-Kuratowski outer/upper limit of K(z) as z → z∗ is defined as lim sup 
+
+> z→z∗
+
+K(z) = {y∗ ∈ Rn | ∃ (zk, y k) → (z∗, y ∗) with yk ∈ K (zk), ∀ k ∈ N},
+
+and the sequential Painlev´ e-Kuratowski inner limit of K(z) as z → z∗ by lim inf  
+
+> z→z∗
+
+K(z) = {y∗ ∈ Rn | ∀ zk → z∗, ∃ yk → y∗ such that yk ∈ K (zk), ∀ k ∈ N}.
+
+In the following, we recall some basic concepts in variational analysis. Given a lower semicontinuous (lsc henceforth) function h, the regular subdifferential of h at ¯x ∈ dom h is the set 
+
+b∂h (x) := {v ∈ Rn | h(y) ≥ h(x) + ⟨v, y − x⟩ + o(∥y − x∥), ∀ y ∈ Rn}, (1) with ∂h (x) = ∅ if x̸ ∈ dom h. The Fenchel-Moreau subdifferential of h at ¯ x is given by 
+
+∂F M h(x) := {v ∈ Rn : h(y) ≥ h(x) + ⟨v, y − ¯x⟩, ∀y ∈ Rn},
+
+with ∂F M h(x) = ∅ if x̸ ∈ dom h. Clearly, ∂F M h(x) ⊂ b∂h (x), ∀x. The limiting subdifferential of h at ¯ x is defined as 
+
+∂h (¯ x) = {v ∈ Rn | ∃ xk →h ¯x, ∃ vk → v with vk ∈ b∂h (xk)}
+
+and the horizon subdifferential of h at ¯ x is defined by 
+
+∂∞h(¯ x) = {v ∈ Rn | ∃ xk →h ¯x, ∃ vk → v, ∃ tk → 0+ with vk ∈ b∂h (xk); tkvk → v},
+
+where xk →h ¯x means that xk → ¯x and h(xk) → h(¯ x). 3We point out that a lower lsc function h is locally Lipschitz continuous at ¯ x if and only if ∂∞h(¯ x) = {0}, see [26, Theorem 9.13]. If h is strict differentiable function at ¯x, we get ∂h (¯ x) = b∂h (¯ x) = {∇ h(¯ x)}. Furthermore, we say that a lsc function h is 
+
+subdifferential regular at ¯ x when ∂h (¯ x) = b∂h (¯ x). Given a closed set X ⊂ Rn and z ∈ X , the tangent cone to X at z is 
+
+T (X , z ) := {d ∈ Rs | ∃ tk ↓ 0, d k → d with z + tkdk ∈ X , k ∈ N}.
+
+The regular normal cone to X at z is bN (X , z ) := b∂δ X (z) and the limiting normal cone to X at z is N (X , z ) := ∂δ X (z). Furthermore, by [26], we have bN (X , z ) = 
+
+T (X , z )◦. The set of feasible directions is D(X , z ) := R+(X − z). 
+
+## 2.2 Generalized Convexity 
+
+In this subsection, we recall some basic definitions of generalized convexity, including the notion of quasiconvex functions. We pay special attention to strongly quasiconvex functions, since they form an important family of functions where numerical methods such as gradient and proximal point algorithms can be applied properly (see [17, 19]). Consider a function h with convex domain. We say that h is (a) convex if h(λx +(1 −λ)y) ≤ λh (x)+(1 −λ)h(y) for all λ ∈ [0 , 1] and all x, y ∈ dom h.(b) strongly convex on dom h with modulus γ > 0 if for all x, y ∈ dom h and all λ ∈ [0 , 1], we have h(λy + (1 − λ)x) ≤ λh (y) + (1 − λ)h(x) − λ(1 − λ) γ 
+
+> 2
+
+∥x − y∥2.(c) quasiconvex if h(λx + (1 − λ)y) ≤ max {h(x), h (y)} for all λ ∈ [0 , 1] and all x, y ∈
+
+dom h.(d) strongly quasiconvex [25] on dom h with modulus γ ≥ 0 if for all x, y ∈ dom h and all λ ∈ [0 , 1], we have 
+
+h(λy + (1 − λ)x) ≤ max {h(y), h (x)} − λ(1 − λ) γ
+
+2 ∥x − y∥2. (2) It is said that h is strictly convex (resp. strictly quasiconvex) if the inequality in the definition is strict whenever x̸ = y.The relationship between all these notions is summarizing below: strongly convex =⇒ strictly convex = ⇒ convex 
+
+⇓ ⇓ ⇓
+
+strongly qcx ( γ > 0) = ⇒ strictly qcx =⇒ qcx 
+
+,
+
+where, we denote quasiconvex by qcx. All the reverse statements may not hold. Indeed, h1(x) = p∥x∥ is strongly quasiconvex on any bounded convex set on Rn (see [17, Theorem 17]) without being convex and h2(x) = x 
+
+> 1+ |x|
+
+is strictly quasiconvex without being strongly quasiconvex on R. Other counterexamples are well-known (see [6, 12]). 4Remark 1. An important family of strongly quasiconvex is given by the quotient of quadratic functions with applications in fractional mathematical programming problems. We have the following statement as consequence of [14, Proposition 4.1]. Let A, B ∈ Rn×n, a, b ∈ Rn, α, β ∈ R, and h : Rn → R be the function given by: 
+
+h(x) = f (x)
+
+g(x) = 
+
+> 12
+
+⟨Ax, x ⟩ + ⟨a, x ⟩ + α 
+
+> 12
+
+⟨Bx, x ⟩ + ⟨b, x ⟩ + β . (3) 
+
+Take m, M > 0 such that 0 < m < M . We set K := {x ∈ Rn : m ≤ g(x) ≤ M }.Suppose that A is positive definite and at least one of the following conditions holds: 
+
+(a) B = 0 (the null matrix), 
+
+(b) f is nonnegative on K and B is negative semidefinite, 
+
+(c) f is nonpositive on K and B is positive semidefinite, then h is strongly quasiconvex on K with modulus γ = λmin (A)/M where λmin (A) is the minimum eigenvalue of A.
+
+We recall that ¯ x is a γ-strong minimum if h(x) ≥ h(¯ x)+ γ∥x− ¯x∥2 for all x ∈ K [15, Definition 22]. For a further study on generalized convexity and strongly quasiconvex functions, we refer to [2, 4, 6, 12, 15, 17, 19, 21] and references therein. Following [3], we proceed by defining the limiting sublevel sets and limiting normal operator maps, useful tools to study quasiconvex functions. For a proper function 
+
+g : Rn → R and x ∈ dom h, the sublevel set of g at g(x), the strict sublevel of g at g(x)and the limiting sublevel of g at g(x) are defined by Sg (x) := {y ∈ Rn : g(y) ≤ g(x)},
+
+S<g (x) := {y ∈ Rn : g(y) < g (x)} and Slim g (¯ x) := lim inf y→¯x Sg (y), respectively. The normal operator and limiting normal operator of g at g(x) defined by 
+
+Ng (x) := ( Sg (x) − x)◦ and N lim g (x) := ( Slim g (x) − x)◦.
+
+Finally, we mention other useful subdifferentials suitable for the study of opti-mality conditions for quasiconvex mappings. We start with the Greenberg-Pierskalla 
+
+subdifferential ∂GP h, given by 
+
+∂GP h(x) := {v ∈ Rn : if ⟨v, y − x⟩ ≥ 0 = ⇒ h(y) ≥ h(x)}. (4) For instance, it holds that 0 ∈ ∂GP h(¯ x) whenever ¯ x is a global minimizer of h. For more details and applications, see [27, 29] and references therein. Another important subdifferential is the quasiconvex subdifferential ∂q h, defined for all x ∈ dom h as follows: 
+
+∂q h(x) := 
+
+ ∂F M h(x) ∩ N (Sh(x), x ), if N (S<h (x), x )̸ = {0};
+
+∅, if N (S<h (x), x ) = {0}; (5) It has many important properties, it is always cyclically quasimonotone and coincides with Fenchel-Moreau subdifferential whenever the function is convex. See [8] for more results about the quasiconvex subdifferential. 53 Properties of the Strong Subdifferential 
+
+Recently, to analyze the behavior of quasiconvex functions and the relations with the proximal point methods in the nonconvex case, a new notion of subdifferential had been considered the so-called strong subdifferential , see [15]. 
+
+Definition 1. Given a nonempty set K ⊆ Rn, β > 0 and γ ≥ 0. The (β, γ, K )-strong subdifferential of h at x ∈ dom h ∩ K is the set ∂Kβ,γ h(x) defined by the following: A vector ξ ∈ ∂Kβ,γ h(x) if 
+
+max {h(y), h (x)} ≥ h(x) + λβ ⟨ξ, y − x⟩ + λ
+
+2
+
+
+
+γ − λβ − λγ 
+
+
+
+∥y − x∥2, (6) 
+
+for every y ∈ K and for every λ ∈ [0 , 1] .If K = Sh(x), we define the (β, γ )-SS (strong sublevel) subdifferential of h by 
+
+∂β,γ h(x) := {ξ ∈ Rn | ⟨ ξ, y − x⟩ ≤ − βγ 
+
+2 ∥y − x∥2, ∀ y ∈ Sh(¯ x)}. (7) We would like to mention that if γ > 0, the subdifferential ∂Kβ,γ h(x) is motivated for strongly quasiconvex functions, while if γ = 0, then ∂Kβ, 0h(x) is motivated for quasi-convex functions. Note that the strong subdifferential may provide useful information on strongly quasiconvex functions but other subdifferentials not, [15, Remark 20]. Further properties for the strong subdifferential are listed below (see [15]): (P 1) For x ∈ dom h∩K, β > 0, γ ≥ 0 we have ∂Kβ,γ h(x) is closed and convex. (P 2) ∂Kβ,γ h(x) is compact for all x ∈ int (dom h ∩ K) by [15, Proposition 7( d)]. (P 3) If h is strongly quasiconvex with modulus γ > 0 and lsc, then ∂Kβ,γ h(x)̸ = ∅ for all 
+
+x ∈ dom h ∩ K by [15, Corollary 38( a)]. (P 4) If h is quasiconvex such that lim inf ∥x∥→ +∞ h(x) 
+
+> ∥x∥2
+
+≥ 0, then ∂Kβ,γ h(x)̸ = ∅ for all 
+
+x ∈ dom h ∩ K by [15, Corollary 38( b)]. (P 5) If x ∈ dom h and Sh(x)(h) ⊆ K then ∂Kβ,γ h(x) ⊂ ∂β,γ h(x) for all β > 0, γ ≥ 0. (P 6) If K1 ⊂ K2, then ∂K2 
+
+> β,γ
+
+h(x) ⊂ ∂K1 
+
+> β,γ
+
+h(x). See [15] for further properties on the strong subdifferentials. 
+
+## 3.1 Relation with other subdiferentials 
+
+We discuss some relation between the regular, the limiting and the horizon subdiffer-entials with the strong subdifferential. Relations with the Greenberg-Pierskalla and quasiconvex subdifferentials are also discussed. 
+
+Proposition 1. Let h be a proper function, ¯x ∈ dom h and V be a convex neighborhood of ¯x. Suppose that h is strongly quasiconvex function with modulus γ ≥ 0 on V . If 
+
+v ∈ b∂h (¯ x), then v ∈ ∂K 
+
+> 1,γ
+
+h(x), where K := Sh(¯ x) ∩ V .
+
+6Proof Take v ∈ b∂h (¯ x). Then h(y) ≥ h(¯ x) + ⟨v, y − ¯x⟩ + o(∥y − ¯x∥) for all y. Since h is strongly quasiconvex on V , we have 
+
+h(λz + (1 − λ)x) ≤ max {h(z), h (x)} − λ(1 − λ) γ
+
+2 ∥z − x∥2, ∀ z, x ∈ V, λ ∈ [0 , 1] .
+
+Take y ∈ K = Sh(¯ x) ∩ V and t ∈ (0 , 1]. Set zt := (1 − t)¯ x + ty ∈ V . Thus, 
+
+⟨v, z t − ¯x⟩ + o(∥zt − ¯x∥) + h(¯ x) ≤ h(zt) ≤ max {h(y), h (¯ x)} − t(1 − t) γ
+
+2 ∥y − x∥2.
+
+As h(y) ≤ h(¯ x), the above yields t⟨v, y − ¯x⟩ + o(t∥y − ¯x∥) ≤ − t(1 − t) γ 
+
+> 2
+
+∥y − x∥2. Thus, dividing by t > 0 and taking limit when t → 0+, we get 
+
+⟨v, y − ¯x⟩ ≤ − γ
+
+2 ∥y − ¯x∥2, ∀ y ∈ Sh(¯ x)(h) ∩ V. 
+
+The above yields v ∈ ∂K 
+
+> 1,γ
+
+h(x) with K := Sh(¯ x) ∩ V . □
+
+Following the proof of Proposition 1, it is not difficult to show the next statement. 
+
+Proposition 2. We always have ∂q h(¯ x) ⊂ ∂Sh(¯ x)∩V 
+
+> 1,γ
+
+h(¯ x), if h is strongly quasiconvex with modulus γ ≥ 0 over a convex set V .
+
+For general convex sets, the above subdifferentials can be very different. For exam-ple, consider the strongly quasiconvex function h(x) = p|x|. In this case, from [15], one has ∂[−1,1]  
+
+> β, 12
+
+h(0) = [ −β − 12 , β + 12 ], and by [8], we get ∂q h(0) = R. On the other hand, for the function g1 defined in Example 2, one has ∂R
+
+> 1,1
+
+g1(0) = ( −∞ , − 12 ] and 
+
+∂q g1(0) = ∅.Now, we proceed by analyzing the relation with the limiting and horizon sub-differential. Since the above subdifferentials take into account the limit of certain sequences, we need to study the limit behaviour of the level sets. We have the following proposition. 
+
+Proposition 3. Let h be a proper function, ¯x ∈ dom h and V be a convex neigh-borhood of ¯x with ¯x ∈ int V . Suppose that h is strongly quasiconvex with modulus 
+
+γ ≥ 0 on V and that Sh(·) ∩ V is inner semicontinuous at ¯x, that is, Sh(¯ x) ∩ V ⊂
+
+lim inf y→¯x,y ∈dom (h) Sh(y) ∩ V . Then, the following statements hold: 
+
+(a) ∂h (¯ x) ⊂ ∂Sh(¯ x)1,γ h(x);
+
+(b) ∂∞h(¯ x) ⊂ (Sh(¯ x) ∩ V − ¯x)◦.
+
+Proof (a) Take v ∈ ∂h (¯ x). Then there exist sequences {xk}, {vk} ⊂ Rn with xk →h ¯x and 
+
+vk → v such that vk ∈ b∂h (xk), ∀k. As ¯ x ∈ int V , for k large enough, we get xk ∈ V . Now, set 
+
+Kk := Sh(xk) ∩ V , ∀k ∈ N. Using Proposition 1, for k large enough, one has vk ∈ ∂Kk 
+
+> 1,γ
+
+h(xk). By the inner semicontinuity of Sh(·) ∩ V restricted to dom h, we see that for every 
+
+y ∈ Sh(¯ x) ∩ V there exists a sequence {yk} ⊂ Rn with yk ∈ Sh(xk) ∩ V and yk ∈ dom h
+
+such that yk → y. Now, we observe that vk ∈ ∂Kk 
+
+> 1,γ
+
+h(xk) for all k implies ⟨vk, y k − xk⟩ ≤ −(γ/ 2) ∥yk − xk∥2 for all k. By taking limit in the last expression, we have ⟨v, y − ¯x⟩ ≤ −(γ/ 2) ∥y − ¯x∥2 for all y ∈ Sh(¯ x) ∩ V , that is, v ∈ ∂K 
+
+> 1,γ
+
+h(¯ x), thus ( a) holds. The proof for (b) is similar. □
+
+7Proposition 4. Let h be a continuous function at ¯x ∈ dom h with h(¯ x) < 0 and set 
+
+[h ≤ 0] := {x ∈ Rn : h(x) ≤ 0}. Then the following assertions hold: 
+
+(a) ∂[h≤0]  
+
+> β,γ
+
+h(¯ x) = ∅ (if β > 0 and γ > 0). 
+
+(b) ∂[h≤0]  
+
+> β,γ
+
+h(¯ x) = {0} (if β > 0 and γ = 0 ). 
+
+Proof The proofs are similar, we just prove ( a): By contradiction, assume that β > 0 and 
+
+γ > 0 and that ∂[h≤0]  
+
+> β,γ
+
+h(¯ x)̸ = ∅. Take v ∈ ∂[h≤0]  
+
+> β,γ
+
+h(¯ x). Since h is continuous at ¯ x, there exists 
+
+ε0 > 0 such that ¯ x + εw ∈ [h ≤ 0] for every w ∈ Rn with ∥w∥ = 1 and every 0 < ε ≤ ε0.Thus, ⟨v, y − ¯x⟩ ≤ − (βγ/ 2) ∥y − ¯x∥2 for all y ∈ [h ≤ 0]. Then, by taking y = ¯ x + ϵw , we have 
+
+⟨v, εw ⟩ ≤ − (βγ/ 2) ε2∥w∥2 = −(βγ/ 2) ε2.
+
+As a consequence ∥v∥∞ = sup w:∥w∥=1 ⟨v, w ⟩ ≤ − (βγ/ 2) ε < 0, a contradiction. Therefore, 
+
+∂[h≤0]  
+
+> β,γ
+
+h(¯ x) = ∅. □
+
+We continue with the relation with the Greenberg-Pierskalla subdifferential. We have the following statement. 
+
+Proposition 5. We always have ∂Rn 
+
+> β,γ
+
+h(¯ x) ⊂ ∂GP h(¯ x) for every γ, β > 0.
+
+Proof Take ξ ∈ ∂Rn 
+
+> β,γ
+
+h(¯ x). To show that ξ ∈ ∂GP h(¯ x), we suppose that ⟨ξ, y − ¯x⟩ ≥ 0 for some 
+
+y. Let λ ∈ (0 , γβ  
+
+> 1+ γβ
+
+) and set α := λ 
+
+> 2
+
+(γ − λβ − γλ ). This choice of λ implies α > 0. Hence, from (6), one has max {h(y), h (¯ x)} ≥ h(¯ x) + α∥y − ¯x∥2.
+
+The above expression yields h(y) ≥ h(¯ x). □
+
+The inclusion in the above proposition can be strict, in fact, in Example 2 and using the corresponding notation, we have ∂R
+
+> 1,1
+
+g1(¯ x) = ( −∞ , −1/2] and ∂GP g1(¯ x) = (−∞ , 0). For general convex set K, both subdifferentials can be very different. Indeed, from Remark 2, one has ∂[0 ,1] 1,1 g(0) = ( −∞ , −1/2] meanwhile ∂GP g(0) = (0 , ∞). 
+
+## 3.2 Basic calculus rules for the strong subdifferential 
+
+We continue by providing some basic calculus rules for the strong subdifferential of the supremum of a finite number of functions, an important operation in variational analysis. We start with the following proposition. 
+
+Proposition 6. Let {gj }j∈I be a finite number of extended-valued functions on Rn
+
+and set g := sup j∈I gj . Then, for every ¯x ∈ dom g, we have 
+
+co 
+
+ [
+
+> j∈I(¯ x)
+
+∂Kj 
+
+> β,γ j
+
+gj (¯ x)
+
+ ⊂ ∂Kβ,γ m g(¯ x); (8) 
+
+where I(¯ x) := {j ∈ I : g(¯ x) = gj (¯ x)}, K ⊂ ∩ j∈I(¯ x)Kj and γm := min j∈I(¯ x) γj .
+
+8Proof Since ¯ x ∈ dom g ∩K, by [15, Proposition 7] we get that ∂Kβ,γ m g(¯ x) is convex and closed set. So, it suffices to show that if w ∈ S 
+
+> j∈I(¯ x)
+
+∂Kj 
+
+> β,γ j
+
+gj (¯ x), then w ∈ ∂Kβ,γ m g(¯ x). Indeed, take 
+
+j ∈ I(¯ x) and w ∈ ∂Kj 
+
+> β,γ j
+
+gj (¯ x). Thus, for every y ∈ Kj and every λ ∈ [0 , 1], we have 
+
+λβ ⟨w, y − ¯x⟩ ≤ max {gj (y), g j (¯ x)} − λ(1 − λ)γj
+
+2 ∥y − ¯x∥2 + λ2
+
+2β ∥y − ¯x∥2. (9) Since j ∈ I(¯ x), gj (¯ x) = g(¯ x), and as K ⊂ ∩ i∈I(¯ x)Ki, γm ≤ γj , gj (y) ≤ g(y), expression (9) implies that 
+
+λβ ⟨w, y − ¯x⟩ ≤ max {g(y), g (¯ x)} − λ(1 − λ)γm
+
+2 ∥y − ¯x∥2 + λ2
+
+2β ∥y − ¯x∥2,
+
+for all y ∈ K and all λ ∈ [0 , 1], thus w ∈ ∂Kβ,γ m g(¯ x). □
+
+The inclusion in (8) may be strict even in some simple situations. 
+
+Example 1. (The inclusion in (8) may be strict). Consider the extended-valued functions g1 : R → R and g2 : R → R defined as 
+
+g1(x) = 
+
+ 0, if x ≥ 0, 
+
+> 12
+
+x2, if x < 0. and g2(x) = 
+
+ 12 x2 if x ≥ 0,
+
+0 if x < 0.
+
+Set g := max {g1, g 2}, K := K1 = K2 = R, γ = γ1 = γ2 = 1 and β = 1 . Take 
+
+¯x = 0 . Then, ∂K
+
+> 1,1
+
+g1(¯ x) = ∂K
+
+> 1,1
+
+g1(¯ x) = ∅, and since g(x) = 12 x2 is strongly quasiconvex, by using (P 3) we get ∂K
+
+> 1,1
+
+g(¯ x)̸ = ∅. Hence, the inclusion in (8) is strict. 
+
+By Proposition 6, we see that there is some freedom in the choice of Kj meanwhile 
+
+K ⊂ ∩ j∈I(¯ x)Kj . A particular case choice is Kj := Sgj (¯ x), ∀j and K = Sg (¯ x). Clearly, 
+
+K ⊂ ∩ j∈I(¯ x)Kj and as a consequence of Proposition 6, we get 
+
+co 
+
+ [
+
+> j∈I(¯ x)
+
+∂β,γ j gj (¯ x)
+
+ ⊂ ∂β,γ m g(¯ x).
+
+Now, we focus on a special case where (8) holds as equality. First, let us recall some definitions (see [15, Section 3]). 
+
+Definition 2. Let g : Rn → R be a proper function, K ⊂ Rn, β > 0, γ ≥ 0 and 
+
+x ∈ (dom g) ∩ K. The upper Dini directional derivative of g at x ∈ dom g in the direction d ∈ Rn is defined by 
+
+gD+(x; d) := lim sup 
+
+> t→0+
+
+g(x + td ) − g(x)
+
+t .
+
+Furthermore, we say that g is F -regular at x on (K, β, γ ), if for every d ∈ Rn, we have 
+
+gD+(x; d) ≥ 0 =⇒ σ(∂Kβ,γ g(x); d) ≥ 0.
+
+9For more results of the above definition, see [15, Section 3]. We proceed with the next result. 
+
+Proposition 7. Let {gj }j∈I a finite number of extended-valued functions on Rn,
+
+g := sup j∈I gj , ¯x ∈ dom g and K be a convex set such that K ⊂ ∩ j∈I(¯ x)Kj . Assume that ∩j∈I(¯ x)[cone ∂Kj 
+
+> β,γ j
+
+gj (¯ x)] ◦ ⊂ cone (K − ¯x) and that ∂Kj 
+
+> β,γ j
+
+gj (¯ x) is compact and gj is F-regular at ¯x for all j ∈ I(¯ x).Furthermore, we assume that the following Slater-type condition holds: there exists bd ∈ D(K, ¯x) such that σ(∂Kj 
+
+> β,γ j
+
+gj (¯ x), bd) < 0 for all j ∈ I(¯ x). (S)
+
+Then 
+
+co 
+
+ [
+
+> j∈I(¯ x)
+
+∂Kj 
+
+> β,γ j
+
+gj (¯ x)
+
+ = ∂Kβ,γ m g(¯ x). (10) 
+
+Proof Since (8) holds, we show only the reverse inclusion. Indeed, suppose for the contrary that there exists v ∈ ∂Kβ,γ m g(¯ x) with v /∈ co 
+
+S 
+
+> j∈I(¯ x)
+
+∂Kj 
+
+> β,γ j
+
+gj (¯ x)
+
+
+
+. By the Hahn-Banach theorem, there exists d̸ = 0 satisfying 
+
+⟨v, d ⟩ > 0 ≥ ⟨ w, d ⟩, ∀ w ∈ [
+
+> j∈I(¯ x)
+
+∂Kj 
+
+> β,γ j
+
+gj (¯ x),
+
+which implies that d ∈ ∩ j∈I(¯ x)[cone ∂Kj 
+
+> β,γ j
+
+gj (¯ x)] ◦, and hence d ∈ cone( K − ¯x). Take bd satisfying condition ( S). Then taking dθ := d + θ bd with θ > 0 small enough, we get 
+
+⟨v, d θ ⟩ > 0 > ⟨w, d θ ⟩, ∀ w ∈ [
+
+> j∈I(¯ x)
+
+∂Kj 
+
+> β,γ j
+
+gj (¯ x). (11) Since K is convex and ˆd ∈ D(K, ¯x) = R+(K − ¯x), one has dθ = d + θ ˆd ∈ D(K, ¯x). From (11) and by the compactness of ∂Kj 
+
+> β,γ j
+
+gj (¯ x), we have 0 > σ (∂Kj 
+
+> β,γ j
+
+gj (¯ x), d θ ) for all j ∈ I(¯ x). Now, since I is finite, we can find j0 ∈ I(¯ x) such that gD+(¯ x; dθ ) ≤ gD+ 
+
+> j0
+
+(¯ x; dθ ). Since 
+
+dθ ∈ D(K, ¯x) and by [15, Proposition 9], we have 
+
+⟨v, d θ ⟩ ≤ β max {gD+(¯ x; dθ ), 0}.
+
+From (11), we get 0 < ⟨v, d θ ⟩, and thus 0 < g D+(¯ x; dθ ) ≤ gD+ 
+
+> j0
+
+(¯ x; dθ ). Finally, since 
+
+gj0 is F -regular at ¯ x, it follows that σ(∂Kj0
+
+> β,γ j0
+
+gj0 (¯ x), d θ ) ≥ 0, which is a contradiction. As consequence, v ∈ co 
+
+S 
+
+> j∈I(¯ x)
+
+∂Kj 
+
+> β,γ j
+
+gj (¯ x)
+
+
+
+and the proof is complete. □
+
+# 4 Normal Cone of a Level set 
+
+Let {gj }j∈I be a finite number of extended-valued functions on Rn and set g := sup j∈I gj . Furthermore, define Ω := 
+
+
+
+x ∈ Rn | g(x) = sup 
+
+> j∈I
+
+gj (x) ≤ 0
+
+
+
+.
+
+10 In this section, we focus on obtaining a computable expression for the normal cone of Ω at a feasible point ¯ x ∈ Ω. Our main assumption about the feasible set is that Ω is convex .
+
+Our approach is very general since we only suppose that Ω is convex, and we do not impose any kind of locally Lipschitz, continuity or convexity assumption on the functions {gj }j∈I . We mention that the convexity of Ω holds if g is quasiconvex (in particular if the function g is convex). The next proposition provides a lower estimate of the normal cone in terms of the strong subdifferentials and the normal operators of the functions gj .
+
+Proposition 8. Let {gj }j∈I be a finite number of extended-valued functions in Rn,
+
+g := sup j∈I gj , ¯x ∈ dom g∩Ω and {Kj }j∈I be a family of sets such that Ω ⊂ ∩ j∈I(¯ x)Kj
+
+where I(¯ x) := {j ∈ I | g(¯ x) = 0 }. Then 
+
+[
+
+> μ∈R|I(¯ x)|
+> +
+
+X 
+
+> j∈I(¯ x): μj>0
+
+μj ∂Kj  
+
+> βj,γ j
+
+gj (¯ x) + X 
+
+> j∈I(¯ x): μj=0
+
+Ngj (¯ x)
+
+ ⊂ N (Ω , ¯x), (12) 
+
+Proof Since N (Ω , ¯x) is a closed convex cone, it suffices to show that ∂Kj  
+
+> βj,γ j
+
+gj (¯ x) and Ngj (¯ x) = (Sgj (¯ x) − ¯x)◦ are subsets of N (¯ x, Ω) for all j ∈ I(¯ x). Since Ω ⊂ Sgj (¯ x) for every j ∈ I(¯ x), we have ( Sgj (¯ x) − ¯x)◦ ⊂ N (Ω , ¯x). Take w ∈ ∂Kj  
+
+> βj,γ j
+
+gj (¯ x) for some j ∈ I(¯ x). Then, for every y ∈ Kj ,
+
+λβj
+
+⟨w, y − ¯x⟩ ≤ max {gj (y), g j (¯ x)} − λ(1 − λ)γj
+
+2 ∥y − ¯x∥2 + λ2
+
+2βj
+
+∥y − ¯x∥2. (13) Since Ω ⊂ Sgj (¯ x) and Ω ⊂ Kj , (13) implies ⟨w, y − ¯x⟩ ≤ − 12 βj γj ∥y − ¯x∥2 ≤ 0 for all 
+
+y ∈ Ω. As a consequence, w ∈ N (Ω , ¯x). □
+
+The lower estimative of the normal cone given by (12) may be strict as the following example shows. 
+
+Example 2. (The inclusion in (12) may be strict). Consider the extended-valued functions g1 : R → R and g2 : R → R defined as 
+
+g1(x) = 
+
+
+
+0 if x = 0 ,
+
+−x−1 if 0 < x ≤ 1,
+
++∞ otherwise ,
+
+and g2(x) = 
+
+
+
+0 if x = 0 ,
+
++∞ if 0 < x ≤ 1,
+
+−x−1 otherwise .
+
+Set K1 = K2 = R, γ = γ1 = γ2 = 1 and β = 1 . Take ¯x = 0 . Then, by direct calculation, we have ∂R
+
+> 1,1
+
+g1(¯ x) = ( −∞ , −1/2] and ∂R
+
+> 1,1
+
+g2(¯ x) = ∅, while Ng1 (0) = [0 , 1] ◦ = R− and Ng2 (0) = ( {0} ∪ (1 , ∞)) ◦ = R−.On the other hand, since g := max {g1, g 2}, we get g(0) = 0 and g(x) = + ∞,
+
+∀x̸ = 0 . Thus, Ω = {0}, N (Ω , ¯x) = R and the inclusion in (12) is strict. 
+
+11 In order to obtain the equality in (12) under mild assumptions, we first study some properties of the directional derivatives. To that end, we define the upper Hadamard directional derivative of g at x ∈ dom g in the direction d ∈ Rn by 
+
+gH+(x; ¯d) := lim sup  
+
+> t→0+, d →¯d
+
+g(x + td ) − g(x)
+
+t .
+
+Clearly, gH+(x; ¯d) is well-defined if g is locally Lipschitz at x. Certainly, for every 
+
+d ∈ Rn one has gD+(x; ¯d) ≤ gH+(x; ¯d). The next technical lemma can be seen as a complement to [15, Proposition 9]. The proof follows from [15, Proposition 9] with the appropriate modifications. 
+
+Lemma 1. Let ¯x ∈ dom g and ∂Kβ,γ g(¯ x) be the strong subdifferential for some K,
+
+β > 0 and γ ≥ 0. Then, for every d ∈ T (K, ¯x), we have 
+
+λ⟨w, d ⟩ ≤ β max {gH+(¯ x; d), 0}, ∀λ ∈ [0 , 1] and ∀w ∈ ∂Kβ,γ g(¯ x).
+
+Finally, consider the next definition. 
+
+Definition 3. Let g : R → R be a proper function, K ⊂ Rn, β > 0, γ ≥ 0 and 
+
+x ∈ dom g ∩ K. We say that g is FH -regular at x on (K, β, γ ), if for every d ∈ Rn,the following implication holds 
+
+gH+(x; d) ≥ 0 = ⇒ σ(∂Kβ,γ g(x); d) ≥ 0.
+
+Remark 2. We point out that a function can be FH -regular for some K but not for other sets. In fact, consider g : R → R defined as 
+
+g(x) = 
+
+ 0 if x ≥ 0,
+
+−x if x < 0.
+
+Take ¯x = 0 . Note that gH+(0; d) = 0 if d ≥ 0, and gH+(0; d) = −d if d < 0. Now, take K1 = [ −1, 0] and β = γ = 1 , then ∂K1 
+
+> β,γ
+
+g(0) = [ −1, ∞) and hence σ(∂K1 
+
+> 1,1
+
+g(0); d) ≥
+
+0 for all d. Thus, g is FH -regular at ¯x on (K1, 1, 1) .On the other hand, if K2 = [0 , 1] , then ∂K2 
+
+> 1,1
+
+g(0) = (−∞ , −1/2] and hence 
+
+σ(∂K2 
+
+> 1,1
+
+g(0); d) < 0 when d > 0. Thus, g is not FH -regular at ¯x on (K2, 1, 1) .
+
+We continue with the main result of this section that characterizes the normal cone of Ω by using strong and horizon subdifferentials. 
+
+Theorem 1. Let {gj }j∈I be a finite number of extended-valued functions on Rn,
+
+g := sup j∈I gj , ¯x ∈ dom g, {Kj }j be a family of closed convex sets, βj > 0 and γj ≥ 0
+
+for all j ∈ I. Suppose that Ω ⊂ ∩ j∈I(¯ x)Kj and that the following statements are satisfied: 
+
+12 (a) The Slater-type condition (SN ) holds at ¯x for ∂Kj  
+
+> βj,γ j
+
+gj (¯ x) for all j, that is, there exists bd ∈ ∩ j∈I(¯ x)T (Kj , ¯x) such that σ(∂Kj  
+
+> βj,γ j
+
+gj (¯ x), bd) < 0 ∀j ∈ I(¯ x). (SN )(b) The next inclusion holds 
+
+∩j∈I(¯ x)[cone ∂∞gj (¯ x)] ◦ ∩ ∩ j∈I(¯ x)[cone ∂Kj  
+
+> βj,γ j
+
+gj (¯ x)] ◦ ⊂ ∩ j∈I(¯ x)T (Kj , ¯x).
+
+(c) For every j ∈ I(¯ x), the inclusion ∂∞gj (¯ x) ⊂ (Sgj (¯ x) − ¯x)◦ holds, gj is upper semicontinuous (usc) at ¯x and gj is FH -regular at ¯x on (Kj , β j , γ j ).
+
+(d) For every j ∈ I(¯ x), one of the following conditions holds: 
+
+(d. 1) the strong subdifferential ∂Kj  
+
+> βj,γ j
+
+gj (¯ x) is compact; 
+
+(d. 2) the cone (∂Kj  
+
+> βj,γ j
+
+gj (¯ x)) is closed and 0 /∈ ∂Kj  
+
+> βj,γ j
+
+gj (¯ x).Then 
+
+N (Ω , ¯x) = co 
+
+[
+
+> μ∈R|I(¯ x)|
+> +
+
+X 
+
+> j∈I(¯ x): μj>0
+
+μj ∂Kj  
+
+> βj,γ j
+
+gj (¯ x) + X 
+
+> j∈I(¯ x): μj=0
+
+∂∞gj (¯ x)
+
+, (14) 
+
+where I(¯ x) := {j ∈ I : gj (¯ x) = 0 }.
+
+Proof First, since ∂∞gj (¯ x) ⊂ (Sgj (¯ x) − ¯x)◦ for all j ∈ I(¯ x), the inclusion described in (12) holds. As N (Ω , ¯x) is a closed convex set, the right-hand side of (14) is included in N (Ω , ¯x). Let us prove the equality in (14) under the above hypotheses. Suppose by contradiction that there exists v ∈ N (Ω , ¯x) that does not belong to the right side of (14). Thus, by the Hahn-Banach theorem, there exists d̸ = 0 satisfying 
+
+⟨v, d ⟩ > 0 ≥ ⟨ w, d ⟩, ∀ w ∈ [
+
+> j∈I(¯ x)
+
+∂Kj 
+
+> β,γ j
+
+gj (¯ x) ∪ ∂∞gj (¯ x).
+
+The latter implies d ∈ ∩ j∈I(¯ x)[cone ∂∞gj (¯ x)] ◦ ∩ ∩ j∈I(¯ x)[cone ∂Kj  
+
+> βj,γ j
+
+gj (¯ x)] ◦. So, by (b), we have d ∈ ∩ j∈I(¯ x)T (Kj , ¯x). From the Slater-type condition ( SN ) and due to the convexity of Kj , ∀j; we can find 
+
+dθ := d + θ bd ∈ ∩ j∈I(¯ x)T (Kj , ¯x) for some θ > 0 small enough such that 
+
+⟨v, d θ ⟩ > 0 > ⟨w, d θ ⟩, ∀ w ∈ [
+
+> j∈I(¯ x)
+
+∂Kj  
+
+> βj,γ j
+
+gj (¯ x). (15) Now, we claim that ¯ x + rd θ ∈ Ω for some r > 0 small enough. Indeed, suppose by contradiction that there exist j ∈ I and a sequence {rk} ⊂ R++ with rk → 0+ such that 
+
+gj (¯ x + rkdθ ) > g j (¯ x). If j /∈ I(¯ x), then the upper semicontinuity of gj at ¯ x ensures that 
+
+gj (¯ x + rd θ ) < 0 for every r sufficiently small, a contradiction and thus j ∈ I(¯ x). We point out that gj (¯ x + rkdθ ) > g j (¯ x) implies that gH+ 
+
+> j
+
+(¯ x, d θ ) ≥ lim sup 1 
+
+> rk
+
+(gj (¯ x +
+
+rkdθ ) − gj (¯ x)) ≥ 0. As gj is FH -regular at ¯ x, we have σ(∂Kj  
+
+> βj,γ j
+
+gj (¯ x), d θ ) ≥ 0. Furthermore, as consequence of (15), we get σ(∂Kj  
+
+> βj,γ j
+
+gj (¯ x), d θ ) = 0. Now, we split the proof depending if for such j, the statement ( d. 1) or ( d. 2) holds. 
+
+13 • If ( d. 1) holds then, in this case, the compactness of ∂Kj  
+
+> βj,γ j
+
+gj (¯ x) and (15) imply that 
+
+σ(∂Kj  
+
+> βj,γ j
+
+gj (¯ x), d θ) < 0 which contradicts σ(∂Kj  
+
+> βj,γ j
+
+gj (¯ x), d θ ) ≥ 0. 
+
+• If ( d. 2) is fulfilled then P := cone( ∂Kj  
+
+> βj,γ j
+
+gj (¯ x)) is a pointed closed convex cone. By [26, Exercise 6.22], the latter implies that P ◦ has a nonempty interior. Furthermore, [26, Exercise 6.22] says that ¯d ∈ int P ◦ if and only if ⟨¯v, ¯d⟩ < 0, ∀¯v ∈ P with ¯v̸ = 0. From above and by (15), we get dθ ∈ int P ◦. So, there exists δ > 0 such that 
+
+dθ + εˆv ∈ P ◦, for all ε ∈ [0 , δ ] and ∥ˆv∥ ≤ 1. Hence, we have 
+
+⟨w, d θ + εˆv⟩ ≤ 0, ∀w ∈ P = cone( ∂Kj  
+
+> βj,γ j
+
+gj (¯ x)) , ∀ˆv with ∥ˆv∥ ≤ 1. (16) As σ(∂Kj  
+
+> βj,γ j
+
+gj (¯ x), d θ ) = 0, we get that (16) implies 0 ≤ σ(∂Kj  
+
+> βj,γ j
+
+gj (¯ x), ˆv), ∀ ˆv. Now, by ( d. 2), one has 0 /∈ ∂Kj  
+
+> βj,γ j
+
+gj (¯ x). So, the strong Hahn-Banach theorem implies the existence of ¯ α ∈ R and ¯d (with ∥ ¯d∥ ≤ 1) such that ⟨w, ¯d⟩ ≤ ¯α < 0, ∀w ∈ ∂Kj  
+
+> βj,γ j
+
+gj (¯ x). Taking the supremum, one has σ(∂Kj  
+
+> βj,γ j
+
+gj (¯ x), ¯d) ≤ ¯α < 0 which is a contradiction. 
+
+Therefore, in any case, there exists r > 0 such that ¯ x + rd θ ∈ Ω. Finally, from (15), we get ⟨v, (¯ x + rd θ ) − ¯x⟩ = r⟨v, d θ ⟩ > 0 and thus v /∈ N (Ω , ¯x), contradicting the main supposition. □
+
+Remark 3. Some remarks about the hypotheses of Theorem 1 are in order: (a) A simple situation where (SN ) holds is the following: 
+
+• Suppose that γj > 0 and Kj is convex for all j. If there exists ¯y ∈ ∩ j∈I(¯ x)Sgj (¯ x)∩∩j∈I(¯ x)Kj with ¯y̸ = ¯ x, then (SN ) holds. In fact, we affirm that bd := ¯ y − ¯x satisfies (SN ). Due to the convexity of Kj , we get bd ∈ T (Kj , ¯x) for all j ∈ I(¯ x). Take any w ∈ ∂Kj  
+
+> βj,γ j
+
+gj (¯ x). Thus, it follows from 
+
+(9) that ⟨w, bd⟩ ≤ − (βj γj /2) ∥ bd∥2 < 0. Hence, for every j ∈ I(¯ x), one has 
+
+σ(∂Kj  
+
+> βj,γ j
+
+gj (¯ x), bd) ≤ − (βj γj /2) ∥ bd∥2 < 0.
+
+(b) The inclusion given by Theorem 1(b) can be simplified under some assumptions. Indeed, set Kj = Sgj (¯ x) for all j ∈ I(¯ x). By following the proof of [15, Proposition 15] under the proper modification, we see that if cone (∂Kj 
+
+> β,γ j
+
+gj (¯ x)) is a closed set with 0 /∈ ∂Kj 
+
+> β,γ j
+
+gj (¯ x), then Sgj (¯ x) is convex and gj is FH -regular at ¯x on Kj , thus 
+
+N (Sgj (¯ x), ¯x) ⊂ cone (∂Kj 
+
+> β,γ j
+
+gj (¯ x)) and 
+
+
+
+cone ∂Kj 
+
+> β,γ j
+
+gj (¯ x)
+
+◦
+
+⊂ N (Sgj (¯ x), ¯x)◦ = T (Sgj (¯ x), ¯x). (17) 
+
+Then the inclusion given by (b) is trivially satisfied. (c) Note that if ∂∞gj (¯ x) is convex, then ∂∞gj (¯ x) ⊂ Ngj (¯ x) and Kj = Sgj (¯ x) for all 
+
+j ∈ I(¯ x). As a consequence, the convex hull in (14) can be removed. 
+
+14 We mention Theorem 1 subsumes some of the results given in [15, Lemma 28]. In fact, in the case, that Kj := Ω, ∀j; βj := β, γj := γ, one has 
+
+∂Ω 
+
+> β,γ
+
+gj (¯ x) = {v ∈ Rn : ⟨v, y − ¯x⟩ ≤ − 12 βγ ∥y − ¯x∥2, ∀y ∈ Ω}, for every j ∈ I(¯ x).
+
+Further, we assume that ∂∞gj (¯ x) = ∅, ∀j and Ω is not a singleton. Thus under such assumptions, hypotheses (a) and (b) of Theorem 1 are trivially satisfied. We also note that the inclusion ∅ = ∂∞gj (¯ x) ⊂ (Sgj (¯ x) − ¯x)◦ in hypotheses (c) of Theorem 1 holds. Finally, under the fulfillment of the hypotheses (c) and (d) of Theorem 1, one has the normal cone reduces to N (Ω , ¯x) = cone ∂Ω 
+
+> β,γ
+
+gj (¯ x) for any j ∈ I(¯ x). We end this section, by given an example where (14) holds where the convex sets 
+
+Kj , ∀j are different of Ω. In fact, we consider the feasible set Ω = {x ∈ Rn : g(x) ≤ 0}
+
+where g : R → R ∪ {∞} is defined in Example 5. In this case, Ω = [ −1, 0] and take 
+
+K = [ −1, 1]. Here, ∂[−1,1] 1,1 g(0) = [4 −1, 2] and ∂[−1,0] 1,1 g(0) = [1 /2, ∞). We note that 
+
+N (Ω , 0) = R+ = cone ∂[−1,1] 1,1 g(0) = cone ∂[−1,0] 1,1 g(0). 
+
+# 5 Optimality Conditions 
+
+We start this section with the next technical theorem relating the subdifferentials of the objective function with the normal cone of the feasible set at local minimizers. 
+
+Theorem 2. Assume that f is a lsc function and C is a closed convex set. Let ¯x ∈ C 
+
+be a local solution of minimize f over C. Then, there exist γ0 ≥ 0, v ∈ ∂f (x) and 
+
+v∞ ∈ ∂∞f (x) such that 
+
+0 ∈ γ0v + bγ0v∞ + N (C, ¯x), (18) 
+
+where bγ0 = 1 and ∥v∞∥ = 1 if γ0 = 0 ; and bγ0 = 0 if γ0 > 0.
+
+Proof Let ¯ x ∈ C be a local solution of minimize f over C. To derive (18), we will use an argument based on the penalization method, an useful technique used to obtain FJ/KKT conditions and also sequential optimality conditions, see [1, 5] and the references therein. Since ¯ x is a local minimizer, there exists δ > 0 such that ¯ x is the unique global solution of minimize f (x) + 12 ∥x − ¯x∥2 subject to x ∈ C ∩ B(¯ x; 12 δ).
+
+Given k ∈ N, consider the penalized optimization problem minimize f (x) + k dist( x, C)2 + 12 ∥x − ¯x∥2 subject to x ∈ B(¯ x; 12 δ). (19) Let yk be a global solution of (19) (which exists as a consequence of the Weierstrass theorem). We will show that yk → ¯x. Let ˆ x be any limit point of {yk}. By simplicity, assume that yk → ˆx. Clearly, ∥ˆx − ¯x∥ ≤ 12 δ. Now, from (19), one has 
+
+f (yk) + k dist( yk, C)2 + 12 ∥yk − ¯x∥2 ≤ f (¯ x) + k dist(¯ x, C)2 + 12 ∥¯x − ¯x∥2 = f (¯ x) (20) 
+
+15 The above implies dist( yk, C)2 ≤ (f (¯ x) − f (yk)) /k . By taking the limit we get dist(ˆ x, C)2 ≤ 0and so ˆ x ∈ C . By (20), one has f (yk) + 12 ∥yk − ¯x∥2 ≤ f (¯ x) and so f (ˆ x) + 12 ∥ˆx − ¯x∥2 ≤
+
+f (¯ x) + 12 ∥¯x − ¯x∥2 with ˆ x ∈ B(¯ x, 12 δ). As ¯ x is the unique global minimizer, we must have ¯x = ˆ x. The latter implies that {yk} has a unique limit point and thus yk → ¯x.As yk → ¯x, one has ∥yk − ¯x∥ < δ/ 2 for k large enough. Now, since the function x 7 →
+
+dist( x, C)2 is continuous differentiable, by using [26, Exercise 10.10], the Fermat rule and since ∇[dist( ·, C)2]( yk) ∈ dist( yk, C)∂dist( ·, C)( yk) ⊂ N (C, proj C (yk)) (due to the convexity of C), we get 0 ∈ b∂
+
+
+
+f (·) + k dist( ·, C)2 + 12 ∥ · − ¯x∥2
+
+
+
+(yk) = b∂f (yk) + ∇(k dist( ·, C)2 + 12 ∥ · − ¯x∥2)( yk)
+
+⊂ b∂f (yk) + ∇(k dist( ·, C)2)( yk) + ( yk − ¯x)
+
+⊂ b∂f (yk) + N (C, proj C (yk)) + ( yk − ¯x). (21) Clearly, proj C (yk) → ¯x. Now, we set εk := ( yk − ¯x) for all k ∈ N. Then, εk → 0. From (21), there exists a sequence {vk} ⊂ Rn with vk ∈ b∂f (yk) such that 0 ∈ vk + N (C, proj C (yk)) + εk.Now, we consider two cases depending on if {vk} is bounded or not. 
+
+(i) . Suppose that {vk} is bounded. In this case, after taking an adequate subsequence we suppose that vk → v for some v ∈ Rn. Clearly, v ∈ ∂f (¯ x). Hence, by taking the limit in 0 ∈ vk + N (C, proj C (yk)) + εk, and by using the outercontinuity of the normal cone, we get 0 ∈ v + N (C, ¯x). 
+
+(ii) . Suppose that {vk} is not bounded. Then, after taking an adequate subsequence, we may suppose that ∥vk∥ → ∞ and vk/∥vk∥ → v∞ for some v∞ ∈ ∂∞f (¯ x) with ∥v∞∥ = 1. Taking the limit in 0 ∈ (vk/∥vk∥)+ N (C, proj C (yk))+( εk/∥vk∥), and from the outercontinuity of the normal cone, we get 0 ∈ v∞ + N (C, ¯x). Therefore, in both cases, we get 0 ∈ γ0v + bγ0v∞ + N (C, ¯x), where bγ0 = 1 and ∥v∞∥ = 1 (if γ0 = 0) and bγ0 = 0 (if γ0 > 0). □
+
+## 5.1 Applications to mathematical programming 
+
+In this section, we focus on deriving optimality conditions for mathematical program-ming problem of the form minimize f (x) subject to gj (x) ≤ 0, j ∈ I, (P) where I is a finite index set. Here, we assume that the feasible set Ω := {x ∈ Rn | gj (x) ≤ 0; ∀ j ∈ I}, (22) is a closed convex set and, as usual, we do not impose a local Lipschitz or continuity assumption on the constraint functions gj for all j.Let ¯ x ∈ Ω be a feasible point, then the set of active indexes is given by I(x) := 
+
+{j ∈ I : gj (x) = 0 }. Hence, we continue with the following notion of Fritz-John (FJ) and Karush-Kuhn-Tucker (KKT) conditions at a point ¯ x ∈ Ω. 
+
+Definition 4. Let {Kj }j∈I ⊂ Rn be a family of subsets, βj > 0 and γj ≥ 0 for all j ∈ I. We say that a feasible point ¯x satisfies the generalized Fritz-John (FJ) 
+
+16 optimality condition if we can find scalars γ0 ≥ 0 and μj ≥ 0, j ∈ I(¯ x) satisfying 
+
+γ0 + P 
+
+> j∈I(¯ x)
+
+μj = 1 such that 
+
+0 ∈ γ0∂f (x) + bγ0∂∞f (x) + X 
+
+> j∈I(¯ x): μj>0
+
+μj ∂Kj  
+
+> βj,γ j
+
+gj (x) + X 
+
+> j∈I(¯ x): μj=0
+
+∂∞gj (¯ x), (G-FJ) 
+
+where bγ0 = 1 if γ0 = 0 and bγ0 = 0 if γ0 > 0.If γ0 > 0, then we say that the generalized Karush-Kuhn-Tucker (KKT) conditions hold at ¯x. The scalars {μj /γ 0}j∈I(¯ x) are called multipliers. 
+
+We point out that in our definition of FJ/KKT conditions, we use ∂∞g(¯ x) instead of Ng (¯ x) (note that if g is strong quasiconvex with γ > 0 on Rn and Sg (·) is inner semicontinuous at ¯ x, then ∂∞g(¯ x) ⊂ Ng (¯ x) by Proposition 3). Thus, if we use Ngj (¯ x)instead of ∂∞gj (¯ x) in Definition 4, then we get a condition with more chances to be fulfilled at local minimizers, but, on the other hand, it can be too weak that non-minimizers may fulfill that condition. For instance, consider the next example. 
+
+Example 3. Let f, g : R → R ∪ { +∞} . We consider the problem of minimizing 
+
+f (x) := −x2 subject to g(x) ≤ 0, where g is defined by 
+
+g(x) = 
+
+
+
+0 if x = 0 ,
+
+−x−1 if 0 < x ≤ 1,
+
++∞ otherwise .
+
+Here, Ω = [0 , 1] . Clearly, ¯x = 0 is not a local minimizer, ∇f (¯ x) = ∂f (¯ x) = 0 and 
+
+∂∞f (¯ x) = 0 . Note that g is strongly quasiconvex with modulus γ = 1 on R and Sg (·)
+
+is inner semicontinuous at ¯x. Furthermore, Ng (0) = ( Sg (¯ x) − ¯x)◦ = R−, ∂R
+
+> 1,1
+
+g(0) = (−∞ , −1/2] , b∂g (0) = ∅, ∂g (0) = ∅, ∂∞g(0) = ∅ and ∂q g(0) = ∅. Hence, 0 ∈ (∂f (¯ x) + 
+
+Ng (0)) = R− holds. On the other hand, 0 ∈ ∂f (¯ x)+ μ∂ R
+
+> 1,1
+
+g(0) = μ(−∞ , −1/2] (μ > 0)or 0 ∈ ∂f (¯ x) + ∂∞g(0) cannot hold at the non-minimizer ¯x = 0 , thus, we can use 
+
+(G-FJ) to eliminate some non-minimizers. 
+
+We point out that there are many FJ/KKT conditions in the literature. A very general necessary condition (able to deal with non-Lipschitz functions) is the condition given by [5]. The next example shows an instance when our definition can be applied while the result of [5, Corollary 2.6] can not. 
+
+Example 4. Let f, g : R → R ∪ { +∞} . We consider the problem of minimizing 
+
+f (x) := x subject to g(x) ≤ 0, where g : R → R ∪ { +∞} is defined in Example 3. Clearly, ¯x = 0 is a global minimizer. We note that ∂R
+
+> 1,1
+
+g(0) = ( −∞ , −1/2] and 
+
+0 ∈ ∂f (¯ x) + ∂R
+
+> 1,1
+
+g(0) = ( −∞ , 1/2] hold. On the other hand, we note that [5, Corollary 2.6] says at a local minimizer one has that 0 ∈ ∂f (¯ x) + μ∂g (0) (μ > 0) or 0 ∈ ∂f (¯ x) + ∂∞g(0) . Since ∂∞g(0) and ∂g (0) 
+
+are empty sets, we cannot apply the results of [5, Corollary 2.6]. 
+
+17 Before continuing, we consider the following constraint qualification (CQ), 
+
+N (Ω , ¯x) = [
+
+> μ∈R|I(¯ x)|
+> +
+
+ X  
+
+> j∈I(¯ x): μj>0
+
+μj ∂Kj  
+
+> βj,γ j
+
+gj (¯ x) + X  
+
+> j∈I(¯ x): μj=0
+
+∂∞gj (¯ x)
+
+ . (GCQ) We point out that (GCQ) is valid under the hypotheses of Theorem 1 and Remark 3(a). The following theorem affirms that the generalized FJ conditions are a neces-sary optimality condition, under some assumptions. The proof follows directly from Theorem 2 and (GCQ), thus it is omitted. 
+
+Theorem 3. Let ¯x ∈ Ω be a local solution of (P) with f lsc function and Ω being a closed convex set. If (GCQ) holds at ¯x, then the FJ conditions hold at ¯x.
+
+Now, let us focus on the conditions that ensure the validity of (GCQ). 
+
+Theorem 4. Let ¯x ∈ Ω be a feasible point of (P) such that 
+
+N (Ω , ¯x) = [
+
+> μ∈R|I(¯ x)|
+> +
+
+X 
+
+> j∈I(¯ x): μj>0
+
+μj ∂Kj  
+
+> βj,γ j
+
+gj (¯ x) + X 
+
+> j∈I(¯ x): μj=0
+
+∂∞gj (¯ x)
+
+. (23) 
+
+Assume that the following condition is satisfied: (a) N (Ω , ¯x) is pointed, and for every j ∈ I(¯ x), we have 0 /∈ ∂Kj  
+
+> βj,γ j
+
+gj (¯ x), and 
+
+[∂Kj  
+
+> βj,γ j
+
+gj (¯ x)] ∞ ∩ (Sgj (¯ x) ∩ Kj − ¯x)◦ = {0}.Then (GCQ) holds at ¯x.
+
+Proof Take w ∈ N (¯ x, Ω). Thus, there exists a sequence {wk} ⊂ Rn with wk → w such that 
+
+wk = P  
+
+> j∈I(¯ x): μkj>0
+
+μkj vkj + P  
+
+> j∈I(¯ x): μk=0
+
+vk, ∞ 
+
+> j
+
+, vkj ∈ ∂Kj  
+
+> βj,γ j
+
+gj (¯ x) for all j ∈ I(¯ x) with μkj > 0and vk, ∞ 
+
+> j
+
+∈ ∂∞gj (¯ x) for all j ∈ I(¯ x) with μkj = 0. It remains to prove (GCQ) under (a). Indeed, after taking an adequate subsequence, we assume I+ := {j ∈ I(¯ x) | μkj > 0} and I0 := {j ∈ I(¯ x) | μkj = 0 } for all k. First, we will show that {μkj vkj }j∈I+ and {vk, ∞ 
+
+> j
+
+}j∈I0 are bounded. By contradiction, we assume 
+
+Mk := max {∥ μkj vkj ∥, ∥vk, ∞ 
+
+> i
+
+∥ | j ∈ I+, i ∈ I0} → ∞ .
+
+Then, wk/M k = P 
+
+> j∈I+
+
+(μkj vkj /M k) + P 
+
+> j∈I0
+
+(vk, ∞ 
+
+> j
+
+/M k). We assume that μkj vkj /M k →
+
+wj ∈ N (Ω , ¯x) for all j ∈ I+ (because (23) holds) and vk, ∞ 
+
+> j
+
+/M k → w∞ 
+
+> j
+
+∈ N (Ω , ¯x) for all 
+
+j ∈ I0. As I+ ∪ I0 is finite, the maximum of Mk must be attained in j0 ∈ I+ ∪ I0, for infinite many k. So, after taking an adequate limit and since 0 = P 
+
+> j∈I+
+
+wj + P 
+
+> j∈I0
+
+w∞ 
+
+> j
+
+, we get 
+
+−wj0 ∈ N (Ω , ¯x) with ∥wj0 ∥ = 1, or −w∞ 
+
+> j0
+
+∈ N (Ω , ¯x) with ∥w∞ 
+
+> j0
+
+∥ = 1, which contradicts that 
+
+N (Ω , ¯x) is pointed. As consequence, {μkj vkj }j∈I+ and {vk, ∞ 
+
+> j
+
+}j∈I0 are bounded. 
+
+18 Now, we will show that {μkj }j∈I+ is bounded. Indeed, as {μkj vkj }j∈I+ is bounded, we get 
+
+∥vkj ∥ ≤ 1
+
+> μkj
+
+M for some M > 0. Thus, if μkj → ∞ for some j ∈ I+ we get ∥vkj ∥ ≤ 1
+
+> μkj
+
+M → 0and 0 ∈ ∂Kj  
+
+> βj,γ j
+
+gj (¯ x), which is a contradiction. Therefore, {μkj }j∈I+ is bounded. Then, after taking an adequate subsequence, we assume μkj → ˆμj for all j ∈ I+.Set I++ := {j ∈ I+ | ˆμj > 0} and I+0 := {j ∈ I+ | ˆμj = 0 }. Clearly, as {μkj vkj }j∈I+ is bounded, we get {vkj }j∈I++ is bounded, too. Let us prove that {vkj }j∈I+0 is bounded. Indeed, suppose that ∥vkj ∥ → ∞ for some 
+
+j ∈ I+0 . Since vkj ∈ ∂Kj  
+
+> βj,γ j
+
+gj (¯ x), we have 
+
+λβ
+
+* vkj
+
+∥vkj ∥ , y − ¯x
+
++
+
+≤ − λ(1 − λ)2
+
+γj ∥y − ¯x∥2
+
+∥vkj ∥ + λ2
+
+2βμkj ∥¯y − ¯x∥2
+
+∥vkj ∥ , ∀ y ∈ Sgj (¯ x) ∩ Kj .
+
+Suppose that ( vkj /∥vkj ∥) → wj for some wj ∈ Rn, ∥wj ∥ = 1. Taking the limit in the above expression, we obtain 
+
+w ∈ (Sgj (¯ x) ∩ Kj − ¯x)◦,
+
+and thus w ∈ [∂Kj  
+
+> βj,γ j
+
+gj (¯ x)] ∞ ∩ (Sgj (¯ x) ∩ Kj − ¯x)◦ with w̸ = 0, a contradiction. Therefore, 
+
+{μkj }j∈I+ , {vkj }j∈I+ and {vk, ∞ 
+
+> j
+
+}j∈I0 are bounded. Finally, the result follows from wk = P 
+
+> j∈I++
+
+μkj vkj + P 
+
+> j∈I+0
+
+μkj vkj + P 
+
+> j∈I0
+
+vk, ∞ 
+
+> j
+
+, after taking the limit of an adequate subsequence. □
+
+We point out that it is possible to obtain a description of N (Ω , ¯x) in terms of strong subdifferentials without using the horizon subdifferential ∂∞gj (¯ x) for all j. In fact, if N (Ω , ¯x) = S
+
+> μ∈R|I(¯ x)|
+> +
+
+nP  
+
+> j∈I(¯ x): μj>0
+
+μj ∂Kj  
+
+> βj,γ j
+
+gj (¯ x)
+
+o
+
+, then, under Assumption (a) of Theorem 4 and following the argument of the proof of Theorem 4, with the proper modification, it is possible to show that 
+
+N (Ω , ¯x) = {0} ∪ [
+
+> μ∈R|I(¯ x)|
+> +
+
+X 
+
+> j∈I(¯ x): μj>0
+
+μj ∂Kj  
+
+> βj,γ j
+
+gj (¯ x)
+
+ .
+
+Indeed, as a direct application, we consider the next example. 
+
+Example 5. Let us consider the function g : R → R defined by 
+
+g(x) = 
+
+
+
+2x if x > 0,
+
+0 if x = 0 ,
+
+−x − 1 if x < 0.
+
+Take Ω := {x ∈ R | g(¯ x) ≤ 0} = [ −1, 0] . Clearly, N (Ω , ¯x) = R+, Ng (0) = R+,
+
+∂[−1,1] 1,1 g(0) = [4 −1, 2] and N (Ω , 0) = S 
+
+> μ∈R++
+
+μ[4 −1, 2] . Here, item (a) of Theorem 4 holds at ¯x = 0 , since N (Ω , ¯x) is pointed, 0 /∈ ∂[−1,1] 1,1 g(0) and [∂[−1,1] 1,1 g(0)] ∞ ∩
+
+(Sg (¯ x) − ¯x)◦ = ([4 −1, 2]) ∞ ∩ Ng (0) = {0} ∩ R+ = {0}. Thus, we have N (Ω , 0) = 
+
+{0} ∪ S 
+
+> μ∈R++
+
+μ[4 −1, 2] .
+
+19 Now, consider the following assumption to ensure the fulfillment of the KKT con-ditions. Let ¯ x ∈ Ω be a feasible point. Then we say that ∂∞-no nonzero abnormal multiplier condition holds, if 0 = w + P 
+
+> j∈I+
+
+μj vj + P 
+
+> j∈I0
+
+v∞
+
+> j
+
+w ∈ ∂∞f (¯ x)
+
+vj ∈ ∂Kj  
+
+> βj,γ j
+
+gj (¯ x), j ∈ I+ := {j ∈ I(¯ x) : μj > 0}
+
+v∞ 
+
+> j
+
+∈ ∂∞gj (¯ x), j ∈ I0 := {j ∈ I(¯ x) : μj = 0 }
+
+=⇒
+
+w = 0 ,I+ = ∅ and 
+
+v∞ 
+
+> j
+
+= 0 , ∀ j ∈ I0.
+
+(∂∞-NNAMC) From Theorem 2, we get the next result. 
+
+Theorem 5. Let ¯x be a local minimizer of (P) . If (GCQ) and (∂∞-NNAMC) 
+
+conditions hold, then the generalized KKT conditions is valid at ¯x.
+
+Now, we turn our attention to deriving sufficient conditions based on the generalized FJ/KKT conditions. We start with the following theorem. 
+
+Theorem 6. (Sufficient condition) Let ¯x ∈ Ω be a feasible point satisfying the gener-alized FJ, that is, there exist scalars γ0, μj ≥ 0 for all j ∈ I(¯ x), and vectors v ∈ ∂f (x),
+
+v∞ ∈ ∂∞f (x), vj ∈ ∂Kj  
+
+> βj,γ j
+
+gj (x) (if μj > 0) and v∞ 
+
+> j
+
+∈ ∂∞gj (¯ x) (if μj = 0 ) such that 
+
+γ0 + P 
+
+> j∈I(¯ x)
+
+μj = 1 and 
+
+0 = γ0v + bγ0v∞ + X 
+
+> j∈I(¯ x): μj>0
+
+μj vj + X 
+
+> j∈I(¯ x): μj=0
+
+v∞ 
+
+> j
+
+,
+
+where bγ0 = 1 if γ0 = 0 and bγ0 = 0 if γ0 > 0.Suppose that Ω ⊂ ∩ j∈I(¯ x)Kj , that {gj }j∈I(¯ x) are strongly quasiconvex functions with modulus γj ≥ 0 for all j ∈ I(¯ x), and Sgj (·) is inner semicontinuous at ¯x for all 
+
+j ∈ I(¯ x). Then, there exists an open convex neighborhood V of ¯x such that 
+
+¯μ∥y − ¯x∥2 ≤ γ0⟨v, y − ¯x⟩ + bγ0⟨v∞, y − ¯x⟩, ∀ y ∈ Ω ∩ V, (24) 
+
+where ¯μ := 12
+
+P  
+
+> j∈I(¯ x): μj>0
+
+βj γj μj . Further, if ¯x is a generalized KKT point then 
+
+1
+
+γ0
+
+¯μ∥y − ¯x∥2 ≤ ⟨ v, y − ¯x⟩, ∀ y ∈ Ω ∩ V. (25) 
+
+Proof First, set I+ := {j ∈ I(¯ x) | μj > 0} and I0 := {j ∈ I(¯ x) | μj = 0 }. By Proposition 3, for every j ∈ I0 we have vj ∈ (Sgj (¯ x) ∩ Vj − ¯x)◦ for some Vj open convex neighborhood of ¯x. Thus, ⟨v∞ 
+
+> j
+
+, y − ¯x⟩ ≤ 0 for all y ∈ ∩ j∈I0 Sgj (¯ x) ∩ Vj .
+
+20 On the other hand, for j ∈ I+, since vj ∈ ∂Kj  
+
+> βj,γ j
+
+gj (x), we obtain ⟨vj , y − ¯x⟩ ≤−(βj γj /2) ∥y − ¯x∥2 for every y ∈ ∩ j∈I+ Sgj (¯ x) ∩ Kj . By adding the expressions, we get 
+
+X
+
+> j∈I+
+
+μj ⟨vj , y − ¯x⟩ + X
+
+> j∈I0
+
+⟨v∞ 
+
+> j
+
+, y − ¯x⟩ ≤ − 12
+
+X
+
+> j∈I+
+
+μj βj γj ∥y − ¯x∥2, (26) for every y ∈ (∩j∈I+ Sgj (¯ x) ∩ Kj ) ∩ (∩j∈I0 Sgj (¯ x) ∩ Vj ) = Ω ∩ V where V := ∩j∈I0 Vj is an open convex neighborhood of ¯ x. From (26), we get 12
+
+X
+
+> j∈I+
+
+μj βj γj ∥y − ¯x∥2 ≤ − X
+
+> j∈I+
+
+μj ⟨vj , y − ¯x⟩ − X
+
+> j∈I0
+
+⟨v∞ 
+
+> j
+
+, y − ¯x⟩≤
+
+*
+
+− X
+
+> j∈I+
+
+μj vj − X
+
+> j∈I0
+
+v∞ 
+
+> j
+
+, y − ¯x
+
++
+
+= γ0⟨v, y − ¯x⟩ + bγ0⟨v∞, y − ¯x⟩, ∀ y ∈ Ω ∩ V. 
+
+The above implies (24). Note that (25) follows from (24) when bγ0 = 0. □
+
+We point out that Theorem 6 gives a sufficient optimality condition under classical assumptions. In fact, consider the following statement. 
+
+Theorem 7. Let f be a locally Lipchitz and α-strongly pseudoconvex function with respect to ∂f (¯ x) (that is, sup ξ∈∂f (¯ x)⟨ξ, y − ¯x⟩ ≥ 0 implies f (y) ≥ f (¯ x) + α∥y − ¯x∥2). Then, if ¯x is a feasible point that satisfies the hypothesis of Theorem 6 with f
+
+locally Lipchitz and α-strongly pseudoconvex, then f (y) ≥ f (¯ x) + α∥y − ¯x∥2 for all 
+
+y ∈ Ω ∩ V , for some open neighborhood V of ¯x.
+
+Proof In fact, since f is locally Lipschitz we have ∂∞f (¯ x) = ∅. Now, from expression (24), we get 0 ≤ ¯μ∥y − ¯x∥2 ≤ γ0 sup v∈∂f (¯ x)⟨v, y − ¯x⟩, for every y ∈ V ∩ Ω. As γ0 > 0 and due to the 
+
+α-strongly pseudoconvexity of f , we get that f (y) ≥ f (¯ x) + α∥y − ¯x∥2 for all y ∈ Ω ∩ V . □
+
+Remark 4. We mention that convex functions are α-strongly pseudoconvex for α = 0 
+
+and α-strongly quasiconvex functions are α-strongly pseudoconvex, too, (see [4, 16] for more on strongly pseudoconvex functions). 
+
+The following simple example shows an instance in which our results can be applied while no other KKT result does. 
+
+Example 6. Let f, g : R → R ∪ { +∞} . We consider the problem of minimizing 
+
+f (x) = x subject to g(x) ≤ 0, where g is given as in Example 3. Observe that 
+
+0 ∈ ∇ f (0) + ∂R
+
+> 1,1
+
+g(0) = 1 + ( −∞ , −1/2] = ( −∞ , 1/2] .
+
+Since f is convex, it follows from Remark 4 that ¯x = 0 is an optimality solution. Here, ∂∞g(0) = ∂g (0) = b∂g (0) = ∂q g(0) = ∅. Here, Theorem 6 can be applied even in situations where classical sufficient KKT conditions fail. 
+
+21 Another interesting application of our sufficient condition is the following result, which concerns quadratic fractional programming. 
+
+Proposition 9. Consider the quadratic fractional programming (QFP) optimization 
+
+minimize f (x) subject to g1(x)
+
+g2(x) ≤ α, (QFP) 
+
+where α ∈ R, g1, g 2 : Rn → R are functions such that g1 is strongly convex with modulus γ > 0, and g2 is a positive affine function. Let m, M be two positive numbers with m ≤ M . We suppose that K := {x ∈ Rn : m ≤ g2(x) ≤ M }̸ = ∅.If there exists a feasible point ¯x of (QFP) , vectors v ∈ ∂f (¯ x), v∞ ∈ ∂∞f (¯ x) and scalars γ0, ˆγ0, μ > 0 satisfying g1(¯ x) = αg 2(¯ x), γ0 + μ = 1 such that 
+
+0 ∈ γ0v + ˆ γ0v∞ + μ∂ F M (g1 − αg 2)(¯ x), (27) 
+
+where bγ0 = 1 if γ0 = 0 and bγ0 = 0 if γ0 > 0.Then, we can find an open convex neighborhood V of ¯x such that 
+
+12 γμ ∥y − ¯x∥2 ≤ γ0⟨v, y − ¯x⟩ + γ0⟨v, y − ¯x⟩, ∀y ∈ Ω ∩ V. 
+
+In particular, if f is a locally Lipchitz and α-strongly pseudoconvex function with respect to ∂f (¯ x), then f (y) ≥ f (¯ x) + α∥y − ¯x∥2 for all y ∈ Ω ∩ V .                                                         
+
+> Proof The proof is a consequence of Theorem 6. In fact, first, we observe that g=g1−αg 2is strongly convex of modulus γ > 0. Thus, by [18, Proposition 4.1], if we set h(x) = g(x)/g 2(x), we have M−1ρ ∂ F M (g−h(¯ x)g2)(¯ x)⊂∂Kρ,M −1γh(¯ x), ∀ρ > 0. Hence, we get 0∈γ0v+ ˆ γ0v∞+μ∂ F M (g1−αg 2)(¯ x)⊂γ0v+ ˆ γ0v∞+μM ρ∂Kρ,M −1γh(¯ x).
+> From (24), one has ¯ μ∥y−¯x∥2≤γ0⟨v, y −¯x⟩+γ0⟨v, y −¯x⟩where ¯ μ=12
+> μM ρ.ρ. γM=12μγ .□
+
+# 6 Conclusions 
+
+Our KKT and FJ type optimality conditions confirm that the strong subdifferential is a good tool when we deal with strongly quasiconvex functions, as noted in [15] (see also [7, 18]). The proposed optimality conditions are established under mild assump-tions and do not rely on classical convexity, which broadens their applicability. In particular, the FJ conditions allow us to handle situations where standard constraint qualifications may fail, while the KKT conditions offer sharper characterizations when suitable regularity assumptions are satisfied. These findings contribute to a deeper understanding of the structure of strongly quasiconvex problems and open the door to further developments. Possible directions for future research include the study of algorithmic consequences of the proposed conditions, extensions to vector and multiobjective optimization, and applications to nonsmooth problems arising in applied mathematics and engineering. 22 7 Declarations 
+
+## 7.1 Availability of supporting data 
+
+No data sets were generated during the current study. 
+
+## 7.2 Author Contributions 
+
+Both authors contributed equally to the study conception, design, wrote and corrected the manuscript. 
+
+## 7.3 Competing Interests 
+
+There are no conflicts of interest or competing interests related to this manuscript. 
+
+## 7.4 Funding 
+
+This research was partially supported by UTA research project Fortalecimiento de Grupos de Investigaci´ on C´ odigo 8802-25, by ANID-Chile under Fondecyt Regular 1241040 (Lara) and by Fondecyt Regular 1231188 (Ramos). 
+
+Acknowledgements. The authors wishes to thank the reviewers for the comments and remarks that improved the quality of this paper. 
+
+# References 
+
+[1] R. Andreani, W. G´ omez, G. Haeser, L. M. Mito, A. Ramos , On optimality conditions for nonlinear conic programming, Math. Oper. Res. , 47 (3) , 2160–2185, (2022). [2] K. J. Arrow, A. C. Enthoven , Quasiconcave programming, Econometrica , 29 ,779–800, (1961). [3] D. Aussel, M. Pistek , Limiting normal operator in quasiconvex analysis, Set-Valued Var. Anal. , 23 , 669–685, (2015). [4] M. Avriel, W. E. Diewert, S. Schaible, I. Zang . “Generalized Concavity”. SIAM, Philadelphia, (2010). [5] J. M. Borwein, J. S. Treiman, Q. J. Zhu , Necessary conditions for constrained optimization problems with semicontinuous and continuous data, Trans. Amer. Math. Soc. , 350 (6) , 2409–2429, (1998). [6] A. Cambini, L. Martein . “Generalized Convexity and Optimization: Theory and Applications”. Springer, (2009). [7] J. Choque, F. Lara, R. T. Marcavillaca , A subgradient projection method for quasiconvex minimization. Positivity , Vol. 28, Issue 5, Paper 64, (2024). 23 [8] A. Daniilidis, N. Hadjisavvas, J. E. Mart´ ınez-Legaz , An appropriate subdifferential for quasiconvex functions, SIAM J. Optim. , 12 , 407–420, (2001). [9] G. Debreu . “Theory of value”. John Wiley, New York, (1959). [10] J. Frenk, S. Schaible , Fractional programming. In: N. Hadjisavvas et al. (eds.): “Handbook of Generalized Convexity and Generalized Monotonicity”. pp. 335–386. Springer-Verlag, Boston, (2005). [11] D. Ge and X. Jiang and Y. Ye , A note on complexity of Lp minimization. 
+
+Math. Programm. , 129 , 285–299, (2011). [12] N. Hadjisavvas, S. Komlosi, S. Schaible . “Handbook of Generalized Con-vexity and Generalized Monotonicity”. Springer-Verlag, Boston, (2005). [13] A. Iusem, F. Lara , Proximal point algorithms for quasiconvex pseudomonotone equilibrium problems. J. Optim. Theory Appl. , 193 , 443–461, (2022). [14] A. Iusem, F. Lara, R. T. Marcavillaca, L.H. Yen , A two-step PPA for nonconvex equilibrium problems with applications to fractional programming, J. Global Optim. , 90 , 755–779, (2024). [15] A. Kabgani, F. Lara , Strong subdifferentials: theory and applications in nonconvex optimization, J. Global Optim. , 84 , 349–368, (2022). [16] S. Karamardian, S. Schaible , Seven kinds of monotone maps, J. Optim. Theory Appl. , 66 , 37–46, (1990). [17] F. Lara , On strongly quasiconvex functions: existence results and proximal point algorithms, J. Optim. Theory Appl. , 192 , 891–911, (2022). [18] F. Lara, R. T. Marcavillaca, T. V. Thang , A subgradient projec-tion method for quasiconvex multiobjetive optimization, Optimization, DOI: 10.1080/02331934.2024.2436577 , (2025). [19] F. Lara, R. T. Marcavillaca, P. T. Vuong , Characterization, dynami-cal systems and gradient methods for strongly quasiconvex functions, J. Optim. Theory Appl. , 206 , article number 60, (2025). [20] F. Lara, R. T. Marcavillaca, L. H. Yen , An extragradient projection method for strongly quasiconvex equilibrium problems with applications. Comp. Appl. Math. , 43 , Issue 3, N. º 128, 21 pp. (2024). [21] O. L. Mangasarian . “Nonlinear Programming”. SIAM, Classics in Applied Mathematics, Philadelphia, (1994). [22] A. Mas-Colell, M.D. Whinston, J.R. Green , Microeconomic Theory .Oxford University Press, Oxford, (1995). 24 [23] N. M. Nam, J. Sharkasky , On strong quasiconvexity of functions in infinite dimensions, Optim. Letters, DOI: 10.1007/s11590-025-02261-x , (2025). [24] N. Pischke , On the proximal point algorithm for strongly quasicon-vex functions in Hadamard spaces, Optim. Methods & Software, DOI: 10.1080/10556788.2025.2531481 , (2025). [25] B. T. Polyak , Existence theorems and convergence of minimizing sequences in extremum problems with restrictions, Soviet Math. , 7, 72–75, (1966). [26] R. T. Rockafellar, R. Wets , Variational Analysis, Series: Grundlehren der mathematischen Wissenschaften , 317 , German, (2009). [27] S. Suzuki . “Karush-Kuhn-Tucker type optimality condition for quasiconvex pro-gramming in terms of the Greenberg-Pierskalla subdifferential”. J. Global Optim. ,
+
+79 , 191—202, (2021). [28] V. N. Tran , A relaxed proximal point algorithm with double-inertial effects for nonconvex equilibrium problems, arXiv preprint, arXiv: 2502.10986, (2025). [29] P. Q. Khanh, H. T. Quyen, J-C. Yao . “Optimality conditions under relaxed quasiconvexity assumptions using star and adjusted subdifferentials”, European J. Oper. Res. , 212 , 235–241, (2011). 25

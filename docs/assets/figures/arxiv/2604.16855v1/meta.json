@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.16855v1/fig-001.webp",
+      "caption": "Fig. 2: Reduces cross-token scale interference. (a–c) Token-wise range disparity under FP32, naive W4A4, and DSTG: token-group scaling mitigates backgrounddominated range inflation. (d–e) Boundary-region activation magnitudes before/after quantization: naive W4A4 collapses many small responses to zero, while COD-TDQ preserves them, reducing the zeroed-activation fraction from 41.6% to 14.2%.",
+      "page": 6,
+      "index": 1,
+      "width": 652,
+      "height": 435
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16855v1/fig-002.webp",
+      "caption": "Table 2: W4A4 post-training quantization results on CFRN.",
+      "page": 11,
+      "index": 2,
+      "width": 716,
+      "height": 336
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16855v1/fig-003.webp",
+      "caption": "Fig. 3: DCRP prevents zero-bin mass collapse. DCRP projects each token-group clip radius to satisfy a step-to-dispersion bound and a zero-bin mass bound. The fraction of non-boundary token-groups exceeding the step-to-std threshold drops from 72.60% (pre-projection) to 0.00% after C1, and the fraction with pre-projection ρ0 > zr drops from 98.36% (naive W4A4) to 20.87% under COD-TDQ statistics.",
+      "page": 7,
+      "index": 3,
+      "width": 725,
+      "height": 202
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16855v1/fig-004.webp",
+      "caption": "Fig. 5: Qualitative comparison. The first column shows the input image and the GT mask. The remaining columns present the prediction masks produced by different quantization methods(RepQ-ViT, IGQ–ViT, PTQ4SAM). For each example, the two rows correspond to results obtained with the CFRN and ESCNet baselines, respectively.",
+      "page": 14,
+      "index": 4,
+      "width": 719,
+      "height": 414
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16855v1/fig-005.webp",
+      "caption": "Fig. 1: COD-specific W4A4 failure. Naive W4A4 inflates a shared clipping range, producing a coarse step size and high zero-bin mass that erases weak boundary evidence. The inset summarizes representative diagnostics (cg,∆, ρ0) and the associated Sα collapse/recovery on CFRN/NC4K (rounded to three decimals).",
+      "page": 3,
+      "index": 5,
+      "width": 721,
+      "height": 354
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16855v1/fig-006.webp",
+      "caption": "Fig. 4: COD-TDQ (DSTG and DCRP) pipeline overview.",
+      "page": 8,
+      "index": 6,
+      "width": 688,
+      "height": 279
+    }
+  ]
+}

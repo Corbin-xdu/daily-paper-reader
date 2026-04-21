@@ -1,0 +1,2832 @@
+Title: Inter-Layer Hessian Analysis of Neural Networks with DAG Architectures
+
+URL Source: https://arxiv.org/pdf/2604.11639v1
+
+Published Time: Tue, 14 Apr 2026 02:49:56 GMT
+
+Number of Pages: 45
+
+Markdown Content:
+# Inter-Layer Hessian Analysis of Neural Networks with DAG Architectures 
+
+Maxim Bolshim a, ∗, Alexander Kugaevskikh a
+
+> aITMO University, Saint Petersburg, Russia
+
+Abstract 
+
+Modern automatic differentiation frameworks (JAX, PyTorch) return the Hessian of the loss function as a monolithic tensor, without exposing the internal structure of inter-layer interactions. This paper presents an analytical formalism that explicitly decomposes the full Hessian into blocks indexed by the DAG of an arbitrary architecture. The canonical decomposition H = HGN + HT separates the Gauss–Newton component (convex part) from the tensor component (residual curvature responsible for saddle points). For piecewise-linear activations (ReLU), the tensor component of the input Hessian vanishes ( HTv,w ≡ 0 a.e., 
+
+Hfv,w = HGN v,w ⪰ 0); the full parametric Hessian contains residual terms that do not reduce to the GGN. Build-ing on this decomposition, we introduce diagnostic metrics (inter-layer resonance R, geometric coupling C,stable rank D, GN-Gap) that are estimated stochastically in O(P ) time and reveal structural curvature inter-actions between layers. The theoretical analysis explains exponential decay of resonance in vanilla networks and its preservation under skip connections; empirical validation spans fully connected MLPs (Exp. 1–5) and convolutional architectures (ResNet-18, ∼11 M parameters, Exp. 6). When the architecture reduces to a single node, all definitions collapse to the standard Hessian ∇2 
+
+> θ
+
+L(θ) ∈ Rp×p.
+
+Keywords: Hessian analysis, DAG architecture, Gauss–Newton decomposition, curvature diagnostics, inter-layer interaction, neural network 
+
+1. Introduction 
+
+The second-order Hessian ∇2L plays a fundamental role in curvature analysis of the loss landscape and in the design of optimization methods for neural networks (Martens, 2020). Second-order methods such as Newton, trust-region, and their variants require accurate curvature information for efficient optimiza-tion (Nocedal and Wright, 2006). However, for deep neural networks computing and storing the full Hessian is computationally prohibitive, requiring various approximations. The most common approach—the Gauss–Newton (GN) approximation—captures only a subset of the second derivatives, disregarding significant curvature contributions (Schraudolph, 2002; Martens, 2010). Block-diagonal approximations (K-FAC; Martens and Grosse, 2015) are restricted to diagonal blocks and do not capture inter-layer interactions in arbitrary DAG architectures. Hessian–vector product (HVP) methods (Pearlmutter, 1994) yield exact Hessian–vector products but do not reveal the structure of inter-layer curvature. Moreover, the GN approximation is inherently blind to negative curvature: the block matrix 
+
+[HGN v,w ] ⪰ 0, rendering it insensitive to saddle points (Dauphin et al., 2014). The full Hessian H = HGN +HT
+
+recovers this information through the tensor component HT . Non-smooth activations (ReLU, max-pooling) additionally require a generalized second-derivative apparatus that has not been developed for full inter-layer blocks in the existing literature.         
+
+> ∗Corresponding author
+> Email addresses: maxim.bolshim@yandex.ru (Maxim Bolshim), a-kugaevskikh@yandex.ru (Alexander Kugaevskikh)
+> URL: https://orcid.org/0009-0009-3037-9852 (Maxim Bolshim), https://orcid.org/0000-0002-6676-0518
+> (Alexander Kugaevskikh)
+> Preprint submitted to Neural Networks April 14, 2026
+> arXiv:2604.11639v1 [cs.LG] 13 Apr 2026
+
+Recent studies of per-layer Hessian spectra (Bolshim and Kugaevskikh, 2025; Ghorbani et al., 2019) suggest that diagonal blocks carry diagnostic information about overfitting and expressivity that is invisible in the global Hessian; however, existing analyses remain confined to ∂2L/∂θ 2 
+
+> v
+
+and do not address inter-layer interactions. The present work addresses this gap: we construct an analytical formalism for structural analysis of inter-layer Hessian blocks ∂2L/∂f v ∂f w and ∂2L/∂θ v ∂θ w in neural networks with arbitrary DAG architectures. Standard APIs of modern frameworks (JAX, PyTorch) return the Hessian as a monolithic tensor, without exposing its internal block structure. We propose an explicit analytical decomposition: recurrence relations over the graph, the canonical splitting HGN + HT , path-wise contribution analysis, and diagnostic metrics (GN-Gap, resonance, coupling). This enables one to prove structural theorems about architectures (effects of skip connections, rank constraints, curvature decay) that do not follow from the computation of individual Hessian components. 
+
+Key distinction from the GGN literature: our contribution is not a more efficient computation of the GN approximation (K-FAC and its variants already achieve this), but rather an explicit analytical decomposition of the full Hessian H = HGN + HT at the level of arbitrary DAG blocks, together with structural theorems that cannot be derived from HGN alone. 
+
+Contributions. C1 . Full inter-layer Hessian for DAG architectures. A recurrence relation for blocks Hfv,w account-ing for all pure, mixed, and cross-block second derivatives with respect to inputs and parameters, including weight sharing across nodes (Eq. equation 2, Eq. equation 5, Appendix F). 
+
+C2 . Canonical decomposition H = HGN + HT . Splitting into the Gauss–Newton component (block matrix [HGN v,w ] ⪰ 0) and the tensor component, formally explaining the blindness of the GN approx-imation to saddle points; the quantitative deviation measure is the GN-Gap (Theorem 7, Defini-tion 11). 
+
+C3 . Non-smooth case: input Hessian for ReLU networks. A rigorous proof that for piecewise-linear activations (ReLU) the tensor component of the input Hessian vanishes: HTv,w ≡ 0 a.e., and 
+
+Hfv,w = HGN v,w in activation space. The parametric residual equation 5 is determined by mixed input–parameter derivatives that do not involve σ′′ ; this residual does not vanish in general. The GN-Gap metric quantitatively measures the deviation of Hf from HGN ; correctness of AD com-putations is established via conservative set-valued fields (CSVF) theory (Bolte and Pauwels, 2021) (Appendix D). 
+
+C4 . Curvature routing and the HVP operator. Recurrence equation 2 formalizes curvature routing through the DAG: decomposition of HGN +HT along edges and path-wise contributions. Collapsing the graph recursion over all nodes analytically reduces it to an O(P ) HVP operator whose cost matches that of a backward pass (Definition 20, Corollary 21, Appendix I). Building on this framework, we define diagnostic metrics (inter-layer resonance R, geometric coupling C,stable rank D, GN-Gap) that reveal structural curvature interactions between layers; details are in Ap-pendix G. The metrics are estimated stochastically in O(P ) time and O(P ) memory (storing a probe vector of dimension P ) via Hessian–vector products. The theoretical analysis establishes exponential decay of reso-nance in vanilla networks, preservation of long-range coupling under skip connections, and rank constraints imposed by bottleneck layers. Practical applicability of the framework is confirmed on a convolutional architecture (ResNet-18, ∼11 M parameters) through stochastic curvature estimation. 
+
+Special case: if the architecture reduces to a single node with no parents or children, all proposed definitions naturally collapse to the standard Hessian ∇2 
+
+> θ
+
+L(θ) ∈ Rp×p.
+
+Scope. The formalism is designed for structural analysis , not for novel optimization algorithms. Exper-iments 1–5 verify theoretical predictions on fully connected MLPs and toy Attention; Exp. 6 extends the validation to a convolutional architecture (ResNet-18, ∼11 M parameters). Scaling to ImageNet-scale models and Transformers is discussed in Section 6. 22. Related Work Second-order curvature approximations. Methods based on the GN approximation (Martens, 2010; Martens and Sutskever, 2012; Botev et al., 2017) and its Kronecker variants (K-FAC (Martens and Grosse, 2015), KFRA (George et al., 2018), Shampoo (Gupta et al., 2018)) operate on block-diagonal structures and ignore both the tensor component HT and inter-layer cross-blocks. AdaHessian (Yao et al., 2021) estimates only the Hessian diagonal; Sophia (Liu et al., 2024) uses a stochastic diagonal estimate for large language models. Pearlmutter HVP (Pearlmutter, 1994) yields exact Hessian–vector products but does not reveal block structure. Abreu et al. (2025) studied the full GN for LLMs, confirming the practical significance of the decomposition. Kunstner et al. (2019) demonstrated the Fisher/GGN/Hessian divergence; our decomposition H = HGN +HT explicitly separates these contributions and quantifies the gap via the GN-Gap. Dangel et al. (2022) exploit the low-rank structure of the GGN for curvature access; our path decomposition reveals the architectural origin of this structure. 
+
+Modular curvature backpropagation. Botev et al. (2017) proposed recursive computation of GGN blocks via backpropagation (modular curvature backpropagation); Dangel et al. (2020) scaled this approach in the BackPACK framework, implementing modular computation of layer-wise GGN blocks and their Kro-necker approximations for sequential architectures. Our formalism extends the modular paradigm: (i) inter-layer cross-blocks Hfv,w (v̸ = w), absent in layer-wise schemes; (ii) arbitrary DAGs with fan-in > 1; (iii) an explicit tensor component HT with quantitative diagnostics (GN-Gap, R, C, D). A key consequence: the structural theorems of this work—exponential resonance decay (Theorem 25), path decomposition (Theo-rem 33), bottleneck rank constraint (Proposition 31)—are formulated through cross-blocks Hfv,w , v̸ = w, and 
+
+have no analog in block-diagonal schemes operating only on Hv,v .
+
+Spectral analysis and loss landscape. Papyan (2019), Pennington and Worah (2018), Ghorbani et al. (2019), and Sagun et al. (2017) studied the global Hessian spectrum; Tang et al. (2025) and Singh (2025) analyzed Hessian structure in CNNs and LLMs. Per-layer Hessian spectra have been linked to local curvature properties and generalization (Bolshim and Kugaevskikh, 2025; Sagun et al., 2017); the present work generalizes the per-layer approach from diagonal blocks to the full inter-layer block structure, enabling diagnostics of specific layer pairs. Schoenholz et al. (2017) and Hayou et al. (2019) established edge of chaos conditions for signals; our condition sρ < 1 (Corollary 26) generalizes this idea to curvature in DAG architectures. Cohen et al. (2021) empirically showed that GD operates at the edge of the maximum Hessian eigenvalue (edge of stability); our analysis provides a formal framework for studying this phenomenon at the level of inter-layer blocks (Theorem 25). In the NTK limit (Jacot et al., 2018) HT ≡ 0; our analysis operates at finite width where HT̸ = 0 .
+
+Non-smooth activations. Clarke (1990) and Bolte and Pauwels (2021) provided the formal foundation of generalized derivatives and CSVF for neural networks. Zhang et al. (2018) proposed computing local Hessian blocks during backpropagation, but without explicit inter-layer cross-blocks for DAGs. 
+
+Positioning. Unlike GN/K-FAC/HVP, we construct full inter-layer cross-blocks Hfv,w for arbitrary DAGs with the decomposition HGN +HT , path analysis, and quantitative curvature metrics; unlike NTK/ spectral analysis, we operate at finite width for specific layer pairs. 
+
+3. Methodology 
+
+3.1. Analysis framework Remark 1 (Scope and paradigm of analysis) . The object of analysis is the AD-Hessian —the numerical object returned by modern AD frameworks when computing second derivatives. For smooth activations it coincides with the classical Hessian; for piecewise-linear activations (ReLU) AD assigns σ′′ (0) := 0 , annihilating the tensor component HT a.e. Correctness is justified via CSVF theory (Bolte and Pauwels, 2021). The goal of the formalism is an explicit decomposition of the Hessian into inter-layer cross-blocks, path-wise contributions, and tensor components over the DAG (curvature routing), analogous to backpropagation routing gradients. The full matrix ( O(P 2)) is intended for analysis of small architectures; for scaling, the framework collapses to an O(P ) HVP operator (Corollary 21). 33.2. Notation and network model 
+
+Core notation is summarized in Table 1; detailed index conventions and tensor contraction rules are deferred to Appendix A.                                          
+
+> Table 1: Core notation.
+> Symbol Definition
+> Graph and derivatives
+> G= ( V, E )DAG of the neural network
+> Pa( v),Ch( v)Parents / children of node vfv∈RdvOutput of node vθv∈RpvParameters of node vδvGradient ∇fvL
+> Du←vJacobian ∂f u/∂f v
+> Tu;v,Tu;v,w Hessians / mixed second derivatives w.r.t. inputs
+> Hfv,w Input Hessian block
+> ∂2
+> CfvClarke Hessian
+> Decomposition and metrics (Def. 23, 24)
+> HGN ,HTGN and tensor components
+> R(v, w )Inter-layer resonance ∥Hfv,w ∥F
+> C(v, w )Geometric coupling (normalized R)
+> D(v, w )Stable rank equation 7 GN-Gap ∥HTv,w ∥F/(∥HGN v,w ∥F+ϵ)equation 4
+
+We distinguish two regularity cases (detailed definitions of function spaces are in Appendix A). 
+
+Assumption 2 (Regularity of node functions) . For every node v ∈ V : (A) in the smooth case gv ∈ C2;(B) in the non-smooth case gv ∈ P C 2 and is locally Lipschitz. 
+
+Architecture. A neural network is specified by a DAG G = ( V, E ). For each node v ∈ V : output 
+
+fv = gv (fPa( v), θ v ) ∈ Rdv , parameters θv ∈ Rpv , loss L : Rdout → R. Computation proceeds in reverse topological order over G.Gradients δv , Jacobians Du←v , Dv , and second-derivative tensors Tu;v , Tu;v,w are defined in Table 1; element-wise definitions, contraction rules, and notational conventions are in Appendix A (notation follows Magnus and Neudecker, 2019). 
+
+Remark 3 (Element-wise form of the tensor terms) . For a node u with a single parent v and node function 
+
+fu = σ(Wufv + bu), the second-derivative tensor has entries 
+
+[Tu;v ]i,j,k = ∂2fu,i 
+
+∂f v,j ∂f v,k 
+
+= σ′′ (zu,i ) Wu,ij Wu,ik , (1) where zu = Wufv + bu. For a node u with two parents v, w ∈ Pa( u) (fan-in ≥ 2), the mixed tensor 
+
+[Tu;v,w ]i,j,k = ∂2fu,i /(∂f v,j ∂f w,k ) captures cross-input curvature; it vanishes for linear merge ( fu = fv + fw)and is nonzero when the merge involves a nonlinearity with σ′′ ̸ = 0 (cf. Example 6). The contraction P
+
+> i
+
+[Tu;v ]i, •,• δu,i appearing in equation 2 is a dv ×dv matrix weighted by the gradient at node u.
+
+3.3. Non-smooth case: AD-Hessian for piecewise-linear networks 
+
+For piecewise-linear activations (ReLU, Leaky ReLU, max-pooling) σ′′ (z) = δ(z); AD frameworks assign 
+
+σ′′ (0) := 0 , so that the tensor component Tu;v ≡ 0 for all such nodes. By the canonical decomposition (Theorem 7), HTv,w ≡ 0 a.e.: the input Hessian coincides with HGN v,w ⪰ 0 in activation space; the parametric residual does not vanish in general (Remark 16). For smooth activations (GELU, Swish) HT̸ = 0 , and the GN-Gap (Definition 11) quantitatively measures the curvature lost under the GN approximation. Cor-rectness of AD computations for non-smooth networks is justified via CSVF theory (Bolte and Pauwels, 2021): the AD-Hessian coincides with the classical one a.e., is bounded at non-smooth points, and preserves convergence of stochastic estimates (formal definitions and proofs are in Appendix D). 43.4. Full input Hessian 
+
+Definition 4 (Input Hessian) . The full input Hessian is the block matrix {Hfv,w }v,w ∈V , where each block 
+
+Hfv,w ∈ Rdv ×dw is defined recursively: The input Hessian Hfv,w is the sum of four components: 
+
+Hfv,w = X
+
+> u1∈Ch( v)
+
+X
+
+> u2∈Ch( w)
+
+D⊤ 
+
+> u1←v
+
+Hfu1,u 2 Du2←w
+
++ 1v̸ =w
+
+X
+
+> u∈Ch( v)∩Ch( w)
+> du
+
+X
+
+> i=1
+
+[Tu;v,w ]i, •,•δu,i 
+
++ 1v=w
+
+X
+
+> u∈Ch( v)
+> du
+
+X
+
+> i=1
+
+[Tu;v ]i, •,•δu,i 
+
++ ∂2L
+
+∂f v ∂f w
+
+(2) The terms correspond to: (1) the full double sum over Ch( v) × Ch( w), accounting for all cross-blocks; (2) mixed tensor inputs (when v̸ = w); (3) pure tensor terms for a single input (when v = w); (4) direct loss dependence. 
+
+Example 5 (Two-layer network) . Consider v1 → v2 → out with no skip connections: Ch( v1) = {v2},
+
+Ch( v2) = {out }. For v = w = v1 the double sum in equation 2 reduces to a single term u1 = u2 = v2 (the unique pair in Ch( v1) × Ch( v1)): 
+
+Hfv1,v 1 = D⊤ 
+
+> v2←v1
+
+Hfv2,v 2 Dv2←v1 +
+
+> dv2
+
+X
+
+> i=1
+
+[Tv2;v1 ]i, •,• δv2,i .
+
+The first term propagates curvature from the descendant v2; its GN component is positive semi-definite (PSD) and is given via Dout ←v1 (Theorem 7), but the full Hfv2,v 2 also contains a tensor part. The second term is the tensor part (may be indefinite). Cross-block Hfv1,v 2 : since fv1 affects L only through v2, by the chain rule ∂2L 
+
+> ∂f v1∂f v2
+
+= D⊤ 
+
+> v2←v1
+> ∂2L
+> ∂f 2
+> v2
+
+=
+
+D⊤ 
+
+> v2←v1
+
+Hfv2,v 2 . This is a special case of the one-directional path (Appendix H, Remark 76). With a skip connection v1 → out , term (1) of equation 2 for the pair (v1, v 1) would include all pairs (v2, v 2), (v2, out ),
+
+(out, v 2), (out, out ) from Ch( v1) × Ch( v1), accounting for the cross-block Hfv2,out .
+
+Example 6 (Diamond graph) . Consider a DAG with branching: v1 → v2, v1 → v3, v2 → v4, v3 → v4—two branches converging at node v4. For the cross-branch pair (v2, v 3): Ch( v2) ∩ Ch( v3) = {v4} (common child with fan-in ≥ 2). Equation equation 2 gives: 
+
+Hfv2,v 3 = D⊤ 
+
+> v4←v2
+
+Hfv4,v 4 Dv4←v3 +
+
+> dv4
+
+X
+
+> i=1
+
+[Tv4; v2,v 3 ]i, •,• δv4,i .
+
+The first term is the GN component, propagating curvature through v4 (always present). The second is the mixed tensor term (2) of equation 2: it vanishes for linear merging ( fv4 = fv2 + fv3 , since Tv4;v2,v 3 ≡ 0 by linearity), but does not vanish for nonlinear merging with σ′′ ̸ = 0 .Unlike Example 5, here v2 and v3 are not connected by a directed path—the cross-block Hfv2,v 3 arises exclusively through the common descendant v4. This is the minimal topology in which term (2) can be nonzero. 5with base cases: 
+
+Hfout,out = ∇2L(fout ),Hfv,out = X
+
+> u∈Ch( v)
+
+D⊤ 
+
+> u←v
+
+Hfu,out (∀v̸ = out ),Hfout,v =  Hfv,out 
+
+⊤.
+
+Since node out has no children ( Ch( out ) = ∅), term (1) of equation 2 does not apply to pairs involving w =
+
+out . Instead, blocks Hfv,out are computed by a one-sided recursion (Remark 76 in Appendix), which closes from out in reverse topological order. 
+
+3.5. Canonical decomposition of the Hessian 
+
+Equation equation 2 naturally splits into two structurally distinct components, each with a clear geo-metric interpretation. 
+
+Theorem 7 (Canonical decomposition) . The input Hessian Hfv,w admits a canonical decomposition: 
+
+Hfv,w = HGN v,w + HTv,w , (3) 
+
+where the components are defined as follows: 1. Gauss–Newton component HGN v,w (self-contained recursion): 
+
+HGN v,w = X
+
+> u1∈Ch( v)
+
+X
+
+> u2∈Ch( w)
+
+D⊤ 
+
+> u1←v
+
+HGN u1,u 2 Du2←w + ∂2L
+
+∂f v ∂f w
+
+.
+
+Unrolling the recursion to the output node: HGN v,w = D⊤ 
+
+> out ←v
+
+∇2L Dout ←w. The block matrix [HGN v,w ]v,w ∈V
+
+is positive semi-definite (see Remark 8 below). 2. Tensor component (residual curvature) HTv,w := Hfv,w − HGN v,w satisfies the recursion with base case 
+
+HTout,out = 0 :
+
+HTv,w = X
+
+> u1∈Ch( v)
+
+X
+
+> u2∈Ch( w)
+
+D⊤ 
+
+> u1←v
+
+HTu1,u 2 Du2←w
+
++ 1v̸ =w
+
+X
+
+> u∈Ch( v)∩Ch( w)
+> du
+
+X
+
+> i=1
+
+[Tu;v,w ]i, •,•δu,i 
+
++ 1v=w
+
+X
+
+> u∈Ch( v)
+> du
+
+X
+
+> i=1
+
+[Tu;v ]i, •,•δu,i .
+
+This component encodes node function curvature and can be either positive or negative semi-definite. Proof sketch. The recursion for HGN is self-contained (uses HGN u1,u 2 , not full Hf ); HT := Hf − HGN inherits the recursion with base HTout,out = 0 . Unrolling to the output: HGN v,w = D⊤ 
+
+> out ←v
+
+∇2L Dout ←w; PSD follows from Remark 8. Full proof: Appendix F. 
+
+Remark 8 (PSD of the block GN matrix) . When HL 
+
+> out
+
+⪰ 0 the block matrix HGN := [ HGN v,w ]v,w ∈V is PSD: 
+
+r⊤HGN r = ∥ P 
+
+> v
+
+Dout ←v rv ∥2
+
+> HL
+> out
+
+≥ 0. PSD is inherited from the output Hessian HL
+
+> out
+
+; individual blocks 
+
+Hfu,u (which include HT ) need not be PSD. 6Remark 9 ( HGN and the GGN) . In unrolled form: 
+
+HGN v,w = D⊤ 
+
+> out ←v
+
+∇2L Dout ←w.
+
+Let J := [ Dout ←v1 , . . . , D out ←vn ]⊤ be the full network Jacobian. Then HGN = J⊤∇2L J, which is precisely the Generalized Gauss–Newton (GGN) matrix (Schraudolph, 2002; Martens and Grosse, 2015). One should distinguish GGN from the Fisher matrix: GGN is a deterministic construction requiring no probabilistic model; under log-likelihood loss GGN coincides with the Fisher, but in general they differ (Martens, 2020). The canonical decomposition represents the full Hessian as H = GGN + HT , explicitly isolating the part discarded by optimizers such as K-FAC. 
+
+Proposition 10 (Input Hessian for piecewise-linear networks) . For networks with piecewise-linear activa-tions (ReLU, Leaky ReLU, max-pool) the tensor component of the input Hessian HTv,w ≡ 0 a.e., and in activation space Hfv,w = HGN v,w for all pairs (v, w ). The parametric Hessian equation 5 contains a residual term determined by node function structure but independent of activation curvature σ′′ ; in parameter space the full Hessian does not reduce to GGN in general (Remark 16). Proof sketch. For piecewise-linear activations, σ′′ (z) = 0 a.e. By Remark 3, [Tu;v ]i,j,k = σ′′ (zu,i ) Wu,ij Wu,ik =0 a.e. for every activation node u; likewise Tu; v,w = 0 . In the recursion for HT (Theorem 7, part 2) all source terms (tensor summands) vanish, and the base case is HTout,out = 0 . By structural induction in reverse topological order, HTv,w = 0 for all (v, w ). Full proof: Appendix D. 
+
+Definition 11 (GN-Gap) . The deviation of the full Hessian from the Gauss–Newton approximation is measured by the GN-Gap :
+
+Gap GN (v, w ) := ∥HTv,w ∥F
+
+∥HGN v,w ∥F + ϵ , (4) where ϵ > 0 is a small constant for numerical stability. 
+
+Corollary 12 (Interpretation of GN-Gap) . GN-Gap quantifies the quality of the Gauss–Newton approxi-mation for a given layer pair: 
+
+• Gap GN (v, w ) ≈ 0: the GN approximation is accurate, and optimizers such as K-FAC are expected to be close to exact second order. 
+
+• Gap GN (v, w ) ≫ 0: a substantial contribution of the tensor component HT is present; the full Hessian is required for precise optimization. Since GN-Gap uses the Frobenius norm, it measures the magnitude of the ignored tensor component, not the sign of curvature. To assess negative curvature specifically, one should use the negative-curvature mass (Appendix H). 
+
+Scope of applicability. For piecewise-linear activations (ReLU) the tensor component vanishes (Propo-sition 10), and Gap GN ≈ 0 in activation space; the non-convexity of the landscape concentrates on linear-region boundaries (as delta contributions) unobservable by AD. GN-Gap is critically informative for networks with smooth activations (GELU, Swish, Softmax in Attention), where HT̸ = 0 everywhere and the GN ap-proximation systematically loses information about negative curvature. Remark 13 (Relation to practical optimizers) . Within decomposition equation 3, approximations such as K-FAC (Martens and Grosse, 2015) correspond to dropping the tensor component HT . Since [HGN v,w ] ⪰ 0
+
+(Remark 8), such approximations contain no information about negative curvature, which may limit their effectiveness near saddle points (Dauphin et al., 2014). 
+
+Proposition 14 (Structural sparsity and routing) . The block Hfv,w is nonzero if and only if there exists a path from v and w to a common descendant u, or a direct dependence ∂2L/∂f v ∂f w̸ = 0 . For the special case of a one-directional path ( v →∗ w) the computation reduces to the recursion Hfv,w = P 
+
+> u∈Ch( v)
+
+D⊤ 
+
+> u←v
+
+Hfu,w ,which excludes tensor terms. 
+
+7Proof. Follows from the topological structure of the graph and the chain rule (see Appendix F). 
+
+Symmetry property. In the smooth case (Case A) Hfv,w = ( Hfw,v )⊤ for all v, w ∈ V , following from equality of mixed partial derivatives for twice continuously differentiable functions. In the non-smooth case (Case B), at points of non-differentiability, symmetry of the AD-Hessian may not hold. In such cases one can symmetrize: ˆHfv,w = 12 (Hfv,w + ( Hfw,v )⊤).
+
+Remark 15 (Symmetrization in the non-smooth case) . Symmetrization ˆHfv,w = 12 (Hfv,w + ( Hfw,v )⊤) modifies the spectrum and is recommended when positive definiteness or Cholesky factorization is required; it should be avoided if asymmetry carries curvature information at non-smooth points. 
+
+3.6. Full parametric Hessian 
+
+Given the input block Hfv,w , the parametric Hessian ∇2 
+
+> θ
+
+L = {Hθv ,θ w } is obtained by the standard chain rule: 
+
+Hθv ,θ w = D⊤ 
+
+> v
+
+Hfv,w Dw + 1v=w
+
+X
+
+> i
+
+δv,i T (i) 
+
+> v
+
++X
+
+> u,i
+
+δu,i D⊤ 
+
+> v
+
+T (i) 
+
+> u;v
+
+Dw, (5) where T (i) 
+
+> v
+
+= ∂2fv,i /∂θ 2 
+
+> v
+
+and T (i) 
+
+> u;v
+
+= ∂2fu,i /(∂f v ∂θ v ) are the pure-parameter and mixed input–parameter second-derivative tensors, respectively. With weight sharing an additional cross-tensor term appears (full expansion: Appendix F.1, Eq. equation Appendix F.1). Weight tying (Pascanu et al., 2013) generalizes trivially: Hθ,θ = P 
+
+> a,b
+
+Hθva ,θ vb (Appendix A). 
+
+Remark 16 (Activation vs. parameter space) . The canonical decomposition Hf = HGN +HT (Theorem 7) is defined for the input Hessian. From HTv,w ≡ 0 (piecewise-linear case) it does not follow that Hθv ,θ w = HGN θv ,θ w :the second and third terms in equation 5 involve T (i) 
+
+> v
+
+and T (i) 
+
+> u;v
+
+, which depend on the node function structure and are nonzero for linear layers ( ∂2(W f v )/(∂f v ∂θ v )̸ = 0 ). Contribution C3 refers to the decomposition of the input Hessian; full expansion of the parametric terms is in Appendix F.1. 
+
+Corollary 17 (Input-to-parameter Hessian bridge) . From equation 5 one obtains a norm bound for the parametric cross-block via the input one: 
+
+∥Hθv ,θ w ∥F ≤ ∥ Dv ∥2 ∥Dw∥2 ∥Hfv,w ∥F + Rv,w ,
+
+where Rv,w is the contribution of the pure-parameter and mixed tensors (second and third terms) in equa-tion 5. Consequently, the metrics R(v, w ) and C(v, w ), defined for activations, upper-bound the corresponding parametric cross-blocks up to the Jacobian scale factors ∥Dv ∥2, ∥Dw∥2. High inter-layer resonance R(v, w )
+
+indicates potentially strong coordination of weight updates for θv and θw.3.7. Curvature routing and HVP operator 
+
+Formulas equation 2 and equation 5 define the structure of the inter-layer Hessian. Just as classical backpropagation routes gradient signals δv = ∇fv L over the DAG, the recursion equation 2 extends this paradigm to matrices of curvature signals —blocks of the inter-layer Hessian Hfv,w . The Pearlmutter trick (HVP) (Pearlmutter, 1994) treats the Hessian as a monolithic operator; the graph recursion decomposes it into cross-blocks, path-wise contributions, and tensor components. When collapsed over all nodes (Corol-lary 21), it reduces to an O(P ) HVP. 
+
+Definition 18 (Curvature routing recursion) . Let G = ( V, E ) be the DAG of a neural network with loss 
+
+L. Curvature routing is defined as the scheme of propagating curvature matrices {Hfv,w }v,w ∈V over G in reverse topological order, starting from the base condition Hfout,out = ∇2L(fout ), computing boundary blocks 
+
+Hfv,out by one-sided recursion (Remark 76), and applying the recurrence equation 2 for pairs of internal nodes (Figure 1). 
+
+Theorem 19 (Recursion completeness) . For a neural network with DAG G = ( V, E ) and L ∈ C2, the recursion equation 2, equation 5 exactly recovers ∇2 
+
+> θ
+
+L = [ Hθvi ,θ vj ]ni,j =1 .Proof. Correctness is guaranteed by induction over the reverse topological order of graph nodes using the generalized chain rule. Full formal proof: Appendix I. 8(a) DAG & forward paths 
+
+v0 v1 v2 out        
+
+> D1D2D3
+> I(skip)
+> Dout ←v0= ( I+D2D1)D3
+
+(b) Backward pass: curvature routing 
+
+out v2v1v0                      
+
+> D⊤
+> 3D⊤
+> 2D⊤
+> 1
+> I⊤
+> Hfout,out =∇2LHfv2,out =D⊤
+> 3∇2L
+> Hfv1,out =D⊤
+> 2Hfv2,out
+> Hfv0,out =D⊤
+> 1Hfv1,out +I⊤Hfv2,out
+> Figure 1: (a) DAG of a neural network with skip connection ( v0→v2): forward edges (solid) and skip edge (dashed). The full Jacobian is a sum of path-wise contributions. (b) Backward pass of curvature routing: curvature matrices Hfv,w are propagated from out over the graph via transposed Jacobians; with a skip connection, the block Hfv0,out receives contributions from both paths.
+
+Operator formulation: Hessian–vector products 
+
+The recursion equation 2 admits an operator formulation that avoids storing the full P ×P matrix. 
+
+Definition 20 (HVP operator) . A tangent vector rv is propagated by a forward pass: 
+
+rv = X
+
+> w∈Pa( v)
+
+Dv←w rw, v / ∈ Vin , (6) and the HVP operator action is defined as HVP v (r) := P 
+
+> w∈V
+
+Hfv,w rw.When collapsed over nodes, the recursion reduces to an O(P ) HVP (Pearlmutter, 1994) with explicit decomposition HGN +HT (algorithm and proof: Appendix I; AD implementation: Appendix E). 
+
+Corollary 21 (HVP complexity) . The computational cost of HVP( r) for a tangent vector r obtained by the forward pass equation 6 coincides with the cost of one backward pass (up to a multiplicative constant). For fully connected layers, where multiplication D⊤ 
+
+> u←v
+
+r costs O(du dv ), the total complexity is O(P ), where P is the total number of parameters. Proof. At each edge (v, u ) the main operation is multiplication of D⊤ 
+
+> u←v
+
+by a vector of dimension du, costing 
+
+O(du dv ). Summing over all edges: P 
+
+> (v,u )∈E
+
+du dv , which coincides with the analogous sum for the backward pass. 
+
+Remark 22 (Relation to AD and practical significance) . The recursive HVP formula is implemented via double application of AD (Pearlmutter, 1994): a forward pass, backward for δv , then backward-over-forward with JVP in direction r. The graph recursion provides a micro-decomposition of each HVP summand via equation 3, enabling isolation of HGN and HT contributions and underpinning second-order optimization algorithms (Newton-CG, L-BFGS, Trust Region) for arbitrary DAG architectures. 
+
+4. Diagnostics and structural analysis 
+
+The block structure {Hfv,w } and the canonical decomposition induce quantitative metrics and structural theorems that connect the geometry of L with the network architecture. 
+
+Definition 23 (Inter-layer resonance and geometric coupling) . For a pair of nodes v, w ∈ V we define the inter-layer resonance R(v, w ) := ∥Hfv,w ∥F —a measure of joint curvature influence, and the geometric coupling C(v, w ) := R(v, w )p R(v, v ) · R (w, w )—a normalized connectivity measure. In the PSD regime (HT = 0 ) the metric is strictly bounded: C ≤ 1. A value C > 1 is mathematically possible only due to the tensor component HT and serves as an indicator of an indefinite contribution of HT to the curvature 9between layers v and w. The metric is invariant to rescaling of adjacent weights Wv 7 → αW v , Ww 7 → α−1Ww
+
+for v ∈ Pa( w) (Theorem 44 in Appendix). Since the absolute value R(v, w ) naturally depends on layer dimensions dv × dw, the normalized metric C(v, w ) is used for correct comparison across layers of different width. 
+
+Definition 24 (Stable rank of inter-layer block) . For a pair of nodes v, w ∈ V we define the stable rank of the inter-layer block: 
+
+D(v, w ) := ∥Hfv,w ∥2
+
+> F
+
+∥Hfv,w ∥22
+
+. (7) The metric measures the effective dimensionality of curvature interaction between layers: 
+
+1 ≤ D ≤ rank( Hfv,w ), with D = 1 only if the block has rank 1. Unlike deff := ∥H∥∗/∥H∥2 (Definition 57), the stable rank admits stochastic estimation via HVP: ∥H∥2 
+
+> F
+
+by the Hutchinson estimator (Avron and Toledo, 2011), ∥H∥22 by power iteration (Nocedal and Wright, 2006); total cost is O (m + 2 T ) · Backprop , memory 
+
+O(P ). The two-sided bound D ≤ deff ≤ √r D makes D a practical replacement for deff in large-scale analysis (Proposition 62, Algorithm 4 in Appendix G.2.2). 
+
+Theorem 25 (Lyapunov decay of resonance) . Let v0 → v1 → · · · → vL be a sequential chain in the DAG with 
+
+|Ch( vi)| = 1 for 0 ≤ i < L , Πj←i = Dvj ←vj−1 · · · Dvi+1 ←vi the product of inter-layer Jacobians, and 
+
+λ(m)1 = 1
+
+m log Πi+m←i 2 (8) 
+
+the finite-depth Lyapunov exponent. Then for 0 ≤ i < j ≤ L:
+
+R(vi, v j ) ≤ Cj Πj←i 2 = Cj e (j−i) λ(j−i)1 , (9) 
+
+where Cj = ∥Hfvj ,v j ∥F . At j = L we have CL = ∥Hf
+
+> out ,out
+
+∥F ; for piecewise-linear activations this coincides with CGN = ∥∇ 2L∥ F .Proof. Remark 76 with |Ch( vk)| = 1 gives Hfvk ,v j = D⊤ 
+
+> vk+1 ←vk
+
+Hfvk+1 ,v j . Applying (j−i) times from k = i to 
+
+k = j−1:
+
+Hfvi,v j = D⊤
+
+> vi+1 ←vi
+
+D⊤ 
+
+> vi+2 ←vi+1
+
+· · · D⊤  
+
+> vj←vj−1
+
+Hfvj ,v j = Π ⊤
+
+> j←i
+
+Hfvj ,v j ,
+
+whence R(vi, v j ) ≤ ∥ Πj←i∥2 Cj .
+
+Corollary 26 (Exponential curvature sensitivity for arbitrary DAGs) . Let s = max v |Ch( v)| be the max-imum out-degree and ∥Du←v ∥2 ≤ ρ for all edges (v, u ) ∈ E, with sρ < 1. Then for GN-resonance 
+
+RGN (v, w ) := ∥HGN v,w ∥F :
+
+RGN (v, w ) ≤ CGN (sρ )dist( v,w ), (10) 
+
+where CGN = ∥HGN out,out ∥F = ∥∇ 2L∥ F . For s = 1 (sequential chains) the bound follows from Theorem 25 by submultiplicativity ∥Πj←i∥2 ≤ ρj−i; for arbitrary DAGs ( s > 1) the proof is in Appendix H. Remark 27 (Multiplicative ergodic theorem) . Bound equation 9 is strictly no weaker than equation 10 for 
+
+s = 1 ; the gap can be exponential (at ρ = 2 .6, L = 8 : ρ8 ≈ 780 vs. ∥Π∥2 ≈ 5). If the Jacobians {Di} form a stationary ergodic sequence, then by the Oseledets theorem (Oseledets, 1968) λ1 = lim m→∞ λ(m)1 exists a.s. and R ≤ C e (λ1+o(1)) L; the condition λ1 < 0 is necessary and sufficient for decay. 
+
+Corollary 28 (Block-banded structure) . When sρ < 1 the GN-Hessian is approximately block-banded: blocks HGN v,w with dist( v, w ) > ⌈log ε/ log( sρ )⌉ are negligibly small, justifying block-diagonal approxima-tions (Martens and Grosse, 2015). For piecewise-linear networks (Proposition 10) this extends to the full input Hessian [Hfv,w ].
+
+10 Corollary 29 (K-FAC approximation error) . K-FAC (Martens and Grosse, 2015) approximates Hθ ≈
+
+blkdiag( Hθv ,θ v ), discarding all cross-blocks Hθv ,θ w , v̸ = w. By Corollary 28, when sρ < 1 the approximation error is exponentially small for distant pairs and concentrates in blocks with dist( v, w ) ≤ ⌈ log ε/ log( sρ )⌉.Thus, the framework quantitatively characterizes the accuracy region of block-diagonal optimizers. Remark 30 (Tightness of the sρ < 1 condition) . The condition sρ < 1 is sufficient but not necessary. When 
+
+sρ ≥ 1, the finer bound of Theorem 25 via the Lyapunov exponent λ1 remains applicable: λ1 < 0 is necessary and sufficient for exponential decay (Remark 27). In practice (Table 2), ρmax ≫ 1 at He initialization, but 
+
+λ1 < 0 due to decorrelation of singular bases. Beyond norm decay, narrow layers constrain the dimensionality of coordination between distant blocks. If all paths between v and w pass through a bottleneck of width du, then the Jacobian factors through Rdu ,and the rank of the GN component inherits this compression. 
+
+Proposition 31 (Rank bottleneck) . If all paths from v and w to out pass through a node u with du ≪
+
+min( dv , d w), then the Gauss–Newton component is strictly bounded: rank( HGN v,w ) ≤ du. Consequently, the full Hessian Hfv,w is low-rank up to the tensor perturbation HTv,w —training coordination is limited to du di-rections in the Gauss–Newton regime. (Follows directly from submultiplicativity of rank under matrix mul-tiplication (Horn and Johnson, 2012).) 
+
+Proof sketch . Since every directed path from v (resp. w) to out traverses u, the end-to-end Jacobian factors as Dout ←v = Dout ←u Du←v , where Du←v ∈ Rdu×dv . Substituting into the Gauss–Newton block gives 
+
+HGN v,w = D⊤ 
+
+> u←v
+
+D⊤ 
+
+> out ←u
+
+∇2L Dout ←u
+
+| {z } 
+
+> ∈Rdu ×du
+
+Du←w.
+
+By submultiplicativity of rank under matrix products (Horn and Johnson, 2012), the outer factors cannot increase rank beyond the inner du ×du core, hence rank( HGN v,w ) ≤ du. Full details are in Appendix H. 
+
+Remark 32 (Skip connections and the rank constraint) . Proposition 31 applies when all paths pass through node u. With skip connections bypassing u, additional terms appear in the path decomposition equation 11, and rank( P 
+
+> p
+
+D⊤ 
+
+> p
+
+(· · · )Dp) may exceed du. Thus, skip connections not only restore decaying resonance (Theorem 34) but also break “information bottlenecks,” preserving full-rank inter-layer Hessians. Corollary 26 and Proposition 31 show that resonance decays exponentially and narrow layers constrain coordination. The stable rank D(v, w ) (Definition 24) quantitatively measures the effective number of coordination directions. The decay mechanism is revealed by the path decomposition. 
+
+Theorem 33 (Path decomposition of the Hessian) . Let P(v → c) be the set of directed paths from v to a common descendant c, and Dp = Q 
+
+> (ui,u i+1 )∈p
+
+Dui+1 ←ui the path-wise Jacobian. Then 
+
+Hfv,w = X
+
+> c∈Desc( v)∩Desc( w)
+
+X  
+
+> pv∈P (v→c)
+> pw∈P (w→c)
+
+D⊤ 
+
+> pv
+
+HL 
+
+> fc
+
+Dpw + HTv,w , (11) 
+
+where HTv,w is the tensor component of Theorem 7; its path-wise expansion is given in Appendix G. Each pair of paths (pv , p w) to a common descendant c contributes additively to resonance R(v, w ).Proof: Appendix G. 
+
+Equation equation 11 explains why skip connections restore decaying resonance: adding an edge creates 
+
+new paths and thereby additional summands in R(v, w ).
+
+Theorem 34 (Resonance decay: vanilla network vs. Pre-Activation ResNet) . Consider an L-layer network with ∥Dvi+1 ←vi ∥2 ≤ ρ < 1. Parts (b), (b ′) apply to the Pre-Activation ResNet architecture (He et al., 2016: 
+
+xl+1 = xl + F(ReLU( xl)) ) with din = dout for each residual block, where the skip edge has Jacobian I:
+
+(a) Vanilla network (upper bound): R(v0, v L) ≤ Cρ L L→∞ 
+
+−−−−→ 0.
+
+11 (b) ResNet with identity skips every k layers (upper bound): R(v0, v L) ≤ Cρ k (independent of L). 
+
+(b ′) ResNet (lower bound, PSD regime): If HT = 0 and ∇2L ⪰ 0, then 
+
+R(v0, v L) ≥ (1 −ρk)L/k ∥∇ 2L∥ F > 0.
+
+The decay rate ρk 
+
+> k
+
+is exponentially slower than the vanilla rate ln 1 
+
+> ρ
+
+when ρk ≪ 1. With residual branch scaling α = c/L : (1 −(αρ )k)L/k → 1, i.e. the lower bound is independent of L.
+
+Proof sketch . (a) Submultiplicativity gives ∥ΠL←0∥2 ≤ ρL; applying Theorem 25 yields R ≤ Cρ L → 0.
+
+(b) With identity skips every k layers, the path decomposition equation 11 includes a direct path whose Jacobian contribution is the product QL/k j=1 (I + αkMj ) where ∥Mj ∥2 ≤ ρk. The upper bound becomes 
+
+R ≤ C(1 + ρk)L/k ; when α = O(1 /L ), this converges to (1 + ( αρ )k)L/k → e0 = 1 . (b ′) In the PSD regime (HT = 0 , ∇2L ⪰ 0), the skip-path summands are individually PSD; by Weyl’s inequality each contributes a positive-semidefinite lower bound via σmin , yielding R ≥ (1 − ρk)L/k ∥∇ 2L∥ F . Full proof: Appendix G. 
+
+Remark 35 (Edge of chaos for curvature) . Corollary 26 shows that vanilla networks require strict balancing 
+
+ρ = 1 (He/Xavier init, BatchNorm) to prevent exponential decay/explosion of the Hessian—an analog of “edge of chaos” (Balduzzi et al., 2017). Theorem 34 shows that skip connections remove this requirement :the lower bound R ≥ (1 −ρk)L/k ∥∇ 2L∥ F at α = O(1 /L ) is independent of L.
+
+Remark 36 (Practical implications) . For architectures with dense resonance (ResNet, DenseNet), cross-blocks Hθv ,θ w with dist( v, w ) ≤ k are not negligibly small, so block-diagonal optimizers (K-FAC) lose coupling information; banded preconditioners are optimal (George et al., 2018). The path decomposition predicts resonance growth in DenseNet and high C in U-Net (skip encoder →decoder); applicability to Attention (Example 37), GN insensitivity, BatchNorm—Appendix M, Appendix H. 
+
+Example 37 (Attention block as DAG: density of cross-blocks) . A single-head Attention defines a DAG with nodes {vin , v Q, v K , v V , v out }, where vout computes O = σ(QK ⊤/√dk) V (Softmax ×Value) with Pa( vout ) = 
+
+{vQ, v K , v V } (fan-in = 3 ). Softmax is a smooth nonlinearity with a dense Jacobian Sij = σi(δij − σj )̸ = 0 
+
+for all i, j (since σi > 0) and nonzero Hessian Tσ; z . By equation 2, the cross-block HfQ,K contains the mixed tensor term (2) through common descendant vout : Tout; Q,K ̸ = 0 , hence HTQ,K ̸ = 0 .Structural implications: (i) Softmax creates dense cross-blocks across all sequence positions—the block-banded approximation (Corollary 28) is inapplicable inside an Attention block; (ii) GN-Gap for the pair 
+
+(Q, K ) is fundamentally nonzero, qualitatively distinguishing Attention from piecewise-linear layers and ren-dering the Gauss–Newton approximation inexact; (iii) multi-head analysis reduces to block diagonalization over heads and requires no new formalism. Full Jacobian/tensor expansions and proofs: Appendix M. 
+
+5. Experimental validation of diagnostic metrics 
+
+The purpose of the experiments is falsification-based verification : we test whether empirical data can refute the theoretical predictions, rather than propose a new algorithm. Six experiments are conducted. Experiments 1–4 use CIFAR-10 (CIFAR-100 for Exp. 2) with fully connected MLPs on the flattened input (din = 3072 ; channel normalization to [−1, 1] , no augmentation), enabling exact Hessian block computation. Experiment 5 uses synthetic data and a minimal Attention model (§ 5.5). Experiment 6 extends the valida-tion to a convolutional architecture (ResNet-18, ∼11 M parameters) on CIFAR-10 via stochastic curvature estimation (§ 5.6). Each configuration is trained with 5 random seeds {42 , . . . , 46 }; metrics are computed at checkpoints: init (before training), mid (half epochs), final .
+
+Common protocol. Training: SGD ( η = 0 .01 , momentum 0.9, weight decay 10 −4), cosine sched-ule, 50 epochs, batch size 128 , gradient clipping ( ∥∇∥ 2 ≤ 1). Plain MLP blocks: Linear–LayerNorm– σ
+
+(LayerNorm disabled in Exp. 3, where piecewise linearity is required—§ 5.3; and in Exp. 1b with spectral normalization—Appendix N); Residual MLP blocks: Linear– σ + identity skip (no LayerNorm, α = L−1/2). 1        
+
+> 1LayerNorm is a smooth nonlinearity ( ∇2̸= 0 ), contributing to HTeven for ReLU. In Exp. 1/2/4 we measure R(d), whose decay rate is determined by the spectral radius of the Jacobian ρand is independent of the magnitude of HT. Validation of Proposition 10 for piecewise-linear activations: Exp. 3, where LN is disabled.
+
+12 Stochastic estimates: Hutchinson with 30 Rademacher probes and a common probe vector for correct esti-mation of ∥Havg ∥F ; subsample of 32 examples; power iteration: 20 steps for ∥H∥2.
+
+5.1. Exp. 1: Resonance and coupling decay 
+
+Protocol. For each depth L ∈ { 8, 10 , 12 }, Plain MLP and Residual MLP (skip at every block, α = L−1/2)of width 64 are trained with SGD and cosine schedule, 50 epochs (additional depths L ∈ { 16 , 32 }: Appendix). At each checkpoint we compute ¯R(d) and ¯C(d)—averages over pairs at distance d.
+
+Results (Figure 3). (a) In Plain MLP, ¯R(d) decays exponentially with d, confirming Corollary 26. Log-linear regression log ¯R = a − bd yields R2 > 0.91 for all depths L ∈ { 8, 10 , 12 } at init and final (Table 2); for 
+
+L = 12 norms decrease by 3–4 orders of magnitude (to 10 −14 at L = 32 , see Appendix). (b) In Residual MLP, 
+
+¯R(d) stabilizes ( b ≈ 0.02 , two orders slower than Plain), consistent with Theorem 34. 2 (c) Coupling ¯C(d)
+
+(Figure 2) qualitatively reproduces the same trends: decay in Plain, preservation in ResNet. 
+
+Condition sρ < 1 and the Lyapunov exponent. For He initialization ρmax ≈ 2.6 (Table 2), so the sufficient condition sρ < 1 of Corollary 26 is formally not satisfied , but exponential decay of ¯R(d) is robustly observed. The reason is decorrelation of singular bases: at L = 8 , ∥J8 · · · J1∥2 ≈ 5 (vs. ρ8 ≈ 780 ), λ1 ≈ − 0.02 
+
+(Theorem 25). Exp. 1b (Appendix N) verifies the theorem in strict mode: spectral normalization ensures 
+
+ρ ≤ 1, s = 1 ⇒ sρ ≤ 1. For Residual MLP, ρmax > 1 by construction ( J = αDW +I); stability of ¯R is provided by skip branches (Theorem 34). 
+
+Remark 38 (Batch-averaged decay beyond the Lyapunov bound) . Theorem 25 bounds the per-sample res-onance: when λ1 > 0 the worst-case R(v, w ; xb) ≤ C e λ1L grows with depth. The batch-averaged quantity 
+
+¯R(d) = 1
+
+> B
+
+P 
+
+> b
+
+R(v, w ; xb) can nevertheless decay, because the Jacobian products Q 
+
+> i
+
+Di(xb) entering Hfv,w (xb)
+
+have sample-dependent singular subspaces; the off-diagonal contributions partially cancel upon averaging, analogous to the O(1 /√B) variance reduction that arises from summing random-sign terms. A tight bound on ¯R would require distributional assumptions on the singular subspaces of {Di(xb)}Bb=1 ; characterizing the precise rate of cancellation remains an open question. 
+
+U-shaped artifact. At L ∈ { 16 , 32 } the unnormalized ¯R(d) exhibits a rise for d > L/ 2 due to non-uniformity of R(v, v ) near the output; the normalized ¯C(d) decays monotonically ( R2 ≥ 0.90 , Table Ap-pendix N.3 in Appendix).                                                           
+
+> Table 2: Spectral norms of Jacobians ρmax , Lyapunov exponent λ1, and test accuracy for Exp. 1 configurations (CIFAR-10, mean over 5 seeds).
+> LArch ρinit max ρmid max ρfinal max λinit 1λmid 1λfinal 1Acc (%) 8Plain 2.59 2.50 2.78 −0.02 0.05 0.08 49.8 8Res. 1.25 1.31 1.33 0.02 0.04 0.04 51.3 10 Plain 2.69 2.47 2.59 −0.03 0.03 0.04 49.7 10 Res. 1.22 1.27 1.29 0.02 0.03 0.04 51.3 12 Plain 2.69 2.48 2.55 −0.03 0.03 0.04 49.7 12 Res. 1.20 1.23 1.25 0.01 0.03 0.03 51.3
+
+5.2. Exp. 2: Bottleneck ablation 
+
+Protocol. BottleneckMLP (depths L ∈ { 6, 8}, base width dbase = 256 , CIFAR-100, K = 100 ) with a single narrow layer of width du ∈ { 4, 8, 16 , 32 , 64 , 128 , 256 } at position L/ 2. Control run ( †): dbase = du = 512 
+
+(uniform network without bottleneck; stochastic estimate, 100 probes, subsample 64). Metrics Dfar and Cfar :averages over cross-bottleneck pairs (i<L/ 2<j ).                    
+
+> 2The experimental scaling α=L−1/2directly verifies the upper bound (b), which is independent of both Land α. The lower bound (b ′) guarantees depth-independent curvature preservation under the stronger condition α=O(1 /L ); with α=L−1/2the lower bound decays as e−ρ√L—still exponentially slower than the vanilla rate ρL—but is not formally L-independent. Note that Theorem 34 assumes contracting activations ( ρ < 1); the experimental regime ( ρmax >1) falls outside this formal scope, so the observed stabilization is a qualitative, not quantitative, confirmation of the theorem.
+
+13 0 1 2 3 4 5 6 7
+
+0
+
+0.5
+
+1
+
+Distance d
+
+> ¯C(d)
+
+L = 8 
+
+Plain init Plain final 
+
+Res. init Res. final 
+
+−1 0 1 2 3 4 5 6 7 8 9 10 11 12 
+
+0
+
+0.5
+
+1
+
+Distance d
+
+> ¯C(d)
+
+L = 12 
+
+Figure 2: Exp. 1: Geometric coupling ¯C(d) vs. distance d (error bars: ±1σ over 5 seeds). (a) L = 8 , (b) L = 12 . Plain MLP: C
+
+decays monotonically from 1 to 0.24 ( L = 12 , init), reflecting loss of geometric coherence between distant layers. Residual MLP: 
+
+C > 0.93 at all distances; skip connections preserve coupling. After training both architectures shift upward (curvature becomes more uniform). 
+
+0 1 2 3 4 5 6 7
+
+10 −1
+
+10 0
+
+Distance d
+
+> ¯R(d)
+
+L = 8 
+
+Plain init Plain final Res. init Res. final 
+
+0 2 4 6 8 10 12 
+
+10 −1
+
+10 0
+
+Distance d
+
+> ¯R(d)
+
+L = 12 
+
+Figure 3: Exp. 1: Mean resonance ¯R(d) vs. distance d between layers (log scale on y; error bars ±1σ over 5 seeds). (a) L = 8 ,
+
+(b) L = 12 . Plain MLP exhibits exponential decay (straight lines on log scale, R2 > 0.91 ); Residual MLP shows stabilization (b ≈ 0.02 ). Scale differs: init ∼ 10 −1, final ∼ 10 0 (reflects overall curvature growth during training). 
+
+14 Table 3: Exp. 2: bottleneck ablation ( L = 6 , CIFAR-100). Stable rank Dfar and coupling Cfar vs. narrow layer width du (mean                                                                                                                            
+
+> ±1σover 5 seeds). †Control: dbase = 512 (stochastic estimate, 100 probes, subsample 64). ‡Acc at uninformative model level (du≪K); metrics for du≥8are preferred for conclusions.
+> duDinit far Dfinal far Cinit far Cfinal far Acc (%) 41.65 ±0.23 2.03 ±0.20 0.21 ±0.06 0.37 ±0.02 8.9 ‡
+> 82.58 ±0.11 3.39 ±0.36 0.35 ±0.05 0.58 ±0.03 14.2 16 4.04 ±0.65 4.90 ±0.24 0.43 ±0.03 0.68 ±0.01 17.8 32 5.67 ±0.99 5.01 ±0.41 0.52 ±0.03 0.73 ±0.01 19.8 64 6.95 ±0.52 5.15 ±0.34 0.61 ±0.03 0.77 ±0.02 21.1 128 9.16 ±0.91 5.45 ±0.42 0.66 ±0.04 0.84 ±0.01 22.0 256 10 .73 ±0.84 5.18 ±0.49 0.73 ±0.02 0.86 ±0.02 22.7
+> 512 †11 .17 ±0.77 5.18 ±0.36 0.77 ±0.01 0.88 ±0.01 23.3
+
+Results. Stable rank Dfar increases monotonically with du at initialization (from 1.7 at du = 4 to 
+
+≈ 10 .7 at du = 256 ; suppression ≈ 6.5×) and satisfies Dfar ≤ min( du, K −1) for all configurations, verifying the rank constraint of Proposition 31. At du = 4 the model operates in severe compression ( Acc ≈ 9 % at 
+
+K = 100 ); main conclusions are robust for du ≥ 8. The control run ( †, Table 3) with dbase = du = 512 (uniform network, no bottleneck) yields Dinit far = 11 .2: without a narrow layer, stable rank is determined by network width and class count (see § 6). Coupling Cfar is less sensitive ( ≈ 2×): the bottleneck constrains the rank of both the cross-block HGN v,w and the diagonals Hv,v , Hw,w , and normalization in C partially compensates. Unnormalized resonance Rfar decreases with growing du after training, whereas at initialization Rfar ≈ const 
+
+for all du; normalized metrics C and D isolate the structural bottleneck effect from training-induced scale changes. Summary for L = 6 : Table 3 and Figure 4; L = 8 data are qualitatively analogous ( Dfar lower for 
+
+du ≥ 64 , up to 20 % at init; see Appendix N).        
+
+> 4816 32 64 128 256 512
+> 0
+> 50
+> 100
+
+Bottleneck width du                         
+
+> Dfar
+> L= 6 , init
+> L= 6 , final
+> L= 8 , init
+> L= 8 , final
+> min( du, K −1)
+> Figure 4: Exp. 2: Stable rank Dfar vs. bottleneck width du(CIFAR-100). Solid/dashed: init/final; bright: L= 6 , faded: L= 8 .
+> L= 8 :Dinit far is lower for du≥64 (∼8–20 % ), consistent with additional rank compression at greater distance. Dotted: theoretical bound min( du, K −1) .du= 512 (†, control: dbase = 512 , no bottleneck): Table 3.
+
+5.3. Exp. 3: GN-Gap by activation type 
+
+Motivation. The canonical decomposition (Theorem 7) predicts that the GN-Gap is governed by the activation curvature σ′′ : Gap GN ≈ 0 for piecewise-linear activations ( σ′′ = 0 a.e.) and Gap GN > 0 for smooth ones ( σ′′ ̸ = 0 ). We test this prediction across five activations under two complementary protocols. 
+
+Protocol. Plain MLP (depth 6, width 64) with five activations: ReLU, LeakyReLU (piecewise-linear), Softplus, SiLU, GELU (smooth); training for 20 epochs; subsample for the Hessian: 16 examples (exact computation at width = 64 , memory-bound). For each pair (v, w ) the exact decomposition H = HGN +HT
+
+and GN-Gap equation 4 are computed; additionally, E[σ′′ (z)2] is measured over pre-activation values. Two configurations are evaluated: (a) standard conditions with LayerNorm, where all activations reach Acc >
+
+15 50 % ; (b) isolation protocol without LayerNorm, removing the smooth LayerNorm contribution 3 to isolate the pure effect of σ′′ . Gap stabilizes between mid and final checkpoints (column ∆ in Tables 4, 5). 
+
+Standard training conditions (Exp. 3b, with LayerNorm).. Under standard training all activations converge (Acc > 50 % , Table 4). For ReLU + LN, Gap GN > 0 is expected: LayerNorm is a smooth nonlinearity contributing σ′′ ̸ = 0 . Results (Table 4) confirm: (i) the baseline Gap GN ≈ 0.2 for ReLU/LeakyReLU + LN is entirely due to the smooth LayerNorm component; (ii) smooth activations additionally increase Gap, preserving the monotonic ranking by E[σ′′ 2] (ρs = 1 .0).                                                                          
+
+> Table 4: Exp. 3b: GN-Gap with LayerNorm ( L= 6 , width = 64 , CIFAR-10, mean ±1σover 5 seeds). ∆:relative change init →final. Activation Gap init Gap final ∆(%) E[σ′′ 2]Acc (%) ReLU 0.618 ±0.160 0.199 ±0.030 −67.8 051 .3±0.3
+> LeakyReLU 0.626 ±0.161 0.212 ±0.013 −66.1 051 .5±0.3
+> Softplus 0.459 ±0.098 0.272 ±0.024 −40.9 0.045 52 .7±0.2
+> SiLU 1.967 ±0.317 0.359 ±0.051 −81.7 0.142 52 .6±0.3
+> GELU 2.296 ±0.415 0.516 ±0.117 −77.5 0.271 52 .0±0.4
+
+Isolation of activation curvature (without LayerNorm).. Disabling LayerNorm yields a strict test: Gap GN ≈
+
+0 for piecewise-linear activations is now an exact null hypothesis ( σ′′ ≡ 0 a.e. throughout the network). Without LayerNorm, smooth activations do not reach meaningful accuracy ( Acc ≲ 12 % ); however, the GN-Gap is a structural property of the computation graph (Corollary 12): it tests whether σ′′ = 0 , independently of convergence quality. (a) For ReLU and LeakyReLU, Gap GN ≈ 0 at all checkpoints and pairs, including maximum distance, strictly confirming HT ≡ 0 (Corollary 12). For ReLU/LeakyReLU the tensor component is zero at all 
+
+recursion levels ( σ′′ ≡ 0 a.e.), verified as ∥HT ∥F < 10 −7. (b) For smooth activations, the correlation Gap GN 
+
+vs. E[σ′′ (z)2] manifests already at initialization ( R2 > 0.9, ρs = 0 .97 , p < 0.01 ; Figure 5) and persists at all checkpoints, consistent with the scaling HT ∼ σ′′ 2. The sample size n = 5 is inherently limited by the number of qualitatively distinct activation classes (two piecewise-linear plus three smooth); the near-perfect rank ordering ( ρs = 0 .97 , p < 0.01 ) provides strong evidence for monotonicity despite the small n. Decomposition of ∥HT ∥F and ∥HGN ∥F by distance d (Table Appendix N.5 in Appendix) shows that both norms decay exponentially with d, and at d = L−1 the tensor component vanishes ( HTd=L−1 ≡ 0), confirming the structural routing prediction. (c) Stochastic estimates (30 probes) agree with exact values within 5–10 %. Summary: Table 5.                                                                 
+
+> Table 5: Exp. 3: GN-Gap, isolation protocol (no LayerNorm, L= 6 , width = 64 , CIFAR-10, mean ±1σover 5 seeds). Activation Gap init Gap final ∆(%) E[σ′′ 2]Acc (%) ReLU <10 −7<10 −7—045 .1±0.9
+> LeakyReLU ≲10 −7≲10 −7—045 .0±0.8
+> Softplus 0.122 ±0.020 0.111 ±0.003 −8.9 0.058 10 .0±0.0
+> SiLU 0.225 ±0.005 0.217 ±0.008 −3.5 0.246 11 .7±2.1
+> GELU 0.358 ±0.008 0.345 ±0.012 −3.4 0.618 11 .9±2.4
+
+5.4. Exp. 4: Diamond MLP — activation of tensor term (2) 
+
+Motivation. Experiments 1–3 use sequential architectures in which Ch( v) ∩ Ch( w) = ∅ for v̸ = w at different depths, so that term (2) of formula equation 2 (the mixed tensor Tu; v,w for fan-in ≥ 2) is identically          
+
+> 3LayerNorm is itself a smooth nonlinearity with σ′′ ̸= 0 , contributing to HTeven for piecewise-linear activations. The isolation protocol disables it so that Gap GN ≈0for ReLU/LeakyReLU serves as a strict null hypothesis.
+
+16 −5 · 10 −2 0 5 · 10 −2 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7
+
+> 0
+> 0.2
+> 0.4
+> ReLU
+> Softplus
+> SiLU
+> GELU
+
+E[σ′′ (z)2]                        
+
+> Gap GN  (init)  R2= 0 .908 ,ρs= 0 .97
+> Figure 5: Exp. 3: GN-Gap (init) vs. E[σ′′ (z)2]for 5 activations (isolation protocol, LayerNorm off). Linear fit R2= 0 .908 ;Spearman rank correlation ρs= 0 .97 (p < 0.01 ). With n= 5 ,R2has limited power, but monotonicity of ranking ( ρs≈1) robustly confirms the scaling HT∼σ′′ 2.
+
+zero. To demonstrate the non-triviality of formula equation 2 on DAG topologies, we introduce the minimal Diamond MLP construction (Example 6). 
+
+Protocol. Diamond MLP: stem → two parallel branches (depth k ∈ { 1, 2, 3}, width 32) → merge node → head; CIFAR-10. Sweep: merge type (sum vs. cat + σ + Linear) × activation (ReLU vs. SiLU). 
+
+Metrics: ¯R(d) intra-branch, ¯R(dgraph ) cross-branch, ρmax = max i ∥Ji∥2 (spectral norm of Jacobians), GN-Gap equation 4 for the pair (A k−1, Bk−1) through the merge node. 
+
+Hypotheses. (H4.1) Intra-branch resonance ¯RAA (d) decays monotonically with distance. (H4.2a) At initialization, cross-branch ¯RAB (dgraph ) decays exponentially. (H4.2b) After training the decay is violated: 
+
+R grows with distance due to increasing ρ and weakened sign cancellation (Remark 81). (H4.3) Linear merge: 
+
+Tmerge; A,B = 0 ⇒ Gap GN ≈ 0 regardless of σ. Nonlinear merge + SiLU: Tmerge; A,B ̸ = 0 ⇒ Gap GN > 0.
+
+Results. (H4.1) Confirmed: of 48 (config ×distance) pairs, 45 exhibit monotone decay of ¯RAA (d); 3 marginal deviations are within noise ( < 5 % ). (H4.2a) Confirmed: at initialization, cross-branch ¯RAB (dgraph )
+
+decays exponentially; R(d+2) /R (d) ≈ 0.28 –0.39 across configs. Here ρmax > 1 (LayerNorm increases the spectral norm of the Jacobian), and the elementwise upper bound of Corollary 26 grows; the observed batch-averaged decay is explained by mutual sign cancellation when averaging over x. (H4.2b) Confirmed: after training, ρmax increases and cross-branch R grows with dgraph for cat_relu, sum_relu at k ≥ 2, consistent with weakened sign cancellation as ρ grows. (H4.3) Strongly confirmed: for sum-merge, ∥Tmerge ∥F ≈ 0 and 
+
+Gap ≈ 0 (merge is linear ⇒ T = 0 ); for cat + ReLU, ∥T ∥ > 0 but σ′′ = 0 a.e., so Gap ≈ 0 (∼ 10 −7, machine precision); for cat + SiLU, σ′′ ̸ = 0 yields Gap ∼7 orders of magnitude above baseline (separation ≈ 2·10 7). Model accuracy ≈50 % (width = 32 , CIFAR-10), sufficient for curvature diagnostics. Quantitative Gap values for k = 2 : Table 6 and Figure 6; varying branch depth ( k = 1 , 2, 3) does not change qualitative conclusions (Table Appendix N.4 in the Appendix); cross-branch ¯RAB dynamics are shown in Figure Appendix N.2, Appendix N.                                               
+
+> Table 6: Exp. 4: GN-Gap at the merge node of Diamond MLP ( k= 2 , width = 32 , CIFAR-10, Acc ≈50 % ; mean ±1σover 5 seeds). ∥Tmerge ∥F: Frobenius norm of the tensor component. Merge σGap init Gap final ∥T∥init
+> F∥T∥final
+> F
+> sum ReLU 6.7·10 −89.3·10 −84.1·10 −92.0·10 −8
+> sum SiLU 7.0·10 −89.6·10 −84.1·10 −92.0·10 −8
+> cat ReLU 8.4·10 −81.2·10 −76.6·10 −10 3.3·10 −8
+> cat SiLU 1.33 ±0.17 0.082 ±0.007 6.8·10 −3±5.0·10 −42.5·10 −2±1.1·10 −3
+
+5.5. Exp. 5: Toy-Attention — verification of HTQ,K ̸ = 0 
+
+Motivation. Experiments 1–4 are restricted to MLP topologies; Example 37 predicts HTQ,K ̸ = 0 for Softmax self-attention due to its nonzero second derivative, but this has not been empirically verified. We 17 sum+ReLU                  
+
+> sum+SiLU
+> cat+ReLU
+> cat+SiLU
+> 10 −9
+> 10 −6
+> 10 −3
+> 10 0
+> Gap GN
+> init
+> final
+> Figure 6: Exp. 4: GN-Gap at the merge node of Diamond MLP ( k= 2 ). Logarithmic scale highlights the ∼7order-of-magnitude separation between cat +SiLU ( σ′′ ̸= 0 , nonlinear merge) and the remaining configurations (linear merge or σ′′ = 0 a.e.). Sum-merge yields T= 0 by construction — Gap ≈0regardless of σ.
+
+design a minimal experiment contrasting a single-head Attention model with a per-position ReLU-MLP control of comparable size. The prediction HTQ,K ̸ = 0 is scale-invariant: σ′′ 
+
+> Softmax
+
+(z)̸ = 0 for all z ∈ Rd
+
+regardless of dimension or parameter values; hence a minimal architecture suffices for falsification, and the qualitative distinction ( Gap ≫ 0 for Softmax vs. Gap ≈ 0 for piecewise-linear activations) is a structural invariant of the computation graph. 
+
+Protocol. Single-head self-attention: d = 16 , S = 8 , projections WQ, W K , W V ∈ Rd×d (no bias), mean-pool, linear head; 785 parameters. Control: per-position ReLU-MLP, 3×[Linear( d, d )+ReLU] shared across positions, mean-pool, linear head; 833 parameters. Data: synthetic regression y = ¯ σ(XW t) · 1/S · wr + ε,where ¯σ = tanh , Wt ∈ Rd×d, wr ∈ Rd are fixed random teacher weights, ε ∼ N (0 , 0.01) ; targets standardized to zero mean and unit variance. Training: Adam ( η = 10 −3), cosine schedule, 30 epochs, batch 128, 5 seeds. 
+
+Metrics: Hfv,w , HGN v,w , GN-Gap for pairs (Q, K ) (attention) and (block 0, block 1) (MLP); computed via exact autograd on 64 validation samples at checkpoints init , mid , final .
+
+Hypotheses. (H5.1) For Attention, GN-Gap for the pair (Q, K ) is substantially nonzero at all check-points ( HTQ,K ̸ = 0 due to σ′′ 
+
+> Softmax
+
+̸ = 0 ). (H5.2) For per-position ReLU-MLP, GN-Gap ≈ 0 at machine precision (Proposition 10: σ′′ = 0 a.e.). (H5.3) Both models converge on the synthetic target (monotone loss decrease), ensuring that the GN-Gap comparison is not confounded by training failure. 
+
+Results. All hypotheses confirmed (Table 7). (H5.1) Attention yields GN-Gap = 69 .3 ± 20 .1 at con-vergence; ∥HGN Q,K ∥F accounts for less than 2 % of ∥HfQ,K ∥F , confirming that the Gauss–Newton approx-imation is structurally inadequate for the (Q, K ) cross-block (Example 37). (H5.2) ReLU-MLP yields Gap = 7 .4·10 −8±2.0·10 −8 (numerical zero); ∥HT ∥F /∥Hf ∥F < 10 −7 at all checkpoints. The ratio of gaps ex-ceeds 10 9, surpassing the seven-order-of-magnitude separation of Exp. 4 (cat + SiLU vs. σ′′ = 0 ). (H5.3) Both models converge (Attention: MSE 0.99 → 0.57 ; ReLU-MLP: 0.92 → 0.03 ); the GN-Gap for Attention re-mains large and stable across checkpoints ( 57 .5 → 79 .9 → 69 .3), confirming that it reflects architectural structure rather than training state.                                                            
+
+> Table 7: Exp. 5: GN-Gap for Toy-Attention vs. per-position ReLU-MLP ( d= 16 ,S= 8 , synthetic regression, mean ±1σover 5 seeds). ∥HT∥F: Frobenius norm of the tensor component; Gap =∥HT∥F/∥HGN ∥F.Model Checkpoint ∥Hf∥F∥HGN ∥F∥HT∥FGap Attention init 9.2·10 −31.7·10 −49.2·10 −357 .5±16 .4
+> Attention mid 5.2·10 −37.4·10 −55.2·10 −379 .9±23 .3
+> Attention final 5.2·10 −38.7·10 −55.2·10 −369 .3±20 .1
+> ReLU-MLP init 3.5·10 −23.5·10 −23.4·10 −99.6·10 −8
+> ReLU-MLP mid 3.5·10 −13.5·10 −12.8·10 −88.8·10 −8
+> ReLU-MLP final 3.6·10 −13.6·10 −12.6·10 −87.4·10 −8
+
+18 5.6. Exp. 6: Convolutional architecture (ResNet-18, CIFAR-10) 
+
+Motivation. Experiments 1–5 operate on fully connected or toy architectures ( P ≤ 10 5) where exact Hessian blocks are computable. To verify the predictions of the formalism at practical scale we conduct an experiment on ResNet-18 (He et al., 2016) ( P ≈ 11 ·10 6 parameters) with CIFAR-10. 
+
+Protocol. For each activation σ ∈ { ReLU , SiLU } two architectures are trained: (i) SegmentedResNet18-—a standard torchvision ResNet-18 with 5 measurement points (stem, layer1–layer4), and (ii) Segmented-PlainResNet18—the same parameterization with identity shortcuts removed (conv–BN–act chain; stride-based downsampling is preserved). Training: SGD ( η = 0 .1, momentum 0.9, weight decay 5·10 −4), cosine schedule, 100 epochs, batch size 128, standard CIFAR-10 augmentation (random crop, horizontal flip). Checkpoints: init , mid (epoch 50), final (epoch 100). Metrics R, C, D are computed via the Hutchinson estimator (30 Rademacher probes, subsample of 32 examples); GN-Gap via StochasticGNGapEstimator 
+
+(30 probes, common probe vector). Five seeds {42 , . . . , 46 }.
+
+Segmentation and linear classifier. The model is partitioned into n = 6 segments: seg 0 (conv1–BN– 
+
+σ–maxpool), seg 1–4 (ResNet layer1–layer4), seg 5 (avgpool–flatten–fc). Measurement points are the outputs 
+
+fstem , . . . , f layer4 ; maximum distance dmax = 4 . In particular, seg 5 (the linear classifier) contains no nonlinear activations : logits = W · avgpool( flayer4 ) + b. As a consequence, for any pair (v, w ) with d = dmax , the path from fw to the logits passes exclusively through the linear map seg 5, which has a principled implication for GN-Gap at d = dmax (Remark 39). 
+
+Hypotheses. (H6.1) For piecewise-linear activation (ReLU): Gap GN ≈ 0 at all distances ( HT ≡ 0
+
+a.e.). (H6.2) For smooth activation (SiLU): Gap GN > 0 at d < d max (σ′′ ̸ = 0 ). (H6.3) Skip connections stabilize ¯R(d) (ResNet vs. Plain). 
+
+Results. 
+
+(H6.1) Strongly confirmed. For ReLU, GN-Gap < 2·10 −6 at all distances and both architectures at the final checkpoint (Table 8); across all three checkpoints the bound Gap GN < 10 −5 holds uniformly (Table Appendix N.8). This is consistent with HT ≡ 0 a.e. for piecewise-linear activations (Proposition 10) and reproduces the Exp. 3 result on a convolutional architecture with 11 M parameters. (H6.2) Confirmed with refinement. For SiLU, GN-Gap at the final checkpoint is 0.43 (ResNet, d = 0 ) and decreases with distance to 0.15 at d = 3 (Table 8), confirming the presence of the tensor component HT̸ = 0 .However, at d = dmax = 4 , GN-Gap collapses to ∼10 −6 for all configurations, including SiLU (Remark 39). (H6.3) Confirmed. At initialization, ReLU ResNet yields stable ¯R(d) (R(0) /R (4) ≈ 1), whereas Plain exhibits ∼627 × decay; for SiLU the contrast is stronger: 25 × (ResNet) vs. 47 000 × (Plain) (Figure 7). Coupling ¯C(d) decreases monotonically in all configurations; skip connections slow the decay (Table 9). Test accuracy: 88 .3 % (ReLU ResNet), 87 .4 % (ReLU Plain), 88 .2 % (SiLU ResNet), 87 .3 % (SiLU Plain)— sufficient for meaningful curvature diagnostics. 
+
+Remark 39 (Linear head and GN-Gap at d = dmax ). For a pair (v, w ) with d = dmax (here: stem, layer4), the path from fw to the logits passes only through the linear map seg 5 : fw 7 → W avgpool( fw) + b. Since 
+
+∂2logits /∂f 2 
+
+> w
+
+= 0 , the Jacobian Jw = ∂logits /∂f w does not depend on fw, and the block Hessian becomes 
+
+Hfv,w = J⊤ 
+
+> v
+
+∇2 
+
+> z
+
+ℓ J w = HGN v,w ,
+
+i.e. HTv,w = 0 exactly , regardless of the activation type in intermediate layers. The residual value 
+
+∥HT ∥F
+
+∥HGN ∥F ∼ 10 −6
+
+is a float32 arithmetic artifact. This effect is specific to architectures with a linear classifier head (standard fc head) and does not arise with nonlinear heads (e.g., MLP head in ViT). 19 0 1 2 3 4
+
+10 −5
+
+10 −3
+
+10 −1
+
+10 1
+
+Distance d
+
+> ¯R(d)
+
+ReLU 
+
+ResNet init 
+
+ResNet final 
+
+Plain init 
+
+Plain final 
+
+0 1 2 3 4
+
+10 −7
+
+10 −4
+
+10 −1
+
+10 2
+
+Distance d
+
+> ¯R(d)
+
+SiLU 
+
+ResNet init 
+
+ResNet final 
+
+Plain init 
+
+Plain final 
+
+Figure 7: Exp. 6: Mean resonance ¯R(d) for ResNet-18 (CIFAR-10, log-scale on y; ±1σ over 5 seeds). (a) ReLU: ResNet preserves ¯R at init ( R(0) /R (4) ≈ 1); Plain decays by ∼627 ×. (b) SiLU: decay is stronger—Plain init 47 000 ×; ResNet 25 ×,slower than Plain (skip connections stabilize curvature). Table 8: Exp. 6: GN-Gap by distance d for ResNet-18 (CIFAR-10, final checkpoint, mean ± 1σ over 5 seeds). Row d = 4 : linear classifier (Remark 39). 
+
+d ReLU SiLU ResNet Plain ResNet Plain 
+
+0 < 2·10 −6 < 10 −6 0.43 ± 0.12 0.21 ± 0.11 1 < 2·10 −6 < 10 −6 0.24 ± 0.07 0.12 ± 0.04 2 < 2·10 −6 < 2·10 −6 0.22 ± 0.06 0.06 ± 0.02 3 < 2·10 −6 < 10 −6 0.15 ± 0.04 0.05 ± 0.02 4† < 2·10 −6 < 2·10 −6 < 2·10 −6 < 2·10 −6 
+
+> †
+
+HT = 0 exactly (linear head); see Remark 39. Table 9: Exp. 6: mean resonance ¯R(d) and coupling ¯C(d) at initialization (ResNet-18, CIFAR-10, mean over 5 seeds). 
+
+¯R(d) ¯C(d)
+
+d ReLU SiLU ReLU SiLU Res. Plain Res. Plain Res. Plain Res. Plain 
+
+0 4.5·10 −2 2.1·10 −2 3.0·10 −2 2.1·10 −2 1.00 1.00 1.00 1.00 1 3.5·10 −2 3.5·10 −4 1.0·10 −2 1.1·10 −4 0.95 0.93 0.56 0.24 2 3.3·10 −2 6.0·10 −5 4.2·10 −3 6.9·10 −6 0.92 0.83 0.31 0.06 3 3.6·10 −2 2.9·10 −5 2.1·10 −3 1.2·10 −6 0.89 0.71 0.17 0.01 4 4.8·10 −2 3.3·10 −5 1.2·10 −3 4.4·10 −7 0.82 0.58 0.08 < 0.01 
+
+5.7. Ablation and reproducibility 
+
+Comparison of exact and stochastic (30 Rademacher probes) GN-Gap estimates shows discrepancy < 1 % 
+
+for all smooth activations (Table Appendix N.6, Appendix N), confirming the adequacy of the Hutchinson estimator. At fixed m = 30 the relative error scales as O(prank( A)/m ) (Avron and Toledo, 2011); probe-count scaling guidelines are given in Appendix N. Implementation: PyTorch 2.x; all experiments are feasible on a single GPU (CIFAR-10/100, width ≤ 256 ). Seeds, hyperparameters, and configurations are fixed; code is available at https://github.com/comiam/dag-hesse .20 6. Discussion and limitations Scaling. Explicit materialization of H is practical for P ≲ 10 5; for larger networks the framework reduces to an O(P ) HVP operator whose cost is 2–4× that of a backward pass. Experiments have been verified on MLPs up to L = 32 (Table Appendix N.3), on a toy single-head Attention model (Exp. 5), and on ResNet-18 (∼11 M parameters, Exp. 6). Exp. 6 confirms the key predictions of the formalism under stochastic curvature estimation at practical scale. Scaling to ImageNet-scale models, extension to Transformer architectures, and integration of the proposed metrics into online training diagnostics remain key directions for future work. 
+
+Role of experiments. The experiments serve a falsification role: they verify theoretical predictions (decay, rank constraints, vanishing HT ) on exact Hessian blocks. Experiments 1–4 use fully-connected MLPs, where exact computation of Hfv,w is feasible at moderate P . Experiment 5 extends the empirical scope to self-attention, confirming the prediction of Example 37 ( HTQ,K ̸ = 0 ). Experiment 6 extends the validation to a convolutional architecture (ResNet-18) via stochastic estimation, reproducing the resonance stabilization and GN-Gap predictions at 11 M-parameter scale. The formalism itself is architecture-agnostic (linear, convolutional, Attention — Examples 5–37). 
+
+ReLU and GN-Gap. For piecewise-linear activations the tensor component vanishes in activation space (Proposition 10), and the GN-Gap metric is uninformative; non-convexity is concentrated on the boundaries of linear regions. GN-Gap is critically important for smooth activations (GELU, Swish, Softmax), where 
+
+HT̸ = 0 everywhere. 
+
+Static estimates. All theorems are stated for fixed θ; during re-training the metrics reflect both architecture and the geometry induced by learning. To isolate the architectural effect, measurements at initialization are preferred. 
+
+Potential applications. The formalism yields several consequences that are actionable without addi-tional theoretical development. (i) Banded preconditioner design: Corollary 29 quantifies the approximation error of block-diagonal optimizers; cross-blocks beyond distance ⌈log ε/ log( sρ )⌉ are negligible, providing a principled bandwidth selection for banded preconditioners (George et al., 2018). (ii) Bottleneck diagnos-tics: Proposition 31 bounds the coordination rank of inter-layer blocks by the bottleneck width du; this constraint is invisible from the scalar loss and can inform width allocation in architecture design. (iii) Acti-vation/optimizer compatibility: the GN-Gap quantifies how much curvature information the GGN discards for a given activation type, serving as a criterion for choosing between GGN-based and full-Hessian methods. (iv) Online curvature monitoring: all metrics are estimated stochastically in O(P ) via HVP (Corollary 21); abrupt changes in R, C, or D during training may indicate phase transitions in the loss landscape geometry. 
+
+7. Conclusion 
+
+This paper presents an analytical formalism for block-wise curvature analysis in neural networks of arbitrary DAG architecture, comprising a recursive formula for inter-layer blocks (C1), the canonical de-composition HGN +HT (C2), and diagnostic metrics: inter-layer resonance R, geometric coupling C, stable rank D, and GN-Gap. The theoretical analysis establishes exponential resonance decay in vanilla networks, the stabilizing effect of skip connections on curvature, rank constraints of bottleneck layers, and vanishing of the tensor component of the input Hessian for piecewise-linear activations (C3). Curvature routing (C4) formalizes the propagation of curvature through the graph and reduces to an O(P ) HVP operator. Beyond these theoretical contributions, the empirical validation (Section 5) confirmed the key predictions of the theory: exponential resonance decay without skip connections, rank constraints of bottlenecks on coupling, selective vanishing of GN-Gap for piecewise-linear activations, nonzero HTQ,K in Softmax self-attention (Exp. 5), and reproducibility of these patterns on a convolutional architecture (ResNet-18, ∼11 Mparameters, Exp. 6). At initialization, the decay is guaranteed by Theorem 25 ( λ1 < 0); after training, λ1 > 0
+
+for all configurations (Table 2), yet batch-averaged resonance still decays—an empirical finding whose formal characterization remains open (Remark 38). Key directions for future work include scaling the diagnostic metrics to ImageNet-scale models and integrating them with second-order optimizers. 21 Declaration of competing interests 
+
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper. 
+
+CRediT authorship contribution statement Maxim Bolshim : Conceptualization, Methodology, Software, Formal analysis, Writing – original draft, Visualization. Alexander Kugaevskikh : Validation, Writing – review & editing. 
+
+Acknowledgements 
+
+The authors thank the anonymous reviewers for their constructive feedback. 
+
+Funding 
+
+This work was supported by the state assignment (project FSER-2025-0004). 
+
+Declaration of generative AI and AI-assisted technologies in the manuscript preparation pro-cess 
+
+During the preparation of this work the authors used Claude Opus (Anthropic) for partial editing and typesetting of the manuscript, and Claude Sonnet (Anthropic) for partial development of the accompanying software code. After using these tools, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article. 
+
+Data availability 
+
+The source code and experimental results supporting the findings of this study are openly available at 
+
+https://github.com/comiam/dag-hesse (archived: https://doi.org/10.5281/zenodo.19545553 ). 
+
+References 
+
+Abreu, N., Vyas, N., Kakade, S., Morwani, D., 2025. The potential of second-order optimization for LLMs: A study with full Gauss–Newton. arXiv preprint arXiv:2510.09378 doi: 10.48550/arXiv.2510.09378 . preprint. Avron, H., Toledo, S., 2011. Randomized algorithms for estimating the trace of an implicit symmetric positive semi-definite matrix. Journal of the ACM 58, 1–34. doi: 10.1145/1944345.1944349 .Balduzzi, D., Frean, M., Leary, L., Lewis, J.P., Ma, K.W.D., McWilliams, B., 2017. The shattered gradients problem: If resnets are the answer, then what is the question?, in: Proceedings of the 34th International Conference on Machine Learning (ICML), pp. 342–350. doi: 10.48550/arXiv.1702.08591 .Ben-Israel, A., Greville, T.N.E., 2003. Generalized Inverses: Theory and Applications. 2nd ed., Springer, New York, NY, USA. doi: 10.1007/b97366 .Bolshim, M., Kugaevskikh, A., 2025. Local properties of neural networks through the lens of layer-wise Hessians. arXiv preprint arXiv:2510.17486 doi: 10.48550/arXiv.2510.17486 . preprint. Bolte, J., Pauwels, E., 2021. Conservative set-valued fields, automatic differentiation, stochastic gradient methods and deep learning. Mathematical Programming 188, 19–51. doi: 10.1007/s10107-020-01501-5 .Botev, A., Ritter, H., Barber, D., 2017. Practical Gauss–Newton optimisation for deep learning, in: Proceedings of the 34th International Conference on Machine Learning (ICML), pp. 557–565. doi: 10.48550/arXiv.1706.03662 .Clarke, F.H., 1990. Optimization and Nonsmooth Analysis. SIAM, Philadelphia, PA, USA. doi: 10.1137/1.9781611971309 .Cohen, J.M., Kaur, S., Li, Y., Kolter, J.Z., Talwalkar, A., 2021. Gradient descent on neural networks typically occurs at the edge of stability, in: Proceedings of the 9th International Conference on Learning Representations (ICLR). doi: 10.48550/ arXiv.2103.00065 .Dangel, F., Kunstner, F., Hennig, P., 2020. BackPACK: Packing more into backprop, in: Proceedings of the 8th International Conference on Learning Representations (ICLR). doi: 10.48550/arXiv.1912.10985 .Dangel, F., Tatzel, L., Hennig, P., 2022. ViViT: Curvature access through the generalized Gauss–Newton’s low-rank structure. Transactions on Machine Learning Research (TMLR) doi: 10.48550/arXiv.2106.02624 .
+
+22 Dauphin, Y.N., Pascanu, R., Gulcehre, C., Cho, K., Ganguli, S., Bengio, Y., 2014. Identifying and attacking the saddle point problem in high-dimensional non-convex optimization, in: Advances in Neural Information Processing Systems (NeurIPS), pp. 2933–2941. doi: 10.48550/arXiv.1406.2572 .George, T., Laurent, C., Bouthillier, X., Ballas, N., Vincent, P., 2018. Fast approximate natural gradient descent in a Kronecker-factored eigenbasis, in: Advances in Neural Information Processing Systems (NeurIPS), pp. 9550–9560. doi: 10.48550/arXiv. 1806.03884 .Ghorbani, B., Krishnan, S., Xiao, Y., 2019. An investigation into neural net optimization via Hessian eigenvalue density, in: Proceedings of the 36th International Conference on Machine Learning (ICML), pp. 2232–2241. doi: 10.48550/arXiv.1901. 10159 .Gupta, V., Koren, T., Singer, Y., 2018. Shampoo: Preconditioned stochastic tensor optimization, in: Proceedings of the 35th International Conference on Machine Learning (ICML), pp. 1842–1850. doi: 10.48550/arXiv.1802.09568 .Hanin, B., Rolnick, D., 2019. Complexity of linear regions in deep networks, in: Proceedings of the 36th International Conference on Machine Learning (ICML), pp. 2596–2604. doi: 10.48550/arXiv.1901.09021 .Hayou, S., Doucet, A., Rousseau, J., 2019. On the impact of the activation function on deep neural networks training, in: Proceedings of the 36th International Conference on Machine Learning (ICML), pp. 2672–2680. doi: 10.48550/arXiv.1902. 06853 .He, K., Zhang, X., Ren, S., Sun, J., 2016. Deep residual learning for image recognition, in: Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), pp. 770–778. doi: 10.1109/CVPR.2016.90 .Horn, R.A., Johnson, C.R., 2012. Matrix Analysis. 2nd ed., Cambridge University Press, Cambridge, UK. doi: 10.1017/ CBO9781139020411 .Jacot, A., Gabriel, F., Hongler, C., 2018. Neural tangent kernel: Convergence and generalization in neural networks, in: Advances in Neural Information Processing Systems (NeurIPS), pp. 8571–8580. doi: 10.48550/arXiv.1806.07572 .Jeyakumar, V., Luc, D.T., 1999. Nonsmooth calculus, minimality, and monotonicity of convexificators. Journal of Optimization Theory and Applications 101, 599–621. doi: 10.1023/A:1021790120780 .Kunstner, F., Hennig, P., Balles, L., 2019. Limitations of the empirical Fisher approximation for natural gradient descent, in: Advances in Neural Information Processing Systems (NeurIPS), pp. 4156–4167. doi: 10.48550/arXiv.1905.12558 .Liu, H., Li, Z., Hall, D., Liang, P., Ma, T., 2024. Sophia: A scalable stochastic second-order optimizer for language model pre-training, in: Proceedings of the 12th International Conference on Learning Representations (ICLR). doi: 10.48550/ arXiv.2305.14342 .Magnus, J.R., Neudecker, H., 2019. Matrix Differential Calculus with Applications in Statistics and Econometrics. 3rd ed., John Wiley & Sons, Chichester, UK. doi: 10.1002/9781119541219 .Martens, J., 2010. Deep learning via Hessian-free optimization, in: Proceedings of the 27th International Conference on Machine Learning (ICML), pp. 735–742. doi: 10.48550/arXiv.1003.0358 .Martens, J., 2020. New insights and perspectives on the natural gradient method. Journal of Machine Learning Research 21, 1–76. doi: 10.48550/arXiv.1412.1193 .Martens, J., Grosse, R., 2015. Optimizing neural networks with Kronecker-factored approximate curvature, in: Proceedings of the 32nd International Conference on Machine Learning (ICML), pp. 2408–2417. doi: 10.48550/arXiv.1503.05671 .Martens, J., Sutskever, I., 2012. Training deep and recurrent networks with Hessian-free optimization, in: Neural Networks: Tricks of the Trade. 2nd ed.. Springer, Berlin, Germany. volume 7700 of Lecture Notes in Computer Science , pp. 479–535. doi: 10.1007/978-3-642-35289-8_27 .Miyato, T., Kataoka, T., Koyama, M., Yoshida, Y., 2018. Spectral normalization for generative adversarial networks, in: Proceedings of the 6th International Conference on Learning Representations (ICLR). doi: 10.48550/arXiv.1802.05957 .Mordukhovich, B.S., 2006. Variational Analysis and Generalized Differentiation I: Basic Theory. Springer, Berlin, Germany. doi: 10.1007/3-540-31247-1 .Nocedal, J., Wright, S.J., 2006. Numerical Optimization. 2nd ed., Springer, New York, NY, USA. doi: 10.1007/ 978-0-387-40065-5 .Oseledets, V.I., 1968. A multiplicative ergodic theorem. Characteristic Ljapunov exponents of dynamical systems. Trudy Moskov. Mat. Obshch. 19, 179–210. Papyan, V., 2019. Measurements of three-level hierarchical structure in the outliers in the spectrum of deepnet Hessians, in: Proceedings of the 36th International Conference on Machine Learning (ICML), pp. 5012–5021. doi: 10.48550/arXiv.1901. 08244 .Pascanu, R., Mikolov, T., Bengio, Y., 2013. On the difficulty of training recurrent neural networks, in: Proceedings of the 30th International Conference on Machine Learning (ICML), pp. 1310–1318. doi: 10.48550/arXiv.1211.5063 .Pearlmutter, B.A., 1994. Fast exact multiplication by the Hessian. Neural Computation 6, 147–160. doi: 10.1162/neco.1994. 6.1.147 .Pennington, J., Worah, P., 2018. The spectrum of the Fisher information matrix of a single-hidden-layer neural network, in: Advances in Neural Information Processing Systems (NeurIPS), pp. 5410–5419. doi: 10.48550/arXiv.1810.01075 .Poole, B., Lahiri, S., Raghu, M., Sohl-Dickstein, J., Ganguli, S., 2016. Exponential expressivity in deep neural networks through transient chaos, in: Advances in Neural Information Processing Systems (NeurIPS), pp. 3360–3368. doi: 10.48550/arXiv. 1606.05340 .Rockafellar, R.T., Wets, R.J.B., 1998. Variational Analysis. Springer, Berlin, Germany. doi: 10.1007/978-3-642-02431-3 .Sagun, L., Evci, U., Güney, V.U., Dauphin, Y., Bottou, L., 2017. Empirical analysis of the Hessian of over-parametrized neural networks. arXiv preprint arXiv:1706.04454 doi: 10.48550/arXiv.1706.04454 . preprint. Schoenholz, S.S., Gilmer, J., Ganguli, S., Sohl-Dickstein, J., 2017. Deep information propagation, in: Proceedings of the 5th International Conference on Learning Representations (ICLR). doi: 10.48550/arXiv.1611.01232 .
+
+23 Schraudolph, N.N., 2002. Fast curvature matrix–vector products for second-order gradient descent. Neural Computation 14, 1723–1738. doi: 10.1162/08997660260028683 .Serra, T., Tjandraatmadja, C., Ramalingam, S., 2018. Bounding and counting linear regions of deep neural networks, in: Proceedings of the 35th International Conference on Machine Learning (ICML), pp. 4558–4566. doi: 10.48550/arXiv.1711. 02114 .Singh, S.P., 2025. The geometry of learning via loss landscape curvature. Ph.D. thesis. ETH Zurich. Tang, Q.Y., Gu, Y., Cai, Y., Sun, M., Li, P., Zhou, X., Xie, Z., 2025. Investigating the overlooked Hessian structure: From CNNs to LLMs, in: Proceedings of the 42nd International Conference on Machine Learning (ICML), pp. 58805–58831. URL: 
+
+https://proceedings.mlr.press/v267/tang25d.html .Yao, Z., Gholami, A., Shen, S., Mustafa, M., Keutzer, K., Mahoney, M.W., 2021. AdaHessian: An adaptive second order optimizer for machine learning, in: Proceedings of the AAAI Conference on Artificial Intelligence, pp. 10665–10673. doi: 10. 1609/aaai.v35i12.17275 .Zhang, H., Chen, W., Liu, T.Y., 2018. On the local Hessian in back-propagation, in: Advances in Neural Information Processing Systems (NeurIPS). URL: https://proceedings.neurips.cc/paper/2018/hash/ b6d67a24906e8a8541291882f81d31ca-Abstract.html .
+
+Appendix A. Notation details and function spaces 
+
+Remark 40 (Index convention) . i — component index of the node output; j, k — component indices of inputs; k, ℓ (in parameter context) — component indices of θv ; v, w, u — node indices. Standard function spaces are employed: C2 (twice continuously differentiable, smooth case), C1,1 (func-tions with Lipschitz derivatives), P C 2 (piecewise C2 with piece boundaries of measure zero). In the non-smooth case we rely on the apparatus of generalized differentiation (Mordukhovich, 2006) and, in particular, Clarke subdifferentials (Clarke, 1990): for a locally Lipschitz function, ∂C f (x) is non-empty, convex, and compact; the Clarke Hessian ∂2 
+
+> C
+
+F (x) exists when ∇Fi is Lipschitz. 
+
+Remark 41 (Tensor notation and contraction rules) . Index i refers to the output component of a node ( fu
+
+or fv ); j, m to inputs from parent nodes; α, β to parameters θv . Notation [T ]i, •,• denotes a tensor slice at fixed i. Contraction [Tu;v ]i,j,k δu,i yields a dv ×dv matrix with entries Pdu
+
+> i=1
+
+[Tu;v ]i,j,k δu,i . Under matrix multiplication D⊤ 
+
+> u←v
+
+Hfu,u Du←w, the dimensions chain as (dv ×du)( du ×du)( du ×dw) = dv ×dw. Rules for differentiating matrix expressions follow the standard formalism (Magnus and Neudecker, 2019). Element-wise definitions of second-derivative tensors ( v, w ∈ Pa( u)): 
+
+[Tu;v ]i,j,k = ∂2(fu)i
+
+∂(fv )j ∂(fv )k
+
+∈ Rdu×dv ×dv ,
+
+[Tu;v,w ]i,j,k = ∂2(fu)i
+
+∂(fv )j ∂(fw)k
+
+∈ Rdu×dv ×dw ,
+
+[Tv;w,θ ]i,j,k = ∂2(fv )i
+
+∂(fw)j ∂(θv )k
+
+∈ Rdv ×dw ×pv ,
+
+[T θv ]i,k,ℓ = ∂2(fv )i
+
+∂(θv )k ∂(θv )ℓ
+
+∈ Rdv ×pv ×pv .
+
+Remark 42 (Symmetry of the tensor component) . The mixed tensor Tu;v,w ∈ Rdu×dv ×dw for v̸ = w produces rectangular dv × dw slices that cannot be symmetrized. Symmetry of the full Hessian is ensured by the relation Hfv,w = ( Hfw,v )⊤ between blocks. For diagonal blocks ( v = w) the slices are square; in the smooth case [Tu;v ]i, :,: = [ Tu;v ]⊤ 
+
+> i, :,:
+
+by Schwarz’s theorem. The double sum over (u1, u 2) ∈ Ch( v) × Ch( w) in term 1 entails no double-counting: each pair contributes independently. 
+
+Assembling blocks into the global Hessian.. The global Hessian ∇2 
+
+> θ
+
+L ∈ RP ×P is assembled from the computed parametric blocks Hθvi ,θ vj as a block matrix [Hθvi ,θ vj ]ni,j =1 with symmetry by Schwarz’s theorem. 24 Appendix B. Stability and invariance of the curvature recursion Theorem 43 (Error accumulation in the curvature recursion) . Under local Jacobian errors ∥∆D∥2 ≤
+
+ϵD ∥D∥2 and tensor errors ∥∆T ∥F ≤ ϵT ∥T ∥F :
+
+εv,w ≤ dist( v, w )(2 ϵD + ϵT ) + O(ϵ2).
+
+The protocol is stable whenever L(2 ϵD + ϵT ) < 1.
+
+The Hutchinson estimator (Avron and Toledo, 2011) is used for trace and norm computation, converging as ∥ ˆT − T ∥F ≤ C∥T ∥F
+
+plog(1 /δ )/m with probability ≥ 1−δ using m probe vectors. 
+
+Theorem 44 (Invariance of geometric coupling) . Let v ∈ Pa( w) and consider the rescaling Wv 7 → αW v ,
+
+Ww 7 → α−1Ww that preserves the output fw (and hence all downstream activations and L). Then: Hfv,v 7 →
+
+α−2Hfv,v , Hfv,w 7 → α−1Hfv,w , Hfw,w is invariant, so that 
+
+˜C(v, w ) = α−1∥Hfv,w ∥F
+
+q
+
+α−2∥Hfv,v ∥F · ∥ Hfw,w ∥F
+
+= C(v, w ).
+
+In a DAG with branching ( v has several children), rescaling Wv 7 → αW v affects all children: preserving outputs requires compensating transformations on every child, but the ratio C(v, w ) remains invariant provided fw
+
+and all fu, u ∈ Ch( v) are preserved. 
+
+Appendix C. Optimization-theoretic remarks 
+
+Appendix C.1. Convergence guarantees 
+
+Using the exact Hessian (or its AD analog for non-smooth networks) as Bk in second-order methods yields classical convergence guarantees: quadratic for Newton’s method and superlinear when ∥Bk −∇ 2L∥ → 
+
+0 (Nocedal and Wright, 2006). In practice, regularization Bk + λkI and symmetrization 12 (Bk + B⊤ 
+
+> k
+
+) ensure numerical stability. 
+
+Appendix C.2. Pseudoinverse and Newton direction 
+
+In Definition 47 the AD-Hessian is defined as a valid element of a conservative field (via CSVF (Bolte and Pauwels, 2021)). Here we clarify its connection with the Moore–Penrose pseudoinverse. 
+
+Remark 45 (Relation to the pseudoinverse) . For an arbitrary H ∈ ∂2 
+
+> C
+
+L, the Newton direction d = −H†g
+
+(g = ∇L , H† is the Moore–Penrose pseudoinverse) is the minimum-norm solution of Hd = −g (Ben-Israel and Greville, 2003). At full rank ( rank( H) = p), H† = H−1 and the direction coincides with the standard Newton step. 
+
+Appendix D. Non-smooth case: Clarke Hessian and CSVF 
+
+This section contains the full theory of the non-smooth case omitted from the main text. Methodologically we rely on the non-smooth calculus of convexificators (Jeyakumar and Luc, 1999) and work within the 
+
+Conservative Set-Valued Fields (CSVF) framework (Bolte and Pauwels, 2021): for a piecewise-analytic network F , the mapping x 7 → ∂2 
+
+> C
+
+L(x) is a conservative field whose potential is ∇L (a.e.). This circumvents the well-known intransitivity of the chain rule for the Clarke subdifferential (Rockafellar and Wets, 1998): instead of an element-wise chain rule, the global conservativity property guarantees correctness of AD computations for the entire computation graph. 
+
+Theorem 46 (AD-Hessian of a ReLU DAG network) . Let F be a ReLU DAG network and ℓ ∈ C2. Then: 1. Each fv is locally Lipschitz. 
+
+25 2. Under a transversality condition on the activation maps (the mapping x 7 → [fu1 (x), . . . ]⊤ intersects non-smoothness hyperplanes transversally), the set of non-smooth points has Lebesgue measure zero. 3. At points of differentiability, the AD-Hessian coincides with the classical one. 4. At non-smooth points, AD frameworks return an AD-Hessian (with T ≡ 0), which amounts to select-ing the zero element from the generalized derivative and preserves algorithmic convergence by CSVF theory (Bolte and Pauwels, 2021). 
+
+Definition 47 (AD-Hessian at a non-smooth point) . For ReLU networks, AD frameworks set σ′′ (0) := 0 ,so that Tu;v ≡ 0. The input Hessian block at a non-smooth point is defined through Jacobian products Du←v
+
+(computed via the convention σ′(0) := 0 ). This choice is valid under CSVF theory (Bolte and Pauwels, 2021): the AD-Hessian is a valid element of a conservative field, guaranteeing convergence of second-order optimization algorithms. 
+
+Theorem 48 (Stability of the AD-Hessian) . Let xn → x0 with the network twice differentiable at every xn.Then ∇2L(xn) → M implies M ∈ ∂2 
+
+> C
+
+L(x0). At smooth points the AD-Hessian is continuous in x.Proof of Theorem 46. Step 1 (local Lipschitz continuity). Consider the topological ordering v1, . . . , v |V |.For the input node, fv1 (x) = x is 1-Lipschitz. If node v receives outputs fu1 , . . . , f uk and applies Wv ( · ) + bv
+
+followed by ReLU: 
+
+fv (x) = ReLU  Wv [fu1 (x), . . . , f uk (x)] ⊤ + bv
+
+.
+
+The linear map has Lipschitz constant ∥Wv ∥2; ReLU has constant 1. Hence fv is  Q ki=1 Lui
+
+∥Wv ∥2-Lipschitz, where Lui is the Lipschitz constant of fui . Induction over the topological order yields local Lipschitz continuity for all fv .
+
+Step 2 (measure of the smooth set). L is non-smooth on submanifolds corresponding to boundaries of ReLU linear regions. For each neuron the set of points where the pre-activation equals zero is given by the equation Wv [fu1 (x), . . . , f uk (x)] ⊤ +bv = 0 . Under the rank condition (the mapping x 7 → [fu1 (x), . . . , f uk (x)] ⊤
+
+has locally full rank), this is a codimension-1 hypersurface of measure zero. Geometrically, this is a transver-sality condition : the activation sign map x 7 →  sign(preact j (x))  
+
+> j
+
+intersects the non-smoothness hyperplanes 
+
+{zj = 0 } transversally, which guarantees codimension ≥ 1 for each neuron (Hanin and Rolnick, 2019). When transversality is violated (degenerate Jacobians, dead ReLU, bottleneck layers), the rank condition may fail; for F (x) = max {0, x }, L(x) = F (x)2/2 the function is twice non-differentiable on (−∞ , 0] .When the rank condition holds, the non-smoothness set is covered by at most 2N codimension-1 sub-spaces (Hanin and Rolnick, 2019; Serra et al., 2018). 
+
+Step 3 (coincidence at smooth points). At a twice-differentiable point, ∂2 
+
+> C
+
+L(x) = ∇2L(x) . Inside a linear region F is affine ( F (x) = Ax + b), so ∇2L(x) = A⊤∇2ℓ(F (x)) A.
+
+Step 4 (AD-Hessian at non-smooth points). For piecewise-linear activations (ReLU), σ′′ (z) = δ(z) is a distribution, not an element of L∞; the classical Clarke apparatus is not directly applicable. However, AD frameworks assign σ′′ (0) := 0 , zeroing out Tu;v ≡ 0 for all ReLU nodes. The AD-Hessian is therefore defined 
+
+solely through Jacobian products Du←v .Under CSVF theory (Bolte and Pauwels, 2021), the AD gradient g(x) := AD[ ∇L ]( x) is an element of a conservative field for piecewise-analytic functions. Key observation: with σ′′ (0):=0 , the mapping g is piecewise-affine (off a measure-zero set it equals x 7 → A⊤ 
+
+> r
+
+∇ℓ(Ar x+br ) for linear region r). Since g is piecewise-analytic, its Jacobian Jg (x) = AD[ ∇2L]( x) is defined a.e. and is itself an element of a conservative field 
+
+∂C g (closure by the CSVF chain rule, Proposition 3 in (Bolte and Pauwels, 2021)). Thus the AD-Hessian satisfies the conservative-field axioms and is valid for second-order optimization. 26 Appendix E. Implementation via autodiff frameworks Algorithm 1 Computing an input Hessian block 
+
+1: function ComputeInputHess (v, w, {fu}, L, {δu}, {Hf }, C )2: if (v, w ) ∈ C then return Hfv,w 
+
+3: end if 
+
+4: Hfv,w ← 0
+
+5: if v, w influence L then Hfv,w ← ∂2L/∂f v ∂f w
+
+6: end if 
+
+7: for u1 ∈ Ch( v) do ▷ Term (1): double sum over Ch( v) × Ch( w)
+
+8: Dv ← jac (fu1 , f v )
+
+9: for u2 ∈ Ch( w) do 
+
+10: Dw ← jac (fu2 , f w )
+
+11: if (u1, u 2) /∈ C then Hfu1,u 2 ← ComputeInputHess (u1, u 2, . . . )
+
+12: end if 
+
+13: Hfv,w ← Hfv,w + D⊤ 
+
+> v
+
+Hfu1,u 2 Dw
+
+14: end for 
+
+15: end for 
+
+16: if v̸ = w then ▷ Term (2): mixed tensor ( v̸ = w)17: for u ∈ Ch( v) ∩ Ch( w) do 
+
+18: for i ∈ 1..d u do 
+
+19: T ← MixedHess (fu,i , f v , f w )
+
+20: Hfv,w ← Hfv,w + T · δu,i 
+
+21: end for 
+
+22: end for 
+
+23: else ▷ Term (3): pure tensor ( v = w)24: for u ∈ Ch( v) do 
+
+25: for i do Hfv,v ← Hfv,v + hess (fu,i , f v ) · δu,i 
+
+26: end for 
+
+27: end for 
+
+28: end if 
+
+29: C ← C ∪ { (v, w )}; return Hfv,w 
+
+30: end function 
+
+Algorithm 2 Computing a parametric Hessian block 
+
+1: function ComputeParamHess (v, w, {fu}, {θ}, {Hf }, {δ})2: Dv ← jac (fv , θ v ); Dw ← jac (fw , θ w )
+
+3: Hθv ,θ w ← D⊤ 
+
+> v
+
+Hfv,w Dw
+
+4: if v = w then 
+
+5: for i do Hθv ,θ v ← Hθv ,θ v + hess (fv,i , θ v ) · δv,i 
+
+6: end for 
+
+7: end if 
+
+8: for u ∈ Pa( v) ∩ Ch( w) do 
+
+9: for i, j, α do 
+
+10: T ← MixedDeriv (fv,i , f u,j , θ v,α )
+
+11: Hθv ,θ w ← Hθv ,θ w + T · jac (fu, f w ) · δv,i 
+
+12: end for 
+
+13: end for 
+
+14: return Hθv ,θ w
+
+15: end function 
+
+27 Algorithm 3 Full Hessian computation 
+
+1: function FullHessian (G, {fv }, {θv }, L)2: δout ← ∇L ; Hfout ← ∇ 2L
+
+3: topo ← TopoSort (G).rev () ; C ← ∅ 
+
+4: for v ∈ InputDepNodes (L) do Hfv,v ← hess (L, f v ); C ← C ∪ { (v, v )}
+
+5: end for 
+
+6: for v, w ∈ InputDep , v ̸ = w do Hfv,w ← mixed_hess (L, f v , f w ); C ← C ∪ { (v, w )}
+
+7: end for 
+
+8: for v ∈ topo do 
+
+9: BackpropGrad (v)
+
+10: for w : Ch( v)̸ = ∅ OR Ch( w)̸ = ∅ OR (v, w ) influences L do 
+
+11: Hfv,w ← ComputeInputHess (v, w, . . . , C )
+
+12: end for 
+
+13: end for 
+
+14: Init H of size P × P
+
+15: for v, w ∈ V : ∃ path v →∗ u ←∗ w OR (v, w ) influences L do 
+
+16: Hθv ,θ w ← ComputeParamHess (v, w, . . . )
+
+17: Update H
+
+18: end for 
+
+19: return H
+
+20: end function 
+
+Appendix F. Proof of the canonical decomposition 
+
+We give the full proof of Theorem 7. 
+
+Proof. Define HGN v,w by a recursion with base HGN out,out = ∇2L and rule 
+
+HGN v,w = X
+
+> u1∈Ch( v)
+
+X
+
+> u2∈Ch( w)
+
+D⊤ 
+
+> u1←v
+
+HGN u1,u 2 Du2←w + ∂2L
+
+∂f v ∂f w
+
+.
+
+The recursion is closed: at each step only HGN u1,u 2 are used, excluding tensor terms. Unrolling to the output node and applying induction: HGN v,w = D⊤ 
+
+> out ←v
+
+∇2L Dout ←w. This coincides exactly with the GGN matrix J⊤∇2L J (cf. Remark 9). The tensor component HT := Hf − HGN inherits the recursion with base HTout,out = 0 ; substituting 
+
+Hf = HGN + HT into equation 2 and subtracting the HGN recursion yields only the tensor terms Tu;v ,
+
+Tu;v,w weighted by δu,i .
+
+Appendix F.1. Full parametric Hessian formula 
+
+Let 
+
+Dv = ∂f v
+
+∂θ v
+
+, T (i) 
+
+> u;v,α
+
+= ∂2fu,i 
+
+∂f v ∂θ v,α 
+
+, T (i) 
+
+> v,αβ
+
+= ∂2fv,i 
+
+∂θ v,α ∂θ v,β 
+
+.
+
+The full parametric block obtained from equation 2: 
+
+Hθv ,θ w = D⊤ 
+
+> v
+
+Hfv,w Dw
+
+| {z }
+
+> GN-like
+
++ X
+
+> i
+
+δv,i T (i)
+
+> v
+
+| {z } 
+
+> tensor over θv
+> (v=w)
+
++ X
+
+> u,i
+
+δu,i D⊤ 
+
+> v
+
+T (i) 
+
+> u;v
+
+Dw
+
+| {z } 
+
+> mixed tensor
+> (v̸=w, u ∈Pa( v)∩Ch( w))
+
++ X
+
+> u,i
+
+δu,i T (i)
+
+> u;v,w
+
+| {z }
+
+> cross-tensor
+> (shared params )
+
+, (Appendix F.1) 28 where the fourth term appears only with weight sharing ( θv ≡ θw across nodes); for standard architectures without weight sharing it vanishes. 
+
+Remark 49 (Weight sharing between nodes) . If parameter θ is shared among nodes Vθ = {v1, . . . , v m}, the corresponding diagonal block of the full Hessian is Hθ,θ = Pmi,j =1 Hθvi ,θ vj (direct consequence of additivity of second derivatives over shared parameter copies). 
+
+Appendix G. Diagnostic metrics and architectural analysis 
+
+Appendix G.1. Inter-layer resonance 
+
+The block structure of the inter-layer Hessian {Hfv,w } allows introducing a quantitative measure of “geometric connectivity” between nodes. The metrics R, C, and D are defined in the main text (Definitions 23 and 24); below we develop additional properties and proofs. From Definition 23 and formula equation 2: R(v, w ) = 0 iff the nodes share no path to the output; 
+
+R(v, w ) = R(w, v ) (Hessian symmetry); R(v, w ) ≥ 0 (norm property). 
+
+Remark 50 (Meaning of inter-layer resonance) . The curvature recursion induces a weighted interaction graph 
+
+on the DAG with edge weights R(v, w ). Unlike Adam and K-FAC, which treat layers in isolation, resonance allows visualizing curvature “highways,” explaining the effectiveness of skip connections (high R between distant layers), and diagnosing architectural bottlenecks. 
+
+Appendix G.2. Geometric coupling and layer coherence 
+
+Geometric coupling C(v, w ) (Definition 23) normalizes resonance by the diagonal blocks, yielding a scale-invariant connectivity measure. Properties: (i) C ≥ 0; C = 0 iff R = 0 . (ii) PSD bound: if HT = 0 and [Hfv,w ]v,w ⪰ 0, then 
+
+C ≤ 1 (Cauchy–Schwarz for block PSD matrices). (iii) Scale invariance under rescaling Wv 7 → αW v ,
+
+Ww 7 → α−1Ww (Theorem 44). In general, C > 1 is possible only due to the tensor component HT and indicates departure from the GN PSD regime. 
+
+Proof of the PSD bound. With HT = 0 , the block matrix M := [ HGN v,w ]v,w ⪰ 0 admits a decomposition 
+
+M = LL ⊤. Writing L =   PQ
+
+ (P ∈ Rdv ×r , Q ∈ Rdw ×r ): Mv,v = P P ⊤, Mv,w = P Q ⊤, Mw,w = QQ ⊤. Set 
+
+S := P ⊤P , T := Q⊤Q (S, T ⪰ 0). Then ∥Mv,w ∥2 
+
+> F
+
+= tr( ST ), ∥Mv,v ∥2 
+
+> F
+
+= tr( S2), ∥Mw,w ∥2 
+
+> F
+
+= tr( T 2). By the Cauchy–Schwarz inequality for the Hilbert–Schmidt inner product: (tr( ST )) 2 ≤ tr( S2) tr( T 2), whence 
+
+C(v, w ) ≤ 1.
+
+Remark 51 (Stochastic estimation and ˆC > 1 artifacts) . Under stochastic estimation the norms ∥Hv,w ∥F ,
+
+∥Hv,v ∥F , ∥Hw,w ∥F are computed by independent Hutchinson probe series. The ratio of three independent estimates need not respect the theoretical bound C ≤ 1; in practice the result is projected: ˆC := min( ˆC, 1) .With increasing m the violation probability decreases as O(1 /m ).
+
+Remark 52 (Interpretation of coupling) . C ≈ 1: layers function as a single module. C ∈ (0 .3, 0.7) : moderate connectivity, typical for adjacent layers. C ≈ 0: geometric isolation, layers can train independently. 
+
+Remark 53 (Self-compensation under sequential narrowing) . In an MLP, a bottleneck with du ≪ dv constrains the rank of both HGN v,w and HGN v,v . The normalization in C admits partial compensation: numerator and denominator are bounded by the same narrow layer. Hence C diagnoses relative geometric alignment but is insensitive to absolute rank compression. 
+
+Remark 54 (Computing R(v, w ) without the full matrix) . The block Hfv,w ∈ Rdv ×dw is a compact matrix (typically dv , d w ≪ P ), so R(v, w ) = ∥Hfv,w ∥F is computed in O(dv dw) without building the full P × P
+
+Hessian. When even the block cannot be stored, the Hutchinson estimator (Avron and Toledo, 2011) is used: ∥A∥2 
+
+> F
+
+= tr( A⊤A) = Ez [z⊤A⊤Az ], where each Az is one HVP ( O(P ) time). 29 Appendix G.2.1. Rank bottleneck 
+
+Proposition 55 (Rank bound on path contributions) . Let v, w ∈ V and let c be a common descendant. Consider the path contribution to the GN component along paths pv : v → c and pw : w → c:
+
+Γ( pv , p w) = D⊤ 
+
+> pv
+
+∇2Lfc Dpw .
+
+Then rank(Γ) ≤ min u∈pv ∪pw rank( Ju←pred( u)). For sums, only subadditivity holds: 
+
+rank( P 
+
+> i
+
+Γi) ≤ P 
+
+> i
+
+rank(Γ i).Proof. By sub-multiplicativity of rank (Horn and Johnson, 2012): rank( Dpv ) ≤ min u∈pv rank( Ju←pred( u)).Since Γ = D⊤ 
+
+> pv
+
+A D pw : rank(Γ) ≤ min {rank( Dpv ), rank( Dpw )}.
+
+Corollary 56 (Architectural bottleneck) . If all paths from v and w to out pass through a narrow layer u
+
+with du ≪ min( dv , d w), then rank( HGN v,w ) ≤ du. Consequently, the full Hessian Hfv,w is low-rank up to the tensor perturbation HTv,w : layers v and w can coordinate training in at most du independent directions in the Gauss–Newton regime. Proof. All paths factor through u: Dout ←v = Dout ←uMv , Dout ←w = Dout ←uMw, so HGN v,w = M ⊤ 
+
+> v
+
+(· · · )Mw
+
+with the inner matrix in Rdu×du .
+
+Definition 57 (Effective interaction dimension) .
+
+deff (v, w ) := ∥Hfv,w ∥∗
+
+∥Hfv,w ∥2
+
+, (Appendix G.1) where ∥ · ∥ ∗ is the nuclear norm, ∥ · ∥ 2 the spectral norm. 
+
+Proposition 58 (Properties of deff ). (i) 1 ≤ deff ≤ rank( Hfv,w ). (ii) deff = 1 iff rank = 1 . (iii) Equality with rank iff all nonzero singular values are equal. Remark 59 (Rank vs. norm) . Proposition 31 bounds the rank of HGN v,w , not the Frobenius norm. Even at 
+
+rank ≤ du, R(v, w ) = ∥H∥F can remain large (singular values concentrate on du directions). The correct bottleneck test is the stable rank D, not R.
+
+Remark 60 (Double rank bound) . For K-class softmax-CE loss, rank( ∇2L) ≤ K −1. Together with Propo-sition 31: D(v, w ) ≤ min( du, K −1) .
+
+Remark 61 (Architectural consequences) . The rank-propagation theorem explains the success of skip connec-tions (bypassing bottlenecks via high-rank alternative paths), rank degradation in deep MLPs without skip connections, and the minimum hidden width required for training coordination. With paths bypassing u,
+
+rank( P 
+
+> p
+
+D⊤ 
+
+> p
+
+(· · · )Dp) can exceed du; skip connections thus destroy “information bottlenecks” preserving full-rank Hessians. 
+
+Appendix G.2.2. Stochastically computable stable rank 
+
+Computing deff requires the nuclear norm ( ∥H∥∗ = P 
+
+> i
+
+σi), equivalent to a full SVD. For scalable analysis we use the stable rank D(v, w ) (Definition 24)—an alternative effective-dimension measure admitting stochastic estimation via HVP without materializing the full matrix. 
+
+Proposition 62 (Properties of stable rank) . (i) 1 ≤ D ≤ rank( Hfv,w ). (ii) D = 1 iff rank 1. (iii) D = rank 
+
+iff all nonzero singular values are equal. (iv) D ≤ deff ≤ √rank · D .Proof. Let σ1 ≥ · · · ≥ σr > 0 be the nonzero singular values and ai := σi/σ 1 ∈ (0 , 1] . Then D = P a2 
+
+> i
+
+,
+
+deff = P ai. (i)–(iii) follow from a1 = 1 , ai ≤ 1. (iv) a2 
+
+> i
+
+≤ ai gives D ≤ deff ; Cauchy–Schwarz gives 
+
+deff ≤ √r D.30 Remark 63 (Stochastic estimation of D). ∥H∥2 
+
+> F
+
+is estimated by the Hutchinson method (Avron and Toledo, 2011): d∥H∥2 
+
+> F
+
+= 1
+
+> m
+
+Pmk=1 ∥Hz k∥2 with Rademacher vectors zk ∈ {− 1, +1 }dw . ∥H∥22 = σ21 is estimated via power iteration on H⊤H; after T iterations the relative error is O(( σ2/σ 1)2T ) (Nocedal and Wright, 2006). Total cost: O(( m + 2 T ) · Backprop) , memory O(P ).
+
+Algorithm 4 Stochastic estimation of D(v, w ) via HVP 
+
+Require: Nodes v, w ; number of probes m; iterations T ; operator HVP v,w 
+
+Ensure: Estimate ˆD(v, w )
+
+1: // Power iteration: ˆσ21 ≈ ∥ Hfv,w ∥22
+
+2: q ← randn( dw ); q ← q/∥q∥
+
+3: for t = 1 , . . . , T do 
+
+4: p ← HVP v,w (q)
+
+5: q ← HVP ⊤ 
+
+> v,w
+
+(p)
+
+6: q ← q/∥q∥
+
+7: end for 
+
+8: ˆσ21 ← ∥ HVP v,w (q)∥2
+
+9: if ˆσ21 < ε then return 0
+
+10: end if 
+
+11: // Hutchinson: 
+
+12: S ← 0
+
+13: for k = 1 , . . . , m do 
+
+14: Sample zk ∈ {− 1, +1 }dw (Rademacher) 15: S ← S + ∥HVP v,w (zk )∥2
+
+16: end for 
+
+17: return S/ (m ˆσ21 )
+
+Appendix G.3. Path-based curvature analysis Appendix G.3.1. Path decomposition 
+
+Definition 64 (DAG path and path Jacobian) . For nodes v, w ∈ V , denote by P(v → c) the set of all directed paths from v to c ∈ Desc( v). For a path p = ( u0, u 1, . . . , u k), the path Jacobian is 
+
+Dp := 
+
+> k−1
+
+Y
+
+> i=0
+
+Dui+1 ←ui ∈ Rduk ×du0 . (Appendix G.2) 
+
+Theorem 65 (Path decomposition of the Hessian) .
+
+Hfv,w = X
+
+> c∈Desc( v)∩Desc( w)
+
+X 
+
+> pv∈P (v→c)
+
+X 
+
+> pw∈P (w→c)
+
+Infl( pv , p w; c),
+
+where Infl( pv , p w; c) := D⊤ 
+
+> pv
+
+HL 
+
+> fc,f c
+
+Dpw + ( tensor terms ).Proof. From unrolling equation 2. The full Jacobian Dc←v = P 
+
+> p∈P (v→c)
+
+Dp by linearity of differentiation. Substituting: Hfv,w = P
+
+> c
+
+(P 
+
+> pv
+
+Dpv )⊤HL 
+
+> fc
+
+(P 
+
+> pw
+
+Dpw ) + . . . = P
+
+> c
+
+P  
+
+> pv,p w
+
+D⊤ 
+
+> pv
+
+HL 
+
+> fc
+
+Dpw + . . . Tensor terms decompose analogously. 
+
+Definition 66 (Path resonance) . R(pv , p w) := ∥Infl( pv , p w; c)∥F .
+
+Corollary 67 (Additivity of resonance over paths) . R(v, w ) ≤ P
+
+> c
+
+P  
+
+> pv,p w
+
+R(pv , p w). Equality holds when all path contributions are sign-aligned. Appendix G.3.2. Theoretical justification of skip connections 
+
+Definition 68 (Residual architecture) . A skip connection between nodes u ≺ v adds an edge (u, v ) with an identity (or linear) map: fv ← fv + Wskip fu.31 Theorem 69 (Geometric stabilization via skip connections) . Let Gbase be the base architecture, Gres the one with added identity skip connections, and let L be convex. Assume ∥HTv,w ∥F ≤ η∥HGN v,w ∥F with η < 1.Define B = ∆ J⊤∇2L Jbase + J⊤
+
+> base
+
+∇2L ∆J + ∆ J⊤∇2L ∆J. If B ⪰ 0, then for all v, w :
+
+Rres (v, w ) ≥ (1 − η) Rbase (v, w ). (Appendix G.3) 
+
+In the PSD regime ( HT = 0 ): Rres ≥ R base .Proof. With convex L, HGN = J⊤∇2L J ⪰ 0. Adding identity skip edges expands the path set. HGN [Gres ] = 
+
+HGN [Gbase ] + B. By B ⪰ 0: ∥HGN [Gres ]∥F ≥ ∥ HGN [Gbase ]∥F . For the full R = ∥HGN + HT ∥F : by the reverse triangle inequality and the smallness condition on HT : Rres ≥ (1 − η)Rbase .
+
+Remark 70 (Global vs. block-wise monotonicity) . The inequality is established for the full block matrix (global resonance). For individual blocks HGN v,w (v̸ = w, not necessarily PSD), analogous monotonicity is not guaranteed: skip connections may redistribute curvature energy between blocks. However, on average over the graph the total Frobenius norm does not decrease. 
+
+Theorem 71 (Resonance decay: vanilla vs. Pre-Activation ResNet) . Consider an L-layer network with contracting activations ( ∥Dvi+1 ←vi ∥2 ≤ ρ < 1). 
+
+(a) Vanilla (upper bound): Rvanilla (v0, v L) ≤ C · ρL → 0.
+
+(b) ResNet with identity skips every k layers (upper bound, independent of L): 
+
+RResNet (v0, v L) ≤ C · ρk (does not worsen as L → ∞ ). 
+
+(b ′) ResNet (lower bound, PSD regime): If HT = 0 and ∇2L ⪰ 0:
+
+RResNet (v0, v L) ≥ (1 − ρk)L/k ∥∇ 2L∥ F . (Appendix G.4) 
+
+The lower bound decays at rate ρk 
+
+> k
+
+(compared with ln 1 
+
+> ρ
+
+for the vanilla network — exponentially slower when 
+
+ρk ≪ 1). With residual branch scaling ∥DFi ∥2 ≤ αρ , α = c/L : (1 − (αρ )k)L/k → 1, i.e. the lower bound is 
+
+independent of L.Proof. (a) Single path ∥Dp∥2 ≤ ρL.
+
+(b) Each identity skip adds a path with Jacobian I. The shortest path from v0 to vL via skips consists of ⌈L/k ⌉ hops; each hop traverses at most k base edges ( ≤ ρk) plus a skip ( ∥D∥ = 1 ). By the triangle inequality the upper bound depends on k only. 
+
+(b ′) In Pre-Activation ResNet, the Jacobian of block j is I +Dres ,j with ∥Dres ,j ∥2 ≤ ρk. The full Jacobian factors as Dout ←v0 = QL/k j=1 (I + Dres ,j ). By multiplicativity of the minimum singular value: 
+
+σmin (Dout ←v0 ) ≥
+
+> L/k
+
+Y
+
+> j=1
+
+σmin (I + Dres ,j ) ≥
+
+> L/k
+
+Y
+
+> j=1
+
+(1 − ∥ Dres ,j ∥2) ≥ (1 − ρk)L/k ,
+
+where σmin (I +A) ≥ 1 − ∥ A∥2 follows from ∥(I +A)x∥ ≥ ∥ x∥ − ∥ Ax ∥ ≥ (1 −∥ A∥2)∥x∥.In the PSD regime: R(v0, v L) = ∥D⊤ 
+
+> out ←v0
+
+∇2L∥ F ≥ (1 − ρk)L/k ∥∇ 2L∥ F .
+
+Remark 72 (Cross-path terms and the lower bound) . The path decomposition (Theorem 65) writes the full Jacobian as Dout ←v0 = P 
+
+> p∈P
+
+Dp, where P is the set of paths from v0 to out . Substituting into the GN block gives 
+
+HGN v0,out =
+
+X 
+
+> p
+
+Dp
+
+⊤
+
+∇2L = X
+
+> p
+
+D⊤ 
+
+> p
+
+∇2L,
+
+and individual path contributions D⊤ 
+
+> p
+
+∇2L may partially cancel : the inequality ∥ P 
+
+> p
+
+D⊤ 
+
+> p
+
+A∥F ≥ ∥ D⊤
+
+> id
+
+A∥F
+
+does not hold in general. The proof of (b ′) circumvents this difficulty by applying σmin -multiplicativity to the factored product Q 
+
+> j
+
+(I + Dres ,j ) rather than to the element-wise sum of paths, thereby handling cross-path interactions automatically through the minimum singular value of the full Jacobian without the need to control their signs. 32 Corollary 73 (Criterion of geometric stability) . An architecture is geometrically stable (resonance does not decay with depth) iff for every pair of distant layers (v, w ) there exists a path p with ∥Dp∥2 ≥ ϵ > 0
+
+independent of dist( v, w ).Remark 74 (Architectural consequences of path analysis) . (1) ResNet: ρ2-stability via skips every 2 lay-ers (verified in Exp. 1 and Exp. 6). (2) DenseNet: exponential number of paths maximizes P R(pv , p w).(3) Transformer: attention creates “dynamic” skip connections (Exp. 5 verifies HTQ,K ̸ = 0 ). (4) U-Net: encoder–decoder skips maintain high C. Predictions (2) and (4) are structural consequences of Theorem 65 and remain to be validated empirically on the respective architectures. 
+
+Proposition 75 (Optimal skip placement) . To minimize resonance loss in an L-layer network with a budget of B additional edges, the optimal strategy is uniform skip placement with step k = ⌊L/B ⌋, ensuring 
+
+min v,w R(v, w ) ≥ C · ρL/B .Proof sketch. By Theorem 77, resonance between layers v, w decays as (sρ )dist( v,w ). A skip edge of span k
+
+ensures that no pair of layers lies at graph distance exceeding k. Given B edges, the worst-case distance is minimized by uniform placement at intervals of k = ⌊L/B ⌋, yielding min v,w R(v, w ) ≥ C · ρ⌊L/B ⌋. Any non-uniform arrangement leaves a contiguous gap of length > k , strictly increasing the worst-case distance and reducing the minimum resonance. 
+
+Appendix H. Additional theoretical results 
+
+Appendix H.1. Structural sparsity of the Hessian 
+
+A key property of the inter-layer Hessian is its approximate sparsity: blocks Hfv,w decay exponentially with the graph distance between nodes. 
+
+Remark 76 (Computing blocks for a one-directional path) . If a directed path v →∗ w exists in the DAG (i.e. 
+
+v is an ancestor of w), the block Hfv,w satisfies 
+
+Hfv,w = X
+
+> u∈Ch( v)
+
+D⊤ 
+
+> u←v
+
+Hfu,w .
+
+This follows from the chain rule w.r.t. the first argument: every child u ∈ Ch( v) is closer to w in topological order, closing the recursion. 
+
+Theorem 77 (Exponential curvature sensitivity (Hessian vanishing/exploding)) . Let G = ( V, E ) be the DAG of a neural network with maximum out-degree s = max v |Ch( v)|. Assume Jacobian norms are bounded: 
+
+∥Du←v ∥2 ≤ ρ for all edges (v, u ) ∈ E, with sρ < 1. Then for the GN-resonance RGN (v, w ) := ∥HGN v,w ∥F :
+
+RGN (v, w ) ≤ CGN · (sρ )dist( v,w ), (Appendix H.1) 
+
+where dist( v, w ) is the shortest-path length in the undirected graph and CGN = ∥HGN 
+
+> out ,out
+
+∥F = ∥∇ 2L∥ F . For piecewise-linear activations (ReLU, Leaky ReLU) the tensor component HTv,w ≡ 0 a.e. (Theorem 46), and the bound extends to the full input resonance R(v, w ) = ∥Hfv,w ∥F .Proof. Denote by ℓv the length of the longest directed path from v to out (topological depth to output). The proof proceeds by strong induction on ℓv + ℓw.
+
+Base case: ℓv + ℓw = 0 means v = w = out ; RGN (out , out) = CGN = CGN · (sρ )0.
+
+Inductive step: Suppose ℓv + ℓw ≥ 1. WLOG ℓv ≥ ℓw (otherwise use ∥HGN v,w ∥F = ∥HGN w,v ∥F ). Then 
+
+ℓv ≥ 1, v̸ = out , and Ch( v)̸ = ∅.The GN recursion is closed (Theorem 7): HGN v,w = P 
+
+> u∈Ch( v)
+
+D⊤ 
+
+> u←v
+
+HGN u,w for arbitrary (v, w ), without restrictions on activation type. Bounding norms: 
+
+∥HGN v,w ∥F ≤ | Ch( v)| · ρ · max  
+
+> u∈Ch( v)
+
+∥HGN u,w ∥F ≤ sρ · max  
+
+> u∈Ch( v)
+
+∥HGN u,w ∥F .
+
+33 For each u ∈ Ch( v) we have ℓu ≤ ℓv − 1 (the path v → u → · · · → out is one edge longer than from u), so 
+
+ℓu + ℓw < ℓ v + ℓw and by the inductive hypothesis ∥HGN u,w ∥F ≤ CGN (sρ )dist( u,w ).By the triangle inequality in the undirected graph, dist( u, w ) ≥ dist( v, w ) − 1 (since u is a neighbor of v,i.e. dist( v, u ) = 1 ). With sρ < 1:
+
+sρ · CGN (sρ )dist( u,w ) ≤ sρ · CGN (sρ )dist( v,w )−1 = CGN (sρ )dist( v,w ).
+
+Corollary 78 (Block-banded structure) . For deep networks ( L ≫ 1) with sρ < 1, the full Hessian ∇2 
+
+> θ
+
+L
+
+is approximately block-banded : GN-blocks HGN v,w with dist( v, w ) > k ∗ are negligible, where the threshold k∗
+
+is determined by (sρ )k∗
+
+< ε for a given accuracy ε. For piecewise-linear activations (Proposition 10) this extends to the full input blocks Hfv,w .
+
+Definition 79 (Interaction radius) . The interaction radius kε for a given accuracy ε > 0 is the minimum integer k such that 
+
+C · (sρ )k < ε · ∥ Hfv,v ∥F for all v ∈ V. 
+
+Blocks Hfv,w with dist( v, w ) > k ε are set to zero, reducing the complexity from O(n2) to O(n · kε) blocks. 
+
+Remark 80 (Practical significance) . Theorem 77 explains the empirical observation of block-diagonal Hessian structure in deep networks and justifies “block-diagonal Hessian” approximations used in K-FAC and related methods. 
+
+Remark 81 (Mathematical justification of the “edge of chaos”) . Theorem 77 mathematically proves the “edge of chaos” phenomenon for curvature : vanilla networks without residual connections are structurally unstable and require strict balancing ρ = 1 (empirically achieved via He init (Hanin and Rolnick, 2019) and BatchNorm) to prevent exponential decay or explosion of the Hessian. While initialization can achieve 
+
+ρ ≈ 1, during training of vanilla networks the spectral norm of layers inevitably deviates from 1. The theorem shows that vanilla networks are structurally unstable to such deviations (requiring infinitely precise balancing ρ = 1 ): 
+
+• for ρ slightly below 1, the curvature signal decays exponentially: R(v, w ) → 0;
+
+• for ρ slightly above 1 or s > 1 (branching), path contributions explode (gradient/curvature explosion). This agrees with mean-field theory (Schoenholz et al., 2017; Poole et al., 2016), where ρ = 1 corresponds to the critical phase-transition point. Theorem 71 rigorously shows that skip connections (ResNet) break this rigid requirement , guaranteeing R(v0, v L) ≥ C > 0 independently of L. Balduzzi et al. (2017) showed analogous O(2 −L) decay of gradient correlations. 
+
+Appendix H.2. Negative curvature and saddle points 
+
+The full Hessian, unlike the Gauss–Newton approximation, can detect saddle points through analysis of negative eigenvalues. 
+
+Definition 82 (Negative curvature mass) . For a symmetric matrix H with eigenvalues {λi}ni=1 , define the 
+
+negative curvature mass :
+
+m−(H) := X
+
+> λi<0
+
+|λi|. (Appendix H.2) 
+
+Theorem 83 (GN insensitivity to saddle points) . Let L be a convex loss (e.g. MSE or cross-entropy). Then: 1. The Gauss–Newton component HGN is always positive semi-definite: m−(HGN ) = 0 .2. The full Hessian Hf ull = HGN + HT may have m−(Hf ull ) > 0, indicating a saddle point. 3. Negative curvature arises exclusively from the tensor component HT .
+
+34 Proof. Item 1: HGN is a sum of matrices of the form D⊤ 
+
+> c←v
+
+HL
+
+> out
+
+Dc←w, where HL 
+
+> out
+
+⪰ 0 for convex L (see proof of Theorem 7). Item 2: the tensor component contains terms P 
+
+> i
+
+Tu;v,w δu,i where δu,i can be negative (e.g. under mis-classification) and the tensors T need not be PSD. Item 3: the tensor component HT contains cross-blocks Hfu1,u 2 (u1̸ = u2) through tensor terms T
+
+combined with backpropagated residuals δu,i , which can be negative. The tensors T need not be PSD. 
+
+Remark 84 (Connection to the ReLU paradox) . For piecewise-linear activations (ReLU, Leaky ReLU) Tv = 0 
+
+a.e. (the second derivative of a piecewise-linear function is zero), so HTv,w = 0 and Hfv,w = HGN v,w ⪰ 0 in activation space. Consequently m−(Hf ) = 0 a.e.: the input Hessian contains no negative curvature. The parametric Hessian equation Appendix F.1 retains a residual term determined by the structure of node functions, but does not contain σ′′ (see GN-Gap metric, Definition 11). 
+
+Proposition 85 (Escape directions from saddle points) . Let Hf ull have spectral decomposition Hf ull =P 
+
+> i
+
+λiviv⊤ 
+
+> i
+
+. Then the eigenvectors {vi : λi < 0} corresponding to negative eigenvalues define escape directions from the saddle point. Moving along ±vi (for λi < 0) is guaranteed to decrease the loss (for a sufficiently small step), since curvature is symmetric w.r.t. the sign of vi. This is a classical property of saddle points; the key contribution of the present work is proving that negative curvature is contained exclusively in the tensor component HT (Theorem 83). Proof. By the Taylor expansion: 
+
+L(θ + αv i) = L(θ) + α∇L ⊤vi + α2 
+
+> 2
+
+v⊤ 
+
+> i
+
+Hv i + O(α3).
+
+At a saddle point ∇L = 0 , so 
+
+L(θ + αv i) − L (θ) = α2 
+
+> 2
+
+λi + O(α3).
+
+For λi < 0 and sufficiently small α > 0: L(θ + αv i) < L(θ).
+
+Corollary 86 (Practical application) . For efficient escape from saddle points, an optimizer can: (1) compute the full Hessian (not just the GN approximation); (2) find the smallest eigenvalue λmin and the corresponding eigenvector vmin ; (3) if λmin < −τ (for a threshold τ > 0), take a step along ±vmin . At a strict saddle (∇L = 0 ) the sign does not matter. In practice, in saddle neighborhoods ( ∇L̸ = 0 but ∥∇L∥ is small), choose the sign ensuring descent: −sign( ∇L ⊤vmin ) · vmin . This decomposition provides a formal tool for analyzing negative curvature directions (cf. Dauphin et al. 2014). Appendix H.3. Functional-analytic properties of the Hessian 
+
+Under Assumption 2: in the smooth case (A), ∇2 
+
+> θ
+
+L is continuous on RP ; in the non-smooth case (B), the Clarke Hessian coincides with the ordinary one a.e., and the AD-Hessian at singular points is an element of a conservative field (Bolte and Pauwels, 2021). 
+
+Appendix H.4. Integration of specialized architectural components 
+
+Theorem 87 (Integration of specialized layers) . The following architectural components can be represented as DAG nodes and included in the framework: 1. Batch Normalization: represented as a node with two parameter types (scale and shift) and addi-tional internal variables (batch statistics). 2. Residual connections (ResNet): modeled via parallel paths in the graph with subsequent merging. 3. Recurrent networks: mapped to a DAG by unrolling in time, where each time step is a separate subgraph with shared parameters. 
+
+Note. Attention mechanisms (softmax + weighted sum) are formally representable as a DAG subgraph; an explicit derivation of the tensors T for Softmax, cross-blocks between Q, K, V, and architectural consequences is given in Appendix M (single-head case; the multi-head extension reduces to block diagonalization). 
+
+35 Proof sketch. For each layer type one defines the node functions gv and their first and second derivatives. For example, for Batch Normalization: 
+
+gv (x, γ, β ) = γ x − μB
+
+pσ2 
+
+> B
+
++ ϵ + β, 
+
+where μB , σ 2 
+
+> B
+
+are the batch mean and variance, γ, β are scale and shift parameters. The Jacobians Dv and second-derivative tensors Tv are computed by standard differentiation rules for each node type, after which the general formulas equation 2 and equation 5 apply. 
+
+Appendix H.5. Stochastic nodes Remark 88 (Reduction to a deterministic DAG) . Stochastic nodes fv ∼ p(fv | fPa( v), θ v ) reduce to the deterministic formalism via the reparameterization trick: fv = h(fPa( v), θ v , ε ), ε ∼ p(ε). After this, ε
+
+becomes an additional input node of the DAG without parameters, and formulas equation 2,equation 5 apply without modification to Eε[L]. Thus, the stochastic case requires no separate theory — it is a special case of the deterministic DAG formalism. 
+
+Appendix I. Full Hessian computation algorithm 
+
+Appendix I.1. Recursive HVP via graph recursion 
+
+The graph recursion naturally yields a recursive algorithm for computing the Hessian–vector product (HVP), analogous to the classical Pearlmutter algorithm (Pearlmutter, 1994) but operating at the level of 
+
+input blocks Hfv,w . For a direction r ∈ RP , the product ∇2 
+
+> θ
+
+L · r is computed in a single pass: 
+
+[∇2 
+
+> θ
+
+L · r]θv = D⊤
+
+> v
+
+X 
+
+> w
+
+Hfv,w 
+
+X
+
+> w′
+
+Dw′ rθw′
+
+
+
++ X
+
+> i
+
+Tv;iδv,i rθv , (Appendix I.1) where the sum over w runs over nodes with common descendants and Dv = ∂f v /∂θ v . The product Hfv,w ·
+
+(P 
+
+> w
+
+Dwrθw ) does not require explicit storage of Hfv,w ; a vector of dimension dv suffices. The total cost equals one forward+backward pass: O(Tfwd + Tbwd ).
+
+Appendix I.2. Full algorithm 
+
+Algorithm 5 Full Hessian computation for a neural network            
+
+> Require: DAG G= ( V, E ), functions {gv}, parameters {θv}, loss L
+> Ensure: Full Hessian ∇2
+> θL
+
+1: Forward pass: compute fv for all v ∈ V
+
+2: δout ← ∇ fout L; Hf 
+
+> out ,out ← ∇ 2L(fout )
+
+3: for v ∈ V \ { out } in reverse topological order do ▷ Boundary blocks 
+
+4: Hfv, out ← P     
+
+> u∈Ch( v)D⊤
+> u←vHfu, out ;Hf
+> out ,v ←(Hfv, out )⊤
+
+5: end for 
+
+6: Initialize Hfv,w = 0 for v, w ̸ = out 
+
+7: for v ∈ V in reverse topological order do ▷ Internal blocks 
+
+8: Compute δv by chain rule 
+
+9: for w̸ = out : Ch( v)̸ = ∅ or Ch( w)̸ = ∅ do 
+
+10: Compute Hfv,w via equation 2 
+
+11: end for 
+
+12: end for 
+
+13: for v ∈ V do 
+
+14: for w: ∃ paths v → u, w → u do 
+
+15: Compute Hθv ,θw via equation 5 
+
+16: end for 
+
+17: end for 
+
+18: // Weight sharing 
+
+19: for θ ∈ SharedParams do 
+
+20: Vθ ← NodesWithParam (θ)
+
+21: Hθ,θ ← P 
+
+> v,w ∈VθHθv ,θw
+
+22: Update block of H for θ
+
+23: end for 
+
+24: Assemble blocks into ∇2 
+
+> θL
+
+25: return ∇2 
+
+> θL
+
+36 Appendix J. Full proof of the computational complexity theorem Proposition 89 (Computational complexity) . Let |V | = n, P = P 
+
+> v∈V
+
+pv , d = max v dv , s = max v |Pa( v) ∪
+
+Ch( v)|. Then: 1. The time complexity of computing the full Hessian is O(nsd 3 + nsd 2P + P 2) in the general case with dense tensors. 2. For networks with element-wise activation functions (ReLU, sigmoid), where tensors Tu;v and Tu;v,w 
+
+are diagonal or sparse with O(d) cost, the total time reduces to O(nsd 2 + nsdP + P 2).3. The space complexity of storing the full Hessian is O(P 2).4. For a fully connected DAG ( s = O(n)) the time complexity is O(n2d3 + n2d2P + P 2).Proof. 1. Computing the input Hessian Hfv,w :
+
+By formula equation 2, for each pair (v, w ): compute Jacobians Du1←v and Du2←w for all (u1, u 2) ∈
+
+Ch( v) × Ch( w): O(s2d2) per pair; compute blocks Hfu1,u 2 (recursively) and multiply D⊤ 
+
+> u1←v
+
+Hfu1,u 2 Du2←w:
+
+O(s2d3); compute mixed-derivative tensor contractions for u ∈ Ch( v) ∩ Ch( w): O(sd 3). Per pair: O(s2d3).The number of pairs with non-empty Ch( v) ∪ Ch( w) is at most O(ns ), giving O(ns 3d3) worst-case. For 
+
+s = O(1) (chains, trees) this reduces to O(nd 3), and the overall cost is O(nsd 3).
+
+2. Computing the parametric Hessian Hθv ,θ w : Total for all pairs: O(nsdP ). If Tu;v are diagonal (element-wise activations), the cost reduces to O(nsdP + P 2).
+
+3. Assembly: O(P 2) for placing blocks. Total: O(nsd 3 + nsd 2P + P 2).
+
+Corollary 90 (Summary of computational costs) . Let n = |V |, P the total number of parameters, d =max v dv , s = max v |Pa( v) ∪ Ch( v)|. (1) Metrics R, C, D: the block Hfv,w ∈ Rdv ×dw is computed without building the full P × P Hessian; when even the block cannot be stored, the Hutchinson stochastic estima-tor (Avron and Toledo, 2011) is used: ∥Hfv,w ∥2 
+
+> F
+
+= Ez [z⊤A⊤Az ], where each Az is one HVP, O(P ) time, 
+
+O(P ) memory. For the stable rank D, one additionally needs ∥H∥22 via power iteration ( T iterations, 2T
+
+HVPs); total cost O(( m + 2 T ) · P ) (Algorithm 4). (2) Full Hessian: O(nsd 3 + nsd 2P + P 2); with diagonal tensors (ReLU): O(nsd 2 + nsdP + P 2). (3) HVP: O(Tfwd + Tbwd ); for fully connected layers: O(P ).
+
+Appendix K. Low-rank approximation and cost reduction 
+
+The low-rank structure of inter-layer blocks Hfv,w is a mathematical property of DAG architectures 
+
+following from Theorem 77 on exponential resonance decay and Corollary 56 on the rank bound. 
+
+Definition 91 (Low-rank factorization) . For a block Hfv,w ∈ Rdv ×dw , define the rank-r approximation :
+
+Hfv,w ≈ ˜Hfv,w := Uv,w Sv,w V ⊤
+
+> v,w
+
+, (Appendix K.1) where Uv,w ∈ Rdv ×r , Sv,w ∈ Rr×r diagonal, Vv,w ∈ Rdw ×r , and r ≪ min( dv , d w). The optimal Frobenius-norm approximation is given by truncated SVD. 
+
+Proposition 92 (Recursive factor update) . If Hfu,u = UuSuV ⊤ 
+
+> u
+
+is a rank-r factorization, then the GN component of Hfv,w inherits low-rank structure: 
+
+HGN v,w = X
+
+> u
+
+D⊤ 
+
+> u←v
+
+UuSuV ⊤ 
+
+> u
+
+Du←w = ˜U ˜S ˜V ⊤, (Appendix K.2) 
+
+where ˜U = [ D⊤ 
+
+> u1←v
+
+Uu1 , . . . ] has at most kr columns ( k = |Ch( v)| · | Ch( w)|). A fixed rank r is maintained via repeated SVD truncation. 
+
+37 Theorem 93 (Approximation error bound) . Let σ1 ≥ σ2 ≥ · · · ≥ σdmin be the singular values of Hfv,w 
+
+(dmin = min( dv , d w)). Then for the rank-r approximation: 
+
+∥Hfv,w − ˜Hfv,w ∥F =
+
+vuut dmin X
+
+> i=r+1
+
+σ2 
+
+> i
+
+≤ pdmin − r · σr+1 . (Appendix K.3) 
+
+In particular, if σr+1 ≤ εσ 1:
+
+∥Hfv,w − ˜Hfv,w ∥F
+
+∥Hfv,w ∥F
+
+≤ εpdmin − r. 
+
+Proof. By the Eckart–Young–Mirsky theorem, truncated SVD gives the best rank-r approximation in Frobe-nius norm. The error equals the Frobenius norm of the discarded part: ∥Hfv,w − ˜Hfv,w ∥2 
+
+> F
+
+= Pdmin  
+
+> i=r+1
+
+σ2 
+
+> i
+
+. The bound via σr+1 follows from σi ≤ σr+1 for i > r .
+
+Corollary 94 (Rank selection) . For relative accuracy ε it suffices to choose rank r such that 
+
+r = min 
+
+n
+
+k : σk+1 
+
+σ1
+
+≤ ε
+
+√dmin − k
+
+o
+
+.
+
+Due to exponential resonance decay (Theorem 77), for pairs (v, w ) with large dist( v, w ) a very small rank 
+
+r = O(1) suffices. Remark 95 (Complexity consequences) . The low-rank structure guaranteed by Theorem 77 and Corollary 56 automatically reduces the cost of working with inter-layer blocks: storage O(dv dw) → O(( dv + dw)r);multiplication O(dv dw) → O(( dv + dw)r). Combined with the block-banded structure (Corollary 78), the full Hessian is stored in O(n · kε · d · r).
+
+Remark 96 (Cost reduction methods) . Approaches for reducing the computational cost of the full Hessian: (1) Block approximation: computing only diagonal blocks Hθv ,θ v reduces cost to O(nd 3 +P d 2). (2) Low-rank approximation: approximating off-diagonal blocks by rank-r products reduces cost to O(n2d3 +
+
+n2d2r + P r ). (3) Gauss–Newton approximation: using only the first term in equation 2 and equation 5 reduces cost and guarantees PSD. (4) Kronecker factorization: representing matrix blocks as Kronecker products of smaller matrices. 
+
+Remark 97 (Stability and invariance) . The relative recursion error under local perturbations of Jacobians (ϵD ) and tensors ( ϵT ) grows linearly with depth: εv,w ≤ dist( v, w )(2 ϵD + ϵT ) + O(ϵ2). At standard machine precision the protocol is stable for networks of depth L < 10 6 (float32). Geometric coupling C(v, w ) is invariant under weight rescaling Wv 7 → αW v , Ww 7 → α−1Ww. Detailed analysis: Appendix B. 
+
+Remark 98 (Convergence of optimization methods) . Using the full Hessian (or its regularized Clarke ana-log Ht + λI ) in Newton’s method ensures quadratic/superlinear convergence in a neighborhood of regular minima. Details: Appendix C. 
+
+Appendix L. Continuity of the Clarke Hessian Theorem 99 (Hausdorff continuity for piecewise-linear networks) . Let F : Rd → Rm be a piecewise-linear neural network (ReLU activations), ℓ ∈ C2(Rm, R), L = ℓ ◦ F . Then the set-valued map x 7 → ∂2 
+
+> C
+
+L(x) is upper semi-continuous in the Hausdorff metric. Proof sketch. ∂2 
+
+> C
+
+L(x) = co {lim ∇2L(xk) : xk → x, x k ∈ D} . For piecewise-linear F the number of linear regions is finite (Serra et al., 2018); inside each region ∇2L is continuous. On a region boundary ∂2 
+
+> C
+
+L(x)
+
+is the convex hull of finitely many limits (one per adjacent region), and upper semi-continuity follows by standard arguments (Rockafellar and Wets, 1998, Thm 5.19). Continuity of the AD-Hessian at smooth points given continuity of this set follows from (Rockafellar and Wets, 1998, Thm 1.17). 38 Appendix M. Example: Attention block (Softmax × Value) 
+
+To confirm the applicability of the framework to Transformer architectures, we analyze a single-head Attention block as a DAG subgraph. 
+
+Appendix M.1. DAG representation 
+
+Single-head Attention: input X ∈ Rn×d, three linear nodes: 
+
+Q = XW Q, K = XW K , V = XW V ,WQ, W K ∈ Rd×dk , W V ∈ Rd×dv .
+
+Softmax node: A = σ(QK ⊤/√dk) ∈ Rn×n, where σ(Z)ij = exp( Zij )/ P 
+
+> k
+
+exp( Zik ). Output node: O =
+
+AV ∈ Rn×dv .
+
+Remark 100 (DAG structure of Attention) . In terms of our formalism, the Attention block is a DAG with 5 nodes: {vin , v Q, v K , v V , v out }, where vout combines Softmax and multiplication by V . Parameters: θQ = WQ,
+
+θK = WK , θV = WV . Parents of vout : Pa( vout ) = {vQ, v K , v V }.
+
+Appendix M.2. Softmax Jacobian and Hessian 
+
+The Softmax Jacobian w.r.t. logits z ∈ Rn (fixing a row of QK ⊤/√dk): 
+
+∂σ i
+
+∂z j
+
+= σi(δij − σj ) =: Sij , (Appendix M.1) where S = diag( σ) − σσ ⊤ is a dense n×n matrix. The Hessian (tensor T in our notation) for the i-th output: 
+
+[Tσ;z ]i,j,k = ∂2σi
+
+∂z j ∂z k
+
+= σi
+
+ δij δik − δij σk − δik σj − δjk σj + 2 σj σk
+
+.
+
+Remark 101 (Density of Softmax cross-blocks) . Since σi > 0 for all i, both S and Tσ;z are dense, meaning Softmax creates dense Hessian cross-blocks linking all sequence positions. This qualitatively distinguishes Attention from ReLU layers, where T is diagonal. 
+
+Appendix M.3. Cross-blocks between Q, K, and V 
+
+Applying formula equation 2 to node vout with Pa( vout ) = {vQ, v K , v V }:
+
+Proposition 102 (Attention cross-blocks) . Cross-blocks of the input Hessian for the Attention block: 1. HfQ,V : curvature from first derivatives (Softmax Jacobian S, multiplied by V ). Since O = AV , differ-entiation w.r.t. Q passes through A, w.r.t. V directly. The block is dense (all entries nonzero) along the positional index. 2. HfQ,K : both affect A through QK ⊤; the cross-block contains the tensor component Tσ;z (Softmax Hessian), dense along the positional index. This is the main source of HT inside the Attention block. 3. HfK,V : analogous to HfQ,V (symmetric role of K in QK ⊤). Sketch. By formula equation 2 the cross-block HfQ,K contains terms of the mixed (item 2 of equation 2) and propagated (item 1) type. For the pair (Q, K ): the common descendant vout has the mixed tensor 
+
+Tout; Q,K that includes the Softmax Hessian [Tσ;z ]i,j,k from equation Appendix M.2. Since σi > 0 for all i,the tensor T and the resulting block are dense .39 Appendix M.4. Consequences for architectural analysis Remark 103 (Structural consequences of Attention) .
+
+1. Loss of sparsity: Softmax destroys the Hessian sparsity inherent to ReLU networks. The block-banded approximation (Corollary 78) is inapplicable inside an Attention block: all tokens exchange curvature through the dense tensor S. The effective dimension deff inflates along the sequence-length axis. 2. Q–K curvature: the main source of the tensor component HT in Transformers is the Softmax Hessian between Query and Key. This explains empirical observations of Transformer training instability without warmup or normalization: a large GN-Gap for the (Q,K) pair indicates significance of HT .3. Attention as a fully connected graph: along the temporal/positional axis, Attention acts as a fully connected DAG subgraph, explaining global training coordination but making cross-blocks computationally dense ( n2 nonzero entries). The full multi-head analysis (multi-head attention with parameter sharing across heads and output projec-tion WO ) reduces to block diagonalization by heads followed by a linear projection and requires no new formalism. 
+
+Appendix N. Additional experimental results 
+
+Table Appendix N.1 reports the metrics Dfar and Cfar for BottleneckMLP with L = 8 (protocol identical to Exp. 2 in the main text, L = 6 ). Qualitatively the pattern persists: Dfar grows monotonically with du.Quantitatively, Dinit far at L = 8 is 8–20% lower for du ≥ 64 , consistent with additional rank compression from the extra layers between the bottleneck and peripheral blocks. After training the difference is within seed variance ( Dfinal far differs by ≲ 10 % without systematic direction).                                                                                                                 
+
+> Table Appendix N.1: Exp. 2: bottleneck ablation ( L= 8 , CIFAR-100). Same protocol as Table 3 (mean ±1σover 5 seeds).
+> duDinit far Dfinal far Cinit far Cfinal far Acc (%) 41.58 ±0.43 2.44 ±0.17 0.20 ±0.08 0.33 ±0.01 9.6 ‡
+> 82.43 ±0.30 3.92 ±0.39 0.34 ±0.08 0.45 ±0.04 14.1 16 4.27 ±0.57 5.01 ±0.62 0.43 ±0.03 0.56 ±0.01 17.7 32 6.36 ±0.69 5.13 ±0.45 0.51 ±0.03 0.62 ±0.01 19.1 64 6.40 ±0.60 5.41 ±0.55 0.58 ±0.02 0.68 ±0.03 20.5 128 7.90 ±0.28 4.89 ±0.53 0.65 ±0.01 0.76 ±0.02 21.4 256 8.60 ±0.51 5.73 ±0.47 0.69 ±0.01 0.79 ±0.02 22.2
+> 512 †9.21 ±0.65 4.89 ±0.33 0.70 ±0.02 0.81 ±0.01 22.4
+
+Appendix N.1. Exp. 1b: Verification of the theorem under spectral normalization 
+
+Motivation. In the standard regime (He init, width = 64 ) ρmax > 1 and the sufficient condition of Theorem 26 is not satisfied (Section 5.1). For direct verification of the theorem in its own regime we repeat the Exp. 1 protocol with two modifications: (i) spectral normalization (Miyato et al., 2018) on all Linear layers of Plain MLP, guaranteeing ∥Wi∥2 = 1 ; (ii) LayerNorm disabled to ensure piecewise linearity. With ReLU activation: ∥Dblock ∥2 = ∥diag( σ′) · W ∥2 ≤ ∥ W ∥2 = 1 , so ρ ≤ 1 by construction; for a chain 
+
+s = max v |Ch( v)| = 1 and the condition sρ = ρ ≤ 1 holds (strictly at initialization: ρmax ≈ 0.91 ). 
+
+Protocol. Plain MLP (width 64, depths L ∈ { 8, 12 , 16 }, CIFAR-10, 50 epochs) with spectral normaliza-tion. Residual MLP as control (no SN, as in Exp. 1). All metrics ¯R(d), ¯C(d), ρ, λ1 computed by the same protocol. 
+
+Results (Table Appendix N.2, Figure Appendix N.1). (a) ρmax ≤ 1 at initialization for all depths; after training ρmax ≈ 1.0 (slight excess ≤ 1.04 at L = 8 due to finite precision of spectral normalization). 40 (b) At initialization ( ρ ≈ 0.91 < 1), ¯R(d) decays exponentially with d for all depths — a direct verification of inequality equation 10. After training the decay rate is determined by λ1: strong decay for L ≥ 12 
+
+(λ1 ≈ − 1.0), weak for L = 8 (ρ → 1, boundary of the theorem condition). (c) The Lyapunov exponent 
+
+λ1 < 0 for all configurations: λ1 ≈ − 1.0 at init and −1.0–−0.2 after training — the network operates in the contracting regime. (d) Accuracy of Plain SN drops sharply with depth (36.3% at L = 8 ; 10.0% at L ≥ 12 ), confirming that strict curvature suppression ( ρ ≤ 1) leads to vanishing curvature and loss of trainability. Residual MLP (control) stably reaches ≈ 51% .                                                             
+
+> Table Appendix N.2: Exp. 1b: spectral normalization. Same metrics as Table 2. Plain SN guarantees ρ≤1and λ1<0;Residual MLP as control without SN (CIFAR-10, mean over 5 seeds).
+> LArch. ρinit max ρfinal max λinit 1λfinal 1Acc (%) 8Plain SN 0.91 1.00 −1.01 −0.24 36.3 8Res. 1.25 1.33 0.02 0.04 51.3 12 Plain SN 0.91 0.89 −1.01 −1.03 10.0 12 Res. 1.20 1.25 0.01 0.03 51.3 16 Plain SN 0.91 0.90 −1.01 −1.03 10.0 16 Res. 1.17 1.20 0.01 0.02 51.0
+> 0246810 12 14 16
+> 10 −8
+> 10 −5
+> 10 −2
+
+Distance d                                   
+
+> ¯R(d)
+> L= 8 init
+> L= 12 init
+> L= 16 init
+> L= 8 final
+> L= 12 final
+> Figure Appendix N.1: Exp. 1b: resonance ¯R(d)under spectral normalization (Plain SN). Solid curves — initialization ( ρ≈
+> 0.91 <1): exponential decay over ∼5.5orders of magnitude at L= 16 , directly verifying inequality equation 10. Dashed — after training: at L= 8 (ρ→1.0)Rplateaus at ≈0.94 (boundary of the theorem condition); at L= 12 decay persists ( λ1<0). Error bands: ±1σover 5 seeds.
+
+Appendix N.2. Exp. 1: depths L = 16 and L = 32 
+
+Table Appendix N.3 extends the Exp. 1 results to depths L ∈ { 16 , 32 }. Exponential decay of ¯R(d)
+
+persists up to L = 32 : the ratio ¯R(0) / ¯R(L−1) reaches 5.9× (L = 32 , plain, init), and the normalized coupling ¯C(L−1) drops to 0.145. Residual MLP demonstrates stability of ¯R(d) for all depths and training phases ( ¯C(L−1) > 0.91 ). For L = 32 (plain, final), ¯R(d) exhibits a U-shaped pattern: decay from 1.75 to a minimum of ≈0.33 at 
+
+d = 14 , then rise to 0.52 at d = 31 . The cause is non-uniform self-curvature: layers near the output train more and have larger R(v, v ); at large d few pairs remain, biased toward high-resonance output layers. The normalized coupling ¯C(d) corrects this artifact and decays monotonically ( R2 > 0.91 ). 41 Table Appendix N.3: Exp. 1: metrics for depths L ∈ { 16 , 32 } (CIFAR-10, width = 128 , mean ±1σ over 5 seeds; stochastic estimation: 100 Rademacher probes, subsample 64). ¯R(0) / ¯R(L−1) — resonance of nearest/most distant pairs; ¯C(L−1) —coupling at maximum distance. 
+
+L Arch. Phase ρmax ¯R(0) ¯R(L−1) ¯C(L−1) 
+
+16 Plain init 2.59 ± 0.19 0.072 ± 0.018 0.021 ± 0.001 0.263 
+
+16 Plain final 2.56 ± 0.03 4.852 ± 1.219 0.80 ± 0.13 0.624 
+
+16 Res. init 1.17 ± 0.00 0.121 ± 0.005 0.12 ± 0.00 0.983 
+
+16 Res. final 1.21 ± 0.01 2.156 ± 0.111 1.44 ± 0.08 0.887 
+
+32 Plain init 2.71 ± 0.13 0.067 ± 0.018 0.011 ± 0.003 0.145 
+
+32 Plain final 2.62 ± 0.03 1.750 ± 0.530 0.52 ± 0.16 0.403 
+
+32 Res. init 1.12 ± 0.00 0.120 ± 0.004 0.12 ± 0.00 0.986 
+
+32 Res. final 1.13 ± 0.00 2.176 ± 0.082 1.48 ± 0.05 0.915 
+
+Appendix N.3. Exp. 4: GN-Gap by branch depth k ∈ { 1, 2, 3}
+
+Table Appendix N.4 extends the Exp. 4 results from the main text ( k = 2 ) with data for k = 1 and k = 3 .The qualitative picture is independent of k: cat+SiLU (nonlinear merging, σ′′ ̸ = 0 ) exhibits Gap GN > 1 at initialization for all k; remaining configurations stay at machine precision ( ∼ 10 −8). The variation of Gap across k for cat+SiLU is less than 3% at init and ∼15% at final, confirming the robustness of the conclusion about the dominant role of merging type and activation, not branch depth. 
+
+Table Appendix N.4: Exp. 4: GN-Gap at the merging node of Diamond MLP for k ∈ { 1, 2, 3} (width = 32 , CIFAR-10, mean over 5 seeds). 
+
+k Configuration Gap init Gap final ∥T ∥init  
+
+> F
+
+∥T ∥final 
+
+> F
+
+1 sum+ReLU 6.5·10 −8 8.7·10 −8 3.6·10 −9 2.5·10 −8
+
+1 sum+SiLU 6.5·10 −8 9.2·10 −8 3.5·10 −9 2.6·10 −8
+
+1 cat+ReLU 8.1·10 −8 1.2·10 −7 6.0·10 −10 5.6·10 −8
+
+1 cat+SiLU 1.35 0.078 6.6·10 −3 3.3·10 −2
+
+2 sum+ReLU 6.7·10 −8 9.3·10 −8 4.1·10 −9 2.0·10 −8
+
+2 sum+SiLU 7.0·10 −8 9.6·10 −8 4.1·10 −9 2.0·10 −8
+
+2 cat+ReLU 8.4·10 −8 1.2·10 −7 6.6·10 −10 3.3·10 −8
+
+2 cat+SiLU 1.33 0.082 6.8·10 −3 2.5·10 −2
+
+3 sum+ReLU 6.5·10 −8 8.9·10 −8 3.8·10 −9 1.7·10 −8
+
+3 sum+SiLU 7.1·10 −8 9.4·10 −8 4.1·10 −9 1.9·10 −8
+
+3 cat+ReLU 8.3·10 −8 1.4·10 −7 7.6·10 −10 3.0·10 −8
+
+3 cat+SiLU 1.32 0.090 7.0·10 −3 2.1·10 −2
+
+Appendix N.4. Exp. 3: decomposition of ∥HT ∥F and ∥HGN ∥F by distance 
+
+Table Appendix N.5 reports the Frobenius norms of the tensor and Gauss–Newton components of the inter-layer Hessian by distance d for three smooth activations (init, L = 6 , width = 64 ). Both components decay exponentially with d; at maximum distance d = L−1 = 5 , ∥HT ∥F → 0 (structural zero: at the top level of recursion equation 2 tensor terms are absent; see Proposition 14). 42 Table Appendix N.5: Exp. 3: ∥HT ∥F and ∥HGN ∥F by distance d (init, L = 6 , width = 64 , CIFAR-10, mean over 5 seeds). At 
+
+d = 5 the tensor component vanishes ( HTd=L−1 ≡ 0). 
+
+d Activation ∥HT ∥F ∥HGN ∥F Gap GN 
+
+0 Softplus 1.50 ·10 −2 1.22 ·10 −1 0.123 
+
+0 SiLU 2.65 ·10 −2 1.17 ·10 −1 0.227 
+
+0 GELU 4.22 ·10 −2 1.17 ·10 −1 0.361 
+
+2 Softplus 1.24 ·10 −3 1.05 ·10 −2 0.119 
+
+2 SiLU 2.15 ·10 −3 9.59 ·10 −3 0.224 
+
+2 GELU 3.45 ·10 −3 9.70 ·10 −3 0.357 
+
+4 Softplus 7.68 ·10 −5 8.63 ·10 −4 0.089 
+
+4 SiLU 1.32 ·10 −4 7.88 ·10 −4 0.168 
+
+4 GELU 2.15 ·10 −4 8.04 ·10 −4 0.269 
+
+5 Softplus < 10 −10 2.37 ·10 −4 < 10 −7
+
+5 SiLU < 10 −10 2.08 ·10 −4 < 10 −7
+
+5 GELU < 10 −10 2.15 ·10 −4 < 10 −7
+
+Appendix N.5. Exp. 4: cross-branch resonance ¯RAB 
+
+2 3 4
+
+10 −2
+
+10 −1
+
+10 0
+
+Graph distance dgraph       
+
+> ¯RAB  (dgraph )
+> sum+ReLU init cat+ReLU init sum+SiLU init cat+SiLU init
+> sum+ReLU final cat+ReLU final sum+SiLU final cat+SiLU final
+
+Figure Appendix N.2: Exp. 4: cross-branch resonance ¯RAB (dgraph ) in Diamond MLP ( k = 2 ). Solid curves — initialization (decay with distance, H4.2a); dashed — after training (growth, H4.2b). All 4 configurations show R growth with dgraph at final ( 3.5–5.7× from d = 2 to d = 4 ). Error bands: ±1σ over 5 seeds. 
+
+Appendix N.6. Ablation: exact vs. stochastic estimation 
+
+To assess the sensitivity of the metrics to the Hessian computation method, we compare exact decomposi-tion (Exp. 3) with Hutchinson stochastic estimation using 30 Rademacher probes on the same configurations. Table Appendix N.6 reports the relative discrepancy of GN-Gap for smooth activations. The discrepancy does not exceed 0.82% at init and 0.33% at final — the stochastic estimator system-atically overestimates Gap by less than 1%, confirming the adequacy of the Hutchinson estimator with 30 probes for diagnosing the tensor component. In Exp. 1 at L ≥ 12 the stable rank D < 1 for distant pairs, indicating degeneration: the ratio ∥H∥2 
+
+> F
+
+/∥H∥22
+
+falls below unity due to estimation noise in ∥H∥F . For deep or wide networks we recommend scaling the number of probes as m ∝ min( dv , d w) or using exact block computations when dimensionality permits. The control run of Exp. 2 with dbase = du = 512 (uniform network without bottleneck; Table 3, †) shows 
+
+Dinit far = 11 .2 and Dfinal far = 5 .2 — in the absence of a narrow layer the stable rank is determined by network width and number of classes, consistent with the theoretical limit D ≤ min( du, K −1) .43 Table Appendix N.6: Ablation: GN-Gap discrepancy between exact and stochastic (30 probes) estimation (Exp. 3, L = 6 ,width = 64 , mean over 5 seeds). Activation Gap init exact Gap init stoch ∆init (%) ∆final (%) Softplus 0.122 0.123 0.82 0.25         
+
+> SiLU 0.225 0.226 0.46 0.33
+> GELU 0.358 0.359 0.43 0.31
+
+Appendix N.7. Exp. 5: Toy-Attention protocol and additional details 
+
+Architecture. ToyAttentionModel: input X ∈ RS×d (S = 8 , d = 16 ), single-head self-attention O =Softmax( QK ⊤/√d) V , mean-pool, Linear( d, 1). Parameters: 3d2 + d + 1 = 785 . ToyReluMLP: input X ∈
+
+RS×d, 3×[Linear( d, d )+ReLU] applied identically at each position (shared weights), mean-pool, Linear( d, 1). Parameters: 3( d2 +d) + d + 1 = 833 . Both models process input per-position and aggregate via mean-pool; the only structural difference is the nonlinearity (Softmax attention vs. position-wise ReLU). 
+
+Synthetic data. Teacher network with fixed random weights ( seed = 0 , independent of training seeds): 
+
+y = 1
+
+S
+
+> S
+
+X
+
+> s=1
+
+tanh  x⊤ 
+
+> s
+
+Wt
+
+ wr + ε, Wt ∈ Rd×d, w r ∈ Rd, ε ∼ N (0 , 0.01) .Wt,ij ∼ N (0 , 1/d ), wr,j ∼ N (0 , 1/d ). Training set: 2048 samples; validation: 512; targets standardized per training split. 
+
+GN-Gap computation. Both models expose a forward_with_intermediates method returning the graph of intermediate activations. For Attention, the pair (v, w ) = ( Q, K ); for ReLU-MLP, (block 0, block 1).The cross-Hessian ∂2L/∂f v ∂f w is computed exactly via second-order autograd; the Gauss–Newton compo-nent is HGN v,w = (2 /B ) PBb=1 J(b)⊤ 
+
+> v
+
+J(b) 
+
+> w
+
+(MSE loss with mean reduction, scalar output). 
+
+Appendix N.8. Exp. 6: ResNet-18 protocol and additional results 
+
+Architecture. SegmentedResNet18: standard torchvision ResNet-18 ( ∼11 M parameters) with 5 layer names (stem, layer1–layer4) and 6 segments. seg 5 = avgpool + flatten + fc is purely linear (no activation). SegmentedPlainResNet18: identical parameterization with identity shortcuts replaced by sequential conv– BN– σ paths; stride-based downsampling preserved. 
+
+Training details. SGD ( η = 0 .1, momentum 0.9, weight decay 5·10 −4), cosine schedule, 100 epochs, batch 128. CIFAR-10 augmentation: random crop 32 ×32 with padding 4, random horizontal flip, normal-ization to channel mean/std. Five seeds {42 , . . . , 46 }.
+
+Stochastic estimation. Hutchinson estimator: m = 30 Rademacher probes, subsample of 32 examples. Power iteration for ∥H∥22: T = 50 steps. NaN threshold: ˆ∥H∥22 < 10 −24 ⇒ D = NaN (segment contributes negligible curvature). GN-Gap estimator: m = 30 probes, common probe vector, analytical J⊤L′′ J compu-tation. 
+
+Mid-checkpoint results. Table Appendix N.7 provides the full set of metrics at the mid checkpoint (epoch 50), complementing the init and final data in the main text. 44 Table Appendix N.7: Exp. 6 (mid, epoch 50): metrics R, C, D by distance d (mean over 5 seeds). Test accuracy: ReLU ResNet 80 .8 % , ReLU Plain 77 .0 % , SiLU ResNet 79 .9 % , SiLU Plain 78 .4 % .Condition d R(d) C(d) D(d)
+
+ReLU ResNet 0 1.05 1.00 2.87 
+
+1 0.87 0.93 2.73 
+
+2 0.78 0.85 2.65 
+
+3 0.72 0.79 2.85 
+
+4 0.39 0.73 2.91 
+
+ReLU Plain 0 3.81 1.00 2.52 
+
+1 2.16 0.90 2.40 
+
+2 1.80 0.81 2.29 
+
+3 1.73 0.71 2.47 
+
+4 0.41 0.66 3.06 
+
+SiLU ResNet 0 2.60 1.00 3.47 
+
+1 1.68 0.90 3.33 
+
+2 1.27 0.83 3.30 
+
+3 1.64 0.74 3.30 
+
+4 0.49 0.61 2.95 
+
+SiLU Plain 0 3.89 1.00 2.79 
+
+1 2.30 0.87 2.64 
+
+2 1.61 0.79 2.29 
+
+3 1.87 0.72 2.46 
+
+4 0.45 0.60 2.51 
+
+GN-Gap across checkpoints. Table Appendix N.8 reports GN-Gap (d) for all three checkpoints. For ReLU conditions, Gap < 10 −5 at all checkpoints, consistent with Proposition 10. For SiLU conditions, the training dynamics of Gap are architecture-dependent: in Plain networks, Gap grows from near-zero at init to 0.1–0.2 at small distances ( d ≤ 1) as nonlinear curvature emerges, but slightly declines at larger d; in ResNet, skip connections yield a substantial init Gap ( 0.4–0.6 at d ≥ 1) that decreases during training as 
+
+HGN curvature dominates. At d = 4 (linear head), Gap ∼10 −6 for all conditions—the analogy with ReLU is explained by linearity of avgpool + fc (Remark 39). 
+
+Table Appendix N.8: Exp. 6: GN-Gap (d) across checkpoints (mean over 5 seeds). † At d = 4 the segment is purely linear (HT ≡ 0). Checkpoint Condition d = 0 d = 1 d = 2 d = 3 d = 4 †
+
+init ReLU ResNet <10 −5 <10 −5 <10 −5 <10 −5 <10 −5
+
+ReLU Plain <10 −5 <10 −5 <10 −5 <10 −5 <10 −5
+
+SiLU ResNet 0.426 0.526 0.619 0.642 <10 −5
+
+SiLU Plain 0.003 0.028 0.080 0.132 <10 −5
+
+mid ReLU ResNet <10 −5 <10 −5 <10 −5 <10 −5 <10 −5
+
+ReLU Plain <10 −5 <10 −5 <10 −5 <10 −5 <10 −5
+
+SiLU ResNet 0.274 0.144 0.137 0.136 <10 −5
+
+SiLU Plain 0.122 0.062 0.041 0.056 <10 −5
+
+final ReLU ResNet <10 −5 <10 −5 <10 −5 <10 −5 <10 −5
+
+ReLU Plain <10 −5 <10 −5 <10 −5 <10 −5 <10 −5
+
+SiLU ResNet 0.426 0.241 0.220 0.150 <10 −5
+
+SiLU Plain 0.213 0.118 0.058 0.054 <10 −5
+
+45

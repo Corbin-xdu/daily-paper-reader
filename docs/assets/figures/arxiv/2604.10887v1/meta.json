@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.10887v1/fig-001.webp",
+      "caption": "Figure 9: SiO2 etching yields from simulations using (a) CF2 and (b) CF3 at 50, 200, and 400 eV, obtained with 7net-Omni and 7net-Nano.",
+      "page": 15,
+      "index": 1,
+      "width": 479,
+      "height": 337
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10887v1/fig-002.webp",
+      "caption": "Figure 2: Benchmark performance of 7net-Nano across the standard tasks used for 7net-Omni validation: (a) Matbench, (b) defective crystals, (c) molecular systems, (d) metal-organic frameworks, and (e) surface reactions. Metrics and error values of 7net-Omni are adopted from Ref.14 TM and ASD denote transition metal and area-selective deposition, respectively.",
+      "page": 7,
+      "index": 2,
+      "width": 1034,
+      "height": 640
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10887v1/fig-003.webp",
+      "caption": "Figure 4: Li-ion diffusivities of 16 target SSEs obtained from (a) 7net-Omni, (b) 7net-0, (c) 7netNano-5.5 (rc = 5.5 Å), and (d) fine-tuned 7net-Nano-5.0 (rc = 5.0 Å), compared with DFT results. Distributions of (e) energy MAEs, (f) energy softening scales, (g) force MAEs, and (h) force softening scales for the MLIPs are also shown. The DFT diffusivities and trajectories used to compute the MLIP MAEs are adopted from Ref.52",
+      "page": 10,
+      "index": 3,
+      "width": 1051,
+      "height": 566
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10887v1/fig-004.webp",
+      "caption": "Figure 8: Quasi-static drag (QSD) calculations between the surface and a CF molecule. (a) Representative structure in which the F atom of CF is dragged toward a Si atom on the substrate. (b) DFT and MLIP predictions for energy variation as a function of the interatomic distance for the configuration in (a). In (b), Erel is defined by setting the energy of the configuration at the largest interatomic distance (corresponding to 1.3× the sum of covalent radii) to zero. Scatter plots of Erel from the QSD calculations are shown for (c) 7net-Omni and (d) 7net-Nano-5.5, based on 1,075 configurations with Erel > 10 eV.",
+      "page": 14,
+      "index": 4,
+      "width": 494,
+      "height": 516
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10887v1/fig-005.webp",
+      "caption": "Figure 1: Schematic illustration of the training of 7net-Nano via knowledge distillation from 7netOmni, along with its fine-tuning procedure.",
+      "page": 4,
+      "index": 5,
+      "width": 1044,
+      "height": 610
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10887v1/fig-006.webp",
+      "caption": "Figure 11: Speedup tests for amorphous SiO2 MD simulations with system sizes ranging from 70 to 70,000 atoms on an NVIDIA RTX PRO 6000 (80 GB). The performance of 7net-Omni, all 7net-Nano variants, and MACE-mp-0-small is compared in terms of (a) nanoseconds per day and (b) speedup relative to 7net-Omni. Data points for 7net-Omni beyond 15,120 atoms are omitted in (a) due to out-of-memory issues.",
+      "page": 17,
+      "index": 6,
+      "width": 496,
+      "height": 730
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10887v1/fig-007.webp",
+      "caption": "Figure 6: Comparison of experimental and calculated equilibrium densities of 20 Li-ion liquid electrolyte solvents, including cyclic carbonates, linear carbonates, ethers, and esters, obtained using (a) 7net-Omni, (b) 7net-0, and (c) 7netNano-5.5 (rc = 5.5 Å). (d) Equilibrium densities of DFEC, cis-DFEC, and trans-DFEC obtained using fine-tuned 7net-Nano-5.0. Corresponding densities from the original 7net-Nano-5.0 model prior to fine-tuning are denoted by ×. Results for 7net-0 are taken from Ref. [ 99–107].",
+      "page": 12,
+      "index": 7,
+      "width": 490,
+      "height": 574
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10887v1/fig-008.webp",
+      "caption": "Figure 7: MAEs of (a) energy and (b) force for MLIPs evaluated on structures sampled from melt–quench–anneal simulations of Si, SiC, SiO2, and fluorocarbons (FCs), as well as from etching trajectories generated using 7net-Omni. All errors are evaluated relative to the corresponding DFT results.",
+      "page": 12,
+      "index": 8,
+      "width": 495,
+      "height": 710
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10887v1/fig-009.webp",
+      "caption": "Table 1: Classifications, IUPAC names, and abbreviations of the Li-electrolyte solvents used in this study.",
+      "page": 5,
+      "index": 9,
+      "width": 512,
+      "height": 885
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10887v1/fig-010.webp",
+      "caption": "Figure 10: Si yield from SiO2 etching simulations using (a) CF2 and (b) CF3, comparing 7net-Omni, 7net-Nano-5.0, and fine-tuned 7netNano-5.0 (FT-7net-Nano-5.0). All three MLIPs simulate etching using a 4 nm2 surface model, while the fine-tuned 7net-Nano additionally employs a 9 nm2 surface model. Experimental ion-beam data from Refs.64,114–116 are included for comparison.",
+      "page": 16,
+      "index": 10,
+      "width": 479,
+      "height": 387
+    }
+  ]
+}
