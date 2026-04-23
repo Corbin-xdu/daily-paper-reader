@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.16522v1/fig-001.webp",
+      "caption": "Fig. 8. Tracking performance with different assignment cost thresholds τC in different sequences.",
+      "page": 11,
+      "index": 1,
+      "width": 481,
+      "height": 565
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16522v1/fig-002.webp",
+      "caption": "TABLE 2 PCK scores for various methods on Campus dataset frames 350 to 470 and 650 to 750, and Shelf dataset frames 300 to 600 (following the datasets guidelines for evaluation). The highest value (best result) for each column is bolded and underlined.",
+      "page": 11,
+      "index": 2,
+      "width": 1048,
+      "height": 215
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16522v1/fig-003.webp",
+      "caption": "Fig. 6. Camera reconfiguration setting and the OSPAp2q error of the proposed algorithm with YOLOX detector. Configuration (1): all cameras at positions 1, 2, 3, and 4 are on. Configuration (2): three cameras on at positions 2, 3, and 4. Configuration (3): three cameras on at random positions. Configuration (4): two cameras on at positions 1 and 3. Configuration (5): two cameras on at positions 2 and 4.",
+      "page": 10,
+      "index": 3,
+      "width": 469,
+      "height": 711
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16522v1/fig-004.webp",
+      "caption": "Fig. 1. Overview of the proposed algorithm with υ cameras.",
+      "page": 3,
+      "index": 4,
+      "width": 406,
+      "height": 308
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16522v1/fig-005.webp",
+      "caption": "TABLE 1 Tracking performance of different algorithms on CMC, WT, and MultiviewX datasets. The best result for each dataset is bolded and underlined.",
+      "page": 8,
+      "index": 5,
+      "width": 1077,
+      "height": 660
+    }
+  ]
+}

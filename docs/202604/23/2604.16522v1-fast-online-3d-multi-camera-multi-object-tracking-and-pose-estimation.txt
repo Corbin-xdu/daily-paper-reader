@@ -1,0 +1,1606 @@
+Title: Fast Online 3D Multi-Camera Multi-Object Tracking and Pose Estimation
+
+URL Source: https://arxiv.org/pdf/2604.16522v1
+
+Published Time: Tue, 21 Apr 2026 00:12:25 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+> 1
+
+# Fast Online 3D Multi-Camera Multi-Object Tracking and Pose Estimation 
+
+Linh Van Ma, Tran Thien Dat Nguyen, Moongu Jeon 
+
+✦
+
+Abstract —This paper proposes a fast and online method for jointly performing 3D multi-object tracking and pose estimation using multiple monocular cameras. Our algorithm requires only 2D bounding box and pose detections, eliminating the need for costly 3D training data or com-putationally expensive deep learning models. Our solution is an efficient implementation of a Bayes-optimal multi-object tracking filter, enhancing computational efficiency while maintaining accuracy. We demonstrate that our algorithm is significantly faster than state-of-the-art methods without compromising accuracy, using only publicly available pre-trained 2D detection models. We also illustrate the robust performance of our algorithm in scenarios where multiple cameras are intermittently discon-nected or reconnected during operation. 
+
+Index Terms —3D multi-object tracking, 3D multi-person pose estima-tion, multi-camera multi-object tracking, GLMB filter 
+
+1 INTRODUCTION 
+
+Tracking multiple objects and their poses in 3D using only cameras is an important problem in computer vision. This challenge hosts a range of applications, including sports analytics, age care, surveillance, and human-machine in-teraction [1], [2]. Recently, learning-based algorithms have demonstrated their effectiveness in estimating object 3D locations and poses. However, as outlined in [3], the prior knowledge acquired by these 3D models may not generalize well to scenarios outside their training datasets. Further, the process of labeling 3D training data is labor-intensive, and large models are often necessary for effective learning, which can extend inference times and render these 3D learning-based methods less suitable for real-time applica-tions. In contrast, 2D object detection and pose estimation have been effectively addressed in the literature. Compared to 3D models, 2D models require less memory and offer faster training and inference times. Additionally, the availability of 2D training data is currently greater and easier to obtain than 3D data, leading to more robust and generalizable algorithms. Well-known 2D detection algorithms such as YOLO [4], OpenPose [5], and AlphaPose [6] can detect humans and their poses in real-time with a high level of accuracy. 
+
+‚ Linh Van Ma and Moongu Jeon are with the School of Electrical Engineering and Computer Science at GIST, Gwangju, Korea (e-mail: 
+
+{linh.mavan, mgjeon }@gist.ac.kr). Tran Thien Dat Nguyen is with the School of Electrical Engineering, Computing and Mathematical Sciences, Curtin University, Australia (e-mail: t.nguyen1@curtin.edu.au). 
+
+Leveraging the advancement of 2D object and pose de-tection, a promising approach for real-time 3D multi-object tracking and pose estimation involves fusing 2D detections from multiple cameras to create 3D trajectories of poses. The algorithms presented in [7], [8] use 2D detection from various cameras to estimate 3D trajectories. These tech-niques are based on the multi-sensor generalized labeled multi-Bernoulli (MS-GLMB) filter [9], a Bayes-optimal filter designed for multi-object estimation. However, due to their consideration of multiple data association hypotheses, these methods can be computationally intensive, which limits their capability for real-time tracking. Further, they only estimate 3D trajectories and shapes, excluding 3D object poses in their estimation schemes. Our work is motivated by the need for real-time 3D multi-object tracking and pose estimation. Our approach relies solely on 2D object and pose detection. We consider the correspondence between 2D views as a multi-sensor multi-object estimation problem and address this challenge using the Bayes-optimal MS-GLMB filter. To reduce the com-putational costs, we propose a series of approximations to the filter, making real-time processing feasible. In summary, our contributions are:  
+
+> ‚
+
+A fast 3D algorithm for jointly estimating multi-object poses and trajectories that requires only 2D object bounding box and pose detections, designed for real-time applications.  
+
+> ‚
+
+The derivation of the proposed algorithm from Bayes-optimal multi-object tracking filter perspec-tive.  
+
+> ‚
+
+A comprehensive series of studies demonstrating the algorithm’s performance and robustness across various datasets and configurations. The rest of the paper is organized as follows. Section 2 presents a brief overview of related works in 2D and 3D visual object detection, tracking, and pose estimation. In Section 3, we propose an efficient algorithm for 3D multi-camera multi-object tracking and pose estimation using 2D detection. In Section 4, we detail the implementation of the proposed algorithm. Section 5 provides the rationale for our algorithm, which is an approximation of the Bayes-optimal MS-GLMB filter. Finally, the experimental results on various tracking scenarios and two ablation studies are presented in Section 6 while Section 7 concludes the paper. 
+
+> arXiv:2604.16522v1 [cs.CV] 16 Apr 2026 2
+
+2 RELATED WORKS 
+
+2.1 3D Multi-Camera Multi-Object Tracking 
+
+Early approaches in 3D object tracking use multiple cameras to track the head locations of pedestrians using homography transformation [10], [11]. The approaches in [12], [13] use deep-learning-based 3D detectors and a tracker to estimate 3D tracks. The recent approach in [14] utilizes a spatial-temporal lifted multi-cut formulation to track 3D objects, whereas [15] employs ground plane (birds-eye) information for early fusion to improve 3D tracking accuracy. However, these approaches only estimate object ground plane loca-tions, ignoring object 3D shapes and poses. The method in [16], while producing 3D trajectories, requires 3D detections. Nevertheless, training and inferring the 3D object detec-tion/tracking model is computationally demanding, and most of the trained 3D models need to be retrained when the camera geometry changes to achieve good performance. Hence, its applicability is limited in real-time applications. Recently, the online multi-camera multi-object tracking al-gorithm in [17] efficiently clusters 2D tracks from differ-ent cameras using hierarchical clustering, but the resultant tracks are not in 3D. An alternative is directly performing 3D tracking using 2D detection, in which the camera geometry is integrated into the tracker. The filters proposed in [7], [8], based on the MS-GLMB filter [9], follow such a pathway. However, their computation time is relatively high and not suitable for real-time tracking with a large number of objects. 
+
+2.2 3D Multi-Object Pose Estimation 
+
+Earlier works in 3D pose estimation modeled poses as graphical structures, where nodes represent joints and edges depict their relationships [18]. 3D poses are estimated using maximum a posteriori (MAP) methods, incorporating 2D joint detections and physical constraints. More recent ap-proaches follow a two-step process: first, localizing humans in 3D and then estimating detailed 3D poses. For example, VoxelPose [19] uses two networks: one for localizing 3D proposals, and another for estimating the detailed 3D poses, claiming robustness to varying camera views. Meanwhile, Faster-VoxelPose [20] eliminates the 3D networks, resulting in a tenfold increase in speed. TesseTrack [21] offers an end-to-end learnable framework that detects persons in 3D and computes temporal features from neighboring frames for pose estimation. The method in [22] employs graph neural networks for 3D localization, followed by coarse and fine 3D pose estimation using relational information among joints and views. Conversely, MvP [23] directly learns poses from multi-view images using multi-hierarchical query embed-dings and projective attention to aggregate complementary information. SelfPose3D [24] generates 3D joints from 2D affine augmentations without requiring 3D training data; it uses augmented images with VoxelPose to compute loss against 2D pseudo poses obtained from a detection network. On the other hand, the DAS algorithm in [25] is designed to learn the 2D to 3D mapping, and represents the 3D joint distribution by normalization flow models, where the joint locations are obtained via a residual log-likelihood estimator. Conversely, some methods focus on geometry-based techniques for 2D view correspondence. For instance, [26] achieves cross-view correspondence and 3D reconstruction using a plane sweep method, projecting 2D poses to a vir-tual depth plane and refining them based on cross-view con-sistency. This involves two levels of depth regression: one at the person level and another at the joint level, both trained on synthetic 3D data. The method in [3] generalizes to new camera geometries by integrating a learning-free module for handling 3D geometry with a learnable appearance module for end-to-end 2D pose estimation. MVPose [27] employs a 2D detector for bounding box detection and utilizes ap-pearance feature cues and geometric pose consistency to compute association scores through iterative optimization. [28] critiques methods based on epipolar constraints, ar-guing that they can misalign human joints; instead, they match human feet across frames to construct joint positions through MAP estimation, addressing detection inaccuracies in occluded scenes. 
+
+2.3 2D Multi-Object Detection and Pose Estimation 
+
+The 2D object detection and pose estimation problems have been studied for decades. Early 2D detectors based on hand-crafted features [29], [30] were popular. Later, the idea of using convolutional neural networks (CNN) [31] to extract features from images for object detection has dominated the literature due to CNN’s capability to capture multi-scale representations. Popular CNN-based detectors [32], [33] use region proposals to obtain detections. However, its efficiency is surpassed by the anchor-free detectors [34]. The recent anchor-free YOLOX algorithm [4] can detect objects in real-time with a high level of accuracy. Detecting human poses from 2D images is typically addressed through two main approaches. The bottom-up approach detects all body parts and subsequently associates them with individuals, where human parts are identified using learning-based methods, and poses are represented as graphical models, excelling in handling occlusions [35]. The rapid OpenPose method [5] utilizes part affinity fields to assess the degree of association between parts and individ-uals, framing the association as a matching problem, while OpenPifpaf [36] employs composite fields (part intensity and part association) to locate and connect human parts effectively. Conversely, the top-down approach performs single-person pose estimation for each detected bounding box around the human body, with models like Region-based CNN, Feature Pyramid Networks, and Residual Networks adapted for pose estimation [37], [38], [39], and a multi-scale feature network proposed for pose estimation in [40]. Recently, AlphaPose [6] claimed to be the first framework that performs unified 2D whole-body pose estimation and tracking. 
+
+3 THE FAST 3D M ULTI -O BJECT TRACKING AND 
+
+POSE ESTIMATION ALGORITHM 
+
+This section presents the proposed 3D multi-object track-ing and pose estimation algorithm. Our method is based on Bayes-optimal data fusion to estimate 3D object states from 2D object and pose detections obtained from multiple 3
+
+cameras. In particular, we propose a drastic approxima-tion to the multi-sensor generalized labeled multi-Bernoulli (MS-GLMB) filter, which substantially improves processing speed. Intuitively, the resulting filtering recursion can be broken into modules, including: track prediction; data as-sociation and track update; track initialization and termi-nation. An overview of the algorithm implementation is illustrated in Fig. 1. Since our 3D tracking process does not involve training or inferring a deep learning model, the tracker requires no graphical processing unit (GPU) acceler-ation and achieves efficient computation by only processing the tracks and solving a series of 2D linear assignment prob-lems. Nonetheless, the algorithms that detect 2D bounding boxes and poses may require training on 2D data, although our technique is not restricted to any specific type of 2D detectors. 3D Track and Pose Estimates 
+
+2D Detections on Cam. 1 
+
+Single-Camera Data Association 
+
+2D Detections on Cam. 
+
+3D Track and Pose Prediction 
+
+Single-Camera Data Association 
+
+3D Tracks and Poses Update 
+
+## …
+
+## …
+
+Object Initialization and Termination   
+
+> Fig. 1. Overview of the proposed algorithm with υcameras.
+
+3.1 Track Prediction 
+
+In our algorithm, each object (track) is represented by a dis-tinct ID ℓ that is unchanged over time and a state x contains (real-world) 3D position, velocity, shape parameters, and keypoints (joint locations) and their velocity in 3D. Using the notation 1 : n for the list 1, 2, ..., n , the state vector x can be expressed as 
+
+x “ r ρp1:3 q, 9ρp1:3 q, s p1:3 q, p p1:3 P q, 9pp1:3 P qsT ,
+
+where ρp1:3 q is the 3D position of the object center, 9ρp1:3 q
+
+is the 3D velocity of the object, sp1:3 q is the shape param-eters of the 3D axis-aligned ellipsoid enclosing the object, which is the logarithm of the half-lengths of the principal axes, and pp1:3 P q is the object 3D keypoints with P is the (fixed) total number of keypoints and 9pp1:3 P q are their corresponding 3D velocities. Our proposed method applies to all keypoint conventions, such as the BODY 25 (P “ 25 )keypoint convention introduced in [5], COCO (18 keypoints) [41], and MPII (15 keypoints) [42]. When the object first appears, we assume its state is Gaussian distributed, rep-resented by a mean μpℓq 
+
+> 0
+
+and a covariance matrix Ppℓq 
+
+> 0
+
+, i.e., 
+
+N
+
+´
+
+x; μpℓq 
+
+> 0
+
+, Ppℓq
+
+> 0
+
+¯
+
+.To predict the object state from time step t ´ 1 to t,we assume the object motion follows the constant velocity model, a popular motion model used in visual tracking when the frame rate is relatively high. Since an object’s size remains mostly unchanged over time, we set the mean of the object shape parameters at the next time step to be the same as at the current time (i.e., a random walk model on the object shape state). The 3D keypoints also follow the constant velocity model. However, since the keypoints could change drastically when the object changes their pose, we set the noise variance of the keypoints to be relatively high. Overall, the transition of the object state from one time step to the next is linear. If the probability density of the object state with ID ℓ at t ´ 1 is a Gaussian with mean 
+
+μpℓq 
+
+> t´1
+
+and covariance matrix Ppℓq
+
+> t´1
+
+, the predicted mean and covariance matrix of the (Gaussian) object state density at 
+
+t is computed by the well-known Kalman prediction [7], yielding the predicted mean and covariance matrix μpℓq
+
+> t|t´1
+
+and Ppℓq
+
+> t|t´1
+
+, respectively. 
+
+3.2 Data Association and Track Update    
+
+> Fig. 2. Φpcq
+> bp¨q first projects selected extreme points on 3D ellipsoid to 2D camera plane. The projected 2D bounding box is formed by taking the maximum/minimum of the coordinates (reference to the 2D camera plane) of the projected 2D points.
+
+Suppose that a set of monocular cameras, indexed from 
+
+1 to v, are used to detect objects and their poses in the scene. An object with state x and ID ℓ, a labeled state px, ℓ q, can ei-ther be miss-detected or generate a bounding box detection 
+
+b associated with a keypoint list k “ r kp1q, ..., k pP qs. If the 
+
+ith keypoint is miss-detected, conventionally, kpiq “ 8 (a vector whose components are 8). The likelihood of a track 
+
+px, ℓ q generating a detection pb, k q on camera c is given by 
+
+gpcqpb, k |x, ℓ q “ N
+
+´
+
+b; Φ pcq 
+
+> b
+
+pxq, Rpcq
+
+> b
+
+¯
+
+ˆ
+
+> P
+
+ź
+
+> i“1
+
+”´ 
+
+1 ´ δ8rkpiqs
+
+¯
+
+N
+
+´
+
+kpiq; Φ pcq
+
+> k,i
+
+pxq, Rpcq
+
+> k
+
+¯
+
+` δ8rkpiqs
+
+ı
+
+,
+
+(1) where Φpcq 
+
+> b
+
+p¨q and Φpcq
+
+> k,i
+
+p¨q map the 3D object state to, re-spectively, the corresponding 2D bounding box and the 
+
+ith element of the 2D keypoint detection list, Rpcq 
+
+> b
+
+“
+
+diag 
+
+´” 
+
+σpcq 
+
+> ρ
+
+, σ pcq
+
+> s
+
+ı¯ 
+
+with σpcq 
+
+> ρ
+
+and σpcq 
+
+> s
+
+are the variances of the position and size of the 2D bounding box detection noise, respectively, Rpcq 
+
+> k
+
+“ diag 
+
+´
+
+σpcq
+
+> k
+
+¯
+
+with σpcq 
+
+> k
+
+is the variance of the 2D keypoints detection noise, and δxrys
+
+is the Kronecker delta function that takes 1 if x “ y4
+
+and 0 otherwise. The projection Φpcq 
+
+> b
+
+p¨q from 3D position (represented by a 3D ellipsoid) to 2D points is obtained by mapping the extreme points of the 3D ellipsoid to their corresponding points on camera plane [43]. This projection is illustrated in Fig. 2. The projection from the ith 3D state to the ith 2D keypoint element, Φpcq
+
+> k,i
+
+p¨q , is performed using the homogeneous projection method. 
+
+Remark: Our models can also handle object appearance features, similar to ones in [8]. But for efficient computa-tion, we omit these features in this work. Nevertheless, we note that although appearance features can help re-identify objects during missed-detection events, unreliable features may distort the assignment scores and lead to incorrect data associations. Since object keypoints vary significantly between frames, the model of the 3D keypoint positions is uninformative, as mentioned in the previous subsection. Thus, we omit the keypoints when computing the cost function for data association. At time t, we consider a set of n labeled objects 
+
+tp xp1q, ℓ p1qq, ..., pxpnq, ℓ pnqqu . For each camera, say camera c,with a set of enumerated 2D bounding box and keypoint detections Bpcq “ tp bpcq 
+
+> 1
+
+, k pcq 
+
+> 1
+
+q, ..., pbpcq 
+
+> m
+
+, k pcq 
+
+> m
+
+qu (which may contain detections generated by objects and false positive detections), we define a mapping γpcq that maps the object IDs to the index of the detections in Bpcq. γpcqpℓq “ i ą 0
+
+means the ith detection in Bpcq is assigned to the object, and 
+
+γpcqpℓq “ 0 means no detection from camera c is assigned to the object. We obtain the optimal association map γpcq by solving the following optimization problem 
+
+γ˚p cq “ arg min 
+
+> γpcq
+
+ÿ
+
+> ℓPt ℓp1q,..,ℓ pnqu
+
+Cpcqpℓ, γ pcqpℓqq , (2) where: 
+
+Cpcqpℓ, j q “ ´ p 1 ´ δj r0sq log 
+
+´
+
+qpℓ,c qpbpcq 
+
+> j
+
+q
+
+¯
+
+` ι8δj r0s; (3) 
+
+qpℓ,c qpbq “ 
+
+ż
+
+N
+
+´
+
+x; μpℓq
+
+> t|t´1
+
+, Ppℓq
+
+> t|t´1
+
+¯
+
+N
+
+´
+
+b; Φ pcq 
+
+> b
+
+pxq, Rpcq
+
+> b
+
+¯
+
+dx ;
+
+(4) 
+
+ι8 is a large number ( exp p´ ι8q « 0) (i.e., assume the miss-detection cost is much higher than other assignment costs). The integral in (4) can be computed approximately with unscented transform [44], [45] such that 
+
+qpℓ,c qpbq « N
+
+´
+
+b; μpℓ,c q 
+
+> u
+
+, Rpcq 
+
+> b
+
+` Ppℓ,c q
+
+> u
+
+¯
+
+, (5) where 
+
+μpℓ,c q 
+
+> u
+
+“
+
+> 2L
+
+ÿ
+
+> i“0
+
+wpℓq
+
+> m,i
+
+Ypℓ,c q 
+
+> i
+
+, (6) 
+
+Ppℓ,c q 
+
+> u
+
+“
+
+> 2L
+
+ÿ
+
+> i“0
+
+wpℓq 
+
+> c,i
+
+pYpℓ,c q 
+
+> i
+
+´μpℓ,c q 
+
+> u
+
+qp Ypℓ,c q 
+
+> i
+
+´μpℓ,c q 
+
+> u
+
+qT , (7) 
+
+Ypℓ,c q 
+
+> i
+
+“ ΦpcqpX pℓq 
+
+> i
+
+q, (8) 
+
+pX pℓq 
+
+> i
+
+, w pℓq
+
+> m,i
+
+, w pℓq 
+
+> c,i
+
+q “ Upμpℓq
+
+> t|t´1
+
+, Ppℓq
+
+> t|t´1
+
+q, i “ 0 : 2 L,  (9) 
+
+Up¨q generates 2L ` 1 sigma points from the unscented transform given the Gaussian mean and covariance matrix, 
+
+L is the dimension of the state vector, pX , w m, w cq is tuple of a sigma point and its corresponding mean and covariance weights, respectively, and μpℓq 
+
+> t|t´1
+
+and Ppℓq 
+
+> t|t´1
+
+are respectively Active Tracks 
+
+> Multi-View Clustering
+
+Kalman Prediction 
+
+Build Cost Matrix 
+
+Linear Assignment 
+
+Build Cost Matrix 
+
+Linear Assignment 
+
+> …
+> Assigned
+> Detections
+
+Output Estimated 3D Positions and Poses 
+
+New Tracks  Tentative Tracks  
+
+> …
+> View # 1View # v
+
+2D Object Detector  2D Object Detector …
+
+> Unscented Kalman Update
+
+Track Pool 
+
+> Unassigned Detections
+> Unassigned Tracks
+
+Terminate Duplicated Tracks 
+
+> Terminate Prolonged
+> Miss-Detected Tracks
+
+Updated Track Pool 
+
+> …
+> Time Recursion
+> Fig. 3. Algorithm flowchart. Tracks (3D kinematics, shapes, and poses) in the pool are predicted forward using Kalman prediction. For each camera, a cost matrix to assign predicted tracks to 2D bounding box detections is computed, and the optimal data association is determined. Tracks are updated once for each camera (with assigned detection) in turn using an unscented Kalman update. Unassigned detections are clustered in groups with a mean-shift clustering algorithm, and each group is used to initialize a new track. Unassigned tracks that are miss-detected for a long time are terminated. Duplicated tracks (determined via checking pair-wise similarity) are also terminated. Output 3D position and pose are the mean values of the Gaussian state probability density of new and active tracks.
+
+the mean and covariance matrix of the predicted density of object with ID ℓ. The rationale of the optimization given in (2) follows from the approximation of the MS-GLMB filter, which is detailed in Section 5. The optimization in (2) can be solved efficiently with a standard 2D linear assignment algorithm, e.g., Hungarian [46] or Jonker-Volgenant [47]. We use detection gating to eliminate the unlikely solutions. In particular, for object ℓ
+
+with mean state μpℓq and the jth detection bj from camera 
+
+c, let Gspμpℓqq be the mean ground plane position of ℓ and 
+
+Gpcq 
+
+> d
+
+pbj q be the ground plane position of the projection of bj
+
+on 3D real-world coordinate, if 
+
+›››Gspμpℓqq ´ Gpcq 
+
+> d
+
+pbj q
+
+›››2
+
+ą τG,we set Cpcqpℓ, j q “ 8 (i.e., assigning bj to ℓ is infeasible). Further, we apply detection gating directly on the cost value such that if Cpcqpℓ, j q ą τC then Cpcqpℓ, j q “ 8. The optimal multi-camera data association map is the combi-nation of the optimal single-camera data association maps, i.e., γ˚ “ rγ˚p 1q, ..., γ ˚p vqs. Given γ˚, we use unscented Kalman update [44], [45] to update the predicted mean and 5
+
+covariance matrix of the object state density (3D position, velocity, shapes, keypoints, and keypoint velocity), once for each camera in turn (we skip a camera if the object is miss-detected on that camera). If no detection is assigned to the object at all, the updated mean and covariance matrix are the same as the predicted ones. 
+
+3.3 Track Initialization and Termination 
+
+We utilize unassigned detections to initialize new tracks, re-calling that the initial state probability density of a track fol-lows a Gaussian distribution. For a camera c, we apply the transformation ¯Φpcq 
+
+> b
+
+p¨q to convert the center of the bottom edge of a 2D detected bounding box into its corresponding location on the ground plane in 3D real-world coordinates. To group the 3D projected detections from various cameras, we employ the mean shift clustering method proposed in [8]. The centroids of these groups serve as the means ground plane location for the initial track densities. We assume standard values for the mean shape parameter of the object (representing an average human size) and set the initial mean velocity to zero. The initial covariance matrix is defined as a diagonal matrix with high variance for state components with significant initialization uncertainty. For the 3D keypoints, we first initialize a Gaussian distribution centered on the keypoint positions that correspond to a standard pose (standing upright). Subsequently, we utilize the grouped 2D pose detections identified by the mean shift clustering algorithm to refine the initial distribution, using this updated distribution for the keypoint components in the initial state probability density. The collection of all tracks is referred to as a track pool .After track initialization, our track pool has three track types:  
+
+> ‚
+
+New tracks - tracks that are initialized from current unassigned detection(s);  
+
+> ‚
+
+Active tracks - tracks that currently have detection(s) assigned to them;  
+
+> ‚
+
+Tentative tracks - tracks that currently do not have any detection assigned to them. The track termination process follows ByteTrack [48] and FairMOT [49] but replacing the 2D IoU similarity measure (for deleting duplicated tracks) with a 3D IoU measure. After track termination, the set of track estimates (output of the tracker) are the mean states of the remaining (not terminated) new and active tracks. The algorithm flowchart is given in Fig. 3. 
+
+Remark: While the proposed algorithm only selects one data association hypothesis, tracks that do not appear in this hypothesis (e.g., due to miss-detection) are not immediately discarded. Instead, they are stored in the track pool as tentative tracks, enabling revision if they are re-detected later. Thus, this feature prevents the tracker from frequently switching object IDs or incorrectly terminating tracks even when the false negative rate is relatively high. 
+
+4 ALGORITHM IMPLEMENTATION 
+
+In this section, we provide the pseudocode for implement-ing our estimation technique in Algorithm 1. Details of the sub-routines can be found in Algorithms A1-A6, Appendix A. Each track is represented by a tuple pℓ, μ, Pq, where ℓ is the object’s unique ID, μ is the mean and P is the covariance matrix of the state density. Detection is an array of lists B “rBp1q, ..., B pvqs, where Bpcq “ tp b1, k 1q, ..., pbmpcq , k mpcq qu ,
+
+mpcq is the number of 2D detections from camera c.Each element bj is a 2D bounding box with the format 
+
+“left, top, log(width), log(height) ‰T and each kj is a 2D key-point detection list. Note that if the ith keypoint of kj is miss-detected, conventionally, kpiq 
+
+> j
+
+“ 8 . Given the track pool at time t ´ 1 with n objects Pt´1 “ tp ℓi, μ i, Piqu i“1: n
+
+(a list of n tuples), and the detection Bt, the track pool at t
+
+and the 3D track estimates are computed using Algorithm 1. We use μpsq 
+
+> i
+
+and Ppsq 
+
+> i
+
+for the mean and covariance relating to the kinematic (position and velocity) and shape of the track (lines 12 and 25 of Algorithm 1), respectively. We use 
+
+μppq 
+
+> i
+
+and Pppq 
+
+> i
+
+for the mean and covariance relating to the keypoints of the track (line 26 of Algorithm 1), respectively. First, tracks in the pool are predicted forward using  
+
+> KalmanPrediction
+
+. In the data association step, for each camera c we compute a cost matrix C to assign detections to tracks. If a detection is accepted into the gate of the ith track (determined by the function DetectionGating , Algorithm A2, Appendix A), we compute the assignment cost by taking the negative logarithm of the likelihood q, which is obtained from the UKFUpdateKS function (Algorithm A1, Appendix A). Note that q does not depend on the keypoints. If the cost is greater than τC , we set it to infinity. The  
+
+> 2DBBoxtoGroundPlane
+
+function (Algorithm A3, Appendix A) transforms the center of the bottom edge of the 2D bounding box into a 3D coordinate using back-projection with homogeneous coordinates. This 3D coordinate repre-sents the ground plane position of the 3D ellipsoid. The  
+
+> 2DLinearAssignment
+
+determines a row assignment, rep-resented as a vector of length n, where n is the number of tracks in the track pool. This assignment minimizes the cost matrix C. The ith component of the row assignment vector is the index of the column that is assigned to the ith row. This value is 0 if there is no column assigned to the row. The UKFUpdateKS function is used to update the kinematic and shapes of tracks using the bounding box detections determined by the optimal detection to track assignment from all cameras (outputs of the  
+
+> 2DLinearAssignment
+
+). Similarly, the UKFUpdateKP func-tion (Algorithm A4, Appendix A) is used to update the keypoint components of the track states. The function  
+
+> UnscentedTransform
+
+(Algorithm A5, Appendix A) is im-plemented based on [45]. The function 3Dto2DBBox (Algo-rithm A6, Appendix A) is an approximation of the quadric projection [50, pp. 201] to project a 3D ellipsoid onto the image plane. In this algorithm, we transform six extreme points of the 3D ellipsoid to 2D image plane coordinate, and determine the (axis-aligned) 2D bounding box enclosing all the transformed points, as illustrated in Fig. 2, Section 3. After track update, tracks that have at least one de-tection assigned to them are pushed to the active track list A. Tracks that are in the track pool Pt´1 but not ap-pended to the active track list are pushed to the tentative track list T . Unassigned detections are supplied to the  
+
+> MeanshiftClustering
+
+function (based on the mean-shift 6
+
+Algorithm 1: Algorithm iteration at time t.
+
+Input : Track pool at t-1: Pt´1 “ tp ℓi, μ i, Piqu i“1: n.2D bounding box and pose detections at k:
+
+Bt “ r Bp1q, ..., B pvqs,
+
+Bpcq “ tp b1, k 1q, ..., pbmpcq , k mpcq qu .
+
+Output : 3DPositions&Poses, Pt. 
+
+> 1
+
+/*Track Prediction*/  
+
+> 2
+
+for i “ 1 : n do  
+
+> 3
+
+pμi, PiqÐ KalmanPrediction (μi, Pi) 
+
+> 4
+
+/*Data Association*/  
+
+> 5
+
+A Ð 0nˆv 
+
+> 6
+
+for c “ 1 : v do  
+
+> 7
+
+C Ð 0nˆmpcq 
+
+> 8
+
+for i “ 1 : n do  
+
+> 9
+
+for j “ 1 : mpcq do  
+
+> 10
+
+s Ð DetectionGating pbj , μ psq 
+
+> i
+
+, c q
+
+(Algorithms A2 and A3, Appendix A)  
+
+> 11
+
+if s is true then  
+
+> 12
+
+pq, , q Ð UKFUpdateKS (bj , μ psq 
+
+> i
+
+, Ppsq 
+
+> i
+
+, c )(Algorithms A1, A5, and A6, Appendix A)  
+
+> 13
+
+Cri, j s Ð ´ log pqq 
+
+> 14
+
+if Cri, j s ą τC then  
+
+> 15
+
+Cri, j s Ð 8  
+
+> 16
+
+else  
+
+> 17
+
+Cri, j s Ð 8  
+
+> 18
+
+Ar:, c sÐ 2DLinearAssignment (C) 
+
+> 19
+
+/*Track Update*/  
+
+> 20
+
+A Ð EmptyList /* Active Tracks */  
+
+> 21
+
+for i “ 1 : n do  
+
+> 22
+
+for c “ 1 : v do  
+
+> 23
+
+if Ari, c s ą 0 then  
+
+> 24
+
+j “ Ari, c s 
+
+> 25
+
+p , μ psq 
+
+> i
+
+, Ppsq 
+
+> i
+
+q Ð UKFUpdateKS (bj , μ psq 
+
+> i
+
+, Ppsq 
+
+> i
+
+, c )(Algorithms A1, A5, and A6, Appendix A)  
+
+> 26
+
+pμppq 
+
+> i
+
+, Pppq 
+
+> i
+
+q Ð UKFUpdateKP (kj , μ ppq 
+
+> i
+
+, Pppq 
+
+> i
+
+, c )(Algorithm A4, Appendix A)  
+
+> 27
+
+if sum pAri, :sq ą 0 then  
+
+> 28
+
+A Ð Append pA, pℓi, μ i, Piqq  
+
+> 29
+
+T Ð Pt´1zA /*Tentative Tracks*/  
+
+> 30
+
+/*Track Initialization & Termination*/  
+
+> 31
+
+for c “ 1 : v do  
+
+> 32
+
+U rcs Ð UnassignedDetection (Ar:, c s, B pcq) 
+
+> 33
+
+G Ð MeanshiftClustering (U ) 
+
+> 34
+
+I Ð EmptyList /* New Tracks */  
+
+> 35
+
+for l “ 1 : length (G) do  
+
+> 36
+
+pℓl, μ l, Plq Ð TrackInitialzation pGrlsq  
+
+> 37
+
+I Ð Append (I, pℓl, μ l, Plqq  
+
+> 38
+
+T Ð DeleteProlongedMissedTracks pT q 
+
+> 39
+
+pA, I, T q Ð DeleteDuplicatedTracks pA, I, T q 
+
+> 40
+
+3DPositions&Poses Ð
+
+Extract3DEstimates p Append pA, Iqq  
+
+> 41
+
+Pt Ð Append pA, I, T q
+
+clustering algorithm for 3D track initialization proposed in [8]) to generate an array of lists G. Each element of G is a list of unassigned detections that are clustered together. Each cluster is passed to the TrackInitialization function to generate a new track, which is then pushed to the list I. The 
+
+DeleteProlongedMissedTracks function deletes tracks that are consecutively miss-detected for a number of frames. The DeleteDuplicatedTracks function deletes the dupli-cated tracks by computing the pair-wise 3D IoU scores and eliminating tracks with shorter lifespans when the similarity exceeds a threshold. The Extract3DEstimates function returns the 3D track estimates, which are the mean 3D position, shape, and keypoints of the tracks, extracted from mean states μ of new ( I) and active ( A) tracks. 
+
+5 DERIVATION FROM THE MULTI -S ENSOR GLMB FILTER 
+
+For completeness, this section presents the rationale behind our algorithm which is a drastic approximation of the multi-sensor generalized labeled multi-Bernoulli (MS-GLMB) fil-ter [9] that was adapted for 3D multi-view multi-object tracking in [7], [8]. In essence, the MS-GLMB filter propa-gates the multi-object filtering density π that contains all information about the set of objects (and their trajectories), given all the multi-sensor detections up to the current time. The multi-object filtering density is a GLMB, completely characterized by the parameters, i.e., [9], 
+
+π “
+
+!
+
+pωpI,ξ q, p pξqq : pI, ξ q P FL ˆ Ξ
+
+)
+
+,
+
+where: pI, ξ q is a (data association) hypothesis, consisting of a set I of object IDs and an association map history ξ “ γ0: t
+
+; ωpI,ξ q is the hypothesis weight; ppξq is the state density of an object with association history ξ; and FL, Ξ denote, respectively, the space of all I and ξ.Computing the GLMB filtering density at each time requires solving a series of NP-hard multi-dimensional as-signment problems to determine a prescribed number of highest-weighted hypotheses [9]. Each hypothesis weight 
+
+ωpI,ξ q (see equation (13) of [9]) depends on the object survival/birth probabilities and the multi-camera detection 
+
+weight. Specifically, for an object ℓ P I, and an associ-ation map γpcq of camera c, if ℓ generates a detection, the single-camera detection weight is given by ¯ψpc,γ pcqqpℓq “ 
+
+P pcq 
+
+> D
+
+qpℓ,c qpbpcq
+
+> γpcqpℓq
+
+q, where P pcq 
+
+> D
+
+is the detection probability for camera c, and qpℓ,c qp¨q is defined in equation (4). If ℓ is miss-detected, then ¯ψpc,γ pcqqpℓq “ 1 ´ P pcq 
+
+> D
+
+. We approximate the multi-camera detection weight by the product of all single-camera detection weights, taken over all cameras. To reduce the computations, we approximate the GLMB filtering density by its single most significant hypothesis, given that the track deaths and births are captured accu-rately by a separate track initialization/termination proce-dure. This is a reasonable assumption due to the high de-tection quality (of SOTA 2D image detectors) with relatively low false negative rates. Consequently, we restrict ourselves to hypotheses pI, γ 0: tq, where I is a set of IDs of existing tracks, and γ0: t is the sequence of optimal association maps 7
+
+> Fig. 4. Bird’s-eye and 3D views of the estimated 3D positions and poses in the CMC (top two rows) and CMU (bottom two rows) datasets. The inputs consist of 2D detections from different cameras. Our algorithm accurately estimates the 3D poses of multiple persons having different poses, i.e., standing, eating, walking, jumping, and falling on the ground.
+
+from the initial time to t. This means the hypothesis weight (equation (13) of [9]) reduces to 
+
+ωpI,γ 0: tq 9„
+
+ź
+
+> cPt 1: vu
+
+ź
+
+> ℓPI
+
+¯ψpc,γ pcq 
+
+> tq
+
+pℓq, (10) and since the false negative rate is low, i.e., P pcq 
+
+> D
+
+« 1, we have 
+
+¯ψpc,γ pcq 
+
+> tq
+
+pℓq » p 1 ´ δγpcq 
+
+> tpℓq
+
+r0sq qpℓ,c qpbpcq 
+
+> γpcq
+> tpℓq
+
+q ` ϵδ γpcq 
+
+> tpℓq
+
+r0s,
+
+(11) where ϵ is a small positive number. Taking the negative logarithm of the hypothesis weight yields 
+
+CpIqpγq “ 
+
+> v
+
+ÿ
+
+> c“1
+
+ÿ
+
+> ℓPI
+
+Cpcqpℓ, γ pcqpℓqq , (12) where γ “ rγp1q, ..., γ pvqs and Cpcqpℓ, γ pcqpℓqq is defined in equation (3) in Section 3. Hence, minimizing the cost in equation (12) approximately maximizes the hypothesis weight. Further, since each camera’s association map γpcq
+
+contributes independently to the total cost, it can be min-imized by minimizing each outer term independently, i.e., by solving the optimization problem in equation (2), Section 3. 
+
+6 EXPERIMENTAL RESULTS 
+
+In this section, we evaluate the performance of our al-gorithm on multiple multi-camera multi-object tracking datasets, including Curtin Multi-Camera (CMC) [7], WILD-TRACK (WT) [51], and MultiviewX [52]. We test the per-formance in standard configuration when all cameras are in operation and multi-camera re-configuration when cameras are on/off at different instances, simulating camera failures. Further, we also evaluate the performance of our method on 3D pose estimation datasets including Campus, Shelf [18], and CMU Panoptic (CMU) [53]. In Fig. 4, we show examples of our algorithm output at one time step for CMC and CMU datasets. 
+
+6.1 Standard Multi-Camera Configuration 
+
+In this subsection, we consider the CMC dataset consist-ing of 5 sequences recorded with 4 cameras, WT dataset consisting of one sequence recorded with 7 cameras, and MultiviewX synthetic dataset consisting of 6 cameras. Dif-ferent sequences in the CMC dataset have different levels 8
+
+TABLE 1 Tracking performance of different algorithms on CMC, WT, and MultiviewX datasets. The best result for each dataset is bolded and underlined .Standard deviation over Monte Carlo runs for probabilistic algorithms is reported in parentheses. FPS * denotes the processing speed excluding 2D detectors run-time, and FPS denotes the end-to-end processing speed.                                                                                                                                                                                                                                          
+
+> Sequence Tracker FP ÓFN ÓIDs ÓMOTA ÒIDF1 ÒOSPA (2) ÓFPS *ÒFPS Ò
+> CMC1 Ours 03099.5 99.8 0.30 4011.70 6.36
+> MV-GLMB-AB [8] 05099.2(0.0) 99.6(0.0) 0.3(0.0) 11.69 4.12 MV-GLMB [7] 55 87 377.7(5.45) 50.4(1.64) 0.91(0.01) 0.65 0.59 MS-GLMB [9] 13 87 384.1(0.65) 52.4(0.29) 0.89(0.01) 0.75 0.67 CMC2 Ours 222 098.8 99.4 0.36 918.15 6.36
+> MV-GLMB-AB [8] 034 198.3(0.07) 94.7(4.79) 0.39(0.02) 8.29 3.61 MV-GLMB [7] 431 334 80 59.3(2.06) 33.7(1.58) 0.94(0.01) 0.08 0.08 MS-GLMB [9] 214 454 72 64.3(5.27) 36.7(2.71) 0.91(0.01) 0.02 0.02 CMC3 Ours 11 53 097.7 98.9 0.32 564.26 6.31
+> MV-GLMB-AB [8] 29 63 696.5(0.23) 92.5(4.43) 0.36(0.03) 5.30 2.9 MV-GLMB [7] 608 475 121 57.4(2.72) 36.7(2.53) 0.93(0.01) 0.04 0.04 MS-GLMB [9] 269 625 122 64.0(3.12) 39.1(2.22) 0.91(0.01) 0.02 0.02 CMC4 Ours 08098.0 99.0 0.25 439.03 6.30
+> MV-GLMB-AB [8] 119 094.7(0.25) 97.3(0.16) 0.26(0.0) 5.68 3.01 MV-GLMB [7] 28 231 434.6(11.27) 47.9(9.87) 0.86(0.03) 0.07 0.07 MS-GLMB [9] 36 207 538.5(9.51) 53.5(5.37) 0.84(0.02) 0.05 0.05 CMC5 Ours 62 285 30 89.9 56.3 0.91 195.05 6.22
+> MV-GLMB-AB [8] 96 382 39 86.1(0.62) 44.4(3.21) 0.93(0.01) 3.75 2.37 MV-GLMB [7] 464 859 102 61.6(5.89) 22.7(2.87) 0.95(0.01) 0.06 0.06 MS-GLMB [9] 491 887 131 59.3(4.98) 22.7(3.09) 0.96(0.01) 0.07 0.07 WT Ours 4286 590 112 47.6 75.0 0.76 95.67 5.99
+> MV-GLMB-AB [8] 3664 1996 193 38.5(2.76) 63.1(2.36) 0.72(0.03) 0.12 0.12 MV-GLMB [7] 2286 3619 310 34.7(1.83) 47.4(1.55) 0.79(0.01) 0.02 0.02 MS-GLMB [9] 3619 4726 281 9.4(8.5) 34.2(7.36) 0.87(0.03) 0.02 0.02 MultiviewX Ours 2261 677 477 78.0 72.1 0.74(0.0) 98.70 6.03
+> MV-GLMB-AB [8] 1753 2034 460 72.6(1.4) 55.8(1.4) 0.64(0.01) 0.12 0.12 MV-GLMB [7] 11443 2505 1337 1.3(3.15) 42.1(1.03) 0.83(0.01) 0.02 0.02 MS-GLMB [9] 11501 2520 1328 0.9(3.55) 41.9(0.98) 0.83(0.01) 0.02 0.02
+
+of difficulty. In particular, sequences 4 and 5 of the CMC dataset have people constantly jumping and falling, posing significant difficulty for 3D pose estimation algorithms. Note that while the CMC dataset has the ground truth of real-world 3D position of objects (including their size), the WT and MultiviewX datasets only have the ground truth of object feet location. Notably, we do not use any portion of the datasets for training the 2D detectors, and evaluation is performed on the entire datasets. To evaluate 3D tracking performance, we use various performance measures to benchmark the algorithm. We use the CLEARMOT [54] measure with multi-object tracking accuracy (MOTA) as the main score and other component scores including numbers of false positive (FP), false neg-ative (FN) and ID switches (IDS). We also report the IDF1 score [55], and use the OSPA (2) metric [56], [57] to measure the tracking error. For CMC dataset, we use the 3D GIoU distance [58] normalized between 0 and 1 as the pair-wise distance between objects, while for the WT and MultiviewX datasets, we use Euclidean distance between object feet locations as pair-wise distance. For CLEARMOT and track identity measure, the pair-wise distance threshold to re-ject/accept a match is 0.5 for GIoU distance and 1 meter for Euclidean distance. For OSPA (2) metric, the cut-off parameter is set to 1 for GIoU distance and 1 meter for Euclidean distance. Since all tested datasets in this subsection do not have ground truth keypoints, we provide videos showing 3D pose estimation in the supplementary materials for qual-itative evaluation. Additional evaluation with popular 3D keypoint estimation datasets will be provided in Subsection 6.3. We use YOLOX [4] algorithm to generate 2D bounding box detection and AlphaPose [6] to estimate 2D pose in each detected bounding box. The algorithms were tested on a desktop equipped with an Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz. The 2D bounding box and pose detection tasks were accelerated using an NVIDIA GeForce GTX 1080 Ti GPU, achieving average speeds of 7 frames per second (FPS) and 70 FPS, respectively. In contrast, no GPU acceleration was used for the 3D tracking task. To assess the efficiency, we report the processing speed excluding the 2D detection run-time (denoted as FPS *), and the end-to-end FPS rate. We compare our tracking algorithm with the MV-GLMB-AB [8], MV-GLMB [7] and MS-GLMB [9] filters. Since these filters are probabilistic, we report their mean performance over 25 Monte Carlo runs. Observe Table 1, across all sequences, our method out-performs MV-GLMB and MS-GLMB significantly and ex-hibits similar performance to the MV-GLMB-AV filter in terms of tracking accuracy. In particular, the algorithm per-forms well in CMC1-4 and MultiviewX due to the accu-rate detections of those sequences. However, the tracking accuracy drops in sequences CMC5 and WT due to the higher rate of object miss-detection compared to the other sequences. The FPS * and FPS columns of Table 1 show that our method is much faster than the others which demonstrate its real-time 3D tracking and pose estimation potential. Further, they show that the contribution of the proposed tracking module to the overall processing time is marginal compared to the 2D detectors. 9CAM 0  CAM 1  CAM 2  CAM 3  3D Pose          
+
+> CAM 0 CAM 1 CAM 2 CAM 3 3D Pose
+> CAM 1 CAM 3 CAM 0/2/4 CAM 5
+> CAM 0 CAM 1 CAM 2 CAM 3/4/5/6
+> CMC2 CMC3 MultiviewX  WT
+> 3D Pose
+> 3D Pose
+> Fig. 5. Typical incorrect 3D pose estimates from our algorithm in CMC, WT, and MultiviewX datasets. Red rectangles with “x” mark denote miss-detection. Red “x” mark denotes AlphaPose is unable to detect or produces incorrect 2D poses. Severe miss-detection and inaccurate 2D detection on multiple cameras lead to the inaccuracy of our 3D pose estimation.
+
+The significant performance gaps, especially on the IDF1 score and OSPA (2) error, are because the MS-GLMB and MV-GLMB filters generate a high number of false tracks due to the fixed birth track initialization process. When there are more false tracks, ID switches also have a higher tendency to occur. Ours and MV-GLMB-AB filter have an improved track initialization process based on mean-shift clustering, hence better tracking accuracy. Moreover, the low number of ID switches in our method is also due to the fact that we do not discard a track immediately after a miss-detection; instead, we store it as a tentative track and recall it later when the object is re-detected. Further, MV-GLMB-AB, MV-GLMB and MS-GLMB filters use Gibbs sampler to perform data association. Although the Gibbs sampler is able to select diverse hypotheses to represent the GLMB density, it might miss the optimal solution due to its random nature. Moreover, the MV-GLMB filter incorporates an occlusion model to resolve object occlusion. However, we observe that the model assigns low detection probability to the objects even though they are only partially occluded. Indeed, these objects are detected relatively well by the YOLOX detector. Hence, the mismatch between the model and the observed data also contributes to performance degradation. In addition to the MS-GLMB-based filters, we also eval-uate our algorithm against other deep-learning-based 3D trackers and classical trackers using 3D-training-based de-tectors on WT dataset. The results, reported in Appendix B, show that our method’s performance is comparable to methods trained on 10%–30% of the WT dataset (and evaluated on the remainder), but it is outperformed by methods trained on over 50% of the dataset. The inferior performance of our method stems from the lower quality of the 2D detections compared to the 3D detections produced by trained 3D detectors, as the YOLOX detector was not trained on any portion of the WT dataset. Among the techniques included in this study, only our method can estimate 3D poses. Fig. 4 shows examples of the outputs from our algorithm. We include the videos of our estimation results on CMC3, CMC5 (the most crowded sequences in the CMC dataset), WT, and MultiviewX se-quences in the supplementary materials. We observe that our algorithm performs generally well across all sequences, especially when the object density is not high. However, when some 2D keypoints are miss-detected or incorrect, the estimated 3D pose becomes inaccurate. The errors occur more often in crowded scenes, such as ones in WT and CMC5 sequences. In Fig. 5, we show our algorithm’s typical incorrect 3D pose estimation. 
+
+6.2 Multi-Camera Reconfiguration 
+
+To test the robustness of the algorithm in the scenarios of camera failures, in this experiment, we occasionally dis-connect the cameras and reconnect them again to demon-strate the algorithm capability in tracking objects when the camera configuration changes on-the-fly in CMC dataset. The configurations (on/off time) of the camera are depicted in Fig. 6. In this same figure, we plot the OSPA (2) error per time step for both the standard (baseline, all cameras are always on) and the reconfiguration settings. Note that the OSPA (2) error at time t is the OSPA (2) error evaluated from the initial time step up to t. We observe that tracking performance in the reconfiguration settings is similar to the baseline in CMC1 and CMC4 sequences. This is because objects are well-separated in those two scenarios. Thus, turning the cameras off does not significantly reduce the detection quality (compared to the baseline configuration), hence the similarity in tracking accuracy to the baseline. In other sequences, which have higher object density, the tracking performance slightly degrades after the cameras are turned off since some objects are miss-detected and incorrectly terminated. We observe that the trends of pose estimation performance follow the trends of the tracking performance in this experiment. 
+
+6.3 Performance Evaluation on 3D Keypoint Datasets 
+
+In this subsection, we evaluate the performance of our technique on popular datasets for 3D keypoint estima-tion, including the Campus, Shelf [18], and CMU PanOptic (CMU) [53]. Campus is a dataset consisting of three people 10 0 50 100 150 200 250 Frame                                            
+
+> 00.5 1OSPA (2) -GIoU  CMC1 Baseline
+> Reconfig.
+> 050 100 150 200 250 Frame
+> 00.5 1OSPA (2) -GIoU  CMC2
+> 050 100 150 200 250 Frame
+> 00.5 1OSPA (2) -GIoU  CMC3
+> 020 40 60 80 100 120 140 Frame
+> 00.5 1OSPA (2) -GIoU  CMC4
+> 0100 200 300 400 500 Frame
+> 00.5 1OSPA (2) -GIoU
+> CMC5
+> (1) (2) (3) (4) (5)
+> (1) (2) (3) (4) (5)
+> (1) (2) (3) (4) (5)
+> (1) (2) (3) (4) (5)
+> (1) (2) (3) (4) (5)
+
+Fig. 6. Camera reconfiguration setting and the OSPA p2q error of the proposed algorithm with YOLOX detector. Configuration (1): all cameras at positions 1, 2, 3, and 4 are on. Configuration (2): three cameras on at positions 2, 3, and 4. Configuration (3): three cameras on at random positions. Configuration (4): two cameras on at positions 1 and 3. Configuration (5): two cameras on at positions 2 and 4. 
+
+interacting with each other in an outdoor environment, captured with three calibrated cameras. Compared with Campus, Shelf dataset is more complex, which consists of four people disassembling a shelf at a close range. CMU dataset is recorded in a studio equipped with a large num-ber of cameras and features multiple individuals engaged in social activities. To showcase the efficiency, we report both the 3D processing speed, e.g., our 3D tracker excluding 2D detection run-time, denoted as FPS *, and the overall FPS rate. The evaluation was done using the same desktop com-puter as one used in Subsection 6.1. For a fair comparison, we only report processing speeds for methods for which we can obtain codes to test on our hardware. Note that we only use GPU-acceleration for the 2D detectors but not for the proposed 3D tracking module. On Campus and Shelf datasets, we compare our al-gorithm with state-of-the-art techniques in the literature including: 3D Pictorial Structures (3DPS)- 3DPSv1 [18], 3DPSv2 [59], 3DPSv3 [60]; Conditional Random Field (CRF) [61]; MVPose [27]; and MVGFormer [3]. We note that the MVGFormer model is only trained on CMU dataset but not on Campus or Shelf dataset, and the 2D detectors used in our method are not trained on either Shelf, Campus, or CMU dataset. CAM 0  CAM 7  CAM 24  CAM 30  3D Pose 
+
+> Pizza
+
+Fig. 7. Typical incorrect 3D pose estimate from our algorithm in CMU dataset. We only show 2D detection from 4 out of 31 cameras. Red rectangles denote incorrect 2D poses. Note that the person’s 2D pose is either miss-detected or incorrectly detected on 22 cameras. 
+
+In Table 2, we report the percentage of correct keypoint (PCK) scores for each actor and the average score across all actors, and the run-time in terms of FPS rate on Campus and Shelf datasets. We observe that our method outperforms the 3DPS algorithms on both datasets. Additionally, our approach is comparable to the CRF algorithm, though it performs slightly worse than MVPose. Conversely, our al-gorithm demonstrates comparable performance with MVG-Former on Shelf dataset. Nonetheless, the MVGFormer al-gorithm performs significantly worse than ours on Campus dataset, which is due to the mismatch between training and test data in terms of the scene area and level of occlusion. This demonstrates the improved generalizability of our al-gorithm compared to MVGFormer, as ours was not trained on any of the 3D pose estimation datasets. Meanwhile, with the same hardware setting, our method is significantly faster than MVPose and MVGFormer on both datasets. The notable efficiency of our method stems from the fact that it only needs to process the tracks and solve for a series of 2D linear assignment problems. On CMU dataset, we test the performance of our algorithm against DAS [25], Faster-VoxelPose [20], PlaneSweepPose [26], SelfPose3d [24] and MVGFormer [3] on 160422 haggling1 (Hangling), 160906 ian5 (Ian), 160906 band4 (Band), and 160906 pizza1 (Pizza) sequences, following the evaluation in [24], [20] and [3]. We report the mean per joint position error (MPJPE)–measured in millime-ters (mm)–in Table 3 1. On average, our method outperforms DAS and Faster-VoxelPose in terms of accuracy but un-derperforms relative to PlaneSweepPose, MVGFormer and SelfPose3d, achieving a mean MPJPE of 34mm. Meanwhile, it is faster than all other methods except DAS, with speeds of 120.5 FPS (excluding 2D detection runtime) and 6.08 FPS for the entire process, although DAS exhibits substantially lower accuracy than ours. An example of the estimation result is previously shown in Fig. 4 (bottom two rows). Qualitatively, we observe that the pose estimation perfor-mance of our algorithm on this dataset is relatively accurate. Although a person might be occluded on multiple cameras, the extensive camera setup capturing multiple views allows for accurate estimation and tracking of multiple individuals’ poses. However, if miss-detections or inaccuracies in the detected 2D poses are significant, the performance of the 
+
+1. All methods are evaluated using ground truth data obtained from http://domedb.perception.cs.cmu.edu/. 11 
+
+TABLE 2 PCK scores for various methods on Campus dataset frames 350 to 470 and 650 to 750, and Shelf dataset frames 300 to 600 (following the datasets guidelines for evaluation). The highest value (best result) for each column is bolded and underlined .                                                                                                         
+
+> Campus Dataset Shelf Dataset Method 3D Training Free Actor 1 Actor 2 Actor 3 Average FPS *FPS Actor 1 Actor 2 Actor 3 Average FPS *FPS 3DPSv1 [18] ✗82.0 72.4 73.7 75.8 --66.1 65.0 83.2 71.4 --3DPSv2 [59] ✗83.0 73.0 78.0 78.0 --75.0 67.0 86.0 76.0 --3DPSv3 [60] ✗93.5 75.7 84.4 84.5 --75.3 69.7 87.6 77.5 --CRF [61] ✗94.2 92.9 84.6 90.6 --93.3 75.9 94.8 88.0 --MVPose [27] ✗97.6 93.3 98.0 96.3 11.80 0.13 98.8 94.1 97.8 96.9 6.93 0.41 MVGFormer [3] ✗48.0 62.3 73.3 61.2 1.9 1.8 89.8 85.7 88.0 87.8 3.0 2.81 Ours ✓95.5 83.1 81.8 86.8 1829.72 9.95 90.4 66.0 93.9 83.4 606.63 9.81
+
+TABLE 3 MPJPE (measured in mm) for various methods on CMU dataset. The processing speeds are averaged across all sequences. The best result for each sequence is bolded and underlined .                                                        
+
+> Method 3D Training Free Haggling ÓIan ÓBand ÓPizza ÓMean ÓFPS *ÒFPS Ò
+> DAS [25] ✗47.8 100.7 143.9 59.5 88.0 9.80 7.33
+> PlaneSweepPose [26] ✗15.5 15.2 15.9 19.3 16.5 0.29 0.11 Faster-VoxelPose [20] ✗51.2 52.6 64.2 65.4 58.4 0.46 0.27 MVGFormer [3] ✗14.0 27.4 13.5 18.0 18.2 9.39 5.60 SelfPose3d [24] ✗23.8 25.7 24.7 24.6 24.7 0.10 0.10 Ours ✓34.5 37.3 26.5 37.8 34.0 120.52 6.08
+
+TABLE 4 MPJPE for our method on CMU dataset under various simulated miss-detection levels. Standard deviations over 25 Monte Carlo simulations are reported in parentheses.                     
+
+> Sequence Name Original Ó20% Miss Ó30% Miss Ó50% Miss Ó
+> Haggling 34.5 38.0 (0.7) 39.1 (0.5) 40.3 (0.6) Ian 37.3 38.2 (0.3) 38.3 (0.3) 39.4 (0.4) Band 26.5 27.6 (1.9) 28.2 (1.4) 29.3 (1.1) Pizza 37.8 39.2 (0.8) 40.2 (0.8) 41.1 (0.7)
+
+3D pose estimation may decline, as illustrated in Fig. 7. This behavior was also observed on the other datasets. A video showcasing the estimation results from our algorithm for this dataset is given in the supplementary materials. 
+
+6.4 Ablation Studies 
+
+6.4.1 Simulated Miss-Detection Scenarios 
+
+To evaluate the robustness of our method against miss-detection, we conducted an ablation study on the CMU dataset, in which we randomly delete 20%, 30% and 50% of the original detections from each camera to simulate miss-detection events. The experiment was conducted over 25 Monte Carlo runs, with the resulting MPJPE values reported in Table 4. The results show that as the false negative rate increased, performance degraded gracefully, indicating that our method is resilient to moderate miss-detection and maintains consistent performance under challenging conditions. For instance, in the Pizza sequence, the MPJPE increased only from 37.8mm to 39.2mm when 20% of the detections were removed, and slightly to 41.1mm when 50% of the original detections were deleted. The robust perfor-mance stems from our optimal assignment and detection gating procedures, which ensure that correct detections are assigned to the tracks in most cases. Further, when a track is miss-detected by all cameras, it is stored as a tentative track. Upon re-detection by at least one camera, it becomes active again and is included in the estimates, hence preventing the tracker from losing tracks during miss-detection events. 
+
+6.4.2 Effect of Varying Assignment Cost Threshold on Tracking Performance 4 6 8 10 12 14 16                
+
+> Threshold
+> 020 40 60 80 100
+> MOTA
+> CMC1 CMC2
+> CMC3 CMC4
+> CMC5 WT
+> 46810 12 14 16
+> Threshold
+> 020 40 60 80 100
+> IDF1
+> 46810 12 14 16
+> Threshold
+> 00.2 0.4 0.6 0.8 1
+> OSPA (2) -GIoU
+
+Fig. 8. Tracking performance with different assignment cost thresholds 
+
+τC in different sequences. 
+
+We experimentally observe that changing the assignment cost threshold τC could affect the algorithm’s performance, especially if there are miss-detections and false positive detections. If τC is low, the optimal assignment algorithm 12 
+
+favors miss-detection assignment. If τC is high, the optimal assignment algorithm might assign false positive detections to miss-detected tracks or assign detections to false tracks. To illustrate the influence of τC on performance, in Fig. 8, we plot the threshold τC versus MOTA, IDF1 scores and OSPA (2) error in different sequences. We vary the threshold from 2 to 17 and observe that when the threshold is higher than 7.5, the tracking accuracy is relatively stable for CMC1-3 and WT sequences. This value is 10 for CMC4-5 sequences. Note that we observe the cost if a bounding box detection is correctly assigned to a track is between 4 and 8 for CMC1-3 and WT sequences. This cost is between 4 and 12 in CMC4-5 sequences due to the jumping and falling objects. We observe that the performance of the pose estimation follows the trend of the tracking performance in this study. Further, the trends on MultiviewX dataset are similar to those on WT. The inferior performance at low gating thresholds is because when the threshold is lower than the cost of the correct assignment, the assignment algorithm incorrectly declares many tracks as miss-detected, and the unassigned detections are used to initialize false tracks. In contrast, if the threshold is high, false positive detections are assigned to miss-detected tracks or false tracks, which leads to a decrease in performance, as seen in CMC3 and CMC5. 
+
+7 CONCLUSIONS 
+
+We have proposed a fast online 3D multi-object tracking and pose estimation algorithm using 2D detections from monocular cameras. Our algorithm is based on a drastic approximation of the Bayes-optimal multi-sensor general-ized labeled multi-Bernoulli filter. In particular, we deter-mine the most suitable term in the multi-object filtering density through the track initialization/termination process and resolve multi-camera data association with a series of independent 2D linear assignments, admitting a low-cost implementation. Experimental results demonstrate that our algorithm, which provides trajectories and poses in 3D world frame, is much faster than the state-of-the-art methods without compromising performance, even when cameras are reconfigured on-the-fly. 
+
+ACKNOWLEDGEMENTS 
+
+The authors would like to acknowledge Professor Ba-Ngu Vo (ba-ngu.vo@curtin.edu.au ) for his invaluable discussions during the drafting of this manuscript. This work was supported in part by Culture, Sports and Tourism R&D Program through the Korea Creative Content Agency grant funded by the Korea government (MCST) in 2024 (R2022060001), and GIST-MIT Research Collaboration Project. 
+
+REFERENCES 
+
+[1] L. Bridgeman, M. Volino, J.-Y. Guillemaut, and A. Hilton, “Multi-person 3D pose estimation and tracking in sports,” in IEEE Conf. Comput. Vis. Pattern Recog. Workshops , 2019, pp. 2487–2496. 1 [2] H. Bradler, A. Kretz, and R. Mester, “Urban traffic surveillance (UTS): A fully probabilistic 3D tracking approach based on 2D detections,” in IEEE Intell. Vehicles Symp. , 2021, pp. 1198–1205. 1 [3] Z. Liao, J. Zhu, C. Wang, H. Hu, and S. L. Waslander, “Multiple view geometry transformers for 3D human pose estimation,” in 
+
+IEEE Conf. Comput. Vis. Pattern Recog. , 2024, pp. 708–717. 1, 2, 10, 11 [4] Z. Ge, S. Liu, F. Wang, Z. Li, and J. Sun, “YOLOX: Exceeding YOLO series in 2021,” arXiv preprint arXiv:2107.08430 , 2021. 1, 2, 8 [5] Z. Cao, T. Simon, S.-E. Wei, and Y. Sheikh, “Realtime multi-person 2D pose estimation using part affinity fields,” in IEEE Conf. Comput. Vis. Pattern Recog. , 2017, pp. 7291–7299. 1, 2, 3 [6] H. Fang, J. Li, H. Tang, C. Xu, H. Zhu, Y. Xiu, Y.-L. Li, and C. Lu, “AlphaPose: Whole-body regional multi-person pose estimation and tracking in real-time,” IEEE Trans. Pattern Anal. Mach. Intell. ,vol. 45, no. 6, pp. 7157–7173, 2022. 1, 2, 8 [7] J. Ong, B.-T. Vo, B.-N. Vo, D. Y. Kim, and S. E. Nordholm, “A Bayesian filter for multi-view 3D multi-object tracking with occlusion handling,” IEEE Trans. Pattern Anal. Mach. Intell. , vol. 44, no. 5, pp. 2246–2263, 2022. 1, 2, 3, 6, 7, 8 [8] L. V. Ma, T. T. D. Nguyen, B.-N. Vo, H. Jang, and M. Jeon, “Track initialization and re-identification for 3D multi-view multi-object tracking,” Inf. Fusion , p. 102496, 2024. 1, 2, 4, 5, 6, 8 [9] B.-N. Vo, B.-T. Vo, and M. Beard, “Multi-sensor multi-object track-ing with the generalized labeled multi-Bernoulli filter,” IEEE Trans. Signal Process. , vol. 67, no. 23, pp. 5952–5967, 2019. 1, 2, 6, 7, 8 [10] S. M. Khan and M. Shah, “A multiview approach to tracking people in crowded scenes using a planar homography constraint,” in Eur. Conf. Comput. Vis. Springer, 2006, pp. 133–146. 2 [11] R. Eshel and Y. Moses, “Homography based multiple camera detection and tracking of people in a dense crowd,” in IEEE Conf. Comput. Vis. Pattern Recog. , 2008, pp. 1–8. 2 [12] T. Chavdarova and F. Fleuret, “Deep multi-camera people detec-tion,” in IEEE Int. Conf. Mach. learning and Appl. , 2017, pp. 848–853. 2[13] P. Baqu´ e, F. Fleuret, and P. V. Fua, “Deep occlusion reasoning for multi-camera multi-target detection,” in IEEE Int. Conf. Comput. Vis. , 2017, pp. 271–279. 2, 15 [14] D. M. H. Nguyen, R. Henschel, B. Rosenhahn, D. Sonntag, and P. Swoboda, “LMGP: Lifted multicut meets geometry projections for multi-camera multi-object tracking,” in IEEE Conf. Comput. Vis. Pattern Recog. , 2022, pp. 8866–8875. 2, 15 [15] T. Teepe, P. Wolters, J. Gilg, F. Herzog, and G. Rigoll, “EarlyBird: Early-fusion for multi-view tracking in the bird’s eye view,” in 
+
+IEEE/CVF Winter Conf. Appl. Comput. Vis. , 2024, pp. 102–111. 2, 15 [16] T. Gao, Z. Jia, W. Lin, and Y. Li, “Delving into monocular 3D vehicle tracking: a decoupled framework and a dedicated metric,” 
+
+Appl. Intell. , vol. 53, no. 1, pp. 746–756, 2023. 2 [17] K. Shim, K. Ko, J. Hwang, H. Jang, and C. Kim, “Fast online multi-target multi-camera tracking for vehicles,” Appl. Intell. , vol. 53, no. 23, pp. 28 994–29 004, 2023. 2 [18] V. Belagiannis, S. Amin, M. Andriluka, B. Schiele, N. Navab, and S. Ilic, “3D pictorial structures for multiple human pose estimation,” in IEEE Conf. Comput. Vis. Pattern Recog. , 2014, pp. 1669–1676. 2, 7, 9, 10, 11 [19] H. Tu, C. Wang, and W. Zeng, “VoxelPose: Towards multi-camera 3d human pose estimation in wild environment,” in Eur. Conf. Comput. Vis. Springer, 2020, pp. 197–212. 2 [20] H. Ye, W. Zhu, C. yu Wang, R. Wu, and Y. Wang, “Faster VoxelPose: Real-time 3D human pose estimation by orthographic projection,” in Eur. Conf. Comput. Vis. Springer, 2022, pp. 142–159. 2, 10, 11 [21] N. Reddy, L. Guigues, L. Pischulini, J. Eledath, and S. G. Narasimhan, “TesseTrack: End-to-end learnable multi-person ar-ticulated 3D pose tracking,” in IEEE Conf. Comput. Vis. Pattern Recog. , 2021, pp. 15 190–15 200. 2 [22] S. Wu, S. Jin, W. Liu, L. Bai, C. Qian, D. Liu, and W. Ouyang, “Graph-based 3D multi-person pose estimation using multi-view images,” in IEEE Conf. Comput. Vis. Pattern Recog. , 2021, pp. 11 148– 11 157. 2 [23] T. Wang, J. Zhang, Y. Cai, S. Yan, and J. Feng, “Direct multi-view multi-person 3D pose estimation,” Adv. Neural Inf. Process. Syst. ,vol. 34, pp. 13 153–13 164, 2021. 2 [24] V. K. Srivastav, K. Chen, and N. Padoy, “SelfPose3d: Self-supervised multi-person multi-view 3D pose estimation,” in IEEE Conf. Comput. Vis. Pattern Recog. , 2024, pp. 2502–2512. 2, 10, 11 [25] Z. Wang, X. Nie, X. Qu, Y. Chen, and S. Liu, “Distribution-aware single-stage models for multi-person 3D pose estimation,” in IEEE Conf. Comput. Vis. Pattern Recog. , 2022, pp. 13 096–13 105. 2, 10, 11 13 
+
+[26] J. Lin and G. H. Lee, “Multi-view multi-person 3D pose estimation with plane sweep stereo,” in IEEE Conf. Comput. Vis. Pattern Recog. ,2021, pp. 11 886–11 895. 2, 10, 11 [27] J. Dong, W. B. Jiang, Q.-X. Huang, H. Bao, and X. Zhou, “Fast and robust multi-person 3D pose estimation from multiple views,” in 
+
+IEEE Conf. Comput. Vis. Pattern Recog. , 2019, pp. 7792–7801. 2, 10, 11 [28] H. Chen, P. Guo, P. Li, G. H. Lee, and G. S. Chirikjian, “Multi-person 3D pose estimation in crowded scenes based on multi-view geometry,” in Eur. Conf. Comput. Vis. Springer, 2020, pp. 541–557. 2[29] D. G. Lowe, “Distinctive image features from scale-invariant key-points,” Int. J. Comput. Vis. , vol. 60, pp. 91–110, 2004. 2 [30] N. Dalal and B. Triggs, “Histograms of oriented gradients for human detection,” in IEEE Conf. Comput. Vis. Pattern Recog. , vol. 1, 2005, pp. 886–893. 2 [31] R. B. Girshick, J. Donahue, T. Darrell, and J. Malik, “Rich feature hierarchies for accurate object detection and semantic segmenta-tion,” in IEEE Conf. Comput. Vis. Pattern Recog. , 2014, pp. 580–587. 2[32] R. Girshick, “Fast R-CNN,” in IEEE Int. Conf. Comput. Vis. , 2015, pp. 1440–1448. 2 [33] S. Ren, K. He, R. B. Girshick, and J. Sun, “Faster R-CNN: Towards real-time object detection with region proposal networks,” Adv. Neural Inf. Process. Syst , vol. 28, 2015. 2 [34] J. Redmon, S. K. Divvala, R. B. Girshick, and A. Farhadi, “You only look once: Unified, real-time object detection,” in IEEE Conf. Comput. Vis. Pattern Recog. , 2016, pp. 779–788. 2 [35] X. Chen and A. L. Yuille, “Parsing occluded people by flexible compositions,” in IEEE Conf. Comput. Vis. Pattern Recog. , 2015, pp. 3945–3954. 2 [36] S. Kreiss, L. Bertoni, and A. Alahi, “OpenPifPaf: Composite fields for semantic keypoint detection and spatio-temporal association,” 
+
+IEEE Trans. Intell. Transp. Syst. , vol. 23, no. 8, pp. 13 498–13 511, 2021. 2 [37] K. He, G. Gkioxari, P. Doll´ ar, and R. Girshick, “Mask R-CNN,” in 
+
+IEEE Int. Conf. Comput. Vis. , 2017, pp. 2961–2969. 2 [38] Y. Chen, Z. Wang, Y. Peng, Z. Zhang, G. Yu, and J. Sun, “Cascaded pyramid network for multi-person pose estimation,” in IEEE Conf. Comput. Vis. Pattern Recog. , 2018, pp. 7103–7112. 2 [39] B. Xiao, H. Wu, and Y. Wei, “Simple baselines for human pose estimation and tracking,” in Eur. Conf. Comput. Vis. , 2018, pp. 466– 481. 2 [40] K. Sun, B. Xiao, D. Liu, and J. Wang, “Deep high-resolution representation learning for human pose estimation,” in IEEE Conf. Comput. Vis. Pattern Recog. , 2019, pp. 5693–5703. 2 [41] T.-Y. Lin, M. Maire, S. J. Belongie, J. Hays, P. Perona, D. Ramanan, P. Doll´ ar, and C. L. Zitnick, “Microsoft COCO: Common objects in context,” in Eur. Conf. Comput. Vis. Springer, 2014, pp. 740–755. 3 [42] M. Andriluka, L. Pishchulin, P. Gehler, and B. Schiele, “2D human pose estimation: New benchmark and state of the art analysis,” in 
+
+IEEE Conf. Comput. Vis. Pattern Recog. , 2014, pp. 3686–3693. 3 [43] Z. Zhang, “A flexible new technique for camera calibration,” IEEE Trans. Pattern Anal. Mach. Intell. , vol. 22, no. 11, pp. 1330–1334, 2000. 4 [44] S. J. Julier and J. K. Uhlmann, “Unscented filtering and nonlinear estimation,” Proc. IEEE , vol. 92, no. 3, pp. 401–422, 2004. 4 [45] R. van der Merwe and E. Wan, Sigma-point Kalman filters for probabilistic inference in dynamic state-space models . Oregon Health & Science University, 2004. 4, 5 [46] H. W. Kuhn, “The Hungarian method for the assignment prob-lem,” Nav. Res. Logist. Q. , vol. 2, no. 1-2, pp. 83–97, 1955. 4 [47] R. Jonker and A. Volgenant, “A shortest augmenting path algo-rithm for dense and sparse linear assignment problems,” Comput-ing , vol. 38, no. 4, pp. 325–340, 1987. 4 [48] Y. Zhang, P. Sun, Y. Jiang, D. Yu, Z. Yuan, P. Luo, W. Liu, and X. Wang, “ByteTrack: Multi-object tracking by associating every detection box,” in Eur. Conf. Comput. Vis. , 2022, pp. 1–21. 5 [49] Y. Zhang, C. Wang, X. Wang, W. Zeng, and W. Liu, “FairMOT: On the fairness of detection and re-identification in multiple object tracking,” Int. J. Comput. Vis. , vol. 129, no. 11, pp. 3069–3087, 2021. 5[50] A. Harltey and A. Zisserman, Multiple view geometry in computer vision . Cambridge university press, 2003. 5 [51] T. Chavdarova, P. Baqu´ e, S. Bouquet, A. Maksai, C. Jose, T. M. Bagautdinov, L. Lettry, P. V. Fua, L. V. Gool, and F. Fleuret, “Wild-track: A multi-camera hd dataset for dense unscripted pedestrian detection,” IEEE Conf. Comput. Vis. Pattern Recog. , pp. 5030–5039, 2018. 7, 15 [52] Y. Hou, L. Zheng, and S. Gould, “Multiview detection with feature perspective transformation,” in Eur. Conf. Comput. Vis. Springer, 2020, pp. 1–18. 7 [53] H. Joo, H. Liu, L. Tan, L. Gui, B. C. Nabbe, I. Matthews, T. Kanade, S. Nobuhara, and Y. Sheikh, “Panoptic Studio: A massively multi-view system for social motion capture,” in IEEE Int. Conf. Comput. Vis. , 2015. 7, 9 [54] K. Bernardin and R. Stiefelhagen, “Evaluating multiple object tracking performance: The CLEAR MOT metrics,” EURASIP J. on Image and Video Process. , vol. 2008, pp. 1–10, 2008. 8 [55] E. Ristani, F. Solera, R. Zou, R. Cucchiara, and C. Tomasi, “Per-formance measures and a data set for multi-target, multi-camera tracking,” in Eur. Conf. Comput. Vis. Springer, 2016, pp. 17–35. 8 [56] M. Beard, B.-T. Vo, and B.-N. Vo, “A solution for large-scale multi-object tracking,” IEEE Trans. Signal Process. , vol. 68, pp. 2754–2769, 2020. 8 [57] T. T. D. Nguyen, H. Rezatofighi, B.-N. Vo, B.-T. Vo, S. Savarese, and I. Reid, “How trustworthy are the existing performance evaluations for basic vision tasks?” IEEE Trans. Pattern Anal. Mach. Intell. , vol. 45, no. 7, pp. 8538–8552, 2023. 8 [58] H. Rezatofighi, N. Tsoi, J. Gwak, A. Sadeghian, I. Reid, and S. Savarese, “Generalized intersection over union: A metric and a loss for bounding box regression,” in IEEE Conf. Comput. Vis. Pattern Recog. , 2019, pp. 658–666. 8 [59] V. Belagiannis, X. Wang, B. Schiele, P. V. Fua, S. Ilic, and N. Navab, “Multiple human pose estimation with temporally consistent 3D pictorial structures,” in Eur. Conf. Comput. Vis. Workshops .Springer, 2015, pp. 742–754. 10, 11 [60] V. Belagiannis, S. Amin, M. Andriluka, B. Schiele, N. Navab, and S. Ilic, “3D pictorial structures revisited: Multiple human pose estimation,” IEEE Trans. Pattern Anal. Mach. Intell. , vol. 38, no. 10, pp. 1929–1942, 2015. 10, 11 [61] S. Ershadi-Nasab, E. Noury, S. Kasaei, and E. Sanaei, “Multiple human 3D pose estimation from multiview images,” Multimed. Tools Appl. , vol. 77, pp. 15 573–15 601, 2018. 10, 11 [62] B.-T. Vo and B.-N. Vo, “Labeled random finite sets and multi-object conjugate priors,” IEEE Trans. Signal Process. , vol. 61, no. 13, pp. 3460–3475, 2013. 15 [63] S. Blackman and R. Populi, “Design and analysis of modern tracking systems,” Norwood, MA: Artech House, 1999. , 1999. 15 [64] R. Qiu, M. Xu, Y. Yan, J. S. Smith, and X. Yang, “3D random occlu-sion and multi-layer projection for deep multi-camera pedestrian localization,” in Eur. Conf. Comput. Vis. , 2022. 15 14 
+
+# Appendices for “Fast Online 3D Multi-Camera Multi-Object Tracking and Pose Estimation” 
+
+Linh Van Ma, Tran Thien Dat Nguyen, and Moongu Jeon 
+
+APPENDIX APSEUDOCODES FOR IMPORTANT SUB -R OUTINES 
+
+In this appendix, we provide a series of pseudocodes for the important sub-routines used in Algorithm 1 in the main text. The list of constants and notation is given in Table A1. 
+
+TABLE A1 List of constants and notations used in the pseudocodes. 
+
+Notations Meanings 
+
+v Number of cameras. 
+
+Mpcq Camera matrix of camera c.
+
+Rpcq 
+
+> b
+
+Covariance matrix of the bounding box detection noise of camera c.
+
+Rpcq 
+
+> k
+
+Covariance matrix of the keypoint detection noise of camera c.
+
+κ Secondary scaling factor of the unscented transform, set to 2. 
+
+α Sigma point spreading factor of the unscented transform, set to 1. 
+
+β Prior knowledge factor of the unscented transform, set to 2. 
+
+τG Gating threshold for ground plane position. 
+
+τC Gating threshold for assignment cost. 
+
+Algorithm A1: UKFUpdateKS 
+
+Input : b, μpsq, Ppsq, c.
+
+Output : q, μpsq 
+
+> u
+
+, Ppsq 
+
+> u
+
+. 
+
+> 1
+
+L Ð 9 
+
+> 2
+
+n Ð 2L ` 1 
+
+> 3
+
+pX , w m, w cq Ð UnscentedTransform pμpsq, Ppsqq
+
+(Algorithm A5)  
+
+> 4
+
+for i “ 1 : n do  
+
+> 5
+
+Yris Ð 3Dto2DBBox pX ris, c q (Algorithm A6)  
+
+> 6
+
+μd Ð b ´ řni“1 wmrisYris 
+
+> 7
+
+Pd Ð řni“1 wcrisp Yris ´ μdqp Yris ´ μdqT 
+
+> 8
+
+Ps Ð řni“1 wcrisp X ris ´ μqp Yris ´ μdqT 
+
+> 9
+
+K Ð PdP´1 
+
+> s
+> 10
+
+μpsq 
+
+> u
+
+Ð μpsq ` Kμd 
+
+> 11
+
+Ppsq 
+
+> u
+
+Ð Ppsq ´ PdP´1 
+
+> s
+
+Ps 
+
+> 12
+
+q Ð GaussianPDF pb, μ psq 
+
+> u
+
+, Rpcq 
+
+> b
+
+` Ppsq 
+
+> u
+
+q
+
+APPENDIX BTRACKING PERFORMANCE COMPARISON WITH 3D-TRAINING -B ASED METHODS 
+
+In this appendix, using WILDTRACK (WT) dataset, we evaluate our algorithm against 3D-training-based methods. Note that the 3D-training-based methods use a portion of the ground truth as training data. In particular, we use 
+
+Algorithm A2: DetectionGating .
+
+Input : b, μ, c.
+
+Output : s. 
+
+> 1
+
+x Ð
+
+«
+
+μr1s
+
+μr2s
+
+ff  
+
+> 2
+
+y Ð 2DBBoxtoGroundPlane pb, c q (Algorithm A3)  
+
+> 3
+
+if || x ´ y || 2 ą τG then  
+
+> 4
+
+s Ð false  
+
+> 5
+
+else  
+
+> 6
+
+s Ð true 
+
+Algorithm A3: 2DBBoxtoGroundPlane .
+
+Input : b, c.
+
+Output : g. 
+
+> 1
+
+f Ð
+
+«
+
+br1s ` exp pbr3sq 
+
+> 2
+
+br2s ` exp pbr4sq 
+
+ff  
+
+> 2
+
+f Ð
+
+´
+
+Mpcqr:, r1, 2, 3ss 
+
+¯´1
+
+f 
+
+> 3
+
+f r1s Ð f r1s{ f r3s 
+
+> 4
+
+f r2s Ð f r2s{ f r3s 
+
+> 5
+
+g Ð
+
+«
+
+f r1s
+
+f r2s
+
+ff 
+
+Algorithm A4: UKFUpdateKP 
+
+Input : k, μppq, Pppq, c, Mpcq.
+
+Output : μppq 
+
+> u
+
+, Pppq 
+
+> u
+
+. 
+
+> 1
+
+rμppq 
+
+> i
+
+si“1: P Ð ListKeyPointMean pμppqq 
+
+> 2
+
+rPppq 
+
+> i
+
+si“1: P Ð ListKeyPointCovariance pPppqq 
+
+> 3
+
+L Ð 6; n Ð 2L ` 1 
+
+> 4
+
+for i “ 1 : P do  
+
+> 5
+
+if ki ‰ 8 then  
+
+> 6
+
+pX , w m, w cq Ð UnscentedTransform pμppq 
+
+> i
+
+, Pppq 
+
+> i
+
+q
+
+(Algorithm A5)  
+
+> 7
+
+for j “ 1 : n do  
+
+> 8
+
+Yrjs Ð MpcqX rjs 
+
+> 9
+
+Yrjs Ð 
+
+” Yrj, 0s 
+
+> Yrj, 2s
+
+, Yrj, 1s
+
+> Yrj, 2s
+
+ı 
+
+> 10
+
+μd Ð ki ´ řnj“1 wmrjsYrjs 
+
+> 11
+
+Pd Ð řnj“1 wcrjsp Yrjs ´ μdqp Yrjs ´ μdqT 
+
+> 12
+
+Ps Ð řnj“1 wcrjsp X rjs ´ μdqp Yrjs ´ μdqT 
+
+> 13
+
+K Ð PdP´1 
+
+> s
+> 14
+
+μppq 
+
+> i
+
+Ð μppq 
+
+> i
+
+` Kμd 
+
+> 15
+
+Pppq 
+
+> i
+
+Ð Pppq 
+
+> i
+
+´ PdP´1 
+
+> s
+
+Ps 
+
+> 16
+
+μppq 
+
+> u
+
+Ð KeypointMean pr μppq 
+
+> i
+
+si“1: P q 
+
+> 17
+
+Pppq 
+
+> u
+
+Ð KeypointCovariance pr Pppq 
+
+> i
+
+si“1: P q15 
+
+Algorithm A5: UnscentedTransform 
+
+Input : μ, P.
+
+Output : X , wm, wc. 
+
+> 1
+
+L Ð Dimension (μ ) 
+
+> 2
+
+n Ð 2L ` 1 
+
+> 3
+
+λ Ð α2pL ` κq ´ L X r1s Ð μ 
+
+> 4
+
+wmr1s Ð λL`λ 
+
+> 5
+
+wcr1s Ð λL`λ ` 1 ´ α2 ` β 
+
+> 6
+
+Psq Ð apL ` λqP 
+
+> 7
+
+for i “ 2 : L ` 1 do  
+
+> 8
+
+X ris Ð μ ` Psq ri, :s 
+
+> 9
+
+for i “ L ` 2 : 2 L ` 1 do  
+
+> 10
+
+X ris Ð μ ´ Psq ri ´ L, :s 
+
+> 11
+
+for i “ 2 : 2 L ` 1 do  
+
+> 12
+
+wmris Ð 12pL`λq 
+
+> 13
+
+wcris Ð 12pL`λq
+
+Algorithm A6: 3Dto2DBBox .
+
+Input : x, c, Mpcq (camera matrix of camera c). 
+
+Output : b . 
+
+> 1
+
+ρ Ð xr1 : 3 s /* xrn : ms: the nth to mth 
+
+components of x */  
+
+> 2
+
+s Ð exp pxr7 : 9 sq  
+
+> 3
+
+A Ð
+
+»————————–
+
+ρr1s ` sr1s ρr2s ρr3s 1
+
+ρr1s ´ sr1s ρr2s ρr3s 1
+
+ρr1s ρr2s ` sr2s ρr3s 1
+
+ρr1s ρr2s ´ sr2s ρr3s 1
+
+ρr1s ρr2s ρr3s ` sr3s 1
+
+ρr1s ρr2s ρr3s ´ sr3s 1
+
+fi ffi ffi ffi ffi ffi ffi ffi ffi fl  
+
+> 4
+
+P Ð MpcqAT 
+
+> 5
+
+ζ Ð 02ˆ6 
+
+> 6
+
+ζr1, :s Ð Pr1, :s m Pr3, :s /* ζrn, :s: all elements in row nth of ζ */  
+
+> 7
+
+ζr2, :s Ð Pr2, :s m Pr3, :s /* m: element-wise division*/  
+
+> 8
+
+l Ð min pζr1, :sq /* Left */  
+
+> 9
+
+t Ð min pζr2, :sq /* Top */  
+
+> 10
+
+r Ð max pζr1, :sq /* Right */  
+
+> 11
+
+o Ð max pζr2, :sq /* Bottom */  
+
+> 12
+
+b Ð r l, t, log pr ´ lq, log po ´ tqs T
+
+classical multi-object tracking filters including the single-sensor generalized labeled multi-Bernoulli (GLMB) [62], multi-hypothesis tracking (MHT), joint probabilistic data association (JPDA), global nearest neighbor (GNN) filters [63] to process 3D detections obtained from 3DROM de-tector [64]. We also test the KSP-ptracker (K.p.) [51] using 3D detections from DeepOcclusion (DeepOcc.) detector [13], LGMP [14] and EarlyBird [15] 3D trackers. We note that 3DROM, DeepOcc. and LGMP models are trained on 90% of the WT dataset and evaluated on the remaining 10%. The EarlyBird tracker was trained on 10-90% of the WT dataset. The YOLOX 2D detector used in our method is not trained on any portion of the WT dataset or 3D data. Table A2, which presents the detection quality on WT             
+
+> TABLE A2 Detection quality on the WT dataset (‘ ˚’ indicates 3D) in terms of multi-object detection accuracy (MODA), multi-object detection precision (MODP) scores with their recall (Rcll) and precision (Prcn) components.
+> Detector MODA ÒMODP ÒRcll ÒPrcn Ò
+> 3DROM* 93.5 75.9 96.2 97.2 YOLOX 38.09 67.02 76.22 66.66
+
+dataset, shows that the 3DROM detector achieves almost perfect results. Note that the reported YOLOX detection quality is averaged over the results from all cameras. We ob-serve that YOLOX detections are much worse than 3DROM detections. Tracking results are reported in Table A3 which shows that LMGP is the best method among the tested ones. In terms of IDF1, our method is better than classical single-sensor MOT filters with 3DROM detections except for the GLMB filter. In general, our method is inferior to the recent LMGP and EarlyBird trackers, which are trained on a por-tion of the ground truth. Nonetheless, in terms of IDF1, our method is comparable with the EarlyBird tracker trained on 30% of the ground truth and better than one that is trained on 10% of the ground truth. The inferior performance of our method is due to the low-quality 2D detection results compared to the 3D-training-based detection. However, our method only requires generic 2D detection models, not scenario-dependent 3D detection/tracking models.
