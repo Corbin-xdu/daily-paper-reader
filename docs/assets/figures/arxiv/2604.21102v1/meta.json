@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.21102v1/fig-001.webp",
+      "caption": "Fig. 1: Overview of our framework for evaluating building conditions.",
+      "page": 3,
+      "index": 1,
+      "width": 840,
+      "height": 452
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21102v1/fig-002.webp",
+      "caption": "Fig. 2: Examples of buildings corresponding to each condition rating.",
+      "page": 4,
+      "index": 2,
+      "width": 937,
+      "height": 327
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21102v1/fig-003.webp",
+      "caption": "Fig. 4: Overview of the visualization dashboard, which integrates building-level property review, parcellevel map context, and city-scale comparison views in a unified interface.",
+      "page": 12,
+      "index": 3,
+      "width": 950,
+      "height": 467
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21102v1/fig-004.webp",
+      "caption": "Fig. 5: Example dashboard views for LLM-based building assessment: the analysis tabs provide a compact summary of model outputs, while the report view presents detailed evaluation results for the selected property.",
+      "page": 12,
+      "index": 4,
+      "width": 454,
+      "height": 320
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21102v1/fig-005.webp",
+      "caption": "Fig. 3: Attribute-label distributions for GPT-5.4, Gemini-3.1-Pro, and Claude-Opus-4.6 after majority voting across five runs.",
+      "page": 9,
+      "index": 5,
+      "width": 936,
+      "height": 304
+    }
+  ]
+}

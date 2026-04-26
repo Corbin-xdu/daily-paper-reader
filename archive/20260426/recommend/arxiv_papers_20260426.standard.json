@@ -1,0 +1,1296 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-26T19:53:02.105810+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 48,
+    "deep_cap": 6,
+    "deep_selected": 22,
+    "quick_candidates": 63,
+    "quick_skim_target": 11,
+    "quick_selected": 11
+  },
+  "deep_dive": [
+    {
+      "id": "2604.16708v1",
+      "source": "arxiv",
+      "title": "Knowledge Distillation for Lightweight Multimodal Sensing-Aided mmWave Beam Tracking",
+      "abstract": "Beam training and prediction in real-world millimeter-wave (mmWave) communications systems are challenging due to rapidly time-varying channels and strong interference from surrounding objects. In this context, widely available sensors, such as cameras and radars, can capture rich environmental information, enabling efficient beam management. This paper proposes a knowledge-distillation (KD)-enabled learning framework for developing lightweight and low-complexity models for beam prediction and tracking using real-world camera and radar data from the DeepSense 6G dataset. Specifically, a powerful teacher network based on convolutional neural networks (CNNs) and gated recurrent units (GRUs) is first designed to predict current and future beams from historical sensor observations. Then, a compact student model is constructed and trained via KD to transfer the predictive capability of the teacher model to a lightweight architecture. Simulation results demonstrate that jointly leveraging radar and image modalities significantly outperforms single-modality approaches. Moreover, the proposed student model achieves over 96% Top-5 beam prediction accuracy while reducing computational complexity by more than 4 times and the number of parameters by over 27 times compared with the teacher model.",
+      "authors": [
+        "Mengyuan Ma",
+        "Isuri Welgamage",
+        "Ahmed Alkhateeb",
+        "A. Lee Swindlehurst",
+        "Markku Juntti",
+        "Nhan Thanh Nguyen"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-04-17T21:18:12+00:00",
+      "link": "https://arxiv.org/pdf/2604.16708v1",
+      "tags": [
+        "keyword:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Knowledge distillation for lightweight multimodal sensing models",
+      "llm_evidence_cn": "用于轻量化多模态感知模型的知识蒸馏",
+      "llm_evidence": "用于轻量化多模态感知模型的知识蒸馏",
+      "canonical_evidence": "用于轻量化多模态感知模型的知识蒸馏",
+      "llm_tldr_en": "Proposes a KD framework to develop lightweight models for mmWave beam tracking using camera and radar data.",
+      "llm_tldr_cn": "提出一种知识蒸馏框架，利用相机和雷达数据开发轻量化毫米波波束跟踪模型。",
+      "llm_tldr": "提出一种知识蒸馏框架，利用相机和雷达数据开发轻量化毫米波波束跟踪模型。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Mathematical principles of knowledge distillation in CV",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.16783v1",
+      "source": "arxiv",
+      "title": "EdgeVTP: Exploration of Latency-efficient Trajectory Prediction for Edge-based Embedded Vision Applications",
+      "abstract": "Vehicle trajectory prediction is central to highway perception, but deployment on roadside edge devices necessitates bounded, deterministic end-to-end latency. We present EdgeVTP, an embedded-first trajectory predictor that combines interaction-aware graph modeling with a lightweight transformer backbone and a one-shot curve decoder. By predicting future motion as compact curve parameters (anchored at the last observed position) rather than horizon-scaled autoregressive waypoints, EdgeVTP reduces decoding overhead while producing smooth trajectories. To keep runtime predictable in crowded scenes, we explicitly bound interaction complexity via a locality graph with a hard neighbor cap. Across three highway benchmarks and two Jetson-class platforms, EdgeVTP achieves the lowest measured end-to-end latency under a protocol that includes graph construction and post-processing, while attaining state-of-the-art (SotA) prediction accuracy on two of the three datasets and competitive error on other benchmarks. Our code is available at https://github.com/SeungjinStevenKim/EdgeVTP.",
+      "authors": [
+        "Seungjin Kim",
+        "Reza Jafarpourmarzouni",
+        "Christopher Neff",
+        "Hamed Tabkhi",
+        "Vinit Katariya"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-18T02:13:02+00:00",
+      "link": "https://arxiv.org/pdf/2604.16783v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "lightweight transformer backbone for edge-based embedded vision applications",
+      "llm_evidence_cn": "用于边缘嵌入式视觉应用的轻量级Transformer骨干网络",
+      "llm_evidence": "用于边缘嵌入式视觉应用的轻量级Transformer骨干网络",
+      "canonical_evidence": "用于边缘嵌入式视觉应用的轻量级Transformer骨干网络",
+      "llm_tldr_en": "Introduces a latency-efficient trajectory predictor with a lightweight backbone for edge deployment.",
+      "llm_tldr_cn": "引入一种具有轻量级骨干网络的高效轨迹预测器，适用于边缘部署。",
+      "llm_tldr": "引入一种具有轻量级骨干网络的高效轨迹预测器，适用于边缘部署。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Novel architectural paradigms for resource constrained vision tasks",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.16806v1",
+      "source": "arxiv",
+      "title": "Channel Attention-Guided Cross-Modal Knowledge Distillation for Referring Image Segmentation",
+      "abstract": "Referring image segmentation (RIS) requires accurate segmentation of target regions in images according to language descriptions, which is a cross-modal task integrating vision and language. Existing RIS methods typically employ large-scale vision and language encoding models to improve performance, but their enormous parameter size severely restricts deployment in scenarios with limited computing resources. To solve this problem, this paper proposes a channel attention-guided cross-modal knowledge distillation method, which transfers the high-order fine-grained correlations between vision and language learned by the teacher network, as well as the correlations between semantic components represented by each channel, to the student network. Compared with the traditional pixel-wise relational distillation, this method not only enables the student to learn the knowledge of the teacher, but also retains part of its independent learning ability, alleviating the transfer of learning bias. Experimental results on two public datasets show that the proposed distillation method does not introduce additional parameters during inference and can achieve significant performance improvement for the student model.",
+      "authors": [
+        "Chen Yang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-18T03:28:42+00:00",
+      "link": "https://arxiv.org/pdf/2604.16806v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Cross-modal knowledge distillation for referring image segmentation to reduce parameter size",
+      "llm_evidence_cn": "用于指代图像分割的跨模态知识蒸馏，以减少参数规模",
+      "llm_evidence": "用于指代图像分割的跨模态知识蒸馏，以减少参数规模",
+      "canonical_evidence": "用于指代图像分割的跨模态知识蒸馏，以减少参数规模",
+      "llm_tldr_en": "This paper uses channel attention-guided distillation to create lightweight models for cross-modal segmentation.",
+      "llm_tldr_cn": "本文利用通道注意力引导的蒸馏技术，为跨模态分割任务构建轻量化模型。",
+      "llm_tldr": "本文利用通道注意力引导的蒸馏技术，为跨模态分割任务构建轻量化模型。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Mathematical principles of knowledge distillation in CV",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.16854v1",
+      "source": "arxiv",
+      "title": "CATP: Confidence-Aware Token Pruning for Camouflaged Object Detection",
+      "abstract": "Camouflaged Object Detection (COD) aims to segment targets that share extreme textural and structural similarities with their complex environments. Leveraging their capacity for long-range dependency modeling, Transformer-based detectors have become the mainstream approach and achieve state-of-the-art (SoTA) accuracy, yet their substantial computational overhead severely limits practical deployment. To address this, we propose a hierarchical Confidence-Aware Token Pruning framework (CATP) tailored for COD. Our approach hierarchically identifies and discards easily distinguishable tokens from both background and object interiors, focusing computations on critical boundary tokens. To compensate for information loss from pruning, we introduce a dual-path feature compensation mechanism that aggregates contextual knowledge from pruned tokens into enriched features. Extensive experiments on multiple COD benchmarks demonstrate that our method significantly reduces computational complexity while maintaining high accuracy, offering a promising research direction for the efficient deployment of COD models in real-world scenarios. The code will be released.",
+      "authors": [
+        "Yuhan Gao",
+        "Shuhao Kang",
+        "Xin He",
+        "Bing Li",
+        "Xu Cheng",
+        "Yun Liu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-18T06:03:18+00:00",
+      "link": "https://arxiv.org/pdf/2604.16854v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Token pruning for vision transformer efficiency in camouflaged object detection",
+      "llm_evidence_cn": "伪装目标检测中视觉Transformer效率的Token剪枝",
+      "llm_evidence": "伪装目标检测中视觉Transformer效率的Token剪枝",
+      "canonical_evidence": "伪装目标检测中视觉Transformer效率的Token剪枝",
+      "llm_tldr_en": "Proposes CATP, a hierarchical token pruning framework to reduce computational overhead in Transformer-based COD.",
+      "llm_tldr_cn": "提出CATP，一种层级化Token剪枝框架，旨在减少基于Transformer的伪装目标检测的计算开销。",
+      "llm_tldr": "提出CATP，一种层级化Token剪枝框架，旨在减少基于Transformer的伪装目标检测的计算开销。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Lightweight vision transformer design and optimization",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.16855v1",
+      "source": "arxiv",
+      "title": "When W4A4 Breaks Camouflaged Object Detection: Token-Group Dual-Constraint Activation Quantization",
+      "abstract": "Camouflaged object detection (COD) segments objects that intentionally blend with the background, so predictions depend on subtle texture and boundary cues. COD is often needed under tight on-device memory and latency budgets, making low-bit inference highly desirable. However, COD is unusually hard to quantify aggressively. We study post-training W4A4 quantization of Transformer-based COD and find a task-specific cliff: heavy-tailed background tokens dominate a shared activation range, inflating the step size and pushing weak-but-structured boundary cues into the zero bin. This exposes a token-local bottleneck -- remove cross-token range domination and bound the zero-bin mass under 4-bit activations. To address this, we introduce COD-TDQ, a COD-aware Token-group Dual-constraint activation Quantization method. COD-TDQ addresses this token-local bottleneck with two coupled steps: Direct-Sum Token-Group (DSTG) assigns token-group scales to suppress cross-token range domination, and Dual-Constraint Range Projection (DCRP) projects each token-group clip range to keep the step-to-dispersion ratio and the zero-bin mass bounded. Across four COD benchmarks and two baseline models (CFRN and ESCNet), COD-TDQ consistently achieves an Sαscore more than 0.12 higher than that of the state-of-the-art quantization method without retraining. The code will be released.",
+      "authors": [
+        "Tianqi Li",
+        "Wenyu Fang",
+        "Xin He",
+        "Xue Geng",
+        "Xu Cheng",
+        "Yun Liu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-18T06:05:20+00:00",
+      "link": "https://arxiv.org/pdf/2604.16855v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "W4A4 quantization for camouflaged object detection",
+      "llm_evidence_cn": "伪装目标检测的W4A4量化",
+      "llm_evidence": "伪装目标检测的W4A4量化",
+      "canonical_evidence": "伪装目标检测的W4A4量化",
+      "llm_tldr_en": "Addresses quantization bottlenecks in Transformer-based COD for low-bit on-device inference.",
+      "llm_tldr_cn": "针对基于Transformer的伪装目标检测，解决了低比特量化推理中的瓶颈问题。",
+      "llm_tldr": "针对基于Transformer的伪装目标检测，解决了低比特量化推理中的瓶颈问题。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Model compression techniques in computer vision",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.17320v1",
+      "source": "arxiv",
+      "title": "Towards Joint Quantization and Token Pruning of Vision-Language Models",
+      "abstract": "Deploying Vision-Language Models (VLMs) under aggressive low-bit inference remains challenging because inference cost is dominated by the long visual-token prefix during prefill and the growing KV cache during autoregressive decoding. Token pruning and low-bit quantization are complementary for reducing these costs, yet naive stage-wise combinations are often brittle due to a mismatch between quantization calibration and pruning execution. We present a collaborative quantization-and-pruning framework that unifies low-bit inference and deterministic visual-token pruning in a single deployable pipeline. The framework introduces the \\textbf{Q}uantization \\textbf{U}nified \\textbf{O}ffline \\textbf{T}oken \\textbf{A}llocator (\\textbf{QUOTA}), which converts low-bit calibration signals into a layer-wise token allocation schedule and materializes it as a pruning recipe. Token importance is evaluated under deployed W4A4 operators with a quantized KV cache by combining activation magnitude, attention cues, and an explicit low-bit risk signal, enabling consistent budgeted top-$k$ selection. Experiments on standard VLM benchmarks show improved robustness over stage-wise baselines under the same low-bit regime, achieving 95.65\\% average retention while retaining only 30\\% of visual tokens, compared with about 94.3\\% retention for representative stage-wise combinations. The code will be released.",
+      "authors": [
+        "Xinqing Li",
+        "Xin He",
+        "Xindong Zhang",
+        "Ming-Ming Cheng",
+        "Lei Zhang",
+        "Yun Liu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-19T08:18:29+00:00",
+      "link": "https://arxiv.org/pdf/2604.17320v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Joint quantization and token pruning for vision-language model compression",
+      "llm_evidence_cn": "视觉语言模型压缩的联合量化与Token剪枝",
+      "llm_evidence": "视觉语言模型压缩的联合量化与Token剪枝",
+      "canonical_evidence": "视觉语言模型压缩的联合量化与Token剪枝",
+      "llm_tldr_en": "Introduces QUOTA, a framework unifying low-bit quantization and token pruning for efficient VLM deployment.",
+      "llm_tldr_cn": "引入QUOTA框架，统一低比特量化与Token剪枝，以实现视觉语言模型的高效部署。",
+      "llm_tldr": "引入QUOTA框架，统一低比特量化与Token剪枝，以实现视觉语言模型的高效部署。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Model compression techniques in computer vision",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.17371v1",
+      "source": "arxiv",
+      "title": "Leveraging Kernel Symmetry for Joint Compression and Error Mitigation in Edge Model Transfer",
+      "abstract": "This paper investigates communication-efficient neural network transmission by exploiting structured symmetry constraints in convolutional kernels. Instead of transmitting all model parameters, we propose a degrees-of-freedom (DoF) based codec that sends only the unique coefficients implied by a chosen symmetry group, enabling deterministic reconstruction of the full weight tensor at the receiver. The proposed framework is evaluated under quantization and noisy channel conditions across multiple symmetry patterns, signal-to-noise ratios, and bit-widths. To improve robustness against transmission impairments, a projection step is further applied at the receiver to enforce consistency with the symmetry-invariant subspace, effectively denoising corrupted parameters. Experimental results on MNIST and CIFAR-10 using a DeepCNN architecture demonstrate that DoF-based transmission achieves substantial bandwidth reduction while preserving significantly higher accuracy than pruning-based baselines, which often suffer catastrophic degradation. Among the tested symmetries, \\textit{central-skew symmetry} consistently provides the best accuracy-compression tradeoff, confirming that structured redundancy can be leveraged for reliable and efficient neural model delivery over constrained links.",
+      "authors": [
+        "Anis Hamadouche",
+        "Mathini Sellathurai"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP",
+        "cs.LG"
+      ],
+      "published": "2026-04-19T10:55:04+00:00",
+      "link": "https://arxiv.org/pdf/2604.17371v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "communication-efficient neural network transmission by exploiting structured symmetry constraints",
+      "llm_evidence_cn": "利用结构化对称约束实现通信高效的神经网络传输",
+      "llm_evidence": "利用结构化对称约束实现通信高效的神经网络传输",
+      "canonical_evidence": "利用结构化对称约束实现通信高效的神经网络传输",
+      "llm_tldr_en": "This paper proposes a compression method using kernel symmetry for efficient model transfer to edge devices.",
+      "llm_tldr_cn": "本文提出一种利用卷积核对称性的压缩方法，旨在实现高效的边缘设备模型传输。",
+      "llm_tldr": "本文提出一种利用卷积核对称性的压缩方法，旨在实现高效的边缘设备模型传输。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Model compression techniques in computer vision",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.17439v1",
+      "source": "arxiv",
+      "title": "Attention Is not Everything: Efficient Alternatives for Vision",
+      "abstract": "Recently computer vision has seen advancements mainly thanks to Transformer-based models. However many non-Transformer methods are still doing well being a direct competition of Transformer-based models. This review tries to present a comprehensive taxonomy of such methods and organize these methods into categories like convolution-based models, MLP-based models, state-space-based and more. These methods are looked at in terms of how efficient they are, how well they scale, how easy they are to understand and how robust they are. A total of 40 papers were chosen for this study. The goal is to give a view of non-Transformer methods and find out what challenges and opportunities exist for future computer vision research.",
+      "authors": [
+        "Nur Mohammad Kazi",
+        "Ibteshum Khaled",
+        "Md. Luthful Hasan Galib",
+        "Ali Faruk Shihab",
+        "Md. Rakibul Islam"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-19T13:42:04+00:00",
+      "link": "https://arxiv.org/pdf/2604.17439v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "comprehensive taxonomy of efficient alternatives to Transformers in vision",
+      "llm_evidence_cn": "视觉领域Transformer高效替代方案的全面分类",
+      "llm_evidence": "视觉领域Transformer高效替代方案的全面分类",
+      "canonical_evidence": "视觉领域Transformer高效替代方案的全面分类",
+      "llm_tldr_en": "Reviews efficient non-Transformer architectures like CNNs and MLPs for computer vision tasks.",
+      "llm_tldr_cn": "综述了计算机视觉任务中如CNN和MLP等高效的非Transformer架构。",
+      "llm_tldr": "综述了计算机视觉任务中如CNN和MLP等高效的非Transformer架构。",
+      "llm_tags": [
+        "query:cv:composite"
+      ],
+      "matched_query_tag": "query:cv:composite",
+      "matched_query_text": "Papers central to 计算机视觉领域模型轻量化与数学原理和模型底层思考创新论文检索, especially work that connects or combines: Model compression techniques in computer vision; Mathematical principles of knowledge distillation in CV; Efficient neural architecture search for mobile vision; Mathematical optimization for deep learning efficiency; Lightweight vision transformer design and optimization; Mathematical foundations of lightweight neural network design; Innovative theoretical frameworks for computer vision model efficiency; First principles analysis of model compression and acceleration; Novel architectural paradigms for resource constrained vision tasks.",
+      "matched_requirement_id": "req-composite-cv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.17720v1",
+      "source": "arxiv",
+      "title": "FlashFPS: Efficient Farthest Point Sampling for Large-Scale Point Clouds via Pruning and Caching",
+      "abstract": "Point-based Neural Networks (PNNs) have become a key approach for point cloud processing. However, a core operation in these models, Farthest Point Sampling (FPS), often introduces significant inference latency, especially for large-scale processing. Despite existing CUDA- and hardware-level optimizations, FPS remains a major bottleneck due to exhaustive computations across multiple network layers in PNNs, which hinders scalability. Through systematic analysis, we identify three substantial redundancies in FPS, including unnecessary full-cloud computations, redundant late-stage iterations, and predictable inter-layer outputs that make later FPS computations avoidable. To address these, we propose \\textbf{\\textit{FlashFPS}}, a hardware-agnostic, plug-and-play framework for FPS acceleration, composed of \\textit{FPS-Prune} and \\textit{FPS-Cache}. \\textit{FPS-Prune} introduces candidate pruning and iteration pruning to reduce redundant computations in FPS while preserving sampling quality, and \\textit{FPS-Cache} eliminates layer-wise redundancy via cache-and-reuse. Integrated into existing CUDA libraries and state-of-the-art PNN accelerators, \\textit{FlashFPS} achieves 5.16$\\times$ speedup over the standard CUDA baseline on GPU and 2.69$\\times$ on PNN accelerators, with negligible accuracy loss, enabling efficient and scalable PNN inference. Codes are released at https://github.com/Yuzhe-Fu/FlashFPS.",
+      "authors": [
+        "Yuzhe Fu",
+        "Hancheng Ye",
+        "Cong Guo",
+        "Junyao Zhang",
+        "Qinsi Wang",
+        "Yueqian Lin",
+        "Changchun Zhou",
+        "Hai",
+        "Li",
+        "Yiran Chen"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CV"
+      ],
+      "published": "2026-04-20T02:03:24+00:00",
+      "link": "https://arxiv.org/pdf/2604.17720v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Efficient sampling and pruning for point cloud processing in computer vision",
+      "llm_evidence_cn": "计算机视觉中点云处理的高效采样与剪枝",
+      "llm_evidence": "计算机视觉中点云处理的高效采样与剪枝",
+      "canonical_evidence": "计算机视觉中点云处理的高效采样与剪枝",
+      "llm_tldr_en": "FlashFPS optimizes Farthest Point Sampling in point-based networks via pruning and caching to reduce latency.",
+      "llm_tldr_cn": "FlashFPS通过剪枝和缓存优化点云网络中的最远点采样，显著降低推理延迟。",
+      "llm_tldr": "FlashFPS通过剪枝和缓存优化点云网络中的最远点采样，显著降低推理延迟。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Model compression techniques in computer vision",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.18260v1",
+      "source": "arxiv",
+      "title": "Geometry-Guided 3D Visual Token Pruning for Video-Language Models",
+      "abstract": "Multimodal large language models have demonstrated remarkable capabilities in 2D vision, motivating their extension to 3D scene understanding. Recent studies represent 3D scenes as 3D spatial videos composed of image sequences with depth and camera pose information, enabling pre-trained video-language models to perform 3D reasoning tasks. However, the large number of visual tokens in spatial videos remains a major bottleneck for efficient inference and context management. Existing pruning methods overlook the view consistency of spatial videos and the spatial diversity of the remaining tokens, which prevents them from effectively removing inter-frame redundancy and preserving scene completeness. In this paper, we propose Geo3DPruner, a Geometry-Guided 3D Visual Token Pruning framework. Geo3DPruner first models cross-frame relevance through geometry-aware global attention, and then performs a two-stage pruning process. The intra-voxel stage selects representative multi-view features within each voxel, while the inter-voxel stage preserves spatial diversity by selecting a globally distributed subset of voxels. Extensive experiments on multiple 3D scene understanding benchmarks demonstrate that Geo3DPruner retains over 90% of the original performance while pruning 90% of visual tokens, significantly outperforming existing text-guided and vision-guided pruning methods.",
+      "authors": [
+        "Han Li",
+        "Zehao Huang",
+        "Jiahui Fu",
+        "Naiyan Wang",
+        "Si Liu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-20T13:33:50+00:00",
+      "link": "https://arxiv.org/pdf/2604.18260v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Geometry-guided token pruning for efficient 3D video-language inference",
+      "llm_evidence_cn": "几何引导的视觉Token剪枝，用于高效3D视频语言推理",
+      "llm_evidence": "几何引导的视觉Token剪枝，用于高效3D视频语言推理",
+      "canonical_evidence": "几何引导的视觉Token剪枝，用于高效3D视频语言推理",
+      "llm_tldr_en": "Proposes a geometry-guided pruning method to reduce visual tokens in 3D video-language models.",
+      "llm_tldr_cn": "提出一种几何引导的剪枝方法，减少3D视频语言模型中的视觉Token。",
+      "llm_tldr": "提出一种几何引导的剪枝方法，减少3D视频语言模型中的视觉Token。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Novel architectural paradigms for resource constrained vision tasks",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.18348v1",
+      "source": "arxiv",
+      "title": "AdaCluster: Adaptive Query-Key Clustering for Sparse Attention in Video Generation",
+      "abstract": "Video diffusion transformers (DiTs) suffer from prohibitive inference latency due to quadratic attention complexity. Existing sparse attention methods either overlook semantic similarity or fail to adapt to heterogeneous token distributions across layers, leading to model performance degradation. We propose AdaCluster, a training-free adaptive clustering framework that accelerates the generation of DiTs while preserving accuracy. AdaCluster applies an angle-similarity-preserving clustering method to query vectors for higher compression, and designs a euclidean-similarity-preserving clustering method for keys, covering cluster number assignment, threshold-wise adaptive clustering, and efficient critical cluster selection. Experiments on CogVideoX-2B, HunyuanVideo, and Wan-2.1 on one A40 GPU demonstrate up to 1.67-4.31x speedup with negligible quality degradation.",
+      "authors": [
+        "Haoyue Tan",
+        "Shengnan Wang",
+        "Yulin Qiao",
+        "Juncheng Zhang",
+        "Youhui Bai",
+        "Ping Gong",
+        "Zewen Jin",
+        "Cheng Li"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-04-20T14:43:36+00:00",
+      "link": "https://arxiv.org/pdf/2604.18348v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "adaptive clustering framework for sparse attention in video diffusion transformers",
+      "llm_evidence_cn": "视频扩散Transformer中稀疏注意力的自适应聚类框架",
+      "llm_evidence": "视频扩散Transformer中稀疏注意力的自适应聚类框架",
+      "canonical_evidence": "视频扩散Transformer中稀疏注意力的自适应聚类框架",
+      "llm_tldr_en": "AdaCluster reduces inference latency in video transformers through training-free adaptive query-key clustering.",
+      "llm_tldr_cn": "AdaCluster通过免训练的自适应键值聚类降低视频Transformer的推理延迟。",
+      "llm_tldr": "AdaCluster通过免训练的自适应键值聚类降低视频Transformer的推理延迟。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Lightweight vision transformer design and optimization",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.18452v1",
+      "source": "arxiv",
+      "title": "ESsEN: Training Compact Discriminative Vision-Language Transformers in a Low-Resource Setting",
+      "abstract": "Vision-language modeling is rapidly increasing in popularity with an ever expanding list of available models. In most cases, these vision-language models have parameters in the tens of billions, which is necessary for some needs, but in many cases smaller models are necessary (e.g., on edge devices or independent robotic platforms). Unfortunately, there is little research in producing light-weight models or in training them with small datasets. Inspired by the language learning progression and data sparsity in child development, in this paper, we address both of these goals in a systematic fashion. We show that two-tower encoder models are superior to one-tower encoders in low-resource settings for discriminative English tasks. We show also that incorporating traditional convolutional networks into the two-tower transformer architecture can help produce parameter efficient vision-language models. Finally, we show that the cross-modal fusion module of two-tower encoders can vary significantly in shape and size while producing the same results. In addition, we present ESsEN, a compact vision-language model that can be trained end-to-end with relatively few resources that performs as well on several tasks with only a fraction of the parameters compared to other models. The experimental results and the tools we present here make vision-language modeling more accessible to a wider variety of researchers.",
+      "authors": [
+        "Clayton Fields",
+        "Casey Kennington"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.CL"
+      ],
+      "published": "2026-04-20T16:10:28+00:00",
+      "link": "https://arxiv.org/pdf/2604.18452v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Training compact discriminative vision-language transformers for edge devices",
+      "llm_evidence_cn": "为边缘设备训练紧凑的判别式视觉语言Transformer",
+      "llm_evidence": "为边缘设备训练紧凑的判别式视觉语言Transformer",
+      "canonical_evidence": "为边缘设备训练紧凑的判别式视觉语言Transformer",
+      "llm_tldr_en": "ESsEN explores architectural designs to produce lightweight vision-language models for resource-constrained platforms.",
+      "llm_tldr_cn": "ESsEN探索了为资源受限平台构建轻量化视觉语言模型的架构设计。",
+      "llm_tldr": "ESsEN探索了为资源受限平台构建轻量化视觉语言模型的架构设计。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Lightweight vision transformer design and optimization",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.18790v1",
+      "source": "arxiv",
+      "title": "EfficientPENet: Real-Time Depth Completion from Sparse LiDAR via Lightweight Multi-Modal Fusion",
+      "abstract": "Depth completion from sparse LiDAR measurements and corresponding RGB images is a prerequisite for accurate 3D perception in robotic systems. Existing methods achieve high accuracy on standard benchmarks but rely on heavy backbone architectures that preclude real-time deployment on embedded hardware. We present EfficientPENet, a two-branch depth completion network that replaces the conventional ResNet encoder with a modernized ConvNeXt backbone, introduces sparsity-invariant convolutions for the depth stream, and refines predictions through a Convolutional Spatial Propagation Network (CSPN). The RGB branch leverages ImageNet-pretrained ConvNeXt blocks with Layer Normalization, 7x7 depthwise convolutions, and stochastic depth regularization. Features from both branches are merged via late fusion and decoded through a multi-scale deep supervision strategy. We further introduce a position-aware test-time augmentation scheme that corrects coordinate tensors during horizontal flipping, yielding consistent error reduction at inference. On the KITTI depth completion benchmark, EfficientPENet achieves an RMSE of 631.94 mm with 36.24M parameters and a latency of 20.51 ms, operating at 48.76 FPS. This represents a 3.7 times reduction in parameters and a 23 times speedup relative to BP-Net, while maintaining competitive accuracy. These results establish EfficientPENet as a practical solution for real-time depth completion on resource-constrained edge platforms such as the NVIDIA Jetson.",
+      "authors": [
+        "Johny J. Lopez",
+        "Md Meftahul Ferdaus",
+        "Mahdi Abdelguerfi",
+        "Anton Netchaev",
+        "Steven Sloan",
+        "Ken Pathak",
+        "Kendall N. Niles"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-20T19:56:04+00:00",
+      "link": "https://arxiv.org/pdf/2604.18790v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Lightweight multi-modal fusion and modernized backbone for real-time embedded deployment",
+      "llm_evidence_cn": "用于实时嵌入式部署的轻量级多模态融合和现代化骨干网络",
+      "llm_evidence": "用于实时嵌入式部署的轻量级多模态融合和现代化骨干网络",
+      "canonical_evidence": "用于实时嵌入式部署的轻量级多模态融合和现代化骨干网络",
+      "llm_tldr_en": "Introduces EfficientPENet, a lightweight depth completion network optimized for real-time embedded hardware.",
+      "llm_tldr_cn": "引入EfficientPENet，一种针对实时嵌入式硬件优化的轻量级深度补全网络。",
+      "llm_tldr": "引入EfficientPENet，一种针对实时嵌入式硬件优化的轻量级深度补全网络。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Novel architectural paradigms for resource constrained vision tasks",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.19145v1",
+      "source": "arxiv",
+      "title": "ST-Prune: Training-Free Spatio-Temporal Token Pruning for Vision-Language Models in Autonomous Driving",
+      "abstract": "Vision-Language Models (VLMs) have become central to autonomous driving systems, yet their deployment is severely bottlenecked by the massive computational overhead of multi-view camera and multi-frame video input. Existing token pruning methods, primarily designed for single-image inputs, treat each frame or view in isolation and thus fail to exploit the inherent spatio-temporal redundancies in driving scenarios. To bridge this gap, we propose ST-Prune, a training-free, plug-and-play framework comprising two complementary modules: Motion-aware Temporal Pruning (MTP) and Ring-view Spatial Pruning (RSP). MTP addresses temporal redundancy by encoding motion volatility and temporal recency as soft constraints within the diversity selection objective, prioritizing dynamic trajectories and current-frame content over static historical background. RSP further resolves spatial redundancy by exploiting the ring-view camera geometry to penalize bilateral cross-view similarity, eliminating duplicate projections and residual background that temporal pruning alone cannot suppress. These two modules together constitute a complete spatio-temporal pruning process, preserving key scene information under strict compression. Validated across four benchmarks spanning perception, prediction, and planning, ST-Prune establishes new state-of-the-art for training-free token pruning. Notably, even at 90\\% token reduction, ST-Prune achieves near-lossless performance with certain metrics surpassing the full-model baseline, while maintaining inference speeds comparable to existing pruning approaches.",
+      "authors": [
+        "Lin Sha",
+        "Haiyun Guo",
+        "Tao Wang",
+        "Cong Zhang",
+        "Min Huang",
+        "Jinqiao Wang",
+        "Qinghai Miao"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-04-21T06:51:08+00:00",
+      "link": "https://arxiv.org/pdf/2604.19145v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Training-free spatio-temporal token pruning for vision-language models",
+      "llm_evidence_cn": "视觉语言模型的免训练时空令牌剪枝",
+      "llm_evidence": "视觉语言模型的免训练时空令牌剪枝",
+      "canonical_evidence": "视觉语言模型的免训练时空令牌剪枝",
+      "llm_tldr_en": "ST-Prune reduces VLM computational overhead in autonomous driving via spatio-temporal redundancy exploitation.",
+      "llm_tldr_cn": "ST-Prune通过利用时空冗余，降低了自动驾驶中视觉语言模型的计算开销。",
+      "llm_tldr": "ST-Prune通过利用时空冗余，降低了自动驾驶中视觉语言模型的计算开销。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Model compression techniques in computer vision",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.19334v1",
+      "source": "arxiv",
+      "title": "Silicon Aware Neural Networks",
+      "abstract": "Recent work in the machine learning literature has demonstrated that deep learning can train neural networks made of discrete logic gate functions to perform simple image classification tasks at very high speeds on CPU, GPU and FPGA platforms. By virtue of being formed by discrete logic gates, these Differentiable Logic Gate Networks (DLGNs) lend themselves naturally to implementation in custom silicon - in this work we present a method to map DLGNs in a one-to-one fashion to a digital CMOS standard cell library by converting the trained model to a gate-level netlist. We also propose a novel loss function whereby the DLGN can optimize the area, and indirectly power consumption, of the resulting circuit by minimizing the expected area per neuron based on the area of the standard cells in the target standard cell library. Finally, we also show for the first time an implementation of a DLGN as a silicon circuit in simulation, performing layout of a DLGN in the SkyWater 130nm process as a custom hard macro using a Cadence standard cell library and performing post-layout power analysis. We find that our custom macro can perform classification on MNIST with 97% accuracy 41.8 million times a second at a power consumption of 83.88 mW.",
+      "authors": [
+        "Sebastian Fieldhouse",
+        "Kea-Tiong Tang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "eess.IV"
+      ],
+      "published": "2026-04-21T11:06:27+00:00",
+      "link": "https://arxiv.org/pdf/2604.19334v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "optimize the area and power consumption by minimizing the expected area per neuron",
+      "llm_evidence_cn": "通过最小化每个神经元的预期面积来优化电路面积和功耗",
+      "llm_evidence": "通过最小化每个神经元的预期面积来优化电路面积和功耗",
+      "canonical_evidence": "通过最小化每个神经元的预期面积来优化电路面积和功耗",
+      "llm_tldr_en": "This work maps logic gate networks to silicon, optimizing for area and power at the hardware level.",
+      "llm_tldr_cn": "该研究将逻辑门网络映射到芯片设计，从底层硬件层面优化神经网络的面积与功耗。",
+      "llm_tldr": "该研究将逻辑门网络映射到芯片设计，从底层硬件层面优化神经网络的面积与功耗。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Mathematical foundations of lightweight neural network design",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.20169v2",
+      "source": "arxiv",
+      "title": "Semantic-Fast-SAM: Efficient Semantic Segmenter",
+      "abstract": "We propose Semantic-Fast-SAM (SFS), a semantic segmentation framework that combines the Fast Segment Anything model with a semantic labeling pipeline to achieve real-time performance without sacrificing accuracy. FastSAM is an efficient CNN-based re-implementation of the Segment Anything Model (SAM) that runs much faster than the original transformer-based SAM. Building upon FastSAM's rapid mask generation, we integrate a Semantic-Segment-Anything (SSA) labeling strategy to assign meaningful categories to each mask. The resulting SFS model produces high-quality semantic segmentation maps at a fraction of the computational cost and memory footprint of the original SAM-based approach. Experiments on Cityscapes and ADE20K benchmarks demonstrate that SFS matches the accuracy of prior SAM-based methods (mIoU ~ 70.33 on Cityscapes and 48.01 on ADE20K) while achieving approximately 20x faster inference than SSA in the closed-set setting. We also show that SFS effectively handles open-vocabulary segmentation by leveraging CLIP-based semantic heads, outperforming recent open-vocabulary models on broad class labeling. This work enables practical real-time semantic segmentation with the \"segment-anything\" capability, broadening the applicability of foundation segmentation models in robotics scenarios. The implementation is available at https://github.com/KBH00/Semantic-Fast-SAM.",
+      "authors": [
+        "Byunghyun Kim"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-22T04:18:39+00:00",
+      "link": "https://arxiv.org/pdf/2604.20169v2",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Efficient CNN-based re-implementation for real-time performance and reduced memory",
+      "llm_evidence_cn": "基于CNN的高效重新实现，旨在实现实时性能并减少内存占用",
+      "llm_evidence": "基于CNN的高效重新实现，旨在实现实时性能并减少内存占用",
+      "canonical_evidence": "基于CNN的高效重新实现，旨在实现实时性能并减少内存占用",
+      "llm_tldr_en": "Proposes Semantic-Fast-SAM, an efficient CNN-based framework for real-time semantic segmentation.",
+      "llm_tldr_cn": "提出Semantic-Fast-SAM，一种基于CNN的高效实时语义分割框架。",
+      "llm_tldr": "提出Semantic-Fast-SAM，一种基于CNN的高效实时语义分割框架。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Novel architectural paradigms for resource constrained vision tasks",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.20278v1",
+      "source": "arxiv",
+      "title": "Lightweight Low-SNR-Robust Semantic Communication System for Autonomous Driving",
+      "abstract": "Image transmission for vehicle-to-vehicle collaborative perception in autonomous driving faces challenges including limited on-board terminal resources, time-varying wireless channel fading, and poor robustness under low signal-to-noise (SNR) ratio. Traditional separate source-channel coding schemes suffer from the cliff effect, while existing semantic communication models are limited by large parameter sizes and weak digital compatibility. This paper proposes a lightweight, low-SNR-robust deep joint source-channel coding (JSCC) semantic communication system. First, structured pruning is implemented based on batch normalization layer scaling factors and L1 regularization, which significantly reduces model complexity while ensuring image reconstruction quality. Second, a uniform quantization and M-QAM modulation scheme adapted to JSCC features is designed, and a training-deployment separation strategy is adopted to address the non-differentiable quantization problem, enabling compatibility with existing digital communication systems. Simulation results on the Cityscapes dataset show that the pruned model maintains comparable performance and robustness to the original one, even with over half of its parameters removed. Notably, the proposed scheme exhibits significant advantages over conventional communication methods under low SNR conditions.",
+      "authors": [
+        "Ruixing Ren",
+        "Minjie Wei",
+        "Junhui Zhao"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-22T07:25:16+00:00",
+      "link": "https://arxiv.org/pdf/2604.20278v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "structured pruning based on BN scaling factors for autonomous driving image transmission",
+      "llm_evidence_cn": "基于BN层缩放因子的结构化剪枝用于自动驾驶图像传输",
+      "llm_evidence": "基于BN层缩放因子的结构化剪枝用于自动驾驶图像传输",
+      "canonical_evidence": "基于BN层缩放因子的结构化剪枝用于自动驾驶图像传输",
+      "llm_tldr_en": "Proposes a lightweight semantic communication system using structured pruning to reduce complexity for vehicle perception.",
+      "llm_tldr_cn": "提出一种利用结构化剪枝降低复杂度的轻量化语义通信系统，用于自动驾驶感知。",
+      "llm_tldr": "提出一种利用结构化剪枝降低复杂度的轻量化语义通信系统，用于自动驾驶感知。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Model compression techniques in computer vision",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.20368v1",
+      "source": "arxiv",
+      "title": "LaplacianFormer:Rethinking Linear Attention with Laplacian Kernel",
+      "abstract": "The quadratic complexity of softmax attention presents a major obstacle for scaling Transformers to high-resolution vision tasks. Existing linear attention variants often replace the softmax with Gaussian kernels to reduce complexity, but such approximations lack theoretical grounding and tend to oversuppress mid-range token interactions. We propose LaplacianFormer, a Transformer variant that employs a Laplacian kernel as a principled alternative to softmax, motivated by empirical observations and theoretical analysis. To address expressiveness degradation under low-rank approximations, we introduce a provably injective feature map that retains fine-grained token information. For efficient computation, we adopt a Nyström approximation of the kernel matrix and solve the resulting system using Newton--Schulz iteration, avoiding costly matrix inversion and SVD. We further develop custom CUDA implementations for both the kernel and solver, enabling high-throughput forward and backward passes suitable for edge deployment. Experiments on ImageNet show that LaplacianFormer achieves strong performance-efficiency trade-offs while improving attention expressiveness.",
+      "authors": [
+        "Zhe Feng",
+        "Sen Lian",
+        "Changwei Wang",
+        "Muyang Zhang",
+        "Tianlong Tan",
+        "Rongtao Xu",
+        "Weiliang Meng",
+        "Xiaopeng Zhang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-04-22T09:04:54+00:00",
+      "link": "https://arxiv.org/pdf/2604.20368v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Linear attention with Laplacian kernel for high-resolution vision tasks",
+      "llm_evidence_cn": "用于高分辨率视觉任务的拉普拉斯核线性注意力",
+      "llm_evidence": "用于高分辨率视觉任务的拉普拉斯核线性注意力",
+      "canonical_evidence": "用于高分辨率视觉任务的拉普拉斯核线性注意力",
+      "llm_tldr_en": "LaplacianFormer uses a principled Laplacian kernel to achieve linear complexity in high-resolution vision Transformers.",
+      "llm_tldr_cn": "LaplacianFormer利用拉普拉斯核在高分辨率视觉Transformer中实现了线性复杂度。",
+      "llm_tldr": "LaplacianFormer利用拉普拉斯核在高分辨率视觉Transformer中实现了线性复杂度。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Lightweight vision transformer design and optimization",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.21102v1",
+      "source": "arxiv",
+      "title": "Leveraging Multimodal LLMs for Built Environment and Housing Attribute Assessment from Street-View Imagery",
+      "abstract": "We present a novel framework for automatically evaluating building conditions nationwide in the United States by leveraging large language models (LLMs) and Google Street View (GSV) imagery. By fine-tuning Gemma 3 27B on a modest human-labeled dataset, our approach achieves strong alignment with human mean opinion scores (MOS), outperforming even individual raters on SRCC and PLCC relative to the MOS benchmark. To enhance efficiency, we apply knowledge distillation, transferring the capabilities of Gemma 3 27B to a smaller Gemma 3 4B model that achieves comparable performance with a 3x speedup. Further, we distill the knowledge into a CNN-based model (EfficientNetV2-M) and a transformer (SwinV2-B), delivering close performance while achieving a 30x speed gain. Furthermore, we investigate LLMs' capabilities for assessing an extensive list of built environment and housing attributes through a human-AI alignment study and develop a visualization dashboard that integrates LLM assessment outcomes for downstream analysis by homeowners. Our framework offers a flexible and efficient solution for large-scale building condition assessment, enabling high accuracy with minimal human labeling effort.",
+      "authors": [
+        "Siyuan Yao",
+        "Siavash Ghorbany",
+        "Kuangshi Ai",
+        "Arnav Cherukuthota",
+        "Meghan Forstchen",
+        "Alexis Korotasz",
+        "Matthew Sisk",
+        "Ming Hu",
+        "Chaoli Wang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-04-22T21:42:09+00:00",
+      "link": "https://arxiv.org/pdf/2604.21102v1",
+      "tags": [
+        "keyword:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "distilling MLLM knowledge into EfficientNet and SwinV2",
+      "llm_evidence_cn": "将多模态大模型知识蒸馏至EfficientNet和SwinV2",
+      "llm_evidence": "将多模态大模型知识蒸馏至EfficientNet和SwinV2",
+      "canonical_evidence": "将多模态大模型知识蒸馏至EfficientNet和SwinV2",
+      "llm_tldr_en": "Uses knowledge distillation to transfer capabilities from large models to lightweight CNN and Transformer models.",
+      "llm_tldr_cn": "利用知识蒸馏将大模型能力迁移至轻量化CNN和Transformer模型中以提升效率。",
+      "llm_tldr": "利用知识蒸馏将大模型能力迁移至轻量化CNN和Transformer模型中以提升效率。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Model compression techniques in computer vision",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.21450v1",
+      "source": "arxiv",
+      "title": "VARestorer: One-Step VAR Distillation for Real-World Image Super-Resolution",
+      "abstract": "Recent advancements in visual autoregressive models (VAR) have demonstrated their effectiveness in image generation, highlighting their potential for real-world image super-resolution (Real-ISR). However, adapting VAR for ISR presents critical challenges. The next-scale prediction mechanism, constrained by causal attention, fails to fully exploit global low-quality (LQ) context, resulting in blurry and inconsistent high-quality (HQ) outputs. Additionally, error accumulation in the iterative prediction severely degrades coherence in ISR task. To address these issues, we propose VARestorer, a simple yet effective distillation framework that transforms a pre-trained text-to-image VAR model into a one-step ISR model. By leveraging distribution matching, our method eliminates the need for iterative refinement, significantly reducing error propagation and inference time. Furthermore, we introduce pyramid image conditioning with cross-scale attention, which enables bidirectional scale-wise interactions and fully utilizes the input image information while adapting to the autoregressive mechanism. This prevents later LQ tokens from being overlooked in the transformer. By fine-tuning only 1.2\\% of the model parameters through parameter-efficient adapters, our method maintains the expressive power of the original VAR model while significantly enhancing efficiency. Extensive experiments show that VARestorer achieves state-of-the-art performance with 72.32 MUSIQ and 0.7669 CLIPIQA on DIV2K dataset, while accelerating inference by 10 times compared to conventional VAR inference.",
+      "authors": [
+        "Yixuan Zhu",
+        "Shilin Ma",
+        "Haolin Wang",
+        "Ao Li",
+        "Yanzhe Jing",
+        "Yansong Tang",
+        "Lei Chen",
+        "Jiwen Lu",
+        "Jie Zhou"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-04-23T09:09:36+00:00",
+      "link": "https://arxiv.org/pdf/2604.21450v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "distillation framework that transforms a pre-trained VAR model into a one-step ISR model",
+      "llm_evidence_cn": "将预训练自回归模型蒸馏为单步超分辨率模型的框架",
+      "llm_evidence": "将预训练自回归模型蒸馏为单步超分辨率模型的框架",
+      "canonical_evidence": "将预训练自回归模型蒸馏为单步超分辨率模型的框架",
+      "llm_tldr_en": "VARestorer uses distillation to convert autoregressive models into efficient one-step image super-resolution models.",
+      "llm_tldr_cn": "VARestorer利用蒸馏技术将视觉自回归模型转化为高效的单步图像超分辨率模型。",
+      "llm_tldr": "VARestorer利用蒸馏技术将视觉自回归模型转化为高效的单步图像超分辨率模型。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Mathematical principles of knowledge distillation in CV",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.21694v1",
+      "source": "arxiv",
+      "title": "Efficient Logic Gate Networks for Video Copy Detection",
+      "abstract": "Video copy detection requires robust similarity estimation under diverse visual distortions while operating at very large scale. Although deep neural networks achieve strong performance, their computational cost and descriptor size limit practical deployment in high-throughput systems. In this work, we propose a video copy detection framework based on differentiable Logic Gate Networks (LGNs), which replace conventional floating-point feature extractors with compact, logic-based representations. Our approach combines aggressive frame miniaturization, binary preprocessing, and a trainable LGN embedding model that learns both logical operations and interconnections. After training, the model can be discretized into a purely Boolean circuit, enabling extremely fast and memory-efficient inference. We systematically evaluate different similarity strategies, binarization schemes, and LGN architectures across multiple dataset folds and difficulty levels. Experimental results demonstrate that LGN-based models achieve competitive or superior accuracy and ranking performance compared to prior models, while producing descriptors several orders of magnitude smaller and delivering inference speeds exceeding 11k samples per second. These findings indicate that logic-based models offer a promising alternative for scalable and resource-efficient video copy detection.",
+      "authors": [
+        "Katarzyna Fojcik"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.IR"
+      ],
+      "published": "2026-04-23T14:01:13+00:00",
+      "link": "https://arxiv.org/pdf/2604.21694v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Efficient logic gate networks for high-throughput video copy detection",
+      "llm_evidence_cn": "用于高吞吐视频复制检测的高效逻辑门网络",
+      "llm_evidence": "用于高吞吐视频复制检测的高效逻辑门网络",
+      "canonical_evidence": "用于高吞吐视频复制检测的高效逻辑门网络",
+      "llm_tldr_en": "Uses differentiable logic gate networks to create ultra-fast, Boolean-discretized vision models.",
+      "llm_tldr_cn": "利用可微逻辑门网络构建超快、布尔离散化的视觉模型。",
+      "llm_tldr": "利用可微逻辑门网络构建超快、布尔离散化的视觉模型。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Novel architectural paradigms for resource constrained vision tasks",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.21743v1",
+      "source": "arxiv",
+      "title": "Bridging the Training-Deployment Gap: Gated Encoding and Multi-Scale Refinement for Efficient Quantization-Aware Image Enhancement",
+      "abstract": "Image enhancement models for mobile devices often struggle to balance high output quality with the fast processing speeds required by mobile hardware. While recent deep learning models can enhance low-quality mobile photos into high-quality images, their performance is often degraded when converted to lower-precision formats for actual use on mobile phones. To address this training-deployment mismatch, we propose an efficient image enhancement model designed specifically for mobile deployment. Our approach uses a hierarchical network architecture with gated encoder blocks and multiscale refinement to preserve fine-grained visual features. Moreover, we incorporate Quantization-Aware Training (QAT) to simulate the effects of low-precision representation during the training process. This allows the network to adapt and prevents the typical drop in quality seen with standard post-training quantization (PTQ). Experimental results demonstrate that the proposed method produces high-fidelity visual output while maintaining the low computational overhead needed for practical use on standard mobile devices. The code will be available at https://github.com/GenAI4E/QATIE.git.",
+      "authors": [
+        "Dat To-Thanh",
+        "Nghia Nguyen-Trong",
+        "Hoang Vo",
+        "Hieu Bui-Minh",
+        "Tinh-Anh Nguyen-Nhu"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-04-23T14:46:12+00:00",
+      "link": "https://arxiv.org/pdf/2604.21743v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Quantization-aware training for efficient mobile image enhancement",
+      "llm_evidence_cn": "用于高效移动图像增强的量化感知训练",
+      "llm_evidence": "用于高效移动图像增强的量化感知训练",
+      "canonical_evidence": "用于高效移动图像增强的量化感知训练",
+      "llm_tldr_en": "Proposes an efficient image enhancement model for mobile deployment using quantization-aware training.",
+      "llm_tldr_cn": "提出一种针对移动端部署的高效图像增强模型，采用了量化感知训练技术。",
+      "llm_tldr": "提出一种针对移动端部署的高效图像增强模型，采用了量化感知训练技术。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Model compression techniques in computer vision",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.16678v1",
+      "source": "arxiv",
+      "title": "UniCon: Unified Framework for Efficient Contrastive Alignment via Kernels",
+      "abstract": "Contrastive objectives power state-of-the-art multimodal models, but their training remains slow, relying on long stochastic optimization. We propose a Unified Framework for Efficient Contrastive Alignment via Kernels (UniCon), which spans linear and nonlinear encoders as well as one-to-one and many-to-many alignments. At its core, UniCon introduces the contrastive similarity weight matrix $S(γ)$, which enables closed-form global solutions that provably replace minibatch back-propagation with exact updates. Through the lens of reproducing kernel Hilbert spaces (RKHS), UniCon provides a kernelized perspective that unifies contrastive alignment and reveals its connection to spectral methods. To validate the theory, we conduct experiments on synthetic, unimodal, multimodal, and zero-shot tasks, demonstrating that UniCon achieves substantial efficiency gains while preserving generality and strong empirical performance.",
+      "authors": [
+        "Hangke Sui",
+        "Yuqing Wang",
+        "Minh N Do"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-17T20:21:34+00:00",
+      "link": "https://arxiv.org/pdf/2604.16678v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "closed-form global solutions that provably replace minibatch back-propagation with exact updates",
+      "llm_evidence_cn": "利用闭式全局解代替小批量反向传播的精确更新",
+      "llm_evidence": "利用闭式全局解代替小批量反向传播的精确更新",
+      "canonical_evidence": "利用闭式全局解代替小批量反向传播的精确更新",
+      "llm_tldr_en": "UniCon uses kernel methods to provide efficient, closed-form solutions for contrastive alignment training.",
+      "llm_tldr_cn": "UniCon利用核方法为对比对齐训练提供高效的闭式解，优化了深度学习的训练效率。",
+      "llm_tldr": "UniCon利用核方法为对比对齐训练提供高效的闭式解，优化了深度学习的训练效率。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Mathematical optimization for deep learning efficiency",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2604.16758v1",
+      "source": "arxiv",
+      "title": "Frozen Vision Transformers for Dense Prediction on Small Datasets: A Case Study in Arrow Localization",
+      "abstract": "We present a system for automated detection, localization, and scoring of arrow punctures on 40\\,cm indoor archery target faces, trained on only 48 annotated photographs (5{,}084 punctures). Our pipeline combines three components: a color-based canonical rectification stage that maps perspective-distorted photographs into a standardized coordinate system where pixel distances correspond to known physical measurements; a frozen self-supervised vision transformer (DINOv3 ViT-L/16) paired with AnyUp guided feature upsampling to recover sub-millimeter spatial precision from $32 \\times 32$ patch tokens; and lightweight CenterNet-style detection heads for arrow-center heatmap prediction. Only 3.8\\,M of 308\\,M total parameters are trainable. Across three cross-validation folds, we achieve a mean F1 score of $0.893 \\pm 0.011$ and a mean localization error of $1.41 \\pm 0.06$\\,mm, comparable to or better than prior fully-supervised approaches that require substantially more training data. An ablation study shows that the CenterNet offset regression head, typically essential for sub-pixel refinement, provides negligible detection improvement while degrading localization in our setting. This suggests that guided feature upsampling already resolves the spatial precision lost through patch tokenization. On downstream archery metrics, the system recovers per-image average arrow scores with a median error of 1.8\\% and group centroid positions to within a median of 4.00\\,mm. These results demonstrate that frozen foundation models with minimal task-specific adaptation offer a practical paradigm for dense prediction in small-data regimes.",
+      "authors": [
+        "Maxwell Shepherd"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-04-18T00:17:48+00:00",
+      "link": "https://arxiv.org/pdf/2604.16758v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Lightweight detection heads for vision transformer on small datasets",
+      "llm_evidence_cn": "针对小数据集上视觉Transformer的轻量化检测头",
+      "llm_evidence": "针对小数据集上视觉Transformer的轻量化检测头",
+      "canonical_evidence": "针对小数据集上视觉Transformer的轻量化检测头",
+      "llm_tldr_en": "Uses frozen vision transformers with lightweight detection heads for precise arrow localization on small datasets.",
+      "llm_tldr_cn": "利用冻结的视觉Transformer和轻量化检测头，在小数据集上实现精确的箭矢定位。",
+      "llm_tldr": "利用冻结的视觉Transformer和轻量化检测头，在小数据集上实现精确的箭矢定位。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Lightweight vision transformer design and optimization",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.17492v1",
+      "source": "arxiv",
+      "title": "Coevolving Representations in Joint Image-Feature Diffusion",
+      "abstract": "Joint image-feature generative modeling has recently emerged as an effective strategy for improving diffusion training by coupling low-level VAE latents with high-level semantic features extracted from pre-trained visual encoders. However, existing approaches rely on a fixed representation space, constructed independently of the generative objective and kept unchanged during training. We argue that the representation space guiding diffusion should itself adapt to the generative task. To this end, we propose Coevolving Representation Diffusion (CoReDi), a framework in which the semantic representation space evolves during training by learning a lightweight linear projection jointly with the diffusion model. While naively optimizing this projection leads to degenerate solutions, we show that stable coevolution can be achieved through a combination of stop-gradient targets, normalization, and targeted regularization that prevents feature collapse. This formulation enables the semantic space to progressively specialize to the needs of image synthesis, improving its complementarity with image latents. We apply CoReDi to both VAE latent diffusion and pixel-space diffusion, demonstrating that adaptive semantic representations improve generative modeling across both settings. Experiments show that CoReDi achieves faster convergence and higher sample quality compared to joint diffusion models operating in fixed representation spaces.",
+      "authors": [
+        "Theodoros Kouzelis",
+        "Spyros Gidaris",
+        "Nikos Komodakis"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-19T15:29:15+00:00",
+      "link": "https://arxiv.org/pdf/2604.17492v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "lightweight linear projection for evolving representation space in diffusion",
+      "llm_evidence_cn": "用于扩散模型演化表示空间的轻量级线性投影",
+      "llm_evidence": "用于扩散模型演化表示空间的轻量级线性投影",
+      "canonical_evidence": "用于扩散模型演化表示空间的轻量级线性投影",
+      "llm_tldr_en": "Proposes a framework where semantic representations evolve via lightweight projections during diffusion training.",
+      "llm_tldr_cn": "提出一种在扩散训练期间通过轻量级投影使语义表示演化的框架。",
+      "llm_tldr": "提出一种在扩散训练期间通过轻量级投影使语义表示演化的框架。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Innovative theoretical frameworks for computer vision model efficiency",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.16734v1",
+      "source": "arxiv",
+      "title": "Reducing Peak Memory Usage for Modern Multimodal Large Language Model Pipelines",
+      "abstract": "Multimodal large language models (MLLMs) have recently demonstrated strong capabilities in understanding and generating responses from diverse visual inputs, including high-resolution images and long video sequences. As these models scale to richer visual representations, inference increasingly relies on storing large numbers of vision tokens in the key-value (KV) cache, making memory consumption a central bottleneck. Existing methods address this issue by identifying redundancy in vision tokens and compressing the cache, but such compression is typically applied only after all inputs are processed, resulting in high peak memory usage during the prefill stage. In this work, we show that MLLMs exhibit inherent structural regularities and representational redundancy that can be exploited to control memory growth throughout inference. Based on this insight, we propose a sequential input-compression mechanism that enforces a fixed memory budget by performing structure-aware key-value cache compression during the prefill process. This approach substantially reduces peak memory usage while maintaining generative performance with only minimal degradation, enabling more practical and memory-efficient multimodal inference.",
+      "authors": [
+        "Junwan Kim",
+        "Hyunkyung Bae"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-04-17T22:45:57+00:00",
+      "link": "https://arxiv.org/pdf/2604.16734v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "identifying redundancy in vision tokens and compressing the cache",
+      "llm_evidence_cn": "识别视觉Token冗余并压缩缓存",
+      "llm_evidence": "识别视觉Token冗余并压缩缓存",
+      "canonical_evidence": "识别视觉Token冗余并压缩缓存",
+      "llm_tldr_en": "This work reduces peak memory in multimodal models by identifying and compressing redundant vision tokens.",
+      "llm_tldr_cn": "该研究通过识别和压缩冗余视觉Token，降低了多模态大模型推理时的峰值显存占用。",
+      "llm_tldr": "该研究通过识别和压缩冗余视觉Token，降低了多模态大模型推理时的峰值显存占用。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Model compression techniques in computer vision",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2604.16780v1",
+      "source": "arxiv",
+      "title": "FairNVT: Improving Fairness via Noise Injection in Vision Transformers",
+      "abstract": "This paper presents FairNVT, a lightweight debiasing framework for pretrained transformer-based encoders that improves both representation and prediction level fairness while preserving task accuracy. Unlike many existing debiasing approaches that address these notions separately, we argue they are inherently connected: suppressing sensitive information at the representation level can facilitate fairer predictions. Our approach learns task-relevant and sensitive embeddings via lightweight adapters, applies calibrated Gaussian noise to the sensitive embedding, and fuses it with the task representation. Together with orthogonality constraints and fairness regularization, these components jointly reduce sensitive-attribute leakage in the learned embeddings and encourage fairer downstream predictions. The framework is compatible with a wide range of pretrained transformer encoders. Across three datasets spanning vision and language, FairNVT reduces sensitive-attribute attacker accuracy, improves demographic-parity and equalized-odds metrics, and maintains high task performance.",
+      "authors": [
+        "Qiaoyue Tang",
+        "Sepidehsadat Hosseini",
+        "Mengyao Zhai",
+        "Thibaut Durand",
+        "Greg Mori"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-04-18T02:04:29+00:00",
+      "link": "https://arxiv.org/pdf/2604.16780v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "lightweight debiasing framework for pretrained transformer-based encoders",
+      "llm_evidence_cn": "针对预训练Transformer编码器的轻量化去偏框架",
+      "llm_evidence": "针对预训练Transformer编码器的轻量化去偏框架",
+      "canonical_evidence": "针对预训练Transformer编码器的轻量化去偏框架",
+      "llm_tldr_en": "FairNVT is a lightweight framework that improves fairness in Vision Transformers using noise injection and adapters.",
+      "llm_tldr_cn": "FairNVT通过噪声注入和轻量化适配器提升视觉Transformer的公平性，同时保持任务准确度。",
+      "llm_tldr": "FairNVT通过噪声注入和轻量化适配器提升视觉Transformer的公平性，同时保持任务准确度。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Lightweight vision transformer design and optimization",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.17915v1",
+      "source": "arxiv",
+      "title": "OneDrive: Unified Multi-Paradigm Driving with Vision-Language-Action Models",
+      "abstract": "Vision-Language Models(VLMs) excel at autoregressive text generation, yet end-to-end autonomous driving requires multi-task learning with structured outputs and heterogeneous decoding behaviors, such as autoregressive language generation, parallel object detection and trajectory regression. To accommodate these differences, existing systems typically introduce separate or cascaded decoders, resulting in architectural fragmentation and limited backbone reuse. In this work, we present a unified autonomous driving framework built upon a pretrained VLM, where heterogeneous decoding behaviors are reconciled within a single transformer decoder. We demonstrate that pretrained VLM attention exhibits strong transferability beyond pure language modeling. By organizing visual and structured query tokens within a single causal decoder, structured queries can naturally condition on visual context through the original attention mechanism. Textual and structured outputs share a common attention backbone, enabling stable joint optimization across heterogeneous tasks. Trajectory planning is realized within the same causal LLM decoder by introducing structured trajectory queries. This unified formulation enables planning to share the pretrained attention backbone with images and perception tokens. Extensive experiments on end-to-end autonomous driving benchmarks demonstrate state-of-the-art performance, including 0.28 L2 and 0.18 collision rate on nuScenes open-loop evaluation and competitive results (86.8 PDMS) on NAVSIM closed-loop evaluation. The full model preserves multi-modal generation capability, while an efficient inference mode achieves approximately 40% lower latency. Code and models are available at https://github.com/Z1zyw/OneDrive",
+      "authors": [
+        "Yiwei Zhang",
+        "Xuesong Chen",
+        "Jin Gao",
+        "Hanshi Wang",
+        "Fudong Ge",
+        "Weiming Hu",
+        "Shaoshuai Shi",
+        "Zhipeng Zhang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-20T07:50:00+00:00",
+      "link": "https://arxiv.org/pdf/2604.17915v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "unified transformer decoder for heterogeneous driving tasks to improve backbone reuse",
+      "llm_evidence_cn": "用于异构驾驶任务的统一Transformer解码器以提高主干复用",
+      "llm_evidence": "用于异构驾驶任务的统一Transformer解码器以提高主干复用",
+      "canonical_evidence": "用于异构驾驶任务的统一Transformer解码器以提高主干复用",
+      "llm_tldr_en": "A unified framework for autonomous driving that reconciles multiple tasks within a single efficient decoder.",
+      "llm_tldr_cn": "一种自动驾驶统一框架，在单个高效解码器中协调多个任务。",
+      "llm_tldr": "一种自动驾驶统一框架，在单个高效解码器中协调多个任务。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Novel architectural paradigms for resource constrained vision tasks",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.17087v1",
+      "source": "arxiv",
+      "title": "EvoComp: Learning Visual Token Compression for Multimodal Large Language Models via Semantic-Guided Evolutionary Labeling",
+      "abstract": "Recent Multimodal Large Language Models (MLLMs) have demonstrated strong performance on vision-language understanding tasks, yet their inference efficiency is often hampered by the large number of visual tokens, particularly in high-resolution or multi-image scenarios. To address this issue, we propose EvoComp, a visual token compression framework that significantly reduces token count while preserving task accuracy. EvoComp introduces a lightweight encoder-only transformer-based compressor that selects the most informative and non-redundant visual tokens by jointly considering visual and textual contexts. A core challenge lies in providing effective supervision for training the compressor. To this end, we design an evolutionary labeling strategy that searches for token subsets minimizing the MLLM's output loss, while enforcing semantic diversity through vocabulary-based token grouping. We further train the compressor using a tailored loss function combining the GHM loss to mitigate class and difficulty imbalance, and a cosine similarity regularization to encourage semantic separation between retained and discarded tokens. Extensive experiments across multiple vision-language benchmarks show that EvoComp outperforms existing methods based on attention or similarity heuristics. Notably, it retains 99.3% of the original accuracy under 3x token compression and delivers up to 1.6x speedup on mobile devices.",
+      "authors": [
+        "Jiafei Song",
+        "Fengwei Zhou",
+        "Jin Qu",
+        "Wenjin Jason Li",
+        "Tong Wu",
+        "Gengjian Xue",
+        "Zhikang Zhao",
+        "Daomin Wei",
+        "Yichao Lu",
+        "Bailin Na"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-04-18T17:52:02+00:00",
+      "link": "https://arxiv.org/pdf/2604.17087v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "visual token compression for multimodal models",
+      "llm_evidence_cn": "多模态模型的视觉Token压缩",
+      "llm_evidence": "多模态模型的视觉Token压缩",
+      "canonical_evidence": "多模态模型的视觉Token压缩",
+      "llm_tldr_en": "Proposes EvoComp to reduce visual token count in MLLMs using a lightweight transformer-based compressor.",
+      "llm_tldr_cn": "提出EvoComp框架，通过轻量化Transformer压缩器减少多模态大模型的视觉Token数量。",
+      "llm_tldr": "提出EvoComp框架，通过轻量化Transformer压缩器减少多模态大模型的视觉Token数量。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Model compression techniques in computer vision",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2604.16823v1",
+      "source": "arxiv",
+      "title": "Hierarchical Vision Transformer Enhanced by Graph Convolutional Network for Image Classification",
+      "abstract": "Vision Transformer (ViT) has brought new breakthroughs to the field of image classification by introducing the self-attention mechanism and Graph Convolutional Networks(GCN) have been proposed and successfully applied in data representation and analysis. However, there are key challenges which limit their further development: (1) The patch size selected by ViT is crucial for accurate predictions, which raises a natural question: How to select the size of patches properly or how to comprehensively combine small patches and larger patches; (2) While the spatial structure information is important in vision tasks, the 1D position embeddings fails to capture the spatial structure information of patches more accurately; (3) The GCN can capture the local connectivity relationships between image nodes, but it lacks the ability to capture global graph structural information. On the contrary, the self-attention mechanism of ViT can draw the global relation on image patches, but it is unable to model the local structure of image. To overcome such limitations, we propose the Hierarchical Vision Transformer Enhanced by Graph Convolutional Network (GCN-HViT) for image classification. Specifically, the Hierarchical ViT we designed can model patch-wise information interactions on a global scale within each level and model hierarchical relationships between small patches and large patches across multiple levels. In addition, the proposed GCN method functions as a local feature extractor to obtain the local representation of each image patch which serves as a 2D position embedding of each patch in the 2D space. Meanwhile, it models patch-wise information interactions on a local scale within each level. Extensive experiments on 3 real-world datasets demonstrate that GCN-HViT achieves state-of-the-art performance.",
+      "authors": [
+        "Haibin Jiao"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-04-18T04:29:20+00:00",
+      "link": "https://arxiv.org/pdf/2604.16823v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "enhances Vision Transformer with GCN to capture spatial structure and optimize patch selection",
+      "llm_evidence_cn": "利用GCN增强Vision Transformer，以捕获空间结构并优化分块选择",
+      "llm_evidence": "利用GCN增强Vision Transformer，以捕获空间结构并优化分块选择",
+      "canonical_evidence": "利用GCN增强Vision Transformer，以捕获空间结构并优化分块选择",
+      "llm_tldr_en": "Combines ViT and GCN to better capture spatial information and improve image classification performance.",
+      "llm_tldr_cn": "结合ViT和GCN以更好地捕获空间信息，并提升图像分类性能。",
+      "llm_tldr": "结合ViT和GCN以更好地捕获空间信息，并提升图像分类性能。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Lightweight vision transformer design and optimization",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.18264v1",
+      "source": "arxiv",
+      "title": "Universally Empowering Zeroth-Order Optimization via Adaptive Layer-wise Sampling",
+      "abstract": "Zeroth-Order optimization presents a promising memory-efficient paradigm for fine-tuning Large Language Models by relying solely on forward passes. However, its practical adoption is severely constrained by slow wall-clock convergence and high estimation variance. In this work, we dissect the runtime characteristics of ZO algorithms and identify a critical system bottleneck where the generation of perturbations and parameter updates accounts for over 40% of the training latency. We argue that the standard uniform exploration strategy is fundamentally flawed as it fails to account for the heterogeneous sensitivity of layers in deep networks, resulting in computationally wasteful blind searches. To address this structural mismatch, we propose AdaLeZO, an Adaptive Layer-wise ZO optimization framework. By formulating the layer selection process as a non-stationary Multi-Armed Bandit problem, AdaLeZO dynamically allocates the limited perturbation budget to the most sensitive parameters. We further introduce an Inverse Probability Weighting mechanism based on sampling with replacement, which guarantees unbiased gradient estimation while effectively acting as a temporal denoiser to reduce variance. Extensive experiments on LLaMA and OPT models ranging from 6.7B to 30B parameters demonstrate that AdaLeZO achieves 1.7x to 3.0x wall-clock acceleration compared to state-of-the-art methods. Crucially, AdaLeZO functions as a universal plug-and-play module that seamlessly enhances the efficiency of existing ZO optimizers without incurring additional memory overhead.",
+      "authors": [
+        "Fei Wang",
+        "Li Shen",
+        "Liang Ding",
+        "Chao Xue",
+        "Ye Liu",
+        "Changxing Ding"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-20T13:37:31+00:00",
+      "link": "https://arxiv.org/pdf/2604.18264v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Mathematical optimization for memory-efficient fine-tuning via adaptive layer-wise sampling",
+      "llm_evidence_cn": "通过自适应逐层采样的内存高效微调数学优化方法",
+      "llm_evidence": "通过自适应逐层采样的内存高效微调数学优化方法",
+      "canonical_evidence": "通过自适应逐层采样的内存高效微调数学优化方法",
+      "llm_tldr_en": "Proposes an adaptive layer-wise sampling method for zeroth-order optimization to improve convergence in deep networks.",
+      "llm_tldr_cn": "提出一种自适应逐层采样的零阶优化方法，以提高深度网络微调的收敛速度。",
+      "llm_tldr": "提出一种自适应逐层采样的零阶优化方法，以提高深度网络微调的收敛速度。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "Mathematical optimization for deep learning efficiency",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.17224v1",
+      "source": "arxiv",
+      "title": "LASER: Low-Rank Activation SVD for Efficient Recursion",
+      "abstract": "Recursive architectures such as Tiny Recursive Models (TRMs) perform implicit reasoning through iterative latent computation, yet the geometric structure of these reasoning trajectories remains poorly understood. We investigate the activation manifold of TRMs during recursive unrolling and find that activations occupy an effectively linear, low-dimensional subspace whose principal directions can be tracked dynamically with cheap power iterations. This suggests that weight-sharing concentrates iterative computation along a small number of dominant eigendirections, and we find that this concentration varies sharply across computational sites. We exploit this structure through LASER (Low-Rank Activation SVD for Efficient Recursion), a dynamic compression framework that maintains an evolving low-rank basis via matrix-free subspace tracking with a fidelity-triggered reset mechanism, achieving ${\\sim}60\\%$ activation memory savings with no statistically significant accuracy degradation. Our analysis raises questions about how recursive architectures allocate representational capacity during implicit reasoning, and whether this concentration can be exploited to improve the efficiency and stability of latent computation.",
+      "authors": [
+        "Ege Çakar",
+        "Ketan Ali Raghu",
+        "Lia Zheng"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "stat.ML"
+      ],
+      "published": "2026-04-19T03:11:30+00:00",
+      "link": "https://arxiv.org/pdf/2604.17224v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "dynamic compression framework using low-rank activation SVD for recursive models",
+      "llm_evidence_cn": "基于低秩激活SVD的递归模型动态压缩框架",
+      "llm_evidence": "基于低秩激活SVD的递归模型动态压缩框架",
+      "canonical_evidence": "基于低秩激活SVD的递归模型动态压缩框架",
+      "llm_tldr_en": "Analyzes activation manifolds to implement dynamic compression in recursive neural architectures via SVD.",
+      "llm_tldr_cn": "通过SVD分析激活流形，在递归神经架构中实现动态压缩。",
+      "llm_tldr": "通过SVD分析激活流形，在递归神经架构中实现动态压缩。",
+      "llm_tags": [
+        "query:cv"
+      ],
+      "matched_query_tag": "query:cv",
+      "matched_query_text": "First principles analysis of model compression and acceleration",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2604.16864v1",
+      "source": "arxiv",
+      "title": "HieraSparse: Hierarchical Semi-Structured Sparse KV Attention",
+      "abstract": "The deployment of long-context Large Language Models (LLMs) poses significant challenges due to the intense computational cost of self-attention and the substantial memory overhead of the Key-Value Cache (KV Cache). In this paper, we introduce HieraSparse, a hierarchical KV Cache compression framework with acceleration kernels that leverage GPU sparse tensor cores to speed up semi-structured KV Cache attention for both the prefill and decode phases. With the hierarchical design, our method allows for a flexible quality-sparsity trade-off and successfully converts sparsity into efficiency. Compared to the state-of-the-art decode method that utilizes unstructured sparsity, HieraSparse achieves $\\mathbf{1.2\\times}$ KV compression ratio and $\\mathbf{4.57\\times}$ attention speedup at the same sparsity level. Furthermore, we extended the semi-structured KV Cache pruning to the prefill stage, which demonstrated up to $\\mathbf{1.85\\times}$ attention speedup at the highest sparsity. Lastly, we evaluate the generation quality of HieraSparse with a simple magnitude-based pruning method, and the results show that $\\mathbf{1.37\\times}$ prefill speedup and $\\mathbf{1.77\\times}$ decode speedup can be achieved without significant quality drop. The codebase can be found at https://github.com/psl-ntu/HieraSparse.",
+      "authors": [
+        "Haoxuan Wang",
+        "Chen Wang"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC",
+        "cs.AR"
+      ],
+      "published": "2026-04-18T06:28:21+00:00",
+      "link": "https://arxiv.org/pdf/2604.16864v1",
+      "tags": [
+        "keyword:CV轻量化",
+        "query:CV轻量化"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Hierarchical KV Cache compression framework for transformers",
+      "llm_evidence_cn": "针对Transformer的层级化KV缓存压缩框架",
+      "llm_evidence": "针对Transformer的层级化KV缓存压缩框架",
+      "canonical_evidence": "针对Transformer的层级化KV缓存压缩框架",
+      "llm_tldr_en": "Introduces HieraSparse, a hierarchical KV Cache compression framework using sparse kernels to speed up LLM inference.",
+      "llm_tldr_cn": "引入HieraSparse，一种利用稀疏内核加速大语言模型推理的层级化KV缓存压缩框架。",
+      "llm_tldr": "引入HieraSparse，一种利用稀疏内核加速大语言模型推理的层级化KV缓存压缩框架。",
+      "llm_tags": [
+        "query:cv:composite"
+      ],
+      "matched_query_tag": "query:cv:composite",
+      "matched_query_text": "Papers central to 计算机视觉领域模型轻量化与数学原理和模型底层思考创新论文检索, especially work that connects or combines: Model compression techniques in computer vision; Mathematical principles of knowledge distillation in CV; Efficient neural architecture search for mobile vision; Mathematical optimization for deep learning efficiency; Lightweight vision transformer design and optimization; Mathematical foundations of lightweight neural network design; Innovative theoretical frameworks for computer vision model efficiency; First principles analysis of model compression and acceleration; Novel architectural paradigms for resource constrained vision tasks.",
+      "matched_requirement_id": "req-composite-cv",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

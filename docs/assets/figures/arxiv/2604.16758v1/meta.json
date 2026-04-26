@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.16758v1/fig-001.webp",
+      "caption": "Figure 1: A 40 cm indoor archery target face with arrow punctures across the scoring rings.",
+      "page": 1,
+      "index": 1,
+      "width": 481,
+      "height": 481
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16758v1/fig-002.webp",
+      "caption": "Figure 4: Training and validation loss (top) and validation F1 score (bottom) over 100 epochs for fold 1. The star marks the best F1 (0.811 at epoch 83). The dotted line marks the epoch of lowest validation loss.",
+      "page": 6,
+      "index": 2,
+      "width": 479,
+      "height": 510
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16758v1/fig-003.webp",
+      "caption": "Figure 5: Ablation study comparing detection metrics (left) and mean localization error (right) with and without offset refinement.",
+      "page": 7,
+      "index": 3,
+      "width": 479,
+      "height": 298
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16758v1/fig-004.webp",
+      "caption": "Figure 6: Qualitative results on a validation image. Left: predicted heatmap overlay showing confident peaks at arrow locations. Right: final detections after NMS with per-arrow ring scores.",
+      "page": 8,
+      "index": 4,
+      "width": 976,
+      "height": 473
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16758v1/fig-005.webp",
+      "caption": "Figure 7: Predicted vs. ground-truth average arrow score across all validation images. Points near the diagonal indicate accurate score recovery.",
+      "page": 8,
+      "index": 5,
+      "width": 408,
+      "height": 423
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16758v1/fig-006.webp",
+      "caption": "Figure 3: Model architecture. Blue blocks are frozen pretrained modules (304M params: 303M backbone + 1M upsampler); orange blocks contain the 3.8M trainable parameters.",
+      "page": 4,
+      "index": 6,
+      "width": 477,
+      "height": 464
+    }
+  ]
+}
