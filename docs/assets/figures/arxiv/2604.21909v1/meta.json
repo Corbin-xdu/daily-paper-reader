@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.21909v1/fig-001.webp",
+      "caption": "Figure 1: Asymmetry decomposes into breadth vs. strength, revealing a dissociation between humans and ANNs that is invisible to accuracy. Top-left: Breadth of directional structure quantified as the fraction of asymmetric class pairs (fasym). Top-right: Strength of directional structure quantified as the conditional mean magnitude among asymmetric pairs. Error bars show s.e.m. across blocks; significance marks correspond to two-sided Wilcoxon rank-sum tests on block-wise summaries. Bottom-left: Global confusion-matrix asymmetry measured by the Frobenius index from row-normalized confusion matrices. Each point summarizes one block (unique experiment×condition×model), and boxes show the distribution across blocks. Significance is based on planned Wilcoxon comparisons of each group against humans with BH–FDR correction. Bottom-right: Mean classification accuracy (proportion correct) across the same blocks. Significance is based on planned Wilcoxon comparisons of each group against humans with BH–FDR correction. Groups that are significantly more asymmetric than humans are not significantly different in accuracy (n.s.), and vice versa, confirming a double dissociation between asymmetry structure and accuracy.",
+      "page": 6,
+      "index": 1,
+      "width": 811,
+      "height": 420
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21909v1/fig-002.webp",
+      "caption": "Figure 2: Directional confusion asymmetry covaries with rate–distortion (RD) signatures across humans and model families. Each point corresponds to one block (a unique experiment×condition×model instance) summarized by a row-normalized K×K confusion matrix. The x-axis reports off-diagonal confusion asymmetry Aoff F in probability space, computed from the row-normalized confusion matrix with the diagonal removed (see Section 2.3). Thick lines show family-wise linear trends. (A) Efficiency (AUC). RD efficiency (area under the inferred RD curve) as a function of confusion asymmetry, illustrating how greater directional imbalance can coincide with reduced information–distortion efficiency in several ANN families, with a distinct profile for humans. (B) Slope (β). RD slope signature (median finite-difference slope ∆R/∆D along the traced frontier) versus asymmetry, indicating how directional confusions track changes in the steepness of the information–error trade-off. (C) Curvature (log10(κ+1)). RD curvature proxy (log-transformed) versus asymmetry, highlighting regime-dependent coupling between directional structure and nonlinearity of the RD frontier.",
+      "page": 7,
+      "index": 2,
+      "width": 821,
+      "height": 189
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21909v1/fig-003.webp",
+      "caption": "Figure 3: Mechanistic simulation: directional organization controls RD signatures. Columns compare antisymmetry generators (broad–weak vs. sinks); line types indicate the per-class trial budget Nper row. Facet rows correspond to the generation inverse-temperature values λgen ∈ {0.2, 0.5, 1, 2, 5} (top to bottom). All panels show non-collapsed runs. (A) Breadth of directional structure (fraction of asymmetric class pairs, fpairs) versus antisymmetry strength a. (B) Ground-truth RD efficiency (AUC of R(D) computed from ρtrue) versus a. (C) Beyond accuracy: within-slice residualized true RD efficiency versus a, where residuals remove the linear effect of mean diagonal probability within each fixed (λgen, Nper row) slice. As a increases, the sink generator rapidly becomes sparse in directionality (A) and shows little-to-no increase in efficiency (B), leaving near-zero/negative accuracy-adjusted change (C), whereas the broad–weak generator maintains higher breadth (A) and exhibits a systematic efficiency increase that persists after accuracy residualization (B–C).",
+      "page": 10,
+      "index": 3,
+      "width": 820,
+      "height": 223
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21909v1/fig-004.webp",
+      "caption": "Table 4: Residual regression summary. Within each (λgen, Nper row) slice, we first residualize each RD signature by mean diagonal probability (accuracy proxy), then regress the residual on either (i) breadth/strength terms or (ii) a global asymmetry magnitude term. “Structure offset” refers to contrast between sink-like and broad–weak configurations. Coefficients are summarized across slices; significance counts use BH–FDR within-slice tests.",
+      "page": 18,
+      "index": 4,
+      "width": 828,
+      "height": 567
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21909v1/fig-005.webp",
+      "caption": "Table 3: Recovery sensitivity. A run is counted as recovered if the correlation between recovered and true symmetric confusions exceeds 0.2. The table reports recovery fractions within each (λgen, Nper row) slice and BH–FDR adjusted p-values for differences in recovery rates (two-sample proportion tests).",
+      "page": 18,
+      "index": 5,
+      "width": 772,
+      "height": 465
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21909v1/fig-006.webp",
+      "caption": "Table 5: Mixed-effects ANOVA key terms. Selected fixed-effect tests from replicate-level mixed models Y ∼ structure× a× λgen × log10 Nper row + (1|cell).",
+      "page": 19,
+      "index": 6,
+      "width": 544,
+      "height": 254
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21909v1/fig-007.webp",
+      "caption": "Table 2: Asymmetry–RD associations by group. Spearman correlations between Frobenius asymmetry and RD metrics (AUC, βmedian, log10(κ+1)), plus block-demeaned slope differences (∆slope) vs. humans. %Coll. reports the empirical collapse rate among behavioral confusion matrices (distinct from the 7.7% simulation collapse rate reported in Section 3.2). ∗p < 0.05, ∗∗p < 0.01, ∗∗∗p < 0.001.",
+      "page": 17,
+      "index": 7,
+      "width": 694,
+      "height": 489
+    }
+  ]
+}
