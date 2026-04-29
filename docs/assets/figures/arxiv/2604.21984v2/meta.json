@@ -1,0 +1,102 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.21984v2/fig-001.webp",
+      "caption": "Fig. 3. The Pipeline of SAD. Left: Given an input image, we initialize sites using content-adaptive sampling that places more sites in high-gradient regions (edges and textures). Middle: We jointly optimize site parameters including positions, colors, radii, and blending temperatures (𝜏 ). The Voronoi Partition row (bottom right) shows the evolving spatial decomposition, while the Tau Heatmap (top right) visualizes the learned blending sharpness: warm colors indicate harder, sharper transitions (high 𝜏 ) suited for edges, while cool colors indicate softer transitions (low 𝜏 ) suited for soft gradients. Through iterative densification and pruning, the site count reduces from 128K to 25K while preserving quality. Right: The final output includes the reconstructed image, Apollonius partition boundaries, and optimized site distribution. We also visualize the content-adaptive site density and learned partition structure.",
+      "page": 6,
+      "index": 1,
+      "width": 1064,
+      "height": 225
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21984v2/fig-002.webp",
+      "caption": "Table 5. Reconstruction quality on DIV2K validation set. Average metrics over 100 images at varying bitrates and variable resolution (BPP computed per-image from its H×W). ∗Results from Fast 2DGS [Wang et al. 2025] use 𝑁 = 50,000 primitives (approximately 2.0 BPP) and require pre-trained priors (PSNR only).",
+      "page": 11,
+      "index": 2,
+      "width": 512,
+      "height": 409
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21984v2/fig-003.webp",
+      "caption": "Fig. 8. Training performance: time per epoch vs image resolution. We report time per epoch (one full pass over all pixels) across methods. All methods were trained at 1.0 BPP on five test resolutions (5122 to 20482) with three runs each. For Instant-NGP, we set batch size equal to total pixels to ensure each step processes exactly one epoch; standard NGP uses a fixed 262k batch size, resulting in vastly different sample coverage across resolutions. SAD is 1.75–3.36× faster per epoch than Instant-NGP and 4.08–15.10× faster than Image-GS. Results averaged over three runs with negligible variance (std dev <2% of mean). NVIDIA RTX 5090.",
+      "page": 11,
+      "index": 3,
+      "width": 510,
+      "height": 308
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21984v2/fig-004.webp",
+      "caption": "Table 6. Reconstruction quality on CLIC validation set. Average metrics over 41 images at varying bitrates.",
+      "page": 11,
+      "index": 4,
+      "width": 512,
+      "height": 275
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21984v2/fig-005.webp",
+      "caption": "Fig. 14. 1D signal fitting at a matched 256-parameter budget. Rows: SAD (64 sites × 4 params), Gaussian splatting [Kerbl et al. 2023] (64 splats × 4 params), and SIREN [Sitzmann et al. 2020] ([1, 16, 16, 1],𝜔0=15, 321 params). Columns: smooth sine, step-plus-sine, and multi-frequency periodic target. Dots on the SAD and Gaussian rows mark primitive positions. Gaussian splatting fits smooth regions near-optimally but rounds off the step; SIREN encodes frequency content globally yet exhibits Gibbs-like ringing at the discontinuity; SAD’s learnable per-site temperature sharpens the partition exactly at the step while remaining smooth elsewhere.",
+      "page": 15,
+      "index": 5,
+      "width": 510,
+      "height": 241
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21984v2/fig-006.webp",
+      "caption": "Fig. 13. Differentiable Poisson solving on irregular domain. Top: Ground truth solution, shaded heightfield visualization, and binary mask defining the smiley domain. Bottom: Our reconstructed solution, shaded output, and learned site IDs. The colorful ID map reveals adaptive site concentration near boundaries and high-curvature features. Explicit sites enable hard constraint enforcement by freezing boundary sites during optimization.",
+      "page": 15,
+      "index": 6,
+      "width": 510,
+      "height": 389
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21984v2/fig-007.webp",
+      "caption": "Fig. 7. Qualitative comparison on DIV2K. Results for Instant-NGP, Image-GS, and SAD; error maps are shown at the bottom-right of each result.",
+      "page": 10,
+      "index": 7,
+      "width": 1064,
+      "height": 1110
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21984v2/fig-008.webp",
+      "caption": "Fig. 12. Effect of fixed temperature on reconstruction. From left to right: log𝜏 = 10.0 (23.96 dB), log𝜏 = 7.5 (25.12 dB), log𝜏 = 5.0 (25.37 dB). Higher temperatures produce sharper boundaries while lower temperatures create softer blending.",
+      "page": 14,
+      "index": 8,
+      "width": 510,
+      "height": 356
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21984v2/fig-009.webp",
+      "caption": "Fig. 11. Effect of learnable parameters on cell structure and reconstruction. Top row: SAD diagrams. Bottom row: Reconstructed images. From left to right: Fixed log𝜏 = 7.5, Adaptive Tau, +Radius, +Anisotropy, Full model (+Radius+Anisotropy). Anisotropic cells create characteristic spiral patterns in smooth regions and align with edges in detailed areas.",
+      "page": 14,
+      "index": 9,
+      "width": 1064,
+      "height": 485
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21984v2/fig-010.webp",
+      "caption": "Fig. 10. Effect of site budget on reconstruction quality. Three 2048×1900 DIY photos rendered by SAD at 3k/6k/12k/24k sites (left to right), with the original in the final column.",
+      "page": 13,
+      "index": 10,
+      "width": 1064,
+      "height": 710
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21984v2/fig-011.webp",
+      "caption": "Fig. 9. Convergence analysis. Average PSNR vs training time across three resolution/bitrate configurations. All show similar convergence patterns: quality plateaus around half the maximum training time (2000 iterations), with minimal improvement or slight degradation from longer training.",
+      "page": 12,
+      "index": 11,
+      "width": 510,
+      "height": 394
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21984v2/fig-012.webp",
+      "caption": "Table 4. Image compression on Kodak. Average reconstruction quality and training time over 24 images at 𝑁 = 50,000 primitives (approximately 16.0 BPP). Results for G.Image [Zhang et al. 2024], Instant-GI [Zeng et al. 2025], Fast 2DGS [Wang et al. 2025], and ablations are from Fast 2DGS paper (PSNR only). †We re-evaluated Image-GS and Instant-NGP under the same protocol with all metrics. For Instant-GI, 𝑁 = 47,246.",
+      "page": 9,
+      "index": 12,
+      "width": 517,
+      "height": 345
+    }
+  ]
+}
