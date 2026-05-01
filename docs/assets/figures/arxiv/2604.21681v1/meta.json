@@ -1,0 +1,182 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-001.webp",
+      "caption": "Figure 6: Post-Training Annotations. We annotated 100K in-the-wild images with pose (a) and segmentation (b), class vocabulary is also extended to include eyeglasses (in cyan). For pointmap, normal, albedo (c), we improve our synthetic assets to capture finer geometric details and color variations.",
+      "page": 6,
+      "index": 1,
+      "width": 826,
+      "height": 316
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-002.webp",
+      "caption": "Figure 16: Pointmap using Sapiens2-1B. For each image, we visualize the absolute depth derived from the predicted XYZ pointmap as a heatmap and surface normals computed from depth.",
+      "page": 21,
+      "index": 2,
+      "width": 826,
+      "height": 1127
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-003.webp",
+      "caption": "Figure 1: SAPIENS2 for dense-prediction tasks. We compare 1B models from both generations on segmentation, depth, and normals. Sapiens2 improves over Sapiens with stronger generalization and sharper segmentation of rare classes (lips, tongue, earrings), achieving pixel-accurate hair segmentation. On geometric tasks (depth, normals), it captures subtler facial, clothing, and hair details—all without task-specific architectures.",
+      "page": 2,
+      "index": 3,
+      "width": 827,
+      "height": 729
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-004.webp",
+      "caption": "Table 2: Dense probing on human tasks. We freeze the backbone and fine-tune a lightweight, task-specific decoder with identical hyperparameters across all methods.",
+      "page": 7,
+      "index": 4,
+      "width": 814,
+      "height": 343
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-005.webp",
+      "caption": "Figure 17: Pointmap using Sapiens2-1B. For each image, we visualize the absolute depth derived from the predicted XYZ pointmap as a heatmap and surface normals computed from depth.",
+      "page": 22,
+      "index": 5,
+      "width": 826,
+      "height": 1100
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-006.webp",
+      "caption": "Table 6: Normal evaluations on 10K whole-body test set at 4K ground-truth resolution.",
+      "page": 10,
+      "index": 6,
+      "width": 506,
+      "height": 334
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-007.webp",
+      "caption": "Figure 9: Normal prediction. Qualitative comparison of Sapiens2-1B with DAViD (Saleh et al., 2025).",
+      "page": 10,
+      "index": 7,
+      "width": 826,
+      "height": 188
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-008.webp",
+      "caption": "Figure 2: k-NN comparison using [CLS] token. SAPIENS2 learns a more discriminative, human-semantic feature space—grouping visually similar concepts and improving retrieval performance at high resolution.",
+      "page": 3,
+      "index": 8,
+      "width": 827,
+      "height": 348
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-009.webp",
+      "caption": "Table 8: Pose estimation results on 10K test set (K=308). Flip test is used.",
+      "page": 18,
+      "index": 9,
+      "width": 650,
+      "height": 250
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-010.webp",
+      "caption": "Figure 13: In addition to in-the-wild annotations we also use capture-studio 3D triangulated ground-truth 308 keypoints for finetuning Sapiens2.",
+      "page": 18,
+      "index": 10,
+      "width": 802,
+      "height": 440
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-011.webp",
+      "caption": "Figure 18: Surface normal prediction using Sapiens2-1B.",
+      "page": 23,
+      "index": 11,
+      "width": 798,
+      "height": 1092
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-012.webp",
+      "caption": "Table 3: Pose estimation on 11K test. Flip test is used, same detections. *Denotes v1 open-sourced models.",
+      "page": 8,
+      "index": 12,
+      "width": 446,
+      "height": 309
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-013.webp",
+      "caption": "Figure 7: Body-part segmentation using our 1B-4K model.",
+      "page": 8,
+      "index": 13,
+      "width": 622,
+      "height": 298
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-014.webp",
+      "caption": "Figure 3: Human-centric attention. Visualization of [CLS]-token self-attention across heads in the final layer.",
+      "page": 4,
+      "index": 14,
+      "width": 827,
+      "height": 218
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-015.webp",
+      "caption": "Figure 14: Top-down 308 keypoint predictions using Sapiens2-1B model on in-the-wild images.",
+      "page": 19,
+      "index": 15,
+      "width": 802,
+      "height": 1094
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-016.webp",
+      "caption": "Figure 12: We visualize the encoder features using PCA (3 major components) with different colors. We use foreground masking to extract patch features for human pixels. Sapiens2 features capture texture and color information as well as showcase human semantics.",
+      "page": 17,
+      "index": 16,
+      "width": 788,
+      "height": 1052
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-017.webp",
+      "caption": "Figure 19: Albedo (base color) prediction using Sapiens2-1B at 1024× 768 resolution.",
+      "page": 24,
+      "index": 17,
+      "width": 798,
+      "height": 875
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-018.webp",
+      "caption": "Table 5: Pointmap evaluation in focal-length normalized canonical coordinates on 10K test.",
+      "page": 9,
+      "index": 18,
+      "width": 506,
+      "height": 277
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-019.webp",
+      "caption": "Figure 8: (Top) Pointmap qualitative comparison of Sapiens2-1B with MoGe (Wang et al., 2025b). (Bottom) Depth visualized from the predicted pointmap, along with surface normals and novel 3D viewpoints.",
+      "page": 9,
+      "index": 19,
+      "width": 829,
+      "height": 480
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-020.webp",
+      "caption": "Figure 15: Body-part segmentation (29 classes) using Sapiens2-1B on real-world images.",
+      "page": 20,
+      "index": 20,
+      "width": 798,
+      "height": 1092
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-021.webp",
+      "caption": "Figure 4: SAPIENS2 Pretraining. We combine the masked reconstruction loss (Lmae) with a global contrastive loss on [CLS] (Lcl). Multiple image views are generated, and a student–teacher framework matches predicted distributions across views. Lmae helps the model learn low-level details (e.g.texture) for high-fidelity dense tasks, while Lcl improves semantic understanding across human images.",
+      "page": 5,
+      "index": 21,
+      "width": 827,
+      "height": 355
+    },
+    {
+      "url": "assets/figures/arxiv/2604.21681v1/fig-022.webp",
+      "caption": "Figure 11: We randomly mix blockwise and patchwise masking to provide coarse occlusions. For MAE pretraining at high resolution (1024), we use a 75% mask ratio. Each sample represents (ground-truth image, masked input, reconstruction).",
+      "page": 16,
+      "index": 22,
+      "width": 788,
+      "height": 542
+    }
+  ]
+}

@@ -6,148 +6,133 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-30
-- 运行时间：2026-04-30 20:22:13 UTC
+- 最新运行日期：2026-05-01
+- 运行时间：2026-05-01 21:14:35 UTC
 - 运行状态：成功
-- 本次总论文数：42
-- 精读区：31
+- 本次总论文数：37
+- 精读区：26
 - 速读区：11
 
 ### 今日简报（AI）
-今日深度复盘 42 篇 AI 论文，重点聚焦大模型结构剪枝与车载边缘安全检测两大满分研究。
-核心结论指出 LVLM 剪枝后的恢复动态具有极高数据效率，且知识蒸馏能显著提升道路弱势群体的实时检测性能。
-建议关注超高分辨率遥感与人像重绘等落地技术，探索轻量化模型在复杂现实场景中的部署机会。
-- 详情：[/202604/30/README](/202604/30/README)
+今日精选 37 篇前沿论文，深度解析知识蒸馏与边缘 AI 如何赋能自动驾驶安全与视觉鲁棒性。
+重点关注通过知识蒸馏提升车载端对弱势路人的检测精度，以及增强 ViT 在复杂失真环境下的表征能力。
+建议关注超维计算与语义压缩等低功耗方案，探索无需训练即可寻找最优神经架构的极简路径。
+- 详情：[/202605/01/README](/202605/01/README)
 
 ### 精读区论文标签
-1. [Structural Pruning of Large Vision Language Models: A Comprehensive Study on Pruning Dynamics, Recovery, and Data Efficiency](/202604/30/2604.24380v1-structural-pruning-of-large-vision-language-models-a-comprehensive-study-on-pruning-dynamics-recovery-and-data-efficiency)  
+1. [Edge AI for Automotive Vulnerable Road User Safety: Deployable Detection via Knowledge Distillation](/202605/01/2604.26857v1-edge-ai-for-automotive-vulnerable-road-user-safety-deployable-detection-via-knowledge-distillation)  
    标签：评分：10.0/10、query:cv
-   evidence：用于压缩视觉语言模型的结构化剪枝和知识蒸馏
-2. [Edge AI for Automotive Vulnerable Road User Safety: Deployable Detection via Knowledge Distillation](/202604/30/2604.26857v1-edge-ai-for-automotive-vulnerable-road-user-safety-deployable-detection-via-knowledge-distillation)  
-   标签：评分：10.0/10、query:cv
-   evidence：通过知识蒸馏实现3.9倍压缩与INT8量化鲁棒性
-3. [Hierarchical Spatio-Channel Clustering for Efficient Model Compression in Medical Image Analysis](/202604/30/2604.23375v1-hierarchical-spatio-channel-clustering-for-efficient-model-compression-in-medical-image-analysis)  
+   evidence：通过知识蒸馏实现YOLOv8的3.9倍压缩以用于边缘部署
+2. [Distilling Vision Transformers for Distortion-Robust Representation Learning](/202605/01/2604.22529v1-distilling-vision-transformers-for-distortion-robust-representation-learning)  
    标签：评分：9.5/10、query:cv
-   evidence：针对医学影像CNN的层次化空间-通道低秩压缩
-4. [Deployment-Aligned Low-Precision Neural Architecture Search for Spaceborne Edge AI](/202604/30/2604.24492v1-deployment-aligned-low-precision-neural-architecture-search-for-spaceborne-edge-ai)  
+   evidence：视觉Transformer的知识蒸馏框架
+3. [Efficient VQ-QAT and Mixed Vector/Linear quantized Neural Networks](/202605/01/2604.23172v1-efficient-vq-qat-and-mixed-vectorlinear-quantized-neural-networks)  
    标签：评分：9.5/10、query:cv
-   evidence：针对边缘AI部署的低精度训练硬件感知NAS
-5. [QFlash: Bridging Quantization and Memory Efficiency in Vision Transformer Attention](/202604/30/2604.25306v1-qflash-bridging-quantization-and-memory-efficiency-in-vision-transformer-attention)  
+   evidence：用于模型权重压缩的矢量量化与神经架构搜索
+4. [QFlash: Bridging Quantization and Memory Efficiency in Vision Transformer Attention](/202605/01/2604.25306v1-qflash-bridging-quantization-and-memory-efficiency-in-vision-transformer-attention)  
    标签：评分：9.5/10、query:cv
-   evidence：针对视觉Transformer效率和量化的纯整数FlashAttention设计。
-6. [Semantic-Fast-SAM: Efficient Semantic Segmenter](/202604/30/2604.20169v1-semantic-fast-sam-efficient-semantic-segmenter)  
+   evidence：视觉Transformer注意力机制中的量化与内存效率
+5. [Parameter-Efficient Architectural Modifications for Translation-Invariant CNNs](/202605/01/2604.27870v1-parameter-efficient-architectural-modifications-for-translation-invariant-cnns)  
+   标签：评分：9.5/10、query:cv
+   evidence：轻量级架构修改，减少了98%的参数
+6. [Bridging the Training-Deployment Gap: Gated Encoding and Multi-Scale Refinement for Efficient Quantization-Aware Image Enhancement](/202605/01/2604.21743v1-bridging-the-training-deployment-gap-gated-encoding-and-multi-scale-refinement-for-efficient-quantization-aware-image-enhancement)  
    标签：评分：9.0/10、query:cv
-   evidence：用于实时语义分割的高效CNN版SAM实现
-7. [Semantic-Fast-SAM: Efficient Semantic Segmenter](/202604/30/2604.20169v2-semantic-fast-sam-efficient-semantic-segmenter)  
+   evidence：针对移动端部署的量化感知训练高效图像增强模型
+7. [Selective Depthwise Separable Convolution for Lightweight Joint Source-Channel Coding in Wireless Image Transmission](/202605/01/2604.22338v1-selective-depthwise-separable-convolution-for-lightweight-joint-source-channel-coding-in-wireless-image-transmission)  
    标签：评分：9.0/10、query:cv
-   evidence：面向资源受限语义分割任务的高效CNN重构实现
-8. [Lightweight Low-SNR-Robust Semantic Communication System for Autonomous Driving](/202604/30/2604.20278v1-lightweight-low-snr-robust-semantic-communication-system-for-autonomous-driving)  
-   标签：评分：9.0/10、query:cv
-   evidence：用于自动驾驶轻量化语义通信的结构化剪枝
-9. [Quantization robustness from dense representations of sparse functions in high-capacity kernel associative memory](/202604/30/2604.20333v1-quantization-robustness-from-dense-representations-of-sparse-functions-in-high-capacity-kernel-associative-memory)  
-   标签：评分：9.0/10、query:cv
-   evidence：模型压缩（量化与剪枝）的几何理论与第一性原理分析。
-10. [LaplacianFormer:Rethinking Linear Attention with Laplacian Kernel](/202604/30/2604.20368v1-laplacianformerrethinking-linear-attention-with-laplacian-kernel)  
-   标签：评分：9.0/10、query:cv
-   evidence：用于高分辨率视觉任务的拉普拉斯核线性注意力变体
-11. [Variance Is Not Importance: Structural Analysis of Transformer Compressibility Across Model Scales](/202604/30/2604.20682v1-variance-is-not-importance-structural-analysis-of-transformer-compressibility-across-model-scales)  
-   标签：评分：9.0/10、query:cv
-   evidence：Transformer可压缩性的结构分析
-12. [Leveraging Multimodal LLMs for Built Environment and Housing Attribute Assessment from Street-View Imagery](/202604/30/2604.21102v1-leveraging-multimodal-llms-for-built-environment-and-housing-attribute-assessment-from-street-view-imagery)  
-   标签：评分：9.0/10、query:cv
-   evidence：将大语言模型的知识蒸馏到用于视觉任务的CNN和Transformer中
-13. [Bridging the Training-Deployment Gap: Gated Encoding and Multi-Scale Refinement for Efficient Quantization-Aware Image Enhancement](/202604/30/2604.21743v1-bridging-the-training-deployment-gap-gated-encoding-and-multi-scale-refinement-for-efficient-quantization-aware-image-enhancement)  
-   标签：评分：9.0/10、query:cv
-   evidence：用于高效移动端图像增强的量化感知训练
-14. [Selective Depthwise Separable Convolution for Lightweight Joint Source-Channel Coding in Wireless Image Transmission](/202604/30/2604.22338v1-selective-depthwise-separable-convolution-for-lightweight-joint-source-channel-coding-in-wireless-image-transmission)  
-   标签：评分：9.0/10、query:cv
-   evidence：通过选择性深度可分离卷积实现轻量化JSCC
-15. [Distilling Vision Transformers for Distortion-Robust Representation Learning](/202604/30/2604.22529v1-distilling-vision-transformers-for-distortion-robust-representation-learning)  
-   标签：评分：9.0/10、query:cv
-   evidence：蒸馏Vision Transformer以实现鲁棒表示学习
-16. [Vision-Based Lane Following and Traffic Sign Recognition for Resource-Constrained Autonomous Vehicles](/202604/30/2604.22872v1-vision-based-lane-following-and-traffic-sign-recognition-for-resource-constrained-autonomous-vehicles)  
+   evidence：用于轻量化图像传输的选择性深度可分离卷积
+8. [Vision-Based Lane Following and Traffic Sign Recognition for Resource-Constrained Autonomous Vehicles](/202605/01/2604.22872v1-vision-based-lane-following-and-traffic-sign-recognition-for-resource-constrained-autonomous-vehicles)  
    标签：评分：9.0/10、query:cv
    evidence：针对资源受限嵌入式平台的轻量级视觉框架
-17. [BSViT: A Burst Spiking Vision Transformer for Expressive and Efficient Visual Representation Learning](/202604/30/2604.23165v1-bsvit-a-burst-spiking-vision-transformer-for-expressive-and-efficient-visual-representation-learning)  
+9. [On-Device Vision Training, Deployment, and Inference on a Thumb-Sized Microcontroller](/202605/01/2604.23012v1-on-device-vision-training-deployment-and-inference-on-a-thumb-sized-microcontroller)  
    标签：评分：9.0/10、query:cv
-   evidence：具有双通道脉冲自注意力的能效脉冲视觉Transformer
-18. [Efficient VQ-QAT and Mixed Vector/Linear quantized Neural Networks](/202604/30/2604.23172v1-efficient-vq-qat-and-mixed-vectorlinear-quantized-neural-networks)  
+   evidence：微控制器上的端侧视觉训练与推理
+10. [Toward Real-World Adoption of Portrait Relighting via Hybrid Domain Knowledge Fusion](/202605/01/2604.23094v1-toward-real-world-adoption-of-portrait-relighting-via-hybrid-domain-knowledge-fusion)  
    标签：评分：9.0/10、query:cv
-   evidence：用于逐层量化配置的可微分神经架构搜索
-19. [KAConvNet: Kolmogorov-Arnold Convolutional Networks for Vision Recognition](/202604/30/2604.23320v1-kaconvnet-kolmogorov-arnold-convolutional-networks-for-vision-recognition)  
+   evidence：将增强知识蒸馏至轻量化视觉学生模型
+11. [BSViT: A Burst Spiking Vision Transformer for Expressive and Efficient Visual Representation Learning](/202605/01/2604.23165v1-bsvit-a-burst-spiking-vision-transformer-for-expressive-and-efficient-visual-representation-learning)  
    标签：评分：9.0/10、query:cv
-   evidence：将Kolmogorov-Arnold表示定理应用于视觉卷积网络
-20. [Breaking the Resource Wall: Geometry-Guided Sequence Modeling for Efficient Semantic Segmentation](/202604/30/2604.23399v1-breaking-the-resource-wall-geometry-guided-sequence-modeling-for-efficient-semantic-segmentation)  
+   evidence：节能型脉冲视觉Transformer设计
+12. [Hierarchical Spatio-Channel Clustering for Efficient Model Compression in Medical Image Analysis](/202605/01/2604.23375v1-hierarchical-spatio-channel-clustering-for-efficient-model-compression-in-medical-image-analysis)  
    标签：评分：9.0/10、query:cv
-   evidence：针对受限硬件环境的线性复杂度算子高效架构
-21. [Adaptive Swin Transformer Partitioning over AI-RAN Networks](/202604/30/2604.23554v1-adaptive-swin-transformer-partitioning-over-ai-ran-networks)  
+   evidence：用于CNN模型压缩的分层空间通道聚类
+13. [Breaking the Resource Wall: Geometry-Guided Sequence Modeling for Efficient Semantic Segmentation](/202605/01/2604.23399v1-breaking-the-resource-wall-geometry-guided-sequence-modeling-for-efficient-semantic-segmentation)  
    标签：评分：9.0/10、query:cv
-   evidence：自适应Swin Transformer分区与激活压缩
-22. [ELSA: Exact Linear-Scan Attention for Fast and Memory-Light Vision Transformers](/202604/30/2604.23798v1-elsa-exact-linear-scan-attention-for-fast-and-memory-light-vision-transformers)  
+   evidence：针对资源受限语义分割的高效架构设计
+14. [Adaptive Swin Transformer Partitioning over AI-RAN Networks](/202605/01/2604.23554v1-adaptive-swin-transformer-partitioning-over-ai-ran-networks)  
    标签：评分：9.0/10、query:cv
-   evidence：具有精确线性扫描注意力的轻量化视觉Transformer
-23. [Latent Inter-Frame Pruning: A Training-Free Method Bridging Traditional Video Compression and Modern Diffusion Transformers for Efficient Generation](/202604/30/2604.23858v1-latent-inter-frame-pruning-a-training-free-method-bridging-traditional-video-compression-and-modern-diffusion-transformers-for-efficient-generation)  
+   evidence：针对Swin Transformer的高效激活压缩流水线
+15. [ELSA: Exact Linear-Scan Attention for Fast and Memory-Light Vision Transformers](/202605/01/2604.23798v1-elsa-exact-linear-scan-attention-for-fast-and-memory-light-vision-transformers)  
    标签：评分：9.0/10、query:cv
-   evidence：用于高效视频生成的剪枝技术
-24. [PointTransformerX:Portable and Efficient 3D Point Cloud Processing without Sparse Algorithms](/202604/30/2604.24169v1-pointtransformerxportable-and-efficient-3d-point-cloud-processing-without-sparse-algorithms)  
+   evidence：轻量化内存的视觉Transformer注意力优化
+16. [LearnPruner: Rethinking Attention-based Token Pruning in Vision Language Models](/202605/01/2604.23950v1-learnpruner-rethinking-attention-based-token-pruning-in-vision-language-models)  
    标签：评分：9.0/10、query:cv
-   evidence：无需自定义CUDA算子的便携高效3D视觉Transformer骨干网络
-25. [PointTransformerX: Portable and Efficient 3D Point Cloud Processing without Sparse Algorithms](/202604/30/2604.24169v2-pointtransformerx-portable-and-efficient-3d-point-cloud-processing-without-sparse-algorithms)  
+   evidence：视觉模型中用于减少计算量的令牌剪枝技术
+17. [PointTransformerX:Portable and Efficient 3D Point Cloud Processing without Sparse Algorithms](/202605/01/2604.24169v1-pointtransformerxportable-and-efficient-3d-point-cloud-processing-without-sparse-algorithms)  
    标签：评分：9.0/10、query:cv
-   evidence：无需自定义CUDA算子的便携高效3D视觉Transformer骨干网络
-26. [The Role of Symmetry in Optimizing Overparameterized Networks](/202604/30/2604.25150v1-the-role-of-symmetry-in-optimizing-overparameterized-networks)  
+   evidence：用于3D点云的便携且高效的视觉Transformer骨干网络
+18. [PointTransformerX: Portable and Efficient 3D Point Cloud Processing without Sparse Algorithms](/202605/01/2604.24169v2-pointtransformerx-portable-and-efficient-3d-point-cloud-processing-without-sparse-algorithms)  
    标签：评分：9.0/10、query:cv
-   evidence：超参数化网络优化中对称性的数学分析
-27. [The Surprising Effectiveness of Canonical Knowledge Distillation for Semantic Segmentation](/202604/30/2604.25530v1-the-surprising-effectiveness-of-canonical-knowledge-distillation-for-semantic-segmentation)  
+   evidence：针对嵌入式硬件的3D点云高效视觉Transformer骨干网络
+19. [Deployment-Aligned Low-Precision Neural Architecture Search for Spaceborne Edge AI](/202605/01/2604.24492v1-deployment-aligned-low-precision-neural-architecture-search-for-spaceborne-edge-ai)  
+   标签：评分：9.0/10、query:cv
+   evidence：面向边缘AI的部署对齐低精度神经架构搜索
+20. [Knowledge Distillation Must Account for What It Loses](/202605/01/2604.25110v1-knowledge-distillation-must-account-for-what-it-loses)  
+   标签：评分：9.0/10、query:cv
+   evidence：知识蒸馏损失的理论分析与重构
+21. [The Surprising Effectiveness of Canonical Knowledge Distillation for Semantic Segmentation](/202605/01/2604.25530v1-the-surprising-effectiveness-of-canonical-knowledge-distillation-for-semantic-segmentation)  
+   标签：评分：9.0/10、query:cv
+   evidence：语义分割中经典知识蒸馏有效性的分析
+22. [The Surprising Effectiveness of Canonical Knowledge Distillation for Semantic Segmentation](/202605/01/2604.25530v2-the-surprising-effectiveness-of-canonical-knowledge-distillation-for-semantic-segmentation)  
    标签：评分：9.0/10、query:cv
    evidence：语义分割中经典知识蒸馏效率的分析
-28. [The Surprising Effectiveness of Canonical Knowledge Distillation for Semantic Segmentation](/202604/30/2604.25530v2-the-surprising-effectiveness-of-canonical-knowledge-distillation-for-semantic-segmentation)  
+23. [Vision SmolMamba: Spike-Guided Token Pruning for Energy-Efficient Spiking State-Space Vision Models](/202605/01/2604.25570v1-vision-smolmamba-spike-guided-token-pruning-for-energy-efficient-spiking-state-space-vision-models)  
    标签：评分：9.0/10、query:cv
-   evidence：语义分割中经典知识蒸馏效率的分析
-29. [Vision SmolMamba: Spike-Guided Token Pruning for Energy-Efficient Spiking State-Space Vision Models](/202604/30/2604.25570v1-vision-smolmamba-spike-guided-token-pruning-for-energy-efficient-spiking-state-space-vision-models)  
+   evidence：用于节能脉冲状态空间视觉模型的脉冲引导令牌剪枝
+24. [Diverse Image Priors for Black-box Data-free Knowledge Distillation](/202605/01/2604.25794v1-diverse-image-priors-for-black-box-data-free-knowledge-distillation)  
    标签：评分：9.0/10、query:cv
-   evidence：具有令牌剪枝功能的节能脉冲状态空间视觉模型。
-30. [Diverse Image Priors for Black-box Data-free Knowledge Distillation](/202604/30/2604.25794v1-diverse-image-priors-for-black-box-data-free-knowledge-distillation)  
-   标签：评分：9.0/10、query:cv
-   evidence：黑盒无数据知识蒸馏以构建高效学生模型
-31. [Improving Diversity in Black-box Few-shot Knowledge Distillation](/202604/30/2604.25795v1-improving-diversity-in-black-box-few-shot-knowledge-distillation)  
+   evidence：用于高效学生模型的无数据知识蒸馏
+25. [Improving Diversity in Black-box Few-shot Knowledge Distillation](/202605/01/2604.25795v1-improving-diversity-in-black-box-few-shot-knowledge-distillation)  
    标签：评分：9.0/10、query:cv
    evidence：用于模型压缩的黑盒少样本知识蒸馏
+26. [Energy-Efficient Plant Monitoring via Knowledge Distillation](/202605/01/2604.27178v1-energy-efficient-plant-monitoring-via-knowledge-distillation)  
+   标签：评分：9.0/10、query:cv
+   evidence：利用知识蒸馏将大型ViT的能力转移到高效架构中
 
 ### 速读区论文标签
-1. [UHR-DETR: Efficient End-to-End Small Object Detection for Ultra-High-Resolution Remote Sensing Imagery](/202604/30/2604.21435v1-uhr-detr-efficient-end-to-end-small-object-detection-for-ultra-high-resolution-remote-sensing-imagery)  
+1. [ImageHD: Energy-Efficient On-Device Continual Learning of Visual Representations via Hyperdimensional Computing](/202605/01/2604.21280v1-imagehd-energy-efficient-on-device-continual-learning-of-visual-representations-via-hyperdimensional-computing)  
    标签：评分：8.5/10、query:cv
-   evidence：使用稀疏编码器的高效超高分辨率图像Transformer检测器
-2. [Toward Real-World Adoption of Portrait Relighting via Hybrid Domain Knowledge Fusion](/202604/30/2604.23094v1-toward-real-world-adoption-of-portrait-relighting-via-hybrid-domain-knowledge-fusion)  
+   evidence：用于轻量化设备端视觉表示学习的高维计算
+2. [Adaptive Transform Coding for Semantic Compression](/202605/01/2604.26492v1-adaptive-transform-coding-for-semantic-compression)  
    标签：评分：8.5/10、query:cv
-   evidence：将知识蒸馏至轻量化学生模型以实现人像重光照。
-3. [A Heterogeneous Two-Stream Framework for Video Action Recognition with Comparative Fusion Analysis](/202604/30/2604.23415v1-a-heterogeneous-two-stream-framework-for-video-action-recognition-with-comparative-fusion-analysis)  
+   evidence：视觉骨干网络语义特征压缩的自适应变换编码
+3. [Random Cloud: Finding Minimal Neural Architectures Without Training](/202605/01/2604.26830v1-random-cloud-finding-minimal-neural-architectures-without-training)  
    标签：评分：8.5/10、query:cv
-   evidence：使用MobileNetV2实现资源高效的异构双流架构
-4. [Random Cloud: Finding Minimal Neural Architectures Without Training](/202604/30/2604.26830v1-random-cloud-finding-minimal-neural-architectures-without-training)  
+   evidence：用于寻找极小拓扑结构的无训练神经架构搜索
+4. [VeraRetouch: A Lightweight Fully Differentiable Framework for Multi-Task Reasoning Photo Retouching](/202605/01/2604.27375v1-veraretouch-a-lightweight-fully-differentiable-framework-for-multi-task-reasoning-photo-retouching)  
    标签：评分：8.5/10、query:cv
-   evidence：寻找极小网络拓扑的无训练神经架构搜索
-5. [Prototype-Based Test-Time Adaptation of Vision-Language Models](/202604/30/2604.21360v1-prototype-based-test-time-adaptation-of-vision-language-models)  
+   evidence：多任务视觉推理的轻量化框架
+5. [Sub-Token Routing in LoRA for Adaptation and Query-Aware KV Compression](/202605/01/2604.21335v1-sub-token-routing-in-lora-for-adaptation-and-query-aware-kv-compression)  
    标签：评分：7.5/10、query:cv
-   evidence：视觉语言模型的高效测试时自适应以降低延迟
-6. [Geometric Monomial (GEM): a family of rational 2N-differentiable activation functions](/202604/30/2604.21677v1-geometric-monomial-gem-a-family-of-rational-2n-differentiable-activation-functions)  
+   evidence：Transformer效率的细粒度KV压缩和子Token路由
+6. [A Deployable Embodied Vision-Language Navigation System with Hierarchical Cognition and Context-Aware Exploration](/202605/01/2604.21363v1-a-deployable-embodied-vision-language-navigation-system-with-hierarchical-cognition-and-context-aware-exploration)  
    标签：评分：7.5/10、query:cv
-   evidence：用于梯度优化的有理可微激活函数
-7. [LayerBoost: Layer-Aware Attention Reduction for Efficient LLMs](/202604/30/2604.22050v1-layerboost-layer-aware-attention-reduction-for-efficient-llms)  
+   evidence：在严格计算限制下的真实平台高效部署
+7. [Sapiens2](/202605/01/2604.21681v1-sapiens2)  
    标签：评分：7.5/10、query:cv
-   evidence：用于高效Transformer推理的层感知注意力削减
-8. [ViCrop-Det: Spatial Attention Entropy Guided Cropping for Training-Free Small-Object Detection](/202604/30/2604.26806v1-vicrop-det-spatial-attention-entropy-guided-cropping-for-training-free-small-object-detection)  
+   evidence：用于高分辨率视觉Transformer的自蒸馏对比目标
+8. [Monocular Depth Estimation via Neural Network with Learnable Algebraic Group and Ring Structures](/202605/01/2604.24328v1-monocular-depth-estimation-via-neural-network-with-learnable-algebraic-group-and-ring-structures)  
    标签：评分：7.5/10、query:cv
-   evidence：无需训练的推理框架，用于高效小目标检测
-9. [Fed-DLoRA: Efficient Wireless Federated Learning with Dynamic Low-Rank Adaptation](/202604/30/2604.24103v1-fed-dlora-efficient-wireless-federated-learning-with-dynamic-low-rank-adaptation)  
+   evidence：基于代数几何和层结构的视觉任务理论框架
+9. [Prototype-Based Test-Time Adaptation of Vision-Language Models](/202605/01/2604.21360v1-prototype-based-test-time-adaptation-of-vision-language-models)  
    标签：评分：6.5/10、query:cv
-   evidence：车联网中高效联邦学习的动态低秩自适应
-10. [Monocular Depth Estimation via Neural Network with Learnable Algebraic Group and Ring Structures](/202604/30/2604.24328v1-monocular-depth-estimation-via-neural-network-with-learnable-algebraic-group-and-ring-structures)  
+   evidence：使用原型进行视觉语言模型的高效测试时自适应
+10. [Geometric Monomial (GEM): a family of rational 2N-differentiable activation functions](/202605/01/2604.21677v1-geometric-monomial-gem-a-family-of-rational-2n-differentiable-activation-functions)  
    标签：评分：6.5/10、query:cv
-   evidence：将代数群和环结构嵌入深度学习流水线
-11. [The Recurrent Transformer: Greater Effective Depth and Efficient Decoding](/202604/30/2604.21215v1-the-recurrent-transformer-greater-effective-depth-and-efficient-decoding)  
-   标签：评分：6.0/10、query:cv
-   evidence：高效解码的架构改进
+   evidence：深度学习效率中激活函数的数学优化
+11. [Directional Confusions Reveal Divergent Inductive Biases Through Rate-Distortion Geometry in Human and Machine Vision](/202605/01/2604.21909v1-directional-confusions-reveal-divergent-inductive-biases-through-rate-distortion-geometry-in-human-and-machine-vision)  
+   标签：评分：6.5/10、query:cv
+   evidence：视觉模型归纳偏置的理论框架
 
 
 <div class="dpr-home-promo-card">
