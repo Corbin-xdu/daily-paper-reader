@@ -1,0 +1,324 @@
+Title: Non-Minimal Sampling and Consensus for Prohibitively Large Datasets
+
+URL Source: https://arxiv.org/pdf/2604.22518v1
+
+Published Time: Mon, 27 Apr 2026 00:52:17 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# Non-Minimal Sampling and Consensus for Prohibitively Large Datasets 
+
+Seong Hun Lee 1 , Patrick Vandewalle 2 , and Javier Civera 1 
+
+> 1
+
+I3A, University of Zaragoza, 50018 Zaragoza, Spain 
+
+{seonghunlee,jcivera}@unizar.es  
+
+> 2
+
+EAVISE, KU Leuven, 2860 Sint-Katelijne-Waver, Belgium 
+
+patrick.vandewalle@kuleuven.be 
+
+Abstract. We introduce NONSAC (Non-Minimal Sampling and Con-sensus), a general framework for robust and scalable model estimation from arbitrarily large datasets contaminated with noise and outliers. NONSAC repeatedly samples non-minimal subsets of data and generates model hypotheses using a robust estimator, producing multiple candidate models. The final model is selected based on a predefined scoring rule that evaluates hypothesis quality. Our framework is estimator-agnostic and can be integrated with existing geometric fitting algorithms such as RANSAC to improve both scalability and robustness to outliers. We pro-pose and evaluate various scoring rules for NONSAC on relative camera pose estimation, Perspective-n-Point, and point cloud registration. Fur-thermore, we showcase the applicability of NONSAC to correspondence-free point cloud registration by hypothesizing all-to-all correspondences. 
+
+Keywords: Relative pose estimation · Perspective-n-Point · Point cloud registration · Outlier-robust algorithms · Scalable algorithms 
+
+1 Introduction 
+
+Robust geometric model estimation is a cornerstone of computer vision and robotics, underlying tasks such as relative camera pose estimation, Perspective-n-Point (PnP), and point cloud registration. In practice, these problems are typically formulated as estimating model parameters from a large set of putative correspondences contaminated with noise and a significant fraction of outliers. Classical robust estimators, most notably RANSAC [15] and its variants [2, 3, 10, 34, 42], have proven highly effective when datasets are of moderate size and the outlier ratio is manageable. However, some modern applications produce extremely large correspondence sets, for example through dense matching [27, 37, 39] or by hypothesizing all-to-all correspondences [13, 16, 47], which can lead to prohibitive memory requirements and extreme outlier ratios. In such cases, many existing correspondence-based methods either become computationally infeasible or suffer substantial performance degradation. This motivates the need for a scalable and robust framework that can operate reliably under both massive data volumes and severe outlier contamination. 
+
+> arXiv:2604.22518v1 [cs.CV] 24 Apr 2026
+
+2 S. H. Lee et al. Dataset Hypothesis Scoring and Selection    
+
+> Inlier correspondences Outlier correspondences
+> Non-minimal sample 1 Non-minimal sample 2
+> Model parameters, Residuals, Inlier threshold, Number of inliers.
+> Estimator
+> (e.g., RANSAC or global optimization)
+> Estimator
+> (e.g., RANSAC or global optimization)
+> Estimator
+> (e.g., RANSAC or global optimization)
+> Estimator
+> (e.g., RANSAC or global optimization) Model parameters, Residuals, Inlier threshold, Number of inliers. Model parameters, Residuals, Inlier threshold, Number of inliers. Model parameters, Residuals, Inlier threshold, Number of inliers.
+> Non-minimal sample 3 Non-minimal sample m
+
+Fig. 1: NONSAC pipeline: From the original correspondence dataset, we randomly draw m non-minimal samples. Due to randomness, some samples are likely to contain more inliers than others. In this example, Sample 3 has the highest number of inliers. For each sample, we apply an off-the-shelf estimator to compute the model parameters, residuals, inlier counts, and related values. We then aggregate the results from all samples to select the most reliable hypothesis according to a chosen scoring rule. In this case, the hypothesis obtained from Sample 3 is expected to be among the most accurate and thus to receive the highest score and be selected. 
+
+In this work, we propose NONSAC ( Non -minimal Sa mpling and Consensus), a general framework for correspondence-based geometric model estimation that can be integrated with existing estimators to enhance their scalability and ro-bustness. Fig. 1 shows the pipeline of NONSAC. Our main contributions are three-fold: 1. We illustrate the necessity and advantages of non-minimal sampling when dealing with prohibitively large datasets that contain a high proportion of outliers. With a robust core estimator and a fixed number of non-minimal Non-Minimial Sampling and Consensus for Prohibitively Large Datasets 3
+
+samples, NONSAC can process arbitrarily large datasets efficiently and ro-bustly, without inherent scalability constraints. 2. We propose and evaluate several rules for hypothesis scoring and selection (see Fig. 1). We conduct extensive experiments to assess and compare these rules across three fundamental problems in computer vision and robotics: relative pose estimation (with 2D-to-2D correspondences), Perspective-n-Point (with 3D-to-2D correspondences), and point cloud registration (with 3D-to-3D correspondences). 3. We further demonstrate the effectiveness of NONSAC on the correspondence-free point cloud registration problem using a real dataset reconstructed from 3D scanning [11]. In this setting, we hypothesize all-to-all correspondences between two unmatched point clouds, resulting in an extremely large set of candidate matches and a very high outlier ratio, specifically 2.5 × 10 5
+
+correspondences with 99.9% outliers in our experiment. To the best of our knowledge, no prior method has demonstrated the ability to handle data of this scale under such extreme levels of outlier contamination within a reasonable runtime. 
+
+2 Related Work 
+
+• General-purpose robust estimation techniques : NONSAC is a general framework that can be applied to a wide range of problems. A qualitative com-parison between NONSAC and existing frameworks is provided in Tab. 1. In contrast to RANSAC-based methods ( e.g ., [10, 15, 34, 42]) and global optimiza-tion methods ( e.g ., [14,31,33,46]), NONSAC never evaluates the estimated model on the entire dataset, which makes it scalable to arbitrarily large datasets. LO-RANSAC [10] and ANSAC [42] are closely related to NONSAC, as they also use non-minimal samples. LO-RANSAC improves RANSAC by refining promising models using non-minimal samples drawn from their inlier sets, while ANSAC improves the hypothesis generation stage by adaptively drawing non-minimal samples from ranked correspondences. NONSAC, in contrast, draws fixed-size non-minimal samples directly from the original dataset, processes them inde-pendently, and evaluates them using robust scoring. RHT [45] and hypothesis averaging methods ( e.g ., via rotation averaging [18, 24]) are scalable to datasets of arbitrary size. However, these approaches generate hypotheses from minimal samples and evaluate them relative to other hypotheses, which generally makes them less robust than NONSAC, where hypotheses are both generated and eval-uated using non-minimal samples. 
+
+• Problem-tailored geometric model estimation : Relative pose estima-tion, PnP, and point cloud registration are fundamental problems in 3D vi-sion with extensive literature tailored to each of them. Recent advances in rela-tive pose estimation include QCQP/SDP-based methods [4, 17, 41, 50], learning-based approaches [30, 48], and other optimization-based methods [5, 14]. For the PnP problem, recent works span inlier-only optimization methods [38, 40, 43], learning-based approaches [6, 7], and robust estimation methods [28, 44]. For 4 S. H. Lee et al. Random Non-minimal Scales to Works well in sampling? batch arbitrarily high dimensional estimation? large datasets? parameter spaces? RANSAC [15] ✓ ✗ ✗ ✓                    
+
+> LO-RANSAC [10], ANSAC [42] ✓✓✗✓
+> Robust global methods (e.g . IRLS [33], GNC [46], BnB [31]) ✗✓✗✓
+> Random Hough Transform (RHT) [45] ✓✗✓✗
+> Hypothesis averaging ( e.g . [18, 24]) ✓✗✓✓
+> NONSAC (Ours) ✓✓✓✓
+
+Table 1: Qualitative comparison of robust geometric model fitting methods. 
+
+point cloud registration, recent methods include consistency graph-based ap-proaches [9, 25, 47, 49], learning-based methods [1, 21], and other robust opti-mization techniques [8, 20]. We emphasize that neither the general-purpose frameworks nor the problem-specific methods discussed in this section should be viewed as directly com-peting with NONSAC. Instead, any of these methods can be incorporated into NONSAC as a core estimator, as demonstrated in Sec. 4, where we integrate RANSAC [15] and PCR-99 [25] into the NONSAC framework. 
+
+3 Method 
+
+3.1 Non-minimal sampling 
+
+As illustrated in Fig. 1, NONSAC consists of three main steps: (1) non-minimal random sampling, (2) model estimation for each sample, and (3) hypothesis scoring and selection. Non-minimal sampling of the original data has two main practical advantages: 1. It enables us to process extremely large datasets incrementally rather than all at once, which would otherwise be prohibitively expensive in terms of computation time and memory consumption. By keeping the size of the non-minimal sample manageable, we avoid taking on more than we can rea-sonably handle. 2. Some non-minimal samples may exhibit higher inlier ratios than the full original dataset, potentially enabling more accurate model estimation than when processing everything altogether. To be specific, around half of the non-minimal samples would exhibit higher inlier ratios than the full dataset. This is because, according to the Central Limit Theorem [12], the sampling distribution of the sample proportion is approximately normal 3 with mean 
+
+P and variance P (1 − P )/N , where P is the proportion of the population (in our case, the inlier ratio) and N is the sample size.  
+
+> 3
+
+The necessary condition for this approximation is that both N P and N (1 − P ) are greater than equal to 10 [12]. Non-Minimial Sampling and Consensus for Prohibitively Large Datasets 5
+
+3.2 Scoring rules 
+
+We consider the following scoring rules for model selection: 1. Ideal hypothesis selection : Choose the model closest to the ground truth. This provides the upper bound achievable with non-minimal sampling. 2. Fixed non-minimal sample : Rather than drawing new non-minimal samples in each NONSAC iteration, we reuse the initially selected non-minimal sam-ple throughout all iterations. 4
+
+3. Most inliers : Choose the model where the largest number of inliers are found by the estimator. 4. Closest pair : Find the closest pair of models, i.e ., model i and j where the distance between them, dij , is the smallest among all possible pairs. Between the two models, choose the one with more inliers. 5. Closest triplet : Find the closest triplet of models, i.e ., model i, j and k
+
+where max( dij , d ik , d jk ) is the smallest among all possible triplets. Between the three models, choose the one with the most inliers. 6. Minimum mean, median or Q3 : Choose the model with the smallest mean, median or upper quartile of inlier residuals. 7. Pair cost : Find the pair of models ( i, j) that maximizes the following cost function: 
+
+cij = max( ni, n j )(dij )k , (1) where ni and nj are the number of inliers, dij is the distance between the two models, and k is a parameter we set. After identifying the pair (i, j )
+
+with the minimum cost value, select the model (either i or j) that has the greater number of inliers. 8. TLP cost : Choose the model with the smallest truncated Lp cost, i.e ., 
+
+ci = X
+
+> j∈P
+
+min ( |rj |p, τ p) , (2) where P is the set of all point correspondences, rj is the residual of the 
+
+j-th correspondence (in model i), τ is the truncation threshold, and p is a parameter we set. 
+
+4 Results 
+
+We evaluate the performance of NONSAC with the scoring rules described in Section 3.2. We apply our method to three fundamental problems in computer vision and robotics: relative camera pose estimation, Perspective-n-Point (PnP),       
+
+> 4For example, suppose that we adopt RANSAC [15] as the core estimator, with 100 minimal samples drawn for each RANSAC run and 10 non-minimal samples of 1000 points used for NONSAC. In this case, the fixed non-minimal sample rule essentially means that we take only one non-minimal sample of 1000 points and draw 10 ×100 = 1000 minimal samples from this 1000-point set. 6S. H. Lee et al.
+
+and point cloud registration. In all three problems, we use the rotation difference (in degrees) for the distance function dij between model i and j. As for the error metric, we use the mean average accuracy (mAA) [22,48] in the following form: 
+
+mAA = 110 Ns
+
+> 10 ◦
+
+X
+
+> θ=1 ◦
+> Ns
+
+X
+
+> i=1
+
+f (θ, e r ), (3) where Ns is the number of Monte Carlo simulations ( 100 in all our experiments), 
+
+er is the rotation error (in degrees) with respect to the ground truth, and 
+
+f (θ, e r ) = 
+
+(
+
+1, if er < θ 
+
+0, otherwise . (4) 
+
+4.1 Relative pose estimation 
+
+In this section, we apply NONSAC to the relative pose estimation problem. To study the effect of noise level, outlier ratio, and sample size, we set up the simulations as follows: We fix one camera at the origin and generate n random points in front of the camera such that their normalized image points (ui, v i)
+
+and depths di follow uniform distributions in the range [−1, 1] and [0 .1, 10] ,respectively. We place the second camera at some position and orientation such that (1) the distance from the first camera is 1 unit, (2) all of the n points have depths greater than 0.1 unit in the second camera, and (3) their normalized image points fall in the range [−1, 1] . Noise with standard deviation σ is added to the normalized image points in each camera, and some of them are replaced by uniformly distributed random outliers. Next, we configure NONSAC as follows: We pick m random samples of 1000 
+
+points. From each sample, we estimate the relative pose between the cameras us-ing a 5-point algorithm [23] in a standard RANSAC framework [15]. We identify the inliers by applying a threshold of (5 σ)2 to the Sampson errors [29, 35, 36]. Note that the probability of any two non-minimal samples having at least one point in common decreases with the total number of points, n. To simulate extremely large datasets without actually generating an excessive amount of points, we set n = 1000 m and simply ensure that the samples have zero overlap among themselves. We evaluate our method by varying the image noise level (σ), the outlier ratio, the number of non-minimal samples ( m), and the scoring rule from Sec. 3.2. Table 4 presents the results. It shows that there is no clear winner that con-sistently yields the best results. For large noise levels or low outlier ratios, the 
+
+minimum mean and minimum Q3 scoring rules perform best; however, they degrade significantly in small-noise, high-outlier-ratio scenarios. In contrast, the 
+
+pair cost ( k = 0 .05 , 0.1) scoring rules perform best in these cases, but under-perform at large noise levels. Overall, the TLP cost ( p = 0 .1, 0.2) achieves a well-balanced accuracy across all tested scenarios, despite often falling slightly short of the minimum Q3 . The averaged results in Tab. 2 further confirm the overall superiority of the TLP cost ( p = 0 .1, 0.2) scoring rules. Non-Minimial Sampling and Consensus for Prohibitively Large Datasets 7                                                                                                                                                                                                                        
+
+> Relative pose estimation Perspective-n-Point Point cloud registration
+> Outlier ratio: 65%–90% Outlier ratio: 92%–97% Outlier ratio: 99%–99.5% # of non-minimal samples: # of non-minimal samples: # of non-minimal samples: 10 20 30 10 20 30 10 20 30 Ideal hypothesis selection 0.91 0.94 0.96 0.88 0.94 0.96 0.82 0.91 0.95 Fixed non-minimal sample 0.79 0.81 0.83 0.84 0.88 0.92 0.47 0.54 0.60 Most inliers 0.80 0.83 0.85 0.83 0.89 0.91 0.80 0.88 0.91 Closest pair 0.75 0.75 0.78 0.78 0.86 0.87 0.72 0.83 0.89 Closest triplet 0.77 0.77 0.80 0.80 0.88 0.90 0.71 0.81 0.88 Minimum mean 0.83 0.87 0.89 0.42 0.46 0.47 0.09 0.05 0.03 Minimum median 0.81 0.86 0.88 0.40 0.42 0.41 0.09 0.04 0.03 Minimum Q3 0.82 0.87 0.89 0.56 0.61 0.61 0.12 0.06 0.05 Pair cost ( k= 0 .02 )0.81 0.84 0.86 0.83 0.90 0.91 0.80 0.88 0.91 Pair cost ( k= 0 .05 )0.82 0.86 0.87 0.83 0.90 0.91 0.80 0.88 0.91 Pair cost ( k= 0 .1)0.82 0.86 0.87 0.83 0.90 0.92 0.80 0.88 0.91 Pair cost ( k= 0 .2)0.80 0.82 0.84 0.83 0.90 0.92 0.80 0.88 0.92
+> Pair cost ( k= 0 .5)0.82 0.85 0.86 0.83 0.89 0.91 0.80 0.88 0.92
+> Pair cost ( k= 1 )0.78 0.80 0.81 0.82 0.88 0.90 0.78 0.86 0.91 TLP cost ( p= 0 .01 )0.78 0.80 0.83 0.56 0.64 0.65 0.81 0.89 0.92
+> TLP cost ( p= 0 .1)0.83 0.87 0.90 0.83 0.90 0.93 0.81 0.89 0.92
+> TLP cost ( p= 0 .2)0.83 0.87 0.90 0.83 0.90 0.93 0.81 0.89 0.92
+> TLP cost ( p= 0 .3)0.83 0.87 0.89 0.83 0.90 0.93 0.81 0.89 0.92
+> TLP cost ( p= 0 .5)0.83 0.87 0.89 0.83 0.91 0.93 0.81 0.89 0.92
+> TLP cost ( p= 1 )0.83 0.87 0.89 0.83 0.91 0.93 0.81 0.88 0.92
+> TLP cost ( p= 2 )0.82 0.86 0.88 0.83 0.91 0.93 0.80 0.88 0.91
+
+Table 2: Average mAA comparison of different scoring rules under varying numbers of non-minimal samples. Each entry in this table represents the average MAA computed across all evaluated outlier ratios and noise levels in Tabs. 4, 5, and 6. Underline: Ideal accuracy obtainable if one chooses the model closest to the ground truth. Blue bold :Best results (excluding Ideal). 
+
+4.2 Perspective-n-Point 
+
+In this section, we apply NONSAC to the PnP problem. To study the effect of noise level, outlier ratio, and sample size, we simulate a camera, 3D points and their normalized image points using the same procedure described in Sec. 4.1. We configure NONSAC in the same manner, except that we use P3P [26] within RANSAC and identify the inliers by applying a threshold of 5σ to the reprojection errors [19]. As in Sec. 4.1, we simulate extremely large datasets by ensuring that the non-minimal samples have zero overlap among themselves. The size of each non-minimal sample is set to 1000 points. Table 5 presents the results. As in the previous relative pose estimation re-sults, the PnP results also show that there is no clear winner. The minimum mean/median/Q3 scoring rules perform poorly most of the time, except in large-noise, small-outlier-ratio scenarios. The pair cost ( k = 0 .01 ) scoring rule pro-duces good results when (i) the noise level is small ( σ = 0 .005 ) or (ii) the noise level is moderate ( σ = 0 .01 ) and the outlier ratio is high ( ≥ 95% ). That said, the 
+
+TLP cost scoring rules achieve the best overall accuracy, with the suitable value for p varying per scenario. We obtain the best results with p = 2 when (i) the noise level is small ( σ = 0 .005 ) or (ii) the noise level is moderate ( σ = 0 .01 ) and the number of samples is small ( 10 in our experiment). On the other hand, we get the best results with p = 0 .5, 1 when (i) the noise level is large ( σ = 0 .02 ) or 8 S. H. Lee et al. 
+
+(ii) the noise level is moderate ( σ = 0 .01 ) and the number of samples is large ( 20 
+
+and 30 in our experiment). The averaged results shown in Tab. 2 also suggest that the TLP cost ( p = 0 .5, 1, 2) scoring rules are relatively reliable when used with 20 or more non-minimal samples. 
+
+4.3 Point cloud registration 
+
+In this section, we apply NONSAC to the point cloud registration problem. To study the effect of noise level, outlier ratio, and sample size, we set up the sim-ulations as follows: First, we obtain the ground-truth point cloud by generating 
+
+n random 3D points, uniformly distributed inside a unit cube. To obtain the query point cloud, we transform it using a random rigid body transformation, add Gaussian noise with standard deviation σ, and replace some of the points with random outlier points, uniformly distributed inside a 3D sphere circumscrib-ing the unit cube. As in Sec. 4.1 and 4.2, we simulate extremely large datasets by ensuring that the non-minimal samples have zero overlap among themselves. The size of each non-minimal sample is set to 2000 points. As for the estimator, we use a modified version of PCR-99 [25] with the following changes compared to the original version: 
+
+– Instead of the log ratio [25], we use the pairwise distance between 3D points to prescreen bad 3-point samples, and also, to score the correspondences. 
+
+– Instead of terminating the iterations based on the number of the number of inliers found, we do it when the number of valid 3-point samples passing the prescreening test ( i.e ., nhypothesis in Alg. 1 of [25]) reaches 1000 or when the number of total 3-point samples drawn reaches 10,000. 5
+
+Table 6 presents the results. When the outlier ratio is below 99 .2% , we see that pair cost ( k = 0 .2, 0.5) scoring rules perform relatively well, often better than the TLP cost . In other cases, however, the TLP cost ( p = 0 .01 –0.5) scoring rules achieve higher accuracy. As in relative pose estimation and P nP, the highest overall accuracy for point cloud registration is achieved using the TLP cost . This is further confirmed by the averaged results reported in Tab. 2. 
+
+4.4 Correspondence-free point cloud registration 
+
+We also demonstrate the advantages of NONSAC for the correspondence-free point cloud registration problem [47], where the rigid-body transformation be-tween two point clouds is estimated by hypothesizing all-to-all correspondences, rather than relying on explicit 3D-to-3D feature matches. Using the Bunny                   
+
+> 5As for the fixed non-minimal sample rule, the number of total 3-point samples is changed to 10000 ×# of non-minimal samples. We do not, however, change
+> nhypothesis , because otherwise this can stall the algorithm when the number of 3-point samples that can pass the prescreening test is smaller than 1000 ×
+> # of non-minimal samples.
+
+Non-Minimial Sampling and Consensus for Prohibitively Large Datasets 9                                                                                                     
+
+> Correspondence-free point cloud registration
+> mAA( 5◦)mAA( 10 ◦)mAA( 15 ◦)mAA( 20 ◦)RANSAC [15], GORE [32], TR-DE [8] Excessive runtime ( >1hour)
+> Consistency graph -based methods Out-of-memory [9, 25, 47, 49]
+> Deep learning -based methods [1, 21] Out-of-memory NONSAC with 10 non-minimal samples 1. Ideal hypothesis selection 0.75 0.87 0.92 0.94 2. Most inliers 0.53 0.76 0.84 0.88 3. Closest pair 0.55 0.75 0.83 0.88 4. Closest triplet 0.58 0.79 0.86 0.89 5. Minimum mean 0.54 0.71 0.78 0.83 6. Minimum median 0.47 0.67 0.75 0.80 7. Minimum Q3 0.38 0.60 0.70 0.76 8. Pair cost ( k= 0 .02 )0.55 0.77 0.85 0.89 9. Pair cost ( k= 0 .05 )0.56 0.78 0.85 0.89 10. Pair cost ( k= 0 .1)0.58 0.79 0.86 0.90 11. Pair cost ( k= 0 .2)0.59 0.79 0.86 0.90 12. Pair cost ( k= 0 .5)0.59 0.79 0.86 0.89 13. Pair cost ( k= 1 )0.58 0.77 0.85 0.89 14. TLP cost ( p= 0 .01 )0.64 0.82 0.88 0.91
+> 15. TLP cost ( p= 0 .1)0.64 0.82 0.88 0.91
+> 16. TLP cost ( p= 0 .2)0.63 0.82 0.88 0.91
+> 17. TLP cost ( p= 0 .3)0.63 0.81 0.87 0.91
+> 18. TLP cost ( p= 0 .5)0.62 0.81 0.87 0.90 19. TLP cost ( p= 1 )0.61 0.80 0.87 0.90 20. TLP cost ( p= 2 )0.60 0.80 0.87 0.90
+
+Table 3: [Correspondence-free point cloud registration] mAA results with 5◦,
+
+10 ◦, 15 ◦ and 20 ◦ thresholds for (3) ( ↑ is better. Upper bound = 1 ). Underline: Ideal accuracy obtainable if one chooses the model closest to the ground truth. Blue bold :Best results (excluding Ideal). 
+
+dataset from the Stanford 3D scanning repository [11], we set up the exper-iment as follows: First, we scale the original point cloud data to fit inside a unit cube. Next, we randomly select two subsets of 500 points each, with a 50% overlap. One subset is transformed by a random rigid body transformation, and Gaussian noise of σ = 0 .01 is added. We then hypothesize all-to-all correspon-dences, resulting in 250,000 tentative matches with a 99.9% outlier ratio (since the inlier ratio is 500 ×0.5500 ×500 = 0 .1% ). The size of the non-minimal sample for NON-SAC is set to 10,000 points. For the estimator, we use another modified version of PCR-99 [25], which differs slightly from the variant used in Sec. 4.3 and is better suited to handling a 99.9% outlier ratio, albeit at the cost of increased computational time. This version differs from the original [25] as follows: 
+
+– As in Sec. 4.3, we use the pairwise distance between 3D points to prescreen bad 3-point samples and to score the correspondences. 
+
+– We terminate the iterations once the inlier ratio reaches at least 0.09% and a minimum of 1000 three-point samples have passed the prescreening test. (i.e ., 1000 ≤ nhypothesis in Alg. 1 of [25]). 10 S. H. Lee et al. Rotation error (deg) 0 27 28 29 30 31 32 33 34 35 36 1Scoring and selection rules 2345678910 #1 #2 #3 #4 #5 #6 #7 #8 #9 #10 #11 #12 #13 #14 #15 #16 #17 #18 #19 #20 Time (s)  
+
+> Fig. 2: [Correspondence-free point cloud registration] Left: Rotation errors of 100 Monte Carlo simulations using different scoring and selection rules for NONSAC. See Tab. 3 for the list of rules corresponding to each ID. Right: Processing times for computing 10 model hypotheses. The experiments are conducted in MATLAB on a laptop with i7-7700HQ (2.8 GHz) and 16 GB RAM.
+
+For this problem, we evaluate not only our NONSAC variants, but also sev-eral state-of-the-art point cloud registration methods, including graph-based ap-proaches (SC2-PCR [9], TEASER ++ [47], MAC [49], original PCR-99 [25]), as well as deep learning-based methods (PointDSC [1] and VBReg [21]). Table 3 presents the results. Due to the sheer number of all-to-all corre-spondences, none of the existing methods we evaluate are able to process the full dataset. In contrast, NONSAC does not encounter memory limitations, as it processes the data incrementally using much smaller samples. Regarding the scoring rule, the TLP cost ( p = 0 .01 , 0.1) achieves the best performance. As shown in Fig. 2, it recovers the rigid body transformation in approximately 30 seconds, with rotation errors below 3◦ in more than 75% of the trials. 
+
+5 Discussions 
+
+• Which scoring rule should be used in practice? 
+
+In the previous section, we observed that the TLP cost ( p = 0 .1–1) consis-tently delivers the strongest overall performance. However, the optimal choice of 
+
+p depends on the specific problem and on the number of non-minimal samples used. If a single value must be selected without further tuning, p = 0 .1 provides a sensible starting point. 
+
+• Is it possible that another scoring rule could perform better? 
+
+The performance gap between the Ideal hypothesis selection baseline and our current results indicates that there is still room for improvement. This may in-volve dynamically switching between scoring rules or adapting their parameters based on the observed residuals. It could also require incorporating entirely dif-ferent criteria, such as measures of model uncertainty or characteristics of the inlier distribution. We leave the investigation of these directions for future work. Non-Minimial Sampling and Consensus for Prohibitively Large Datasets 11 
+
+• How does one determine the appropriate size for the non-minimal sample ( N )? 
+
+If N is too small, each non-minimal sample may contain too few inliers, lead-ing to inaccurate model hypotheses. Conversely, if N is too large, the variability of the inlier ratio across samples decreases, since the standard deviation of the sample proportion is approximately proportional to 1/√N (see Sec. 3.1). As a result, the robustness gain obtained through non-minimal sampling becomes less pronounced. These observations suggest that there exists a balance, or “sweet spot,” for choosing N . For starters, the rule of thumb is that N ≥ Imin /P min ,where Imin and Pmin are respectively the minimum number of inliers and the minimum inlier ratio that the core estimator can reliably handle. Investigating an optimal strategy to choose N is left for future work. 
+
+• Would increasing the number of non-minimal samples improve robustness? 
+
+In general, robustness increases with the number of samples, as it increases the probability that at least one sample contains a sufficiently high inlier ratio to produce an accurate model hypothesis. However, the benefits tend to diminish beyond a certain point, as robustness becomes increasingly governed by the inherent robustness of the core estimator rather than by the number of non-minimal samples. Moreover, computational cost grows linearly with the number of samples. In practice, there is a trade-off between robustness and runtime, and a moderate number of non-minimal samples often provides a good balance. 
+
+• In which situations is NONSAC not recommended? 
+
+NONSAC is not particularly advantageous when the dataset can be processed efficiently in a single batch, since its main strength lies in handling prohibitively large datasets. It may also offer limited benefit when the inlier ratio is already high, as standard robust estimators can perform well using a single non-minimal sample. Furthermore, if the core estimator is weak, increasing the number of non-minimal samples will not compensate for its limitations. Finally, in time-critical applications with strict runtime constraints, the additional computational cost may outweigh the robustness gains. 
+
+6 Conclusion 
+
+We proposed NONSAC, a novel framework for geometric model estimation from prohibitively large datasets with high outlier ratios. Instead of processing the full dataset at once, NONSAC repeatedly draws reasonably sized non-minimal subsets, estimates models independently on each of them, and then selects the most reliable hypothesis using a scoring rule. This allows us to avoid the mem-ory and computational limitations that often hinder existing methods, while also exploiting the statistical variability in inlier ratios across samples to improve ro-bustness. Experiments across relative pose estimation, Perspective-n-Point and point cloud registration demonstrate that NONSAC handles high outlier ratios effectively, with the truncated Lp (TLP) cost offering consistently strong per-formance. Overall, NONSAC offers a simple and practical paradigm for scaling robust geometric estimation to data sizes and outlier ratios that would otherwise be difficult or even impossible to handle. 12 S. H. Lee et al. # of non-minimal samples = 10 # of non-minimal samples = 20 # of non-minimal samples = 30 Outlier ratio Outlier ratio Outlier ratio 65% 70% 75% 80% 85% 90% 65% 70% 75% 80% 85% 90% 65% 70% 75% 80% 85% 90% 
+
+> σ = 0 .002
+
+Ideal hypothesis selection 1.00 1.00 0.99 0.98 0.92 0.76 1.00 1.00 1.00 0.99 0.97 0.88 1.00 1.00 1.00 1.00 0.98 0.93 
+
+Fixed non-minimal sample 0.99 0.98 0.97 0.96 0.87 0.65 0.99 1.00 0.98 0.98 0.91 0.75 0.99 0.99 0.99 0.99 0.96 0.84 Most inliers 0.99 0.98 0.97 0.95 0.85 0.62 0.98 0.98 0.97 0.96 0.94 0.78 0.99 0.99 0.98 0.98 0.95 0.86 Closest pair 0.99 0.98 0.95 0.88 0.69 0.54 0.99 0.98 0.95 0.89 0.70 0.57 1.00 0.98 0.97 0.89 0.75 0.69 Closest triplet 0.99 0.98 0.96 0.90 0.71 0.59 0.99 0.99 0.96 0.88 0.73 0.59 0.99 0.99 0.97 0.91 0.74 0.70 Minimum mean 1.00 0.99 0.98 0.96 0.80 0.47 1.00 1.00 0.99 0.98 0.89 0.55 1.00 1.00 1.00 0.99 0.95 0.67 Minimum median 1.00 0.99 0.98 0.94 0.77 0.45 1.00 1.00 0.99 0.97 0.87 0.53 1.00 1.00 0.99 0.99 0.91 0.56 Minimum Q3 1.00 0.99 0.98 0.95 0.78 0.44 1.00 1.00 0.99 0.98 0.88 0.57 1.00 1.00 0.99 0.98 0.93 0.65 Pair cost ( k = 0 .02 ) 0.99 0.98 0.98 0.95 0.85 0.63 0.99 0.99 0.98 0.96 0.94 0.78 0.99 0.99 0.99 0.98 0.95 0.86 Pair cost ( k = 0 .05 ) 0.99 0.99 0.98 0.95 0.86 0.63 0.99 0.99 0.98 0.96 0.94 0.80 0.99 0.99 0.99 0.98 0.95 0.86 Pair cost ( k = 0 .1) 0.99 0.99 0.97 0.95 0.87 0.64 0.99 0.99 0.98 0.96 0.93 0.80 0.99 0.99 0.99 0.98 0.94 0.86 Pair cost ( k = 0 .2) 0.99 0.99 0.97 0.95 0.87 0.65 0.99 0.99 0.98 0.95 0.92 0.79 1.00 0.99 0.98 0.97 0.93 0.84 Pair cost ( k = 0 .5) 0.99 0.98 0.97 0.94 0.85 0.62 0.99 0.99 0.97 0.94 0.88 0.72 1.00 0.99 0.98 0.96 0.90 0.77 Pair cost ( k = 1 ) 0.99 0.98 0.96 0.91 0.79 0.59 0.99 0.99 0.95 0.93 0.84 0.67 1.00 0.99 0.98 0.93 0.84 0.74 TLP cost ( p = 0 .01) 0.99 0.99 0.96 0.92 0.79 0.54 1.00 0.99 0.98 0.96 0.81 0.53 0.99 0.99 0.99 0.97 0.86 0.60 TLP cost ( p = 0 .1) 1.00 0.99 0.98 0.96 0.86 0.62 1.00 1.00 0.99 0.97 0.93 0.75 1.00 1.00 1.00 0.99 0.95 0.84 TLP cost ( p = 0 .2) 1.00 0.99 0.98 0.96 0.86 0.62 1.00 1.00 0.99 0.97 0.93 0.75 1.00 1.00 1.00 0.99 0.95 0.84 TLP cost ( p = 0 .3) 1.00 0.99 0.98 0.96 0.87 0.63 1.00 1.00 0.99 0.97 0.93 0.75 1.00 1.00 1.00 0.99 0.95 0.84 TLP cost ( p = 0 .5) 1.00 0.99 0.98 0.96 0.87 0.63 1.00 1.00 0.99 0.97 0.93 0.76 1.00 1.00 1.00 0.99 0.95 0.84 TLP cost ( p = 1) 1.00 0.99 0.98 0.96 0.86 0.63 1.00 1.00 0.99 0.97 0.93 0.76 0.99 1.00 1.00 0.99 0.95 0.85 TLP cost ( p = 2) 1.00 0.99 0.98 0.96 0.87 0.63 1.00 0.99 0.98 0.97 0.93 0.75 0.99 1.00 0.99 0.99 0.95 0.85 
+
+> σ = 0 .005
+
+Ideal hypothesis selection 1.00 0.99 0.97 0.94 0.88 0.76 1.00 1.00 0.99 0.98 0.95 0.84 1.00 1.00 1.00 0.99 0.96 0.89 
+
+Fixed non-minimal sample 0.93 0.91 0.89 0.84 0.76 0.60 0.92 0.90 0.89 0.88 0.80 0.67 0.93 0.91 0.92 0.87 0.83 0.73 Most inliers 0.92 0.91 0.88 0.87 0.79 0.60 0.92 0.92 0.88 0.88 0.83 0.71 0.93 0.92 0.91 0.90 0.84 0.74 Closest pair 0.94 0.90 0.83 0.77 0.65 0.53 0.93 0.92 0.85 0.77 0.65 0.54 0.94 0.92 0.87 0.81 0.64 0.57 Closest triplet 0.94 0.92 0.86 0.80 0.68 0.53 0.95 0.93 0.86 0.80 0.66 0.55 0.95 0.92 0.91 0.82 0.69 0.60 Minimum mean 0.98 0.95 0.94 0.89 0.77 0.59 0.98 0.96 0.94 0.92 0.88 0.69 0.97 0.97 0.96 0.94 0.88 0.75 Minimum median 0.98 0.95 0.93 0.87 0.74 0.55 0.98 0.96 0.94 0.92 0.84 0.65 0.98 0.97 0.96 0.93 0.87 0.72 Minimum Q3 0.98 0.96 0.93 0.89 0.77 0.57 0.98 0.96 0.95 0.91 0.87 0.67 0.98 0.98 0.96 0.94 0.89 0.73 Pair cost ( k = 0 .02 ) 0.93 0.92 0.88 0.87 0.79 0.60 0.93 0.92 0.90 0.89 0.85 0.73 0.94 0.94 0.91 0.90 0.85 0.75 Pair cost ( k = 0 .05 ) 0.94 0.92 0.88 0.86 0.79 0.63 0.94 0.94 0.90 0.90 0.86 0.74 0.96 0.95 0.91 0.90 0.87 0.76 Pair cost ( k = 0 .1) 0.94 0.92 0.88 0.87 0.81 0.64 0.95 0.95 0.89 0.88 0.84 0.74 0.94 0.94 0.92 0.90 0.86 0.76 Pair cost ( k = 0 .2) 0.94 0.92 0.86 0.86 0.78 0.65 0.94 0.94 0.90 0.87 0.82 0.74 0.94 0.93 0.92 0.89 0.84 0.73 Pair cost ( k = 0 .5) 0.94 0.91 0.86 0.82 0.73 0.57 0.93 0.94 0.88 0.84 0.76 0.69 0.94 0.93 0.91 0.86 0.78 0.70 Pair cost ( k = 1 ) 0.94 0.91 0.85 0.79 0.71 0.55 0.93 0.93 0.87 0.81 0.73 0.61 0.94 0.93 0.90 0.83 0.72 0.64 TLP cost ( p = 0 .01) 0.96 0.91 0.89 0.82 0.71 0.47 0.95 0.93 0.89 0.85 0.76 0.54 0.96 0.95 0.93 0.87 0.78 0.59 TLP cost ( p = 0 .1) 0.97 0.94 0.92 0.88 0.77 0.61 0.98 0.95 0.93 0.92 0.86 0.70 0.98 0.97 0.95 0.94 0.88 0.77 TLP cost ( p = 0 .2) 0.97 0.94 0.92 0.88 0.77 0.61 0.98 0.96 0.93 0.92 0.86 0.70 0.98 0.97 0.95 0.94 0.88 0.77 TLP cost ( p = 0 .3) 0.97 0.94 0.92 0.88 0.77 0.61 0.97 0.95 0.93 0.92 0.86 0.71 0.97 0.96 0.95 0.93 0.88 0.76 TLP cost ( p = 0 .5) 0.97 0.94 0.92 0.89 0.77 0.61 0.97 0.95 0.93 0.92 0.86 0.71 0.97 0.96 0.94 0.93 0.88 0.76 TLP cost ( p = 1) 0.96 0.94 0.91 0.89 0.78 0.62 0.96 0.95 0.92 0.92 0.87 0.71 0.97 0.96 0.94 0.93 0.87 0.74 TLP cost ( p = 2) 0.95 0.93 0.91 0.89 0.77 0.62 0.96 0.94 0.91 0.90 0.86 0.71 0.96 0.96 0.93 0.92 0.87 0.73 
+
+> σ = 0 .01
+
+Ideal hypothesis selection 0.95 0.93 0.91 0.88 0.80 0.68 0.97 0.97 0.94 0.92 0.84 0.77 0.99 0.98 0.97 0.95 0.90 0.82 
+
+Fixed non-minimal sample 0.78 0.74 0.72 0.70 0.52 0.39 0.75 0.73 0.73 0.68 0.56 0.43 0.75 0.75 0.70 0.70 0.61 0.47 Most inliers 0.83 0.76 0.77 0.70 0.63 0.42 0.80 0.77 0.72 0.75 0.61 0.49 0.81 0.80 0.78 0.78 0.64 0.45 Closest pair 0.81 0.74 0.70 0.67 0.56 0.41 0.80 0.78 0.71 0.64 0.50 0.43 0.81 0.78 0.76 0.61 0.57 0.48 Closest triplet 0.82 0.79 0.74 0.69 0.54 0.45 0.85 0.81 0.73 0.68 0.52 0.48 0.83 0.83 0.78 0.69 0.55 0.51 Minimum mean 0.88 0.85 0.82 0.78 0.68 0.53 0.91 0.87 0.85 0.82 0.71 0.64 0.91 0.89 0.87 0.85 0.78 0.65 Minimum median 0.88 0.84 0.83 0.77 0.67 0.50 0.92 0.88 0.86 0.83 0.70 0.62 0.92 0.90 0.87 0.85 0.79 0.65 Minimum Q3 0.89 0.85 0.83 0.78 0.68 0.52 0.92 0.88 0.84 0.83 0.74 0.63 0.91 0.90 0.87 0.86 0.78 0.65 Pair cost ( k = 0 .02 ) 0.84 0.79 0.77 0.72 0.64 0.46 0.83 0.80 0.76 0.79 0.62 0.53 0.84 0.83 0.81 0.78 0.70 0.55 Pair cost ( k = 0 .05 ) 0.85 0.82 0.80 0.75 0.65 0.49 0.86 0.83 0.78 0.80 0.65 0.58 0.85 0.84 0.82 0.80 0.70 0.58 Pair cost ( k = 0 .1) 0.84 0.81 0.81 0.75 0.67 0.51 0.86 0.83 0.80 0.81 0.66 0.59 0.85 0.82 0.82 0.80 0.71 0.60 Pair cost ( k = 0 .2) 0.83 0.80 0.80 0.75 0.67 0.51 0.85 0.84 0.79 0.77 0.67 0.60 0.84 0.80 0.82 0.78 0.71 0.62 Pair cost ( k = 0 .5) 0.83 0.79 0.76 0.72 0.64 0.50 0.84 0.82 0.74 0.73 0.59 0.55 0.82 0.80 0.82 0.72 0.67 0.57 Pair cost ( k = 1 ) 0.82 0.77 0.72 0.71 0.58 0.46 0.83 0.80 0.72 0.71 0.55 0.48 0.82 0.78 0.80 0.68 0.64 0.52 TLP cost ( p = 0 .01) 0.85 0.80 0.78 0.72 0.57 0.40 0.87 0.82 0.80 0.74 0.58 0.45 0.87 0.85 0.78 0.76 0.64 0.50 TLP cost ( p = 0 .1) 0.88 0.84 0.84 0.75 0.67 0.50 0.91 0.86 0.83 0.79 0.70 0.62 0.90 0.87 0.87 0.83 0.77 0.65 TLP cost ( p = 0 .2) 0.88 0.84 0.84 0.75 0.66 0.50 0.91 0.86 0.83 0.79 0.70 0.63 0.90 0.87 0.87 0.83 0.76 0.65 TLP cost ( p = 0 .3) 0.88 0.84 0.84 0.75 0.66 0.50 0.90 0.86 0.82 0.79 0.70 0.61 0.90 0.87 0.86 0.83 0.76 0.64 TLP cost ( p = 0 .5) 0.88 0.84 0.84 0.76 0.66 0.50 0.90 0.85 0.82 0.79 0.69 0.60 0.89 0.87 0.85 0.83 0.76 0.63 TLP cost ( p = 1) 0.87 0.84 0.83 0.75 0.66 0.49 0.89 0.83 0.80 0.79 0.69 0.61 0.88 0.86 0.83 0.81 0.76 0.62 TLP cost ( p = 2) 0.85 0.82 0.80 0.74 0.63 0.47 0.87 0.82 0.78 0.78 0.68 0.59 0.87 0.85 0.82 0.79 0.71 0.61 
+
+Table 4: [Relative pose estimation] mAA results ( ↑ is better. Upper bound = 1 ). 
+
+Bold : Ideal accuracy obtainable if one chooses the model closest to the ground truth. Green : Best results (excluding Ideal), Red : Low accuracy ( i.e ., mAA < Green −
+
+0.05 ). Non-Minimial Sampling and Consensus for Prohibitively Large Datasets 13 # of non-minimal samples = 10 # of non-minimal samples = 20 # of non-minimal samples = 30 Outlier ratio Outlier ratio Outlier ratio 92% 93% 94% 95% 96% 97% 92% 93% 94% 95% 96% 97% 92% 93% 94% 95% 96% 97% 
+
+> σ = 0 .005
+
+Ideal hypothesis selection 1.00 0.98 0.97 0.93 0.84 0.72 1.00 1.00 1.00 0.99 0.94 0.84 1.00 1.00 1.00 0.99 0.98 0.92 
+
+Fixed non-minimal sample 0.95 0.98 0.96 0.89 0.74 0.69 1.00 1.00 0.99 0.97 0.91 0.66 1.00 1.00 0.99 0.99 0.93 0.88 Most inliers 1.00 0.97 0.96 0.90 0.82 0.64 1.00 0.99 0.99 0.98 0.93 0.78 1.00 1.00 1.00 0.98 0.95 0.86 Closest pair 0.97 0.94 0.93 0.86 0.77 0.51 0.98 0.98 0.97 0.95 0.91 0.74 0.99 0.99 0.98 0.96 0.91 0.85 Closest triplet 0.99 0.96 0.95 0.91 0.78 0.49 0.99 0.99 0.99 0.98 0.92 0.78 1.00 0.99 0.99 0.98 0.95 0.85 Minimum mean 0.38 0.20 0.15 0.06 0.04 0.05 0.32 0.20 0.08 0.05 0.04 0.02 0.29 0.12 0.06 0.01 0.01 0.01 Minimum median 0.25 0.12 0.07 0.02 0.02 0.02 0.11 0.05 0.03 0.01 0.02 0.02 0.13 0.05 0.03 0.02 0.03 0.01 Minimum Q3 0.76 0.58 0.37 0.29 0.14 0.10 0.73 0.56 0.38 0.25 0.13 0.03 0.73 0.51 0.29 0.19 0.13 0.01 Pair cost ( k = 0 .02 ) 1.00 0.97 0.96 0.91 0.82 0.64 1.00 1.00 0.99 0.98 0.94 0.79 1.00 1.00 1.00 0.98 0.96 0.87 Pair cost ( k = 0 .05 ) 1.00 0.97 0.96 0.91 0.82 0.64 1.00 1.00 0.99 0.98 0.94 0.79 1.00 1.00 1.00 0.98 0.96 0.87 Pair cost ( k = 0 .1) 1.00 0.97 0.96 0.91 0.82 0.64 1.00 1.00 0.99 0.98 0.94 0.80 1.00 1.00 1.00 0.98 0.96 0.87 Pair cost ( k = 0 .2) 0.99 0.97 0.96 0.91 0.81 0.64 1.00 1.00 0.99 0.98 0.93 0.80 1.00 1.00 1.00 0.98 0.96 0.87 Pair cost ( k = 0 .5) 0.99 0.97 0.96 0.91 0.81 0.65 1.00 0.99 0.99 0.98 0.93 0.78 1.00 1.00 1.00 0.98 0.96 0.87 Pair cost ( k = 1 ) 0.99 0.95 0.96 0.90 0.81 0.60 0.99 0.99 0.99 0.98 0.93 0.76 1.00 1.00 1.00 0.97 0.96 0.87 TLP cost ( p = 0 .01) 0.93 0.81 0.70 0.48 0.36 0.21 0.96 0.86 0.77 0.70 0.52 0.22 0.94 0.89 0.82 0.68 0.48 0.22 TLP cost ( p = 0 .1) 1.00 0.97 0.96 0.90 0.78 0.54 1.00 1.00 1.00 0.98 0.91 0.72 1.00 1.00 1.00 0.98 0.97 0.83 TLP cost ( p = 0 .2) 1.00 0.97 0.96 0.91 0.79 0.55 1.00 1.00 1.00 0.98 0.91 0.71 1.00 1.00 1.00 0.98 0.96 0.86 TLP cost ( p = 0 .3) 1.00 0.97 0.96 0.91 0.79 0.55 1.00 1.00 1.00 0.98 0.91 0.71 1.00 1.00 1.00 0.98 0.96 0.87 TLP cost ( p = 0 .5) 1.00 0.97 0.96 0.91 0.79 0.57 1.00 1.00 1.00 0.98 0.92 0.74 1.00 1.00 1.00 0.98 0.96 0.86 TLP cost ( p = 1) 1.00 0.97 0.97 0.91 0.80 0.59 1.00 1.00 1.00 0.98 0.92 0.75 1.00 1.00 1.00 0.99 0.96 0.86 TLP cost ( p = 2) 1.00 0.97 0.96 0.90 0.80 0.61 1.00 1.00 1.00 0.98 0.93 0.76 1.00 1.00 1.00 0.99 0.97 0.85 
+
+> σ = 0 .01
+
+Ideal hypothesis selection 0.99 0.97 0.94 0.89 0.81 0.70 1.00 0.99 0.99 0.96 0.92 0.85 1.00 1.00 0.99 0.97 0.94 0.88 
+
+Fixed non-minimal sample 0.95 0.94 0.92 0.89 0.79 0.66 0.98 0.97 0.95 0.94 0.89 0.72 0.98 0.99 0.96 0.95 0.92 0.85 Most inliers 0.95 0.94 0.91 0.85 0.77 0.65 0.97 0.97 0.96 0.93 0.89 0.82 0.97 0.96 0.96 0.93 0.92 0.83 Closest pair 0.92 0.90 0.85 0.77 0.72 0.55 0.94 0.93 0.93 0.89 0.83 0.76 0.95 0.95 0.93 0.88 0.85 0.76 Closest triplet 0.95 0.94 0.87 0.82 0.74 0.57 0.97 0.96 0.95 0.91 0.86 0.78 0.97 0.96 0.95 0.90 0.88 0.81 Minimum mean 0.81 0.66 0.46 0.29 0.20 0.20 0.86 0.74 0.58 0.38 0.22 0.14 0.89 0.75 0.56 0.42 0.21 0.18 Minimum median 0.83 0.66 0.49 0.26 0.18 0.16 0.83 0.62 0.51 0.38 0.21 0.09 0.84 0.61 0.42 0.26 0.13 0.08 Minimum Q3 0.92 0.87 0.68 0.46 0.40 0.29 0.94 0.94 0.84 0.65 0.46 0.27 0.94 0.94 0.82 0.71 0.45 0.37 Pair cost ( k = 0 .02 ) 0.95 0.94 0.91 0.85 0.78 0.66 0.97 0.97 0.96 0.93 0.89 0.82 0.97 0.96 0.96 0.93 0.92 0.82 Pair cost ( k = 0 .05 ) 0.95 0.95 0.91 0.85 0.78 0.66 0.97 0.98 0.96 0.93 0.89 0.82 0.97 0.96 0.96 0.93 0.92 0.82 Pair cost ( k = 0 .1) 0.95 0.95 0.91 0.85 0.78 0.66 0.97 0.97 0.96 0.94 0.89 0.82 0.97 0.96 0.97 0.93 0.92 0.83 Pair cost ( k = 0 .2) 0.95 0.95 0.91 0.85 0.77 0.66 0.97 0.97 0.96 0.93 0.88 0.82 0.97 0.96 0.96 0.93 0.92 0.83 Pair cost ( k = 0 .5) 0.95 0.93 0.90 0.85 0.77 0.66 0.96 0.96 0.96 0.92 0.88 0.82 0.97 0.96 0.95 0.92 0.91 0.82 Pair cost ( k = 1 ) 0.94 0.93 0.88 0.84 0.75 0.64 0.96 0.95 0.95 0.91 0.87 0.79 0.97 0.95 0.94 0.92 0.89 0.81 TLP cost ( p = 0 .01) 0.86 0.80 0.64 0.47 0.34 0.25 0.90 0.87 0.69 0.60 0.48 0.36 0.89 0.86 0.70 0.67 0.52 0.29 TLP cost ( p = 0 .1) 0.96 0.96 0.91 0.84 0.75 0.62 0.98 0.98 0.97 0.94 0.89 0.80 0.99 0.98 0.98 0.95 0.92 0.83 TLP cost ( p = 0 .2) 0.96 0.96 0.91 0.84 0.75 0.61 0.98 0.98 0.97 0.94 0.89 0.80 0.99 0.98 0.98 0.95 0.92 0.83 TLP cost ( p = 0 .3) 0.96 0.96 0.91 0.84 0.75 0.62 0.98 0.98 0.97 0.94 0.89 0.81 0.99 0.98 0.98 0.95 0.92 0.83 TLP cost ( p = 0 .5) 0.97 0.96 0.91 0.84 0.75 0.62 0.98 0.98 0.97 0.94 0.89 0.82 0.99 0.98 0.98 0.95 0.92 0.84 TLP cost ( p = 1) 0.96 0.96 0.91 0.84 0.75 0.63 0.98 0.98 0.97 0.94 0.89 0.83 0.99 0.98 0.97 0.95 0.92 0.84 TLP cost ( p = 2) 0.96 0.96 0.92 0.85 0.75 0.63 0.98 0.98 0.97 0.94 0.89 0.83 0.98 0.97 0.97 0.94 0.92 0.83 
+
+> σ = 0 .02
+
+Ideal hypothesis selection 0.92 0.92 0.90 0.85 0.78 0.66 0.96 0.95 0.94 0.91 0.86 0.80 0.99 0.97 0.95 0.94 0.90 0.85 
+
+Fixed non-minimal sample 0.87 0.85 0.84 0.79 0.72 0.58 0.89 0.90 0.87 0.86 0.78 0.63 0.91 0.90 0.89 0.84 0.82 0.73 Most inliers 0.85 0.85 0.82 0.78 0.71 0.55 0.88 0.86 0.85 0.83 0.77 0.68 0.88 0.88 0.86 0.84 0.81 0.76 Closest pair 0.82 0.81 0.79 0.73 0.65 0.53 0.83 0.84 0.80 0.75 0.71 0.66 0.86 0.84 0.82 0.80 0.70 0.69 Closest triplet 0.84 0.85 0.81 0.77 0.68 0.53 0.86 0.88 0.88 0.79 0.75 0.69 0.90 0.91 0.86 0.83 0.77 0.74 Minimum mean 0.88 0.85 0.80 0.68 0.52 0.39 0.92 0.92 0.89 0.83 0.68 0.48 0.95 0.92 0.89 0.86 0.76 0.57 Minimum median 0.88 0.84 0.82 0.68 0.55 0.41 0.92 0.91 0.87 0.81 0.68 0.46 0.95 0.91 0.87 0.83 0.74 0.53 Minimum Q3 0.90 0.86 0.81 0.71 0.55 0.40 0.92 0.92 0.87 0.81 0.72 0.52 0.95 0.92 0.89 0.87 0.75 0.58 Pair cost ( k = 0 .02 ) 0.85 0.85 0.82 0.78 0.71 0.56 0.88 0.87 0.85 0.84 0.78 0.69 0.88 0.88 0.86 0.85 0.81 0.77 Pair cost ( k = 0 .05 ) 0.85 0.86 0.83 0.78 0.71 0.55 0.88 0.87 0.86 0.84 0.78 0.69 0.90 0.88 0.86 0.86 0.81 0.77 Pair cost ( k = 0 .1) 0.86 0.86 0.83 0.78 0.71 0.55 0.89 0.87 0.86 0.84 0.79 0.69 0.91 0.89 0.86 0.86 0.81 0.77 Pair cost ( k = 0 .2) 0.86 0.86 0.84 0.78 0.71 0.57 0.88 0.87 0.86 0.84 0.79 0.70 0.91 0.90 0.87 0.86 0.81 0.77 Pair cost ( k = 0 .5) 0.86 0.85 0.83 0.78 0.69 0.57 0.87 0.87 0.86 0.81 0.78 0.70 0.90 0.89 0.86 0.86 0.78 0.75 Pair cost ( k = 1 ) 0.85 0.83 0.82 0.77 0.68 0.56 0.87 0.85 0.85 0.79 0.76 0.69 0.89 0.88 0.84 0.84 0.75 0.73 TLP cost ( p = 0 .01) 0.75 0.70 0.63 0.46 0.43 0.25 0.81 0.72 0.69 0.66 0.44 0.32 0.81 0.81 0.70 0.62 0.52 0.31 TLP cost ( p = 0 .1) 0.89 0.88 0.86 0.81 0.72 0.54 0.92 0.91 0.90 0.86 0.81 0.71 0.95 0.93 0.90 0.89 0.85 0.79 TLP cost ( p = 0 .2) 0.89 0.88 0.86 0.81 0.72 0.54 0.92 0.91 0.90 0.86 0.81 0.71 0.95 0.93 0.90 0.89 0.85 0.79 TLP cost ( p = 0 .3) 0.89 0.88 0.86 0.81 0.72 0.54 0.92 0.91 0.90 0.86 0.81 0.72 0.94 0.93 0.90 0.89 0.85 0.79 TLP cost ( p = 0 .5) 0.89 0.87 0.86 0.81 0.72 0.55 0.92 0.91 0.89 0.86 0.82 0.72 0.94 0.94 0.90 0.89 0.85 0.79 TLP cost ( p = 1) 0.89 0.87 0.86 0.80 0.72 0.57 0.92 0.90 0.89 0.86 0.81 0.73 0.94 0.94 0.90 0.88 0.85 0.79 TLP cost ( p = 2) 0.88 0.87 0.85 0.80 0.72 0.57 0.91 0.90 0.89 0.86 0.81 0.71 0.94 0.92 0.88 0.88 0.84 0.79 
+
+Table 5: [Perspective-n-Point] mAA results ( ↑ is better. Upper bound = 1 ). Bold :Ideal accuracy obtainable if one chooses the model closest to the ground truth. Green : Best results (excluding Ideal), Red : Low accuracy ( i.e ., mAA < Green − 0.05 ). 14 S. H. Lee et al. # of non-minimal samples = 10 # of non-minimal samples = 20 # of non-minimal samples = 30 Outlier ratio Outlier ratio Outlier ratio 99.0 99.1 99.2 99.3 99.4 99.5 99.0 99.1 99.2 99.3 99.4 99.5 99.0 99.1 99.2 99.3 99.4 99.5 
+
+> σ = 0 .01
+
+Ideal hypothesis selection 1.00 1.00 1.00 1.00 0.97 0.83 1.00 1.00 1.00 1.00 1.00 0.97 1.00 1.00 1.00 1.00 1.00 1.00 
+
+Fixed non-minimal sample 0.88 0.85 0.74 0.52 0.47 0.25 0.90 0.82 0.72 0.72 0.55 0.34 0.93 0.94 0.86 0.69 0.56 0.41 Most inliers 1.00 1.00 0.99 0.99 0.96 0.81 1.00 1.00 0.99 0.99 0.99 0.95 1.00 1.00 1.00 0.99 0.99 0.98 Closest pair 1.00 1.00 1.00 0.98 0.84 0.59 1.00 1.00 1.00 0.99 0.99 0.92 1.00 1.00 1.00 1.00 0.99 0.98 Closest triplet 1.00 1.00 0.99 0.96 0.81 0.56 1.00 1.00 1.00 1.00 0.96 0.87 1.00 1.00 1.00 1.00 1.00 0.97 Minimum mean 0.17 0.05 0.02 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.02 0.00 0.00 0.00 0.00 0.00 Minimum median 0.18 0.04 0.02 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.02 0.00 0.00 0.00 0.00 0.00 Minimum Q3 0.18 0.05 0.02 0.00 0.00 0.00 0.01 0.00 0.00 0.00 0.00 0.00 0.02 0.00 0.00 0.00 0.00 0.00 Pair cost ( k = 0 .02 ) 1.00 1.00 0.99 0.99 0.96 0.82 1.00 1.00 1.00 0.99 0.99 0.95 1.00 1.00 1.00 0.99 0.99 0.98 Pair cost ( k = 0 .05 ) 1.00 1.00 0.99 0.99 0.96 0.82 1.00 1.00 1.00 0.99 0.99 0.95 1.00 1.00 1.00 0.99 0.99 0.98 Pair cost ( k = 0 .1) 1.00 1.00 0.99 0.99 0.96 0.82 1.00 1.00 1.00 1.00 0.99 0.95 1.00 1.00 1.00 0.99 0.99 0.98 Pair cost ( k = 0 .2) 1.00 1.00 0.99 0.99 0.96 0.82 1.00 1.00 1.00 1.00 0.99 0.95 1.00 1.00 1.00 1.00 1.00 0.99 Pair cost ( k = 0 .5) 1.00 1.00 1.00 0.99 0.96 0.81 1.00 1.00 1.00 1.00 0.99 0.96 1.00 1.00 1.00 1.00 1.00 0.99 Pair cost ( k = 1 ) 1.00 1.00 1.00 0.98 0.95 0.76 1.00 1.00 1.00 1.00 0.99 0.93 1.00 1.00 1.00 1.00 1.00 0.99 TLP cost ( p = 0 .01) 1.00 0.99 0.99 0.99 0.96 0.81 1.00 1.00 1.00 0.99 0.99 0.96 1.00 1.00 1.00 0.99 0.97 0.98 TLP cost ( p = 0 .1) 1.00 1.00 0.99 0.99 0.96 0.82 1.00 1.00 1.00 0.99 0.99 0.96 1.00 1.00 1.00 0.99 0.99 0.99 TLP cost ( p = 0 .2) 1.00 1.00 0.99 0.99 0.96 0.82 1.00 1.00 1.00 0.99 0.99 0.96 1.00 1.00 1.00 0.99 0.99 0.98 TLP cost ( p = 0 .3) 1.00 1.00 0.99 0.99 0.96 0.82 1.00 1.00 1.00 0.99 0.99 0.96 1.00 1.00 1.00 0.99 0.99 0.98 TLP cost ( p = 0 .5) 1.00 1.00 0.99 0.99 0.96 0.82 1.00 1.00 1.00 0.99 0.99 0.96 1.00 1.00 1.00 0.99 0.99 0.99 TLP cost ( p = 1) 1.00 1.00 0.99 0.99 0.96 0.82 1.00 1.00 1.00 0.99 0.98 0.95 1.00 1.00 1.00 0.99 0.99 0.99 TLP cost ( p = 2) 1.00 1.00 0.99 0.99 0.96 0.82 1.00 1.00 1.00 0.99 0.98 0.95 1.00 1.00 1.00 0.99 0.99 0.99 
+
+> σ = 0 .015
+
+Ideal hypothesis selection 1.00 1.00 0.97 0.91 0.70 0.52 1.00 1.00 1.00 0.97 0.89 0.75 1.00 1.00 1.00 1.00 0.97 0.88 
+
+Fixed non-minimal sample 0.71 0.69 0.57 0.37 0.23 0.23 0.78 0.70 0.62 0.57 0.39 0.22 0.86 0.80 0.69 0.57 0.41 0.31 Most inliers 0.96 0.97 0.94 0.87 0.69 0.52 0.97 0.96 0.96 0.94 0.87 0.73 0.97 0.96 0.95 0.95 0.93 0.83 Closest pair 0.97 0.97 0.90 0.86 0.43 0.22 0.98 0.98 0.97 0.94 0.76 0.42 0.99 0.98 0.97 0.97 0.90 0.69 Closest triplet 0.98 0.96 0.89 0.80 0.47 0.22 0.99 0.98 0.97 0.91 0.73 0.31 0.99 0.98 0.98 0.97 0.82 0.59 Minimum mean 0.16 0.08 0.02 0.01 0.01 0.00 0.01 0.03 0.02 0.00 0.00 0.01 0.01 0.01 0.00 0.00 0.00 0.00 Minimum median 0.18 0.07 0.01 0.01 0.01 0.00 0.01 0.03 0.01 0.00 0.00 0.01 0.01 0.01 0.00 0.00 0.00 0.00 Minimum Q3 0.24 0.14 0.05 0.03 0.01 0.01 0.03 0.03 0.01 0.01 0.00 0.01 0.00 0.01 0.02 0.00 0.00 0.00 Pair cost ( k = 0 .02 ) 0.96 0.97 0.94 0.87 0.69 0.52 0.97 0.96 0.95 0.94 0.86 0.73 0.97 0.96 0.95 0.95 0.93 0.84 Pair cost ( k = 0 .05 ) 0.96 0.97 0.94 0.87 0.69 0.52 0.98 0.97 0.96 0.94 0.86 0.73 0.97 0.96 0.96 0.95 0.93 0.84 Pair cost ( k = 0 .1) 0.97 0.97 0.94 0.87 0.69 0.52 0.98 0.97 0.97 0.94 0.86 0.73 0.98 0.97 0.96 0.95 0.94 0.84 Pair cost ( k = 0 .2) 0.98 0.97 0.94 0.88 0.69 0.52 0.98 0.98 0.97 0.94 0.86 0.73 0.99 0.97 0.97 0.96 0.94 0.84 Pair cost ( k = 0 .5) 0.98 0.97 0.94 0.88 0.69 0.50 0.98 0.98 0.97 0.93 0.86 0.69 0.99 0.98 0.97 0.96 0.94 0.84 Pair cost ( k = 1 ) 0.98 0.97 0.94 0.88 0.64 0.46 0.99 0.98 0.97 0.94 0.85 0.62 0.99 0.99 0.97 0.97 0.94 0.80 TLP cost ( p = 0 .01) 0.97 0.97 0.94 0.88 0.69 0.52 0.97 0.96 0.97 0.93 0.87 0.74 0.97 0.96 0.96 0.96 0.94 0.86 TLP cost ( p = 0 .1) 0.97 0.97 0.94 0.88 0.70 0.52 0.97 0.96 0.97 0.93 0.87 0.74 0.97 0.96 0.96 0.96 0.94 0.86 TLP cost ( p = 0 .2) 0.97 0.97 0.95 0.88 0.70 0.52 0.98 0.96 0.97 0.94 0.87 0.74 0.97 0.96 0.96 0.96 0.94 0.86 TLP cost ( p = 0 .3) 0.97 0.97 0.95 0.88 0.70 0.52 0.98 0.96 0.97 0.94 0.87 0.74 0.97 0.96 0.96 0.96 0.94 0.86 TLP cost ( p = 0 .5) 0.97 0.97 0.94 0.88 0.70 0.52 0.98 0.96 0.96 0.94 0.87 0.74 0.97 0.96 0.96 0.95 0.94 0.86 TLP cost ( p = 1) 0.97 0.97 0.94 0.88 0.69 0.52 0.98 0.96 0.96 0.94 0.87 0.74 0.97 0.96 0.96 0.95 0.94 0.86 TLP cost ( p = 2) 0.96 0.97 0.94 0.88 0.69 0.52 0.97 0.96 0.95 0.93 0.86 0.74 0.97 0.96 0.95 0.95 0.94 0.86 
+
+> σ = 0 .02
+
+Ideal hypothesis selection 0.95 0.91 0.82 0.67 0.32 0.25 0.98 0.97 0.93 0.86 0.66 0.41 0.99 0.99 0.97 0.92 0.81 0.58 
+
+Fixed non-minimal sample 0.54 0.49 0.39 0.21 0.15 0.18 0.66 0.58 0.45 0.35 0.25 0.14 0.72 0.69 0.53 0.39 0.37 0.15 Most inliers 0.89 0.86 0.78 0.65 0.32 0.22 0.90 0.89 0.85 0.80 0.62 0.37 0.90 0.89 0.87 0.85 0.74 0.53 Closest pair 0.91 0.81 0.72 0.47 0.15 0.09 0.94 0.93 0.86 0.74 0.41 0.19 0.94 0.92 0.92 0.88 0.63 0.30 Closest triplet 0.90 0.82 0.68 0.47 0.19 0.08 0.93 0.92 0.83 0.67 0.41 0.17 0.95 0.93 0.90 0.83 0.55 0.32 Minimum mean 0.35 0.30 0.24 0.13 0.08 0.05 0.29 0.22 0.15 0.12 0.06 0.02 0.14 0.17 0.12 0.08 0.02 0.02 Minimum median 0.39 0.36 0.22 0.10 0.09 0.01 0.27 0.19 0.08 0.13 0.04 0.01 0.16 0.13 0.08 0.04 0.04 0.03 Minimum Q3 0.42 0.39 0.35 0.17 0.11 0.05 0.38 0.27 0.20 0.12 0.08 0.02 0.27 0.27 0.15 0.09 0.03 0.02 Pair cost ( k = 0 .02 ) 0.90 0.86 0.79 0.65 0.32 0.23 0.91 0.90 0.86 0.80 0.62 0.36 0.90 0.89 0.88 0.85 0.74 0.53 Pair cost ( k = 0 .05 ) 0.90 0.87 0.79 0.65 0.32 0.23 0.92 0.90 0.87 0.79 0.62 0.36 0.90 0.90 0.88 0.86 0.74 0.53 Pair cost ( k = 0 .1) 0.90 0.88 0.79 0.65 0.31 0.23 0.92 0.91 0.87 0.80 0.62 0.37 0.91 0.91 0.89 0.86 0.74 0.54 Pair cost ( k = 0 .2) 0.90 0.88 0.80 0.65 0.30 0.23 0.93 0.92 0.87 0.80 0.61 0.36 0.93 0.92 0.91 0.87 0.75 0.53 Pair cost ( k = 0 .5) 0.91 0.87 0.80 0.63 0.28 0.22 0.94 0.93 0.87 0.80 0.59 0.32 0.94 0.93 0.91 0.87 0.73 0.47 Pair cost ( k = 1 ) 0.91 0.86 0.79 0.60 0.25 0.14 0.93 0.93 0.87 0.78 0.50 0.29 0.94 0.92 0.91 0.87 0.69 0.39 TLP cost ( p = 0 .01) 0.90 0.88 0.80 0.66 0.32 0.24 0.92 0.90 0.88 0.83 0.64 0.40 0.91 0.92 0.92 0.87 0.76 0.56 TLP cost ( p = 0 .1) 0.90 0.88 0.80 0.65 0.32 0.24 0.92 0.90 0.88 0.83 0.65 0.40 0.91 0.92 0.92 0.87 0.77 0.56 TLP cost ( p = 0 .2) 0.90 0.88 0.80 0.65 0.32 0.24 0.92 0.90 0.88 0.83 0.65 0.40 0.91 0.92 0.92 0.87 0.77 0.56 TLP cost ( p = 0 .3) 0.90 0.88 0.80 0.65 0.32 0.24 0.92 0.90 0.88 0.83 0.64 0.40 0.91 0.92 0.92 0.87 0.76 0.56 TLP cost ( p = 0 .5) 0.91 0.88 0.80 0.65 0.32 0.24 0.92 0.90 0.88 0.83 0.64 0.40 0.90 0.92 0.92 0.87 0.76 0.56 TLP cost ( p = 1) 0.91 0.88 0.80 0.65 0.32 0.24 0.92 0.90 0.87 0.83 0.64 0.39 0.90 0.91 0.91 0.87 0.76 0.57 TLP cost ( p = 2) 0.90 0.87 0.79 0.65 0.32 0.24 0.91 0.90 0.86 0.82 0.64 0.40 0.90 0.91 0.90 0.86 0.75 0.57 
+
+Table 6: [Point cloud registration] mAA results ( ↑ is better. Upper bound = 1 ). 
+
+Bold : Ideal accuracy obtainable if one chooses the model closest to the ground truth. Green : Best results (excluding Ideal), Red : Low accuracy ( i.e ., mAA < Green −
+
+0.05 ). Non-Minimial Sampling and Consensus for Prohibitively Large Datasets 15 
+
+References 
+
+1. Bai, X., Luo, Z., Zhou, L., Chen, H., Li, L., Hu, Z., Fu, H., Tai, C.L.: Pointdsc: Robust point cloud registration using deep spatial consistency. In: IEEE Conf. Comput. Vis. Pattern Recog. pp. 15859–15869 (2021) 2. Barath, D., Matas, J.: Graph-cut ransac: Local optimization on spatially coherent structures. IEEE Trans. Pattern Anal. Mach. 44 (9), 4961–4974 (2022) 3. Baráth, D., Noskova, J., Ivashechkin, M., Matas, J.: MAGSAC++, a fast, reliable and accurate robust estimator. In: IEEE Conf. Comput. Vis. Pattern Recog. pp. 1301–1309 (2020) 4. Briales, J., Kneip, L., Gonzalez-Jimenez, J.: A certifiably globally optimal solution to the non-minimal relative pose problem. In: IEEE Conf. Comput. Vis. Pattern Recog. pp. 145–154 (2018) 5. Cai, Q., Li, X., Wu, Y.: Linear relative pose estimation founded on pose-only imaging geometry. arXiv abs/2401.13357 (2024) 6. Campbell, D., Liu, L., Gould, S.: Solving the blind perspective-n-point problem end-to-end with robust differentiable geometric optimization. In: Eur. Conf. Com-put. Vis. pp. 244–261 (2020) 7. Chen, H., Tian, W., Wang, P., Wang, F., Xiong, L., Li, H.: EPro-PnP: Generalized end-to-end probabilistic perspective-n-points for monocular object pose estimation. IEEE Trans. Pattern Anal. Mach. 47 (11), 9413–9425 (2025) 8. Chen, W., Li, H., Nie, Q., Liu, Y.H.: Deterministic point cloud registration via novel transformation decomposition. In: IEEE Conf. Comput. Vis. Pattern Recog. pp. 6338–6346 (2022) 9. Chen, Z., Sun, K., Yang, F., Tao, W.: SC2-PCR: A second order spatial compat-ibility for efficient and robust point cloud registration. In: IEEE Conf. Comput. Vis. Pattern Recog. pp. 13211–13221 (2022) 10. Chum, O., Matas, J., Kittler, J.: Locally optimized RANSAC. In: Pattern Recog-nition. pp. 236–243. Springer Berlin Heidelberg (2003) 11. Curless, B., Levoy, M.: A volumetric method for building complex models from range images. In: SIGGRAPH. pp. 303–312. ACM (1996) 12. Devore, J.L., Berk, K.N., Carlton, M.A.: Modern Mathematical Statistics with Applications. Springer International Publishing (2021) 13. Enqvist, O., Josephson, K., Kahl, F.: Optimal correspondences from pairwise con-straints. In: Int. Conf. Comput. Vis. pp. 1295–1302 (2009) 14. Fan, A., Ma, J., Jiang, X., Ling, H.: Efficient deterministic search with robust loss functions for geometric model fitting. IEEE Trans. Pattern Anal. Mach. 44 (11), 8212–8229 (2022) 15. Fischler, M.A., Bolles, R.C.: Random sample consensus: A paradigm for model fitting with applications to image analysis and automated cartography. Communi-cations of the ACM 24 (6), 381–395 (1981) 16. Fredriksson, J., Larsson, V., Olsson, C., Kahl, F.: Optimal relative pose with un-known correspondences. In: IEEE Conf. Comput. Vis. Pattern Recog. pp. 1728– 1736 (2016) 17. Garcia-Salguero, M., Gonzalez-Jimenez, J.: Fast and robust certifiable estimation of the relative pose between two calibrated cameras. J. Math. Imaging Vis. 63 (8), 1036–1056 (2021) 18. Hartley, R., Aftab, K., Trumpf, J.: L1 rotation averaging using the weiszfeld algo-rithm. In: IEEE Conf. Comput. Vis. Pattern Recog. pp. 3041–3048 (2011) 16 S. H. Lee et al. 19. Hartley, R., Zisserman, A.: Multiple View Geometry in Computer Vision. Cam-bridge University Press, 2 edn. (2003) 20. Huang, T., Peng, L., Vidal, R., Liu, Y.H.: Scalable 3d registration via truncated entry-wise absolute residuals. In: IEEE Conf. Comput. Vis. Pattern Recog. pp. 27477–27487 (2024) 21. Jiang, H., Dang, Z., Wei, Z., Xie, J., Yang, J., Salzmann, M.: Robust outlier re-jection for 3d registration with variational bayes. In: IEEE Conf. Comput. Vis. Pattern Recog. pp. 1148–1157 (2023) 22. Jin, Y., Mishkin, D., Mishchuk, A., Matas, J., Fua, P., Yi, K.M., Trulls, E.: Im-age matching across wide baselines: From paper to practice. Int. J. Comput. Vis. 
+
+129 (2), 517–547 (2021) 23. Kukelova, Z., Bujnak, M., Pajdla, T.: Polynomial eigenvalue solutions to the 5-pt and 6-pt relative pose problems. In: Brit. Mach. Vis. Conf. pp. 56.1–56.10 (2008) 24. Lee, S.H., Civera, J.: Robust single rotation averaging revisited. In: Eur. Conf. Comput. Vis. Worksh. pp. 30–42 (2025) 25. Lee, S.H., Civera, J., Vandewalle, P.: PCR-99: A practical method for point cloud registration with 99 percent outliers. In: Eur. Conf. Comput. Vis. Worksh. pp. 14–29 (2025) 26. Lee, S.H., Vandewalle, P., Civera, J.: P3P made easy. CoRR abs/2508.01312 
+
+(2025) 27. Liu, C., Yuen, J., Torralba, A.: SIFT Flow: Dense correspondence across scenes and its applications. IEEE Trans. Pattern Anal. Mach. 33 (5), 978–994 (2011) 28. Long, C., Hu, Q., Jiang, C., Li, D., Ouyang, Z.: BnB-based robust pnp pose estima-tion method for outliers. IEEE Robotics and Automation Letters 10 (7), 6856–6863 (2025) 29. Luong, Q., Faugeras, O.D.: The fundamental matrix: Theory, algorithms, and sta-bility analysis. Int. J. Comput. Vis. 17 (1), 43–75 (1996) 30. Moran, D., Margalit, Y., Trostianetsky, G., Khatib, F., Galun, M., Basri, R.: Con-sensus learning with deep sets for essential matrix estimation. Advances in Neural Information Processing Systems 37 , 101529–101551 (2024) 31. Olsson, C., Kahl, F., Oskarsson, M.: Branch-and-bound methods for euclidean registration problems. IEEE Transactions on Pattern Analysis and Machine Intel-ligence 31 (5), 783–794 (2009) 32. Parra Bustos, A., Chin, T.J.: Guaranteed outlier removal for point cloud registra-tion with correspondences. IEEE Trans. Pattern Anal. Mach. 40 (12), 2868–2882 (2018) 33. Peng, L., Kümmerle, C., Vidal, R.: On the convergence of IRLS and its variants in outlier-robust estimation. In: Proceedings of the IEEE/CVF Conference on Com-puter Vision and Pattern Recognition (CVPR). pp. 17808–17818 (June 2023) 34. Raguram, R., Chum, O., Pollefeys, M., Matas, J., Frahm, J.M.: USAC: A universal framework for random sample consensus. IEEE Trans. Pattern Anal. Mach. 35 (8), 2022–2038 (2013) 35. Rydell, F., Torres, A., Larsson, V.: Revisiting Sampson Approximations for Ge-ometric Estimation Problems . In: IEEE Conf. Comput. Vis. Pattern Recog. pp. 4990–4998 (2024) 36. Sampson, P.D.: Fitting conic sections to “very scattered” data: An iterative refine-ment of the bookstein algorithm. Computer Graphics and Image Processing 18 (1), 97–108 (1982) 37. Sun, J., Shen, Z., Wang, Y., Bao, H., Zhou, X.: LoFTR: Detector-free local feature matching with transformers. In: IEEE Conf. Comput. Vis. Pattern Recog. pp. 8918–8927 (2021) Non-Minimial Sampling and Consensus for Prohibitively Large Datasets 17 38. Sun, Q., Zhang, T., Zhang, G., Wang, K., Zhu, D., Li, J., Zhang, X.: Efficient solution to pnp problem based on vision geometry. IEEE Robotics and Automation Letters 9(4), 3100–3107 (2024) 39. Teed, Z., Deng, J.: RAFT: Recurrent all-pairs field transforms for optical flow. In: Eur. Conf. Comput. Vis. p. 402–419 (2020) 40. Terzakis, G., Lourakis, M.: A consistently fast and globally optimal solution to the perspective-n-point problem. In: Eur. Conf. Comput. Vis. pp. 478–494 (2020) 41. Tirado-Garín, J., Civera, J.: From correspondences to pose: Non-minimal certifi-ably optimal relative pose without disambiguation. In: IEEE Conf. Comput. Vis. Pattern Recog. pp. 403–412 (2024) 42. Victor Fragoso, Christopher Sweeney, P.S., Turk, M.: ANSAC: Adaptive non-minimal sample and consensus. In: Proceedings of the British Machine Vision Conference (BMVC). pp. 43.1–43.11. BMVA Press (September 2017) 43. Xie, X., Zou, D.: Depth-based efficient pnp: A rapid and accurate method for camera pose estimation. IEEE Robotics and Automation Letters 9(11), 9287–9294 (2024) 44. Xu, C., Guo, T., Huang, Y., Cheng, L.: A hough voting-based 2-point ransac solu-tion to the perspective-n-point problem. IEEE Transactions on Image Processing 
+
+34 , 6838–6851 (2025) 45. Xu, L., Oja, E., Kultanen, P.: A new curve detection method: Randomized Hough transform (RHT). Pattern Recognition Letters 11 (5), 331–338 (1990) 46. Yang, H., Antonante, P., Tzoumas, V., Carlone, L.: Graduated non-convexity for robust spatial perception: From non-minimal solvers to global outlier rejection. IEEE Robotics and Automation Letters (RA-L) 5(2), 1127–1134 (2020) 47. Yang, H., Shi, J., Carlone, L.: TEASER: Fast and certifiable point cloud registra-tion. IEEE Transactions on Robotics 37 (2), 314–333 (2021) 48. Yi, K.M., Trulls, E., Ono, Y., Lepetit, V., Salzmann, M., Fua, P.: Learning to find good correspondences. In: IEEE Conf. Comput. Vis. Pattern Recog. pp. 2666–2674 (2018) 49. Zhang, X., Yang, J., Zhang, S., Zhang, Y.: 3D registration with maximal cliques. In: IEEE Conf. Comput. Vis. Pattern Recog. pp. 17745–17754 (2023) 50. Zhao, J.: An efficient solution to non-minimal case essential matrix estimation. IEEE Trans. Pattern Anal. Mach. 44 (4), 1777–1792 (2022)

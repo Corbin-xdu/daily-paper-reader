@@ -1,0 +1,1699 @@
+Title: A Functorial Formulation of Neighborhood Aggregating Deep Learning
+
+URL Source: https://arxiv.org/pdf/2604.24672v1
+
+Published Time: Tue, 28 Apr 2026 02:14:49 GMT
+
+Number of Pages: 32
+
+Markdown Content:
+A FUNCTORIAL FORMULATION OF NEIGHBORHOOD AGGREGATING DEEP LEARNING  
+
+> SUN WOO PARK, YUN YOUNG CHOI, U JIN CHOI, AND YOUNGHO WOO
+> Abstract. We provide a mathematical interpretation of convolutional (or message passing) neural networks by using presheaves and copresheaves of the set of continuous functions over a topological space. Based on this interpretation, we formulate a theoretical heuristic which elaborates a number of empirical limitations of these neural networks by using obstructions on such sets of continuous functions over a topological space to be sheaves or copresheaves.
+
+Contents 
+
+1. Introduction 12. Sheaves and Cosheaves 43. Deep Learning Techniques 10 4. Examples of Neighborhood Aggregating Discrete Deep Learning Techniques 19 5. Beyond Neighborhood Aggregating Discrete Deep Learning Techniques 24 References 30 1. Introduction 
+
+The universal approximation theorem proves the effectiveness of neural networks as operators for approximating continuous functions of real numbers. 
+
+Theorem 1.1 (Universal Approximation Theorem) . Given a compact subset K ⊂ Rn, let f : K →
+
+Rm be a continuous function. Let σ : R → R be a predetermined continuous function. Then the following two conditions are equivalent. (1) σ is not a polynomial function. (2) For every ϵ > 0, there exist positive numbers k > 0, matrices A ∈ Rk×n, B ∈ Rk, and 
+
+C ∈ Rm×k such that 
+
+sup 
+
+> x∈K
+
+∥f (x) − C · (
+
+σ[k] (A · x + B))
+
+∥ < ϵ. (1) 
+
+where · is the matrix multiplication operator, and σ[k] : Rk → Rk is a function whose coordinate-wise functions are all equal to σ.
+
+The above formulation, see for example [ 16 , 19 , 28 ], shows that a neural network comprised of two fully connected layers of arbitrary depth generates a dense subset of the set of continuous functions from Rn to Rm under the compact open topology. Other formulations include the universal approximation theorem for fully connected neural networks with arbitrary number of layers and architectural variations of neural networks [ 33 , 37 , 41 ]. These formulations of universal approximation theorems rigorously model asymptotic properties of neural networks in approximating compactly supported continuous functions over the real numbers. However, the universal approximation theorem shows limited capability in analyzing empirical properties of variants of neural networks with finite layers of finite depths. Some of these empirical 
+
+> 1
+> arXiv:2604.24672v1 [cs.LG] 27 Apr 2026 2
+
+limitations and additional measures to improve such limitations, in particular for convolutional (or message passing) neural networks that analyze image data sets, graph data sets, or time series data, can be listed as follows. (1) Non-unique Gluing : Convolutional (or message passing) neural networks with max pooling layers are vulnerable from recognizing a family of images comprised of juxtapositions of isomorphic local components as identical objects. (2) Adversarial Attacks : Perturbation in input data sets often mislead convolutional (or message passing) neural networks to misidentify image or graph data sets. (3) Dataset Dependency : Suitable architectural choices in constructing neural networks have to be chosen to produce state-of-the-art performance in analyzing innate properties of each data set. (4) Topological Inferences : Topological data analysis techniques often enhances performances of convolutional (or message passing) neural networks in analyzing image or graph data sets. This paper intends to provide a mathematical framework which gives a theoretical heuristic on the common origins of these apparently disjoint empirical limitations of convolutional (or message passing) neural networks. The key overarching thesis of the paper can be summarized into two points as follows. 
+
+Theorem 1.2 (Simplification of Theorems 3.12, 3.14 3.15, 3.23) . Let X be a locally compact connected Hausdorff topological space. We denote by DL m a convolutional (or message passing) neural network with m layers (or a discrete deep learning algorithm with m layers satisfying neighborhood aggregating, see a combination of Definitions 3.3 and 3.4). (1) Functorial Interpretation Any DL m that accepts data set defined over X as input approximates a global section of a presheaf and a copresheaf of the set of continuous functions over the space X.(2) Empirical Properties The four aforementioned empirical properties of DL m originate from functorial properties of such presheaves and copresheaves. 
+
+To identify convolutional (or message passing) neural network as a functor from the category of open subsets of X to the category of real vector spaces, we define what is called the presheaf of dual cosheaves and copresheaf of dual sheaves. The local sections of these functors are continuous functions from Rn to Rm for some positive integers n, m > 0. The global sections correspond to continuous functions the convolutional (or message passing) neural network aims to approximate. Hence, we demonstrate that the functorial formulation of these neural networks provides a novel mathematical framework for deducing theoretical support for empirically verified architectural limitations such neural networks may possess, and formulating statements on the classes of continuous functions that can be approximated by convolutional (or message passing) neural networks with finitely many layers of finite depth. 1.1. Related Studies. There have been several previous studies which focus on utilizing cellular sheaves and sheaf theory to give a theoretical analysis on limitations of message passing neural networks. These include oversmoothing, analyzing heterophilic graphs, and effectively extracting global properties of the underlying geometric space of data sets [ 12 ]. Hanson and Gebhart applied cellular sheaves to construct sheaf neural network, which generalizes diffusion operators underlying graph neural networks [ 22 ]. The motivation to utilize sheaf theory to enhance graph neural networks or other forms of neural networks was further explored in subsequent works, such as the work by Bodnar et al. [ 6] (sheaf convolutional network), Barbero et al. [ 3, 4] (which incorporated connection Laplacians and attention mechanisms), He et al. [ 26 ] (positional encoding), Braithwaite et al. (heterogeneous sheaf neural networks), Hajij et al. (copresheaf topological neural networks) [ 23 ], and Borgio et al. [7] (polynomial neural sheaf diffusion). 3
+
+The most relevant and recent groundbreaking work in applying sheaf theory and copresheaf theory to enhancing neural networks is the work by Hajij et al. on Copresheaf Topological Neural Networks (CTNN) [ 23 ]. This is the first published work which uses the theory of copresheaves to provide a provide an overarching theoretical formulation of various types of deep learning architectures, such as convolutional neural networks, transformers, and message passing neural networks. The motivation for devising CTNN originates from comparisons between cellular sheaves and copresheaves on combinatorial complexes. They demonstrate that CTNN enhances performances in addressing many challenges in representation learning in comparison to conventional deep learning algorithms, such as preventing oversmoothing, analyzing heterophilic graphs, and analyzing non-Euclidean datasets. 1.2. Novelty and limitations. Unlike the previous studies which build upon the notion of cellular sheaves, our paper provides a theoretical formulation of convolutional (or message passing) neural networks by using the following three new perspectives. 
+
+• Skyscraper sheaves/cosheaves : We use presheaves (or sheaves) and copresheaves (or cosheaves) to analyze deep learning techniques. To do so, we use presheaf / copresheaf of continuous functions induced from skyscraper cosheaves / sheaves to interpret deep learning architectures as approximators of their local sections. The key insight we use is the fact that the skyscraper sheaf is also a cosheaf. This overlapping duality allows us to assess the capabilities of convolutional (or message passing) neural networks in constructing vector representations by gluing locally defined vector representations. 
+
+• Obstructions : By using the language of presheaves and copresheaves, we can use our assessment on capabilities of convolutional (or message passing) neural networks to obtain theoretical limitations of these architectures. We formulate these limitations by considering obstructions for a presheaf to be a sheaf and a copresheaf to be a cosheaf. To elaborate, there are parts of the sheaf axioms (or cosheaf axioms) that convolutional (or message passing) neural networks violate. Such violations can be used to pinpoint limitations of these networks, such as non-unique gluing of local vector representations, adversarial attacks, and performance dependency on datasets. We also demonstrate trivial presheaf cohomology (and copresheaf homology) for these presheaves and copresheaves, thereby suggesting the merits of incorporating topological inferences when needed. 
+
+• Examples and future directions : We reformulate previously studied deep learning architectures using presheaf / copresheaf of continuous functions induced from skyscraper cosheaves / sheaves. Some examples include convolutional neural networks, message passing neural networks, recurrent neural networks, and attention-transformers. We also propose that other types of sheaves or cosheaves other than the presheaf / copresheaf of continuous functions may give rise to a zoo of novel deep learning algorithms that can surpass previously studied architectures. As many theoretical analyses do, our theoretical framework does not encompass all deep learning techniques, and possess some limitations. Our framework, for example, does not address strengths or limitations that novel deep learning algorithms built upon sheaves or cosheaves other than presheaf / copresheaf of continuous functions may possess. Our framework also does not explain strengths or limitations on concurrently using multiples of deep learning algorithms together, such as multi-agent systems. Nevertheless, we hope that future research may focus on exploring whether sheaf or cosheaf theory can be utilized to effectively analyze different classes of deep learning techniques or different ways to collectively utilize a family of them. 1.3. Organization. We organize the paper in the following manner. Section 2 focuses on con-structing a presheaf (or a copresheaf) of continuous functions induced from cosheaves (or sheaves), whose functorial properties we will analyze in Proposition 2.15. Section 3 utilizes the mathematical 4
+
+framework from Section 2 to define discrete deep learning algorithms with neighborhood aggre-gating layers, and provide a theoretical argument for why certain empirical, as will be shown in Theorems 3.12, 3.14 3.15, and 3.23. Section 4 discusses how certain variants of convolutional (or message passing) neural networks, message passing neural networks for graphs, and recurrent neural networks can be reformulated using the mathematical model provided in Section 3. We finish the manuscript with Section 5, where we briefly discuss some deep learning algorithms which overcome the aforementioned empirical drawbacks, such as attention-transformers, persistent homological techniques, and neural ODEs. We also discuss correspondences between deep learning algorithms that process dynamic time series data defined over graphs and those which process data defined over 2-dimensional spaces such as image data sets. 
+
+Acknowledgements. The majority of the work was completed while the first and the second author were members of the National Institute for Mathematical Sciences (NIMS) up until August of 2022. Sun Woo Park, Yun Young Choi, and Youngho Woo were supported by the National Institute for Mathematical Sciences (NIMS) grant funded by the Korean Government (MSIT) B22920000. The first author would like to thank Max Planck Institute for Mathematics for providing its hospitality, during his stay in which some updates in the manuscript had been made. We would like to thank Asung Kil for constructive comments and suggestions. 2. Sheaves and Cosheaves 
+
+2.1. Preliminary. In this section, we give a brief review of sheaf and cosheaf theory, which are algebraic tools effective for representing topological properties of a space X as real (or complex) vectors. This subsection closely follows Chapter 2 of [ 24 ], Chapters 5 and 6 of [ 8], and Chapter 7 of [15 ]. Throughout this section, we denote by X a locally compact connected Hausdorff topological space. 
+
+Definition 2.1 (Presheaf) . A presheaf F of abelian groups over X is a contravariant functor from the category of open subsets of a topological space X to the category of abelian groups 
+
+F : Top (X)Op → Ab (2) 
+
+Definition 2.2 (Sheaf) . A sheaf F of abelian groups over X is a presheaf of abelian groups over X
+
+which satisfies the exact sequence 
+
+0 → F (U ) → ∏
+
+> α
+
+F(Uα) → ∏
+
+> α,β
+
+F(Uα ∩ Uβ ) (3) for all collections of open sets {Uα} with U = ∪αUα.
+
+Definition 2.3 (copresheaf) . A copresheaf ˜F of abelian groups over X is a covariant functor from the category of open subsets of a topological space X to the category of abelian groups 
+
+> ˜
+
+F : Top (X) → Ab (4) 
+
+Definition 2.4 (Cosheaf) . A cosheaf ˜F of abelian groups over X is a copresheaf of abelian groups over X which satisfies the exact sequence 
+
+> ⊕
+> α,β
+> ˜
+
+F(Uα ∩ Uβ ) → ⊕
+
+> α
+> ˜
+
+F(Uα) → ˜F(U ) → 0 (5) for all collections of open sets {Uα} with U = ∪αUα.
+
+Example 2.5 (Constant Sheaf / Cosheaf) . Fix an abelian group A. The constant sheaf/cosheaf ˆA
+
+over X is given by ˆA(U ) = A (6) for any open neighborhood U .5
+
+Example 2.6 (Skyscraper Sheaf / Cosheaf) . Let x ∈ X be a point. Fix an abelian group A. The skyscraper sheaf/cosheaf at x, denoted as Sx, is given by 
+
+Sx(U ) := 
+
+> 
+
+A if x ∈ U
+
+0 otherwise (7) We note here that the function Sx is both a sheaf and a cosheaf (see Section 6.27 of [ 46 ] and Definition 3.3.3 [15]). 
+
+Example 2.7. Let X be a locally compact connected cell complex. The presheaf of continuous real valued functions C0 
+
+> X
+
+defined as 
+
+C0 
+
+> X
+
+(U ) := {f : U → Rl | f continuous } (8) is a sheaf over X. The presheaf of k-differentiable functions CkX is also a sheaf over X.
+
+Example 2.8. Let X be a locally compact connected cell complex. The copresheaf of compactly supported functions Ω0 
+
+> X
+
+defined as 
+
+Ω0 
+
+> X
+
+(U ) := {f : U → R | supp (f ) compact } (9) is a cosheaf over X. The copresheaf of differential k-forms ΩkX is also a cosheaf over X. One can use a partition of unity of a topological space X to prove that the copresheaf ΩkX satisfies the cosheaf axiom (5). 2.2. Presheaf of dual cosheaves and copresheaf of dual sheaves. One of the central objects we will discuss in this manuscript is the presheaf of dual cosheaves and the copresheaf of dual sheaves. 
+
+Definition 2.9 (Presheaf of Dual Cosheaves) . Let ˜F be a cosheaf of real vector spaces over X, and let V be a fixed finite dimensional real vector space. (1) The presheaf of linear morphisms induced from ˜F, denoted as Hom ( ˜F, V ) is given by Hom ( ˜F, V )( U ) := Hom ( ˜F(U ), V ) (10) (2) The presheaf of continuous functions induced from ˜F, denoted as C0( ˜F, V ) is given by 
+
+C0( ˜F, V ) := {f : ˜F(U ) → V | f continuous } (11) 
+
+Definition 2.10 (copresheaf of Dual Sheaves) . Let F be a sheaf of real vector spaces over X, and let V be a fixed finite dimensional real vector space. (1) The copresheaf of linear morphisms induced from F, denoted as Hom (F, V ) is given by Hom (F, V )( U ) := Hom (F(U ), V ) (12) (2) The copresheaf of continuous functions induced from F, denoted as C0(F, V ) is given by 
+
+C0(F, V ) := {f : F(U ) → V | f continuous } (13) We immediately obtain that the presheaf Hom ( ˜F, Rk) induced from the cosheaf ˜F is a sheaf, and the copresheaf Hom (F, Rk) is a cosheaf. 
+
+Proposition 2.11 ([ 8], Proposition 5.1.10.) . Given a cosheaf ˜F and k a fixed positive number, the presheaf Hom ( ˜F, Rk) is a sheaf. Likewise, given a sheaf ˜F, the copresheaf Hom (F, Rk) is a cosheaf. Proof. The proposition follows immediately from the fact that Hom (−, Rk) is exact. Note that Rk
+
+is an injective R-module, which makes the left-exact functor Hom (−, Rk) exact. □6
+
+In contrast, the presheaf C0(F, V ) and copresheaf C0( ˜F, V ) do not necessarily satisfy the sheaf (or cosheaf) axioms. We suspect that additional structural properties of the sheaf F (or the cosheaf 
+
+> ˜
+
+F) may be required to ensure that these functors satisfy the respective axioms. In the following key proposition, we show that if F is a finite direct sum of skyscraper sheaves (or cosheaves), then the functors C0(F, V ) do not satisfy the sheaf (or cosheaf) axioms. Before we discuss further about the sheaf-theoretic properties of C0(F, V ), let us recall that the procedure of constructing a data set defined over a topological space X consists of taking measurements, possibly with some perturbations due to sensor noises, over finitely many points 
+
+{xi}i = 1 N of X. These procedures can be described using the definition of pushforward of constant sheaves over a discrete set to the topological space. 
+
+Definition 2.12. Given a continuous map of topological spaces f : X → Y , the pushforward sheaf 
+
+f∗(F) of a sheaf F over X is a sheaf over Y given by 
+
+f∗(F)( V ) := F(f −1(V )) . (14) 
+
+Definition 2.13. Given an open continuous map of topological spaces f : X → Y , the pullback sheaf f −1(G) of a sheaf G over Y is a sheaf over X given by 
+
+f −1(G)( U ) = G(f (U )) . (15) 
+
+Definition 2.14. Let A be a finite set of points, endowed with discrete topology. Denote by 
+
+CA,l the constant sheaf (and cosheaf) of l-dimensional vectors. The presheaf (and the copresheaf) of k-dimensional convolutional (or message passing) neural networks, denoted as C0(iA,l , Rk), is constructed as follows. (1) Let iA,l be the pushforward sheaf of CA,l with respect to the inclusion map i : A → X. If necessary, one can take the pullback of the pushforward sheaf of CA,l with respect to the inclusion map i : A → X and the universal covering map π : ˜X → X.(2) Let Hom (iA,l , Rk) be the presheaf of linear morphisms (or the copresheaf of linear morphisms) induced from the sheaf iA,l .(3) Let C0(iA,l , Rk) be the presheaf of continuous functions (or the copresheaf of continuous functions) induced from the sheaf iA,l .We refer to Figures 1 and 2 for a visual demonstration of presheaves and copresheaves constructed in the definition. A crucial property we will explore in this section is that the presheaf (and the copresheaf) of continuous functions induced from the pushforward sheaf (and the pushforward cosheaf) is not a sheaf (and a cosheaf). This property will play a key role in constructing a mathematical framework for understanding the empirical limitations of certain classes of deep learning algorithms in the upcoming sections. 
+
+Proposition 2.15. Let X be a locally compact Hausdorff topological space. Fix a finite set of points 
+
+{xi}Ni=1 in X. Let Sxi be the skyscraper sheaf (or cosheaf Sop xi ) of real vector space at the point xi,given by 
+
+Sxi (U ) := 
+
+> 
+
+Rli if xi ∈ U
+
+0 otherwise (16) 
+
+(1) The copresheaf C0(iA,l , Rk) is not a cosheaf. (2) The presheaf C0(iop A,l , Rk) is not a sheaf. Proof. The copresheaf C0(iA,l , Rk)7
+
+Figure 1. Construction of a pushforward of constant sheaves / cosheaves over discrete sets 
+
+Figure 2. Construction of a functor describing the presheaf / copresheaf of continuous functions induced from the sheaf iA,l over a topological space X and its universal cover 
+
+> ˜
+
+X.Let us regard the functor iA,l as the sheaf of real vector spaces over X. The inclusion of open subsets U → V induces a projection map of real vector spaces. 
+
+res V,U : iA,l (V ) → iA,l (U )(y1, y 2, · · · , y ∑  
+
+> xi∈Vli
+
+) 7 → (y1, y 2, · · · , y ∑  
+
+> xi∈Uli
+
+) (17) As for the copresheaf C0(iA,l , Rk), the inclusion U → V induces a morphism of functions 
+
+iU,V : C0(iA,l , Rk)( U ) → C0(iA,l , Rk)( V ) (18) 
+
+f 7 → f ◦ res V,U (19) We refer to Figures 3 and 4 for illustrations on how the morphisms res V,U and iU,V given two open sets U ⊂ V are constructed. Let U ⊂ X be any open neighborhood. Without loss of generality, suppose the open set U contains all the points {x1, x 2, · · · , x N }. Let {Uα}α be an open cover of U such that there exists a unique point xα ∈ { xi}Ni=1 such that xα ∈ Uα. Then the morphism 
+
+> ⊕
+> α
+
+C0(iA,l , Rk)( Uα) → C0(iA,l , Rk)( U ) (20) 8
+
+Figure 3. Definition of the restriction map res X,U 
+
+Figure 4. Definition of the inclusion map iU,X 
+
+is not surjective. Consider the function 
+
+f (y1, · · · , y ∑Ni=1 li ) = 
+
+∑Ni=1 li
+
+∏
+
+> j=1
+
+yj , · · · ,
+
+∑Ni=1 li
+
+∏
+
+> j=1
+
+yj
+
+ (21) Then there doesn’t exist a collection of functions {gi : Rli → Rk}Ni=1 such that f = ∑ 
+
+> α
+
+gα ◦ res Uα,U .Indeed, for each i-th coordinate of f , gi̸ = ∏∑Ni=1 li 
+
+> j=1
+
+yj .
+
+The presheaf C0(iA,l , Rk)
+
+If we consider Sxi as the skyscraper cosheaf of real vector space at the point xi, the presheaf 
+
+C0(iA,l , Rk) is not a sheaf. The inclusion of open subsets U → V induces an injective linear map of vector spaces 
+
+iU,V : iA,l (U ) → iA,l (V )(y1, y 2, · · · , y ∑  
+
+> xi∈Uli
+
+) 7 → (y1, y 2, · · · , y ∑  
+
+> xi∈Uli
+
+, 0, · · · , 0) (22) where the image iU,V (R
+
+∑  
+
+> xi∈Uli
+
+) is equal to the subspace R
+
+∑  
+
+> xi∈Uli
+
+× { 0} of R
+
+∑  
+
+> xi∈Vli
+
+.9
+
+As for the presheaf C0(iA,l , Rk), the inclusion U → V induces a morphism of functions 
+
+res V,U : C0(iA,l , Rk)( V ) → C0(iA,l , Rk)( U )
+
+{f : R
+
+∑  
+
+> xi∈Vli
+
+→ Rk} 7 → { f ◦ iU,V : R
+
+∑  
+
+> xi∈Uli
+
+→ R
+
+∑  
+
+> xi∈Vli
+
+→ Rk} (23) Let U ⊂ X be any open neighborhood. Without loss of generality, suppose the open set U
+
+contains all the points {x1, x 2, · · · , x N }. Let {Uα}α be an open cover of U such that there exists a point xα ∈ { xi}Ni=1 such that xα̸ ∈ Uα. Then the morphism 
+
+C0(iA,l , Rk)( U ) → ∏
+
+> α
+
+C0(iA,l , Rk)( Uα)
+
+f 7 → (f ◦ iUα,U )α
+
+(24) is not injective. We can use the same function f : R∑Ni=1 li → Rk defined as 
+
+f (y1, · · · , y ∑Ni=1 li ) = 
+
+∑Ni=1 li
+
+∏
+
+> j=1
+
+yj , · · · ,
+
+∑Ni=1 li
+
+∏
+
+> j=1
+
+yj
+
+ (25) to show that it is a non-zero function whereas for any α, f ◦ iUα,U = 0 . □
+
+Remark 2.16. Proposition 2.15 shows that for any collections of open sets {Uα}α with U = ∪αUα,the presheaf (or the copresheaf) C0(iA,l , Rk) satisfies the following two relations: Ker 
+
+(
+
+C0(iA,l , Rk)( U ) → ∏
+
+> α
+
+C0(iA,l , Rk)( Uα)
+
+)̸
+
+= 0 (Locality) Im (
+
+⊕αC0(iA,l , Rk)( Uα) → C0(iA,l , Rk)( U ))̸ = C0(iA,l , Rk)( U ) (Surjectivity) (26) However, for any finite collections of open sets {Uα}nα=1 with U = ∪nα=1 Uα, one can prove that 
+
+C0(iA,l , Rk) satisfies the following two “gluing” conditions. We note that the first condition cor-responds to the presheaf C0(iA,l , Rk), whereas the second condition correpsonds to the cosheaf 
+
+C0(iA,l , Rk).Im 
+
+(
+
+C0(iA,l , Rk)( U ) → ∏
+
+> α
+
+C0(iA,l , Rk)( Uα)
+
+)
+
+= Ker 
+
+(∏
+
+> α
+
+C0(iA,l , Rk)( Uα) → ∏
+
+> α,β
+
+C0(iA,l , Rk)( Uα ∩ Uβ )
+
+)
+
+,
+
+Ker 
+
+(
+
+⊕αC0(iA,l , Rk)( Uα) → C0(iA,l , Rk)( U )
+
+)
+
+= Im 
+
+(
+
+⊕α,β C0(iA,l , Rk)( Uα ∩ Uβ ) → ⊕ αC0(iA,l , Rk)( Uα)
+
+)
+
+.
+
+(27) We give a sketch of the proof of the claim above for the case {Uα}3
+
+> α=1
+
+, the proof for the general case of which we omit in this manuscript. By definition, one can easily check that the left hand sides of the equations above are contained in the right hand sides of the equations. To prove the converse of the first equation above, we denote by fi ∈ C0(iA,l , Rk)( Ui) the local sections defined over Ui’s. Denote by fi,j := res Ui,U i∩Uj (fi). Suppose that 
+
+(f1, f 2, f 3) ∈ Ker 
+
+
+
+> 3
+
+∏
+
+> α=1
+
+C0(iA,l , Rk)( Uα) → ∏
+
+> 1≤α<β ≤3
+
+C0(iA,l , Rk)( Uα ∩ Uβ )
+
+10 
+
+Then by definition, fi,j = fj,i for all 1 ≤ i < j ≤ 3. We can hence define the local section 
+
+fi,j,k := res Ui∩Uj ,U i∩Uj ∩Uk (fi,j ) defined over the intersection of three open sets Ui ∩ Uj ∩ Uk. Then 
+
+f1,2,3 = f1,3,2 = f2,3,1. Define a function f ∈ C0(iA,l , Rk)( U ) by 
+
+f := f1 + f2 + f3 − f1,2 − f1,3 − f2,3 + f1,2,3, (28) where we extend functions fi, f i,j , f i,j,k to U via extension by zero. Then we obtain that f restricts to local sections (f1, f 2, f 3) in ∏3 
+
+> α=1
+
+C0(iA,l , Rk)( Uα).The procedure of the proof for verifying the statement for copresheaf C0(iA,l , Rk) is analogous. We also present the exemplary proof for the case {Uα}3
+
+> α=1
+
+. By definition, the left hand side of the cosheaf condition contains the right hand side of the cosheaf condition. We check the converse statement. For each α = 1 , 2, 3, let fα : Rlα → Rk ∈ C0(iA,l , Rk)( Uα) for each α = 1 , 2, 3, and denote by yα 
+
+> 1
+
+, y α 
+
+> 2
+
+, · · · , y αlα the coordinates of Rlα . Suppose we have 
+
+(f1, f 2, f 3) ∈ Ker 
+
+(
+
+⊕αC0(iA,l , Rk)( Uα) → C0(iA,l , Rk)( U )
+
+)
+
+.
+
+Then f := ∑3 
+
+> i=1
+
+fi is the zero function over U . We consider the case where α = 1 . The other cases follow analogously. The fact that f = 0 implies that f1 is independent from the variable y1 
+
+> i
+
+if y1
+
+> i
+
+does not lie in the image of the following two projection maps: 
+
+res U1,U 1∩U2 : iA,l (U1) → iA,l (U1 ∩ U2)(y11 , y 12 , · · · , y 1 
+
+> l1
+
+) 7 → (y1, · · · , y ∑  
+
+> xi∈U1∩U2li
+
+),res U1,U 1∩U3 : iA,l (U1) → iA,l (U1 ∩ U3)(y11 , y 12 , · · · , y 1 
+
+> l1
+
+) 7 → (y1, · · · , y ∑  
+
+> xi∈U1∩U3li
+
+).
+
+Therefore, f1 is a continuous function depending only on variables lying in the image of res U1,U 1∩U2
+
+and res U1,U 1∩U3 . Analogous statements can be achieved for functions f2 and f3.Taking this new fact into consideration, we use f = 0 again to obtain that f1 is a sum of two functions f1,2 + f1,3, where f1,2 is a function in C0(iA,l , Rk)( U1 ∩ U2), and f1,3 is a function in C0(iA,l , Rk)( U1 ∩ U3). If not, then f1 has a summand g which is a non-zero function not in 
+
+C0(iA,l , Rk)( U2) and C0(iA,l , Rk)( U3). Since the function g cannot be canceled out with respect to taking the operation f1 + f2 + f3, we obtain a contradiction that f = 0 . Likewise, one can obtain that 
+
+f2 is a sum of two functions f2,1 + f2,3, and f3 is a sum of two functions f3,1 + f3,2, where fi,j ’s are functions in C0(iA,l , Rk)( Ui ∩ Uj ). Because f = 0 , we have f1,2 = −f2,1, f1,3 = −f3,1, and f2,3 = −f3,2.Therefore, the tuple (f1, f 2, f 3) can be rewritten as ∑ 
+
+> (i,j )∈{ (1 ,2) ,(1 ,3) ,(2 ,3) }
+
+iUi∩Uj ,U i (fi,j ) − iUi∩Uj ,U j (fi,j ),proving the desired claim. 3. Deep Learning Techniques 
+
+3.1. Functorial Interpretation. The dual nature of skyscraper sheaf and cosheaf as both a covariant and a contravariant functor is the unique property difficult to impose on arbitrary sheaves. The dual relation of such functors can be described using the di-natural transformation between a covariant and a contravariant functor. 
+
+Definition 3.1. Let C, D be abelian categories. Let F : C → D be a covariant functor, and let 
+
+G : Cop → D be a contravariant functor. A di-natural transformation η : F → G is a family of morphisms {ηx : F(x) → G (x)}x∈Obj (C) such that for every morphism {x → y} ∈ Mor (C), the following diagram commutes: 11 
+
+F(x) G(x)
+
+F(y) G(y)
+
+> ηx
+> ηy
+
+In a similar manner, one can also define a di-natural transformation η : G → F .
+
+Example 3.2. Fix a point x ∈ X. Denote by Sx the skyscraper cosheaf at x, and denote by Sop x
+
+the skyscraper sheaf at x. The collection of identity functions {id U : Sx(U ) → Sop x (U )}U ⊂X, open 
+
+defines a di-natural transformation id : Sx → Sop x . Likewise, there exists a di-natural transformation 
+
+id : C0(iop A,l , Rk) → C0(iA,l , Rk).Using these mathematical formulations, we define the deep learning technique as a global section of C0(iA,l , Rk), both as a presheaf and a copresheaf, over a locally compact topological space X.
+
+Definition 3.3 (Discrete Deep Learning Technique) . Let X be a locally compact topological space. Fix a finite set of points χX := {x1, x 2, · · · , x N } ⊂ X. Consider a sequence of collections of finite open subsets {
+
+{U 0 
+
+> α0
+
+}Nα0=1 , {U 1 
+
+> α1
+
+}α1∈A 1 , · · · , {U mαm }αm∈A m , X }
+
+(29) such that for any i, xi ∈ U 0 
+
+> i
+
+and xj̸ ∈ U 0 
+
+> j
+
+if j̸ = i. (Note that each collection does not necessarily have to be an open cover of X). Let Sxi be a skyscraper sheaf (or cosheaf) at the point xi ∈ X of real vector space of dimension k0.A representation DL mν obtained from a discrete deep learning algorithm with m layers equipped with a fixed collection of pointwise deviations ν := {νi : Rk0 → Rk0 }Ni=1 at xi’s is a global section of 
+
+C0(iA,l , Rk) obtained from the following procedure. 
+
+• We identify DL mν , as an element of the copresheaf C0(iA,l , Rk), with the image of the element 
+
+id + ν := ( id + ν1, · · · , id + νN ) under the following composition of functions. 
+
+> N
+
+∏     
+
+> α0=1
+> C0(iA,l ,Rk0)( U0
+> α0)→
+
+∏     
+
+> α1∈A 1
+> C0(iA,l ,Rk1)( U1
+> α1)→ · · · →
+
+∏                               
+
+> αm∈A m
+> C0(iA,l ,Rkm)( Umαm)→C0(iA,l ,Rk)( X)
+> id +ν:= ( id +ν1,· · · , id +νN)7→(f1,1, f 1,2,· · · , f 1,|A 1|)7→ · · · 7 → (fm, 1, f m, 2,· · · , f m, |A m|)7→DL mν
+> (30)
+
+• Each function, possibly non-linear, 
+
+ψi+1 : ∏
+
+> αi∈A i
+
+C0(iA,l , Rki )( U iαi ) → ∏
+
+> αi+1 ∈A i+1
+
+C0(iA,l , Rki+1 )( U i+1  
+
+> αi+1
+
+) (31) corresponds to the i + 1 -th layer of the discrete deep learning technique. We denote by 
+
+(fi, 1, f i, 2, · · · , f i, |A i|) the image obtained after applying i layers of the discrete deep learning technique, i.e. 
+
+(fi, 1, f i, 2, · · · , f i, |A i|) = ( ψi ◦ ψi−1 ◦ · · · ◦ ψ0)( id + ν1, · · · , id + νN ) (32) 
+
+• We identify DL mν as a global section of the presheaf C0(iop A,l , Rk) under the composition of the di-natural transformation. 
+
+C0(iop A,l , Rk)( X) →C0(iA,l , Rk)( X)
+
+DL mν 7 →id (DL mν ) (33) A discrete deep learning algorithm DL m composed of m layers is a function 
+
+> N
+
+∏
+
+> α0=1
+
+C0(iA,l , Rk0 )( U 0 
+
+> α0
+
+) → C0(iA,l , Rk)( X) (34) obtained from the aforementioned procedure. 12 
+
+Definition 3.4 (Neighborhood aggregating axioms) . A neighborhood aggregating layer ψn of a discrete deep learning technique DL mν is a function 
+
+ψn : ∏
+
+> αn−1∈A n−1
+
+C0(iop A,l , Rkn−1 )( U n−1 
+
+> αn−1
+
+) → ∏
+
+> αn∈A n
+
+C0(iop A,l , Rkn )( U nαn )
+
+whose associated collections of finitely many open subsets 
+
+{U n−1 
+
+> αn−1
+
+}αn−1∈A n−1 , {U nαn }αn∈A n
+
+satisfy the following four neighborhood aggregating axioms. (1) Locality : There exists a point xj ∈ χX such that xj̸ ∈ U nαn for every αn ∈ A n.(2) Strictness : #An−1 > #An.(3) Non-triviality : For each αn ∈ A n, there exists a proper subset ˜Aαn,n −1 ⊊ An such that 
+
+U nαn = ⋃ 
+
+> αn−1∈
+
+˜Aαn,n −1
+
+U n−1 
+
+> αn−1
+
+(35) (4) Distinctness : For any αi, α j ∈ A n,
+
+U nαi̸ = U nαj (36) 
+
+Remark 3.5. We note that axioms (2) and (3) imply that there exists an αn ∈ A n whose any proper subset ˜Aαn,n −1 satisfying axiom (3) is of size at least 2.
+
+Remark 3.6. The set of pointwise deviations {νi : Rli → Rli }Ni=1 can be considered as either sensor noises in detecting signals at each point xi ∈ X, or pointwise differences between two input data defined over X. One can hence regard the collection of real representations obtained from applying a discrete deep learning algorithm DL m to a given dataset as the image 
+
+DL m({id + ν}ν∈V ) (37) for some collections of deviations V such that every element ν ∈ V is comprised of constant functions. 
+
+Remark 3.7. Using the restriction morphism for the presheaf C0(iop A,l , Rk), one may define a representation DL mν,U of an open subset U ⊂ X induced from the representation DL mν of X defined as 
+
+DL mν,U := res X,U ◦ DL mν (38) We note that the representations DL mν,U are not necessarily identical to those resulting from imposing neural layers of DL mν (30). 
+
+Definition 3.8 (Factorization through inclusion) . Let DL m be a discrete deep learning algorithm over X composed of m layers. We say that the i-th layer satisfying axiom (3) of the neighborhood aggregating axiom 
+
+ψi : ∏
+
+> αi∈A i
+
+C0(iA,l , Rki )( U iαi ) → ∏
+
+> αi+1 ∈A i+1
+
+C0(iA,l , Rki+1 )( U i+1  
+
+> αi+1
+
+) (39) factors through the inclusion map if there exists a function for each αi ∈ A i
+
+φαi : C0(iA,l , Rki )( U iαi ) → C0(iA,l , Rki+1 )( U iαi ), (40) and a collection of continuous activation functions 
+
+Fαi+1 : C0(iA,l , Rki+1 )( U i+1  
+
+> αi+1
+
+) → C0(iA,l , Rki+1 )( U i+1  
+
+> αi+1
+
+) (41) such that 
+
+ψi =
+
+Fαi+1 ◦ ∑ 
+
+> αj∈A i
+
+iUαi ,U αi+1 ◦ ∏
+
+> αi∈A i
+
+φαi
+
+
+
+> αi+1 ∈A i+1
+
+(42) 13 
+
+Figure 5. Summation by inclusion maps, which defines the surjectivity condition of the cosheaf axiom 
+
+Figure 6. An example of a layer of a convolutional (or message passing) neural network 
+
+Remark 3.9. The definition provided above generalizes the sum-decomposition of continuous functions f : Rn → R proposed in [ 52 ] and [ 49 ]. A function f : Rn → R is said to be sum-decomposable if there exist functions ϕ : R → Z and ρ : Z → R for some topological space Z such that 
+
+f (x1, · · · , x n) = ρ(
+
+> n∑
+> i=1
+
+ϕ(xi)) (43) 
+
+Example 3.10. Any fully connected layer Li with non-linear activation functions factors through the inclusion map. 14 
+
+Remark 3.11. Using the di-natural transformation id : C0(iA,l , Rk) → C0(iop A,l , Rk), it holds that the following diagram commutes for any neighborhood aggregating i-th layer ψi that factors through inclusion. ∏      
+
+> αi∈A iC0(iA,l ,Rki+1 )( Uiαi)
+
+∏     
+
+> αi∈A iC0(iop A,l ,Rki+1 )( Uiαi)
+
+∏     
+
+> αi∈A iC0(iA,l ,Rki)( Uiαi)
+
+∏      
+
+> αi+1 ∈A i+1 C0(iA,l ,Rki+1 )( Ui+1
+> αi+1 )
+
+∏     
+
+> αi+1 ∈A i+1 C0(iop A,l ,Rki+1 )( Ui+1
+> αi+1 )
+
+( 
+
+> Fαi+1 ◦
+
+∑
+
+> αi
+> iUα i ,Uα i+1
+
+)
+
+> αi+1
+
+∏
+
+> αi∈A i
+> φαi
+> ψi
+> id
+
+(∑ 
+
+> αi+1
+> res Uα i+1 ,Uα i
+
+)
+
+> αi
+
+3.2. Architectural Limitations. We have all the key ingredients to prove a number of empirically verified architectural limitations of discrete deep learning techniques obtained from analyzing a collection of data sets, as aforementioned in the introduction. The following two theorems state that discrete deep learning techniques with non-linear layers may misidentify the characteristics of a collection of data. Interestingly, the factorability of the neighborhood aggregating i-th layer of the discrete deep learning algorithm affects whether the architecture is subject to non-unique gluing of local data or adversarial attacks. 
+
+Theorem 3.12 (Non-unique local explainability) . Let DL m be a discrete deep learning algorithm over 
+
+X composed of m layers such that at least one of the layers is non-linear or does not factor through the inclusion map. Let {Uα}α be any open cover of X such that there exists a point xα ∈ { xi}Ni=1 
+
+such that xα̸ ∈ Uα. Then there exist deviations μ, ν such that DL mμ̸ = DL mν whereas for every α,
+
+DL mμ,U α = DL mν,U α for every α.Proof. The condition that there exists a layer ψi which is non-linear or does not factor through the inclusion map implies that there exists a deviation ν such that 
+
+DL mν ∈ C0(iop A,l , Rk)( X) \ Hom (iop A,l , Rk)( X). (44) Here we use the fact that elements in Hom (iop A,l , Rk)( X) are linear maps between R-vector spaces. Choose an open cover {Uαi }αi∈A i used from the i-th layer of the discrete deep learning algorithm. Proposition 2.15 demonstrates that the morphism 
+
+C0(iop A,l , Rk)( X) → C0(iA,l , Rk)( X) → ∏
+
+> α
+
+C0(iA,l , Rk)( Uα) (45) is not injective, whereas the presheaf Hom (iop A,l , Rk)( X) satisfies the sheaf axioms. □
+
+Remark 3.13. As shown in Remark 2.16, the discrete deep learning algorithms from Theorem 3.12 fails the locality condition (26) but satisfies the gluing condition (27) given a finite collection of open cover {Uα}α of X. Figures 7 and 8 illustrates how such discrete deep learning algorithms fail and satisfy the sheaf axioms given a finite collection of open sets. 
+
+Theorem 3.14 (Adversarial Attack) . Let DL m be a discrete deep learning algorithm over X
+
+composed of m layers. Suppose there exists 1 ≤ j ≤ m such that the j-th layer ψj satisfies axioms (2) and (3) of the neighborhood aggregating axiom and factors through the inclusion map. Then for any δ > 0, there exist infinitely many products of local sections 
+
+g := ( g1, g 2, · · · , g |A j |) ∈ ∏ 
+
+> αj∈A j
+
+C0(iop A,l , Rkj+1 )( U jαj ) (46) 
+
+such that for any f ∈ ∏ 
+
+> α0∈A 0
+
+C0(iop A,l , Rk0 )( U 0 
+
+> α0
+
+),
+
+(ψj+1 ◦ · · · ◦ ψ1) ◦ (f ) = 
+
+Fαi+1 ◦ ∑ 
+
+> αj∈A j
+
+iUαj ,U αj+1 
+
+
+
+> αj+1 ∈A j+1
+
+◦ (g) (47) 15 
+
+Figure 7. Presheaf: Does not satisfy the locality condition 
+
+Figure 8. Presheaf: Satisfies the gluing condition 
+
+whereas for any vector v ∈ Rk0×N and p > 0,
+
+∣∣∣∣∣∣ ∏
+
+> αi∈A i
+
+φαi ◦ ψj ◦ · · · ◦ ψ1
+
+ ◦ (f )
+
+ (v) − g(v)
+
+∣∣∣∣∣∣p
+
+> δ (48) 
+
+Proof. We observe that the morphism 
+
+ ∑ 
+
+> αj∈A j
+
+iUαj ,U αj+1 
+
+
+
+> αj+1 ∈A j+1
+
+: ∏ 
+
+> αj∈A j
+
+C0(iop A,l , Rkj+1 )( Uαj ) → ∏
+
+> αj+1 ∈A j+1
+
+C0(iop A,l , Rkj+1 )( Uαj+1 ) (49) from (24) is not injective. For each open neighborhood Uαj , let fαj ∈ C0(iop A,l , Rkj )( Uαj ) be a local section over Uαj . Given a vector vαj ∈ Rkj+1 , we denote by φαj ◦ fαj + vαj the function 
+
+(φαj ◦ fαj + vαj )( y1, y 2, · · · , y kj+1 ) = φαj (fαj (y1, y 2, · · · , y kj+1 )) + vαj , (50) 16 
+
+where φαj is the inclusion map for the index αj ∈ A j from Definition 3.8. For each αj+1 , there exists any set of vectors {mα}α ⊂ Rkj+1 such that 
+
+∑  
+
+> αj∈A j
+> Uαj⊂Uαj+1
+
+mαj = 0 . (51) Hence the following equation holds: 
+
+∑ 
+
+> αj∈A j
+
+iUαj ,U αj+1 ◦ (φαj ◦ fαj + mαj ) = ∑ 
+
+> αj∈A j
+
+iUαj ,U αj+1 ◦ φαj ◦ fαj . (52) We hence obtain that 
+
+ψj+1 ◦
+
+ ∏ 
+
+> αj∈A j
+
+fαj
+
+ =
+
+Fαj+1 ◦ ∑ 
+
+> αj∈A j
+
+iUαj ,U αj+1 ◦ ∏ 
+
+> αj∈A j
+
+φαj
+
+
+
+> αj+1 ∈A j+1
+
+◦
+
+ ∏ 
+
+> αj∈A j
+
+fαj
+
+
+
+=
+
+Fαj+1 ◦ ∑ 
+
+> αj∈A j
+
+iUαj ,U αj+1 
+
+
+
+> αj+1 ∈A j+1
+
+◦
+
+ ∏ 
+
+> αj∈A j
+
+(
+
+φαj ◦ fαj + mαj
+
+)
+
+(53) Because #Aj > #Aj+1 , the subspace of vectors {mαj }αj ∈A j that satisfies (51) for every αj+1 ∈ A j+1 
+
+has positive dimension. For such vectors {mαj }αj ∈A j , the following equation holds for any vector 
+
+v ∈ Rk0×N and p > 0.
+
+∣∣∣∣∣∣∏ 
+
+> αj∈A j
+
+(φαj ◦ fαj )( v) − ∏ 
+
+> αj∈A j
+
+(
+
+φαj ◦ fαj + mαj
+
+)
+
+(v)
+
+∣∣∣∣∣∣p
+
+=
+
+ ∑ 
+
+> αj∈A j
+
+|mαj |p
+
+
+
+> 1
+> p
+
+. (54) The statement of the theorem follows by inductively defining ∏  
+
+> αj∈A j
+
+fαj with respect to j, setting 
+
+g = ∏  
+
+> αj∈A j
+
+(φαj ◦ fαj + mαj ), and choosing vectors {mαj }αj ∈A j whose ℓp norm is greater than δ. □
+
+We now prove that under certain constraints on the final layer of the discrete deep learning algorithm, the state-of-the-art performances in analyzing all collections of data may not be achievable from a predetermined discrete deep learning architecture. 
+
+Theorem 3.15 (Dataset Dependency) . Let DL m be a discrete deep learning algorithm over X
+
+composed of m layers such that the last layer ψm is a neighborhood aggregating layer that factors through inclusion, i.e. 
+
+ψm = F ◦
+
+ ∑
+
+> αm∈A m
+
+iUαm ,X ◦ ∏
+
+> αm∈A m
+
+φαm
+
+ (55) 
+
+Suppose further that the predetermined continuous function F : Rk → Rk satisfies either one of the following conditions: (1) F is not surjective. (2) F is not open. (3) F is open and bijective. Then there exists a function f ∈ C0(iA,l , Rk)( X) such that for every deviations ν,
+
+f̸ = DL mν . (56) 
+
+Proof. Suppose the last layer ψm of the discrete deep learning algorithm factors through inclusion, as shown in Definition 3.8. Observe that any function 
+
+F : Rk → Rk (57) 17 
+
+induces a function of sets 
+
+F : C0(iA,l , Rk)( X) → C0(iA,l , Rk)( X)
+
+g 7 → F ◦ g (58) If F is not surjective or not open, then the induced function from (58) is not surjective because the set-theoretical right inverse of F either does not exist or is not continuous. If F is open and bijective, then F is a homeomorphism. Observe that (58) is a bijective function. But because ψm factors through inclusion, ψm is not surjective. Indeed, from the proof of Proposition 2.15, the morphism  
+
+> ∑
+> αm∈A m
+
+iUαm ,X  
+
+> 
+
+: ⊕αC0(iop A,l , Rk)( Uα) → C0(iop A,l , Rk)( X) (59) from (24) is not surjective. □
+
+Remark 3.16. We note that any discrete deep learning algorithm whose last layer is a fully connected layer with non-linear activation functions satisfy either one of the conditions provided above. Indeed, any function f : R → R which is open and surjective is in fact a homeomorphism. Such result, however, is not necessarily the case for any continuous functions f : Rk → Rk for any 
+
+k ≥ 3. In fact, there always exists a surjective continuous open function F : Rm → Rn for any 
+
+n ≥ m ≥ 3 which is not a homeomorphism if n > m . This seemingly surprising fact is a result of Whitehead’s theorem [ 25 ] and John Walsh’s results on the existence of surjective open continuous maps between manifolds whose induced morphism on their fundamental groups are surjective [ 50 ], see for instance the proof provided by Moishe Kohan on [35]. The technical condition shows that as long as F : Rk → Rk is not a continuous open surjection, then the discrete deep learning algorithm whose last layer factors through inclusion cannot achieve state-of-the-art performance in analyzing all collections of data. If, however, F : Rk → Rk is an open surjection which is not injective, then the function of sets F : C0(iop A,l , Rk)( X) → C0(iop A,l , Rk)( X) is surjective but not injective, because the right inverse of F is continuous. If it is the case that 
+
+F −1 (
+
+C0(iop A,l , Rk)( X))
+
+= ∑
+
+> αm∈A m
+
+iUαm ,X 
+
+> (
+
+C0(iop A,l , Rk)( Uαm ))
+
+(60) then the function of sets F : C0(iop A,l , Rk)( X) → C0(iop A,l , Rk)( X) is surjective, providing a counterex-ample to Theorem 3.15. 
+
+Remark 3.17. Similar to Remark 2.16, the neighborhood aggregating discrete deep learning algorithms from Theorem 3.14 fails the surjectivity condition (26) but satisfies the gluing condition (27) given a finite collection of open cover {Uα}α of X. Figures 9 and 10 illustrates how such neighborhood aggregating algorithms fail and satisfy the sheaf axioms given a finite collection of open sets. 3.3. Cohomological Properties. The aforementioned sections demonstrate that the architectural limitations suggested in Theorems 3.12, 3.14, and 3.15 originate from the property that the presheaf 
+
+C0(iA,l , Rk) (and the cosheaf) fails to be a sheaf (and the cosheaf). Nevertheless, there is a canonical method - the sheafification of a presheaf - which constructs a sheaf associated to a presheaf. This construction would then allow neighborhood aggregating deep learning algorithms to avoid Theorem 3.12, whose proof relied on the fact that the presheaf of our interest is not a sheaf. 
+
+Definition 3.18. Let F be a presheaf of abelian groups over X. The stalk of the sheaf at a point 
+
+x ∈ X is the direct limit of the groups F(U ) for all open sets U containing x.
+
+Fx := lim 
+
+−→
+
+> x∈U
+
+F(U ) (61) 18 
+
+Figure 9. Copresheaf: Does not satisfy the surjectivity condition 
+
+Figure 10. Copresheaf: Satisfies the gluing condition 
+
+Definition 3.19 ([ 24 ], Proposition-Definition 2.1.2) . Let F be a presheaf over X. Define a contravariant functor F+ from the category of open subsets of X to the category of abelian groups as follows. 
+
+F+(U ) := {s : U → ⊔
+
+> x∈U
+
+Fx such that (∗)} (62) where the conditions (∗) are: (1) For each x ∈ U , s(x) ∈ F x
+
+(2) For each x ∈ U , there exists an open neighborhood V containing x and a section t ∈ F (V )
+
+such that for all y ∈ V , ty = sy.Note that there exists a natural inclusion map θ : F → F + for any presheaf F.19 
+
+Remark 3.20. By sheafifying the presheaf C0(iA,l , Rk), the collection of discrete deep learning techniques over a given locally compact Hausdorff topological space X is a subset of the global section of the sheaf C0,+(iA,l (X), Rk).Now that one has constructed a sheaf C0,+(iA,l , Rk) associated to the presheaf C0(iA,l , Rk) it is a natural question to ask what cohomological data the constructed sheaf harbors. Cohomology groups of sheaves are of great importance in excavating underlying topological properties of a given space X. For example, the usual simplicial homology / cohomology groups of a topological space X
+
+provides an easily computable mathematical machinery to encapsulate certain geometric invariants of X, such as the first cohomology group of a graph G, which contains all possible cyclic subgraphs of G. Unfortunately, the sheaf C0,+(iA,l , Rk) does not harbor non-trivial higher cohomological data, as what one would expect to occur for simplicial cohomology groups. 
+
+Definition 3.21 (Flasque Sheaves and Cosheaves) . Let F be a sheaf of abelian groups over X. We say that F is flasque if for a pair of open subsets 
+
+U ⊂ V ⊂ X (63) the restriction map 
+
+r : F(V ) → F (U ) (64) is surjective as group homomorphisms. Likewise, we say that a cosheaf ˜F is flasque if for a pair of open subsets 
+
+U ⊂ V ⊂ X (65) the inclusion map 
+
+i : ˜F(U ) → ˜F(V ) (66) is a monomorphism. 
+
+Proposition 3.22. If F is a flasque sheaf over X, then F is acyclic, i.e. Hi(X, F) = 0 for all 
+
+i > 0.Proof. See Proposition 3.2.5 of [24]. □
+
+Theorem 3.23. Given any topological space X, the sheaves C0,+(iA,l , Rk) and Hom (iA,l , Rk) over 
+
+X are flasque. Proof. This follows from the fact that the skyscraper cosheaf Sx over any topological space X and a point x ∈ X is flasque. □
+
+In other words, there are no obstructions in gluing local sections to construct global sections over a topological space X, regardless of the underlying geometric or topological properties of 
+
+X. Thus, we obtain that discrete deep learning techniques with neighborhood aggregating layers cannot effectively distinguish geometric or topological invariants of the underlying spaces X’s. We have therefore verified the last empirically verified property of discrete deep learning techniques: Topological data analysis or persistent homological techniques often enhances performances of such algorithms in classifying or analyzing geometric properties of image or graph data sets, because they incorporate cohomological data which cannot be derived from higher cohomological datas of the sheaves C0,+(iA,l , Rk) and Hom (iA,l , Rk).4. Examples of Neighborhood Aggregating Discrete Deep Learning Techniques 
+
+In this section, we demonstrate that a wide class of convolutional neural networks, message passing neural networks, and recurrent neural networks are discrete deep learning techniques comprised of neighborhood aggregating layers. We thereby provide a theoretical explanation on empirical results on the constructions and limitations of these discrete deep learning algorithms by using Theorems 3.12, 3.14, and 3.15. 20 
+
+4.1. Convolutional Neural Networks. We use the identification of discrete deep learning tech-niques as elements of global sections of C0(iA,l , Rk) to redefine convolutional neural networks. 
+
+Example 4.1 (Convolutional Neural Networks) . Let I2 := [0 , 1] × [0 , 1] be a grid endowed with the usual Euclidean metric. Fix a positive integer N > 0. One can define a collection of compact subsets 
+
+> {
+
+Km,n :=  
+
+> [
+
+mN , m + 1 
+
+N
+
+> ]
+
+× 
+
+> [
+
+nN , n + 1 
+
+N 
+
+> ]} N−1
+> m,n =0
+
+(67) For each compact subset Km,n , pick a point xm,n inside its interior. Let A be the discrete set comprised of such points, endowed with the natural inclusion map i : A → I2.
+
+A := {xm,n }N −1
+
+> m,n =0
+
+. (68) The vanilla convolutional neural network CN N without sensor noises can be identified as the image of the products of the identity functions. 
+
+CN N ∈ C0(iA,l , Rk)( I2) (69) The associated sequence of finite open covers of I2 is given by 
+
+> {
+
+{U 0 
+
+> α0
+
+}Nα0=1 , {U 1 
+
+> α1
+
+}α1∈A 1 , · · · , {U mαm }αm∈A m , I 2}
+
+(70) whose elements satisfy the neighborhood aggregating axioms from Definition 3.4. For instance, one may take U iαi to be an open subset of I2 which contains a collection of compact subsets 
+
+U iαi ⊃ ∪ i2 
+
+> m=i1
+
+∪i4 
+
+> n=i3
+
+Km,n (71) for some integers 0 ≤ i1 < i 2 ≤ N − 1 and 0 ≤ i3 < i 4 ≤ N − 1.The convolutional layer is constructed as a matrix multiplication 
+
+> ∏
+> αi∈A i
+
+C0(iop A,l , R3)( U iαi ) → ∏
+
+> αi+1 ∈A i+1
+
+C0(iop A,l , R3)( U i+1  
+
+> αi+1
+
+)(f )αi 7 → W × (f )αi
+
+(72) where W is a trainable R|A i|×|A i+1 | matrix whose rows are all equal to a predetermined convolutional filter up to coordinate-wise permutations. The pooling layer is constructed as 
+
+> ∏
+> αi∈A i
+
+C0(iop A,l , R3)( U iαi ) → ∏
+
+> αi+1 ∈A i+1
+
+C0(iop A,l , R3)( U i+1  
+
+> αi+1
+
+)(f )αi 7 → F (( f )αi )
+
+(73) for some predetermined (possibly non-linear) pooling function F : R3|A i| → R3|A i+1 |.The fully connected layer is given by 
+
+> ∏
+> αi∈A i
+
+C0(iop A,l , R3)( U iαi ) → C0(R3N 2
+
+, R3|A m|) → C0(iop A,l , Rk)( I2)(f )αi → (f )αi 7 → F (( f )αi )
+
+(74) where F : R3|A m| → Rk is a composition of trainable affine transformations and non-linear activation functions. 
+
+Remark 4.2. We note that vanilla convolutional neural network CNN is a discrete deep learning technique comprised of neighborhood aggregating layers. In addition, any convolutional layer and fully connected layer factor through inclusion (see Definition 3.8), whereas maximum pooling layer does not. 21 
+
+The example above immediately shows that convolutional neural networks (or image classifiers) comprised of convolutional layers, maximum pooling layers, and fully connected layers are subject to non-unique gluings of local features, adversarial attacks, and dependencies with respect to image datasets. 
+
+Corollary 4.3. Any convolutional neural network (or image data analyzing discrete deep learning technique) comprised of convolutional layers, maximum pooling layers, and fully connected layers satisfy Theorems 3.12, 3.14, and 3.15. 
+
+Example 4.4 (Capsule Neural Networks) . Theorem 3.12 verifies the motivation of capsule neural networks [ 43 ] that maximum pooling layers of conventional convolutional neural networks fail to observe how local components of images contribute to properties of global images. Instead of including pooling layers, the encoder of capsule neural networks are comprised of convolutional layers detecting geometric features (rather than RGB signals) of local components of images: 
+
+> ∏
+> αi∈A i
+
+C0(iop A,l , R3)( U iαi ) → ∏
+
+> αi+1 ∈A i+1
+
+C0(iop A,l , RCk )( U i+1  
+
+> αi+1
+
+) → C0(iop A,l , Rmk )( X) (75) Here, the value C corresponds to the number of capsules used to dissect geometric properties of local components of images, and the value m corresponds to the number of classes the image dataset can be classified into. The layers provided above are trained from dynamic routings between C primary capsules. 
+
+Example 4.5 (Adversarial Attack) . Using the proposed framework, the effects of adversarial attack on the performance of convolutional neural networks can be easily analyzed [ 20 ]. Let 
+
+DL : R3N 2
+
+→ Rk be the global section of C0(iA,l , Rk) induced from the image of products of identity functions (id, · · · , id ). Let ˜DL : R3N 2
+
+→ Rk be the global section C0(iA,l , Rk) induced from the image of products of functions of form (id + νm,n )Nm,n =1 where νm,n : R3 → R3 is a continuous function. The adversarial attack suggests that given any arbitrary input image v ∈ R3N 2
+
+, there exist constants 
+
+ϵ, δ > 0 such that 
+
+|DL (v) − ˜DL (v)| > ϵ (76) even though |νm,n (x)| ≤ δ for every x ∈ R3 and 0 ≤ m, n ≤ N − 1.Empirical evidences support that capsule neural networks are vulnerable to comparable forms of adversarial attacks imposed on classical convolutional neural networks [ 39 ]. Because both architectures use neighborhood aggregating neural layers which factor through inclusion, Theorem 3.14 implies that these techniques are subject to comparable adversarial attacks. 
+
+Example 4.6 (Autoencoders) . The functorial formulation of autoencoders for image datasets can be defined as the following equation: 
+
+> N∏
+> α0=1
+
+C0(iop A,l , R3)( U 0 
+
+> α0
+
+) → C0(iop A,l , Rk)( X) →
+
+> N∏
+> α0=1
+
+C0(iop A,l , R3)( U 0 
+
+> α0
+
+) (77) where the first component of the composite function corresponds to compositions of layers used in convolutional neural networks, as shown in Definition 4.1, and the second component reconstructs the original image data by utilizing compositions of fully connected layers. 4.2. Graph convolutional networks and Weisfeiler-Lehman kernels. Before we formu-late graph convolutional networks and Weisfeiler-Lehman kernels as global sections of a presheaf 
+
+C0(iA,l , Rk), we recall the theory of cell complexes and covering spaces, which can be utilized for analyzing the local topological properties of finite graphs. Readers who are interested in a rigorous treatment of this topic may refer to [25] or [36]. We may consider a graph G := ( V, E ) as a 1-dimensional CW complex, as constructed in Chapter 0 of [ 25 ], where the nodes correspond to 0-dimensional cells, and the edges correpond to 1-dimensional 22 
+
+cells. The open subsets of graphs consist of discrete sets of nodes, disjoint unions of open intervals defined over edges, and disjoint unions of open subsets rooted at a node v. Given a connected graph G, we denote by ˜G its universal cover. We first construct a directed graph associated to an undirected graph without self-loops, as constructed in [12]. 
+
+Definition 4.7. Given an undirected graph G := ( V, E ) without self-loops, let G′ = ( V, E ′) be a graph where every node has a self-loop of weight 1. Let G′′ := ( V, E ′′ ) be a directed graph where there exists a degree 2 projection map p : G′′ → G′ which is ramified at the set of nodes of G′.Denote by ˜G′′ the universal covering space of G′′ .We now reformulate a well-known statement using sheaf theory that graph embedding frameworks over G obtained from utilizing only the node labels are elements of the sections of C0(iA,l , Rk) over 
+
+G or the universal cover of G, as carefully explored in [36, 51, 2, 12]. 
+
+Example 4.8 (Node-label based message passing neural networks) . Let T be any graph embedding framework over a graph G which is obtained from message passing neural networks utilizing only the node labels of G. Let ˜G′′ be the universal covering space of G′′ , as constructed in Definition 4.7. Let U kx be the depth k unfolding tree at the point x ∈ ˜G′′ . Fix a set of nodes ˜V (G) consisting of lifts of nodes v ∈ V (G) over ˜G′′ . Denote by U k ⊂ ˜G′′ the disjoint union of depth k unfolding tree at each node in ˜V (G).
+
+U k := ⊔ 
+
+> v∈˜V(G)
+
+U kv (78) Let Aksubset ˜G′′ be the set of nodes given by 
+
+Ak := U k ∩ V ( ˜G′′ ). (79) Then there exists an integer kT > 0 such that T is the global section of the presheaf of continuous functions induced from direct sums of skyscraper cosheaves supported over U kT ∩ V ( ˜G′′ ).
+
+T ∈ C0 (
+
+iop AkT ,l , Rl′ )
+
+( ˜G′′ ). (80) We hence obtain that graph neural networks that are discrete deep learnign techniques with neighborhood aggregating layers possess limitations of the same kind to convolutional neural networks: 
+
+Corollary 4.9. Any graph neural network, embedding technique, or pooling methods utilizing only the node labels of a graph G satisfy Theorems 3.12, 3.14, and 3.15. 
+
+Example 4.10 (WL Tests and GCNs) . It is a well-known fact that Weisfeiler-Lehman isomorphism tests can distinguish two non-isomorphic graphs G, G ′ as long as their universal covers ˜G, ˜G′ are not isomorphic [45]. Note that k iterations of Weisfeiler-Lehman isomorphism tests are comprised of k
+
+layers which factor through inclusion. In fact, the representations obtained from Weisfeiler-Lehman isomorphism test are global sections of the sheaf Hom (iop AkT ,l , Rl), because the neighborhood aggregating layers used in the Weisfeiler-Lehman procedure are linear. The histogram of node labels obtained from the Weisfeiler-Lehman procedure is obtained from the set of local sections on U kv , the depth k unfolding trees at v ∈ V ( ˜G′′ ).Hence, Theorem 3.12 suggests that the Weisfeiler-Lehman isomorphism test can distinguish two non-isomorphic graphs with non-isomorphic universal covers. On the other hand, the flasqueness of the sheaf Hom (iop A,l , Rl) implies that Weisfeiler-Lehman isomorphism test fails in distinguishing two non-isomorphic graphs with isomorphic universal covers, as demonstrated in Figure 11 and carefully studied in [36, 2, 12]. The representations obtained from graph convolutional networks or message passing neural networks [ 34 ], on the other hand, correspond to global sections of the presheaf C0(iop AkT ,l , Rl′
+
+), thanks to the composition of non-linear activation functions. Nevertheless, similar to Weisfeiler-Lehman 23 
+
+Figure 11. Sheafification: There are no obstructions imposed from topological characteristics of X in obtaining global sections of C0,+(iA,l , Rk). As such, non-trivial geometric differences among topological spaces cannot be effectively detected from neighborhood aggregating discrete deep learning techniques. isomorphism tests, these representations are also obtained from the set of local sections on U kv , the depth k unfolding trees at v ∈ V ( ˜G′′ ).
+
+Example 4.11 (Adversarial Attacks) . Similar to convolutional neural networks, empirical evidences suggest that graph neural networks also suffer from adversarial attacks arising from small graph perturbations or node feature perturbations [ 55 ]. This is not a surprising fact, because any graph neural network which includes a neighborhood aggregating layer factoring through inclusion can suffer from adversarial attacks, as suggested from Theorem 3.14. 4.3. Recurrent Neural Networks. One overarching insight obtainable from defining message passing neural networks as a global section of a presheaf is that the underlying topological space where the presheaf is defined is the universal cover of a graph G, considered as a 1-dimensional CW complex. This intuition can be generalized to devising a discrete deep learning technique which analyzes time series data over a given topological space X.
+
+Definition 4.12 (Time-Series data) . Given a topological space X, let XS1 be a principal S1-bundle of X.
+
+S1 → XS1 → X (81) The discrete deep learning technique DL analyzing dynamic time series data over X is a presheaf of continuous functions induced from skyscraper cosheaves defined over the universal cover of XS1 , i.e. it is a function given as 
+
+DL :
+
+> N∏
+> α0=1
+
+C0(iA,l , Rk0 )( U 0 
+
+> α0
+
+) → C0(iA,l , Rk)( ˜XS1 ) (82) comprised of compositions of layers 
+
+ψn : ∏
+
+> αn−1∈A n−1
+
+C0(iA,l , Rkn−1 )( U n−1 
+
+> αn−1
+
+) → ∏
+
+> αn∈A n
+
+C0(iA,l , Rkn )( U nαn ) (83) 24 
+
+with the associated sequence of collections of finitely many open subsets of ˜XS1 .
+
+> {
+
+{U 0 
+
+> α0
+
+}Nα0=1 , {U 1 
+
+> α1
+
+}α1∈A 1 , · · · , {U mαm }αm∈A m , ˜XS1
+
+> }
+
+(84) Namely, we associate the time variable t to a fiber of the covering map π : ˜XS1 → XS1 → X at a point x ∈ X homeomorphic to S1.
+
+Example 4.13 (Recurrent Neural Network) . The real line R is the universal cover of the circle 
+
+S1 × { x}, which can be considered as a principal S1-bundle of a singleton space {x}.From this perspective, the discrete deep learning techniques specialized for analyzing time series data (such as recurrent neural networks RN N or long short-term memory networks LST M ) is a global section of a presheaf of continuous functions induced from direct sums of skyscraper cosheaves over ˜S1.
+
+DL :
+
+> N∏
+> α0=1
+
+C0(iA,l , Rk0 )( U 0 
+
+> α0
+
+) → C0(iA,l , Rk)( ˜S1) (85) The set of points χR := {x1, x 2, · · · , x N } lie in the preimage of the base point x ∈ S1 with respect to the covering map π : R → S1. For recurrent neural networks RN N , the elements of the finite collection of open subsets {U iαi }αi∈A i consist of connected open subsets of R such that there exists an integer 1 ≤ m ≤ N and an index αi ∈ A i such that 
+
+U iαi ⊃ { x1, x 2, · · · , x m} (86) As for long short-term memory networks LST M [ 27 ] or gated recurrent units GRU [ 11 ], the elements of the finite collection of open subsets {U iαi }αi∈A i consist of connected open subsets of R such that there exists an integer 1 ≤ m1 < m 2 ≤ N and an index αi ∈ A i such that 
+
+U iαi ⊃ { xm1 , x m1+1 , · · · , x m2 } (87) represented by their memory cells. 
+
+Example 4.14 (Positional Enconding in attention transformers) . The positional encoding used in the encoder layer of the attention-transformer implicitly uses the assumption that the time variable 
+
+t can be identified with the topological space S1. Indeed, the position of an input data is defined in terms of trigonometric functions f : R → S1.Because vanilla RNNs, and LSTMs are neighborhood aggregating discrete deep learning techniques, we immediately obtain the following result. 
+
+Corollary 4.15. Any recurrent neural networks or long short term memory networks (LSTM) satisfy Theorems 3.12, 3.14, and 3.15. 
+
+Example 4.16. Empirical evidences suggest that adversarial attacks on recurrent neural networks and long short term memory networks can be achieved from small perturbations of input sequential data [53], [40], which is precisely what the proof of Theorem 3.14 suggests. 5. Beyond Neighborhood Aggregating Discrete Deep Learning Techniques 
+
+In the previous sections, we observed how the fact that the presheaf C0(iA,l , Rk) is not a sheaf gave rise to limitations of discrete deep learning techniques. We end the paper with a formulation of deep learning techniques which do not necessarily fit in the class of discrete deep learning techniques with neighborhood aggregating layers, and propose future research directions on what novel deep learning algorithms may focus on. 25 
+
+5.1. Non-neighborhood Aggregating Layers. As observed from Theorems 3.14 and 3.15, the four neighborhood aggregating axioms make discrete deep learning techniques vulnerable to adversarial attacks, and prevents them from obtaining all possible vector representations of any arbitrarily given input datasets. Hence, it is natural to consider whether it is possible to devise a discrete deep learning algorithm whose layers do not satisfy the neighborhood aggregating axioms. Attention-transformers as constructed in Vaswani et al [48] do not satisfy the neighborhood aggregating axioms. 
+
+Example 5.1 (Attention-transformers) . Let X := S1 × [0 , 1] be a cylinder. Fix a positive integer 
+
+N, d, w > 0.
+
+• Positional Encoding: Denote by A := {xi,j }1≤i≤N
+
+> 1≤j≤d
+
+the set of points on X whose locations are determined as 
+
+xi,j =
+
+> (
+
+sin   
+
+> (i
+> 10000 2jd
+> )
+
+, 2j−12d
+
+> )
+
+if i = 2 k
+
+> (
+
+cos   
+
+> (i
+> 10000 2jd
+> )
+
+, 2j−12d
+
+> )
+
+if i = 2 k + 1 (88) 
+
+• Skyscraper Cosheaf: The pushforward cosheaf iop A,l is given by the direct sum of skyscraper sheaves of real vector spaces of dimension 1 supported at xi,j ∈ A. Note that any set of 
+
+d-dimensional N vectors {v1, · · · , v N } induces a global section of iop A,l .
+
+• Open Cover: Let {Uα0 }N d α0=1 be the set of finite open covers of X such that for each α0
+
+there exists a unique 1 ≤ i ≤ N and 1 ≤ j ≤ d such that A ∩ Uα0 = {xi,j }. Let {Uα1 }Nα1=1 
+
+be the set of finite open covers of X such that for each α1 there exists a unique 1 ≤ i ≤ N
+
+such that A ∩ Uα1 = {xi,j }dj=1 .
+
+• Attention-Transformer: The attention transformer T R [48] can be identified as 
+
+T R :
+
+> N d ∏
+> α0=1
+
+C0(iop A,l , R)( Uα0 ) → C0(iop A,l , RN d )( X) (89) comprised of compositions of encoder and decoder layers. Both are compositions of multi-head attention functions and feed forward networks. 
+
+• Multi-head Attention: Denote by h the number of attention heads. Denote by Q, K, V 
+
+the querry, key, and the value matrix obtained from either the input data or the output of the encoder layer. Denote by {W iQ, W iK , W iV }hi=1 the collection of N × w weight matrices for all attention heads. Denote by WZ a wh × d weight matrix. A single multi-head attention layer is defined as the composition of feedforward networks and multihead attention functions. 
+
+WV :
+
+> N d ∏
+> α0
+
+C0(iop A,l , R)( Uα0 ) →
+
+> N∏
+> α1=1
+
+C0(iop A,l , Rwh )( Uα1 )
+
+V 7 → (
+
+V W iV
+
+> )hi=1
+
+MultiHead :
+
+> N∏
+> α1=1
+
+C0(iop A,l , Rwh )( Uα1 ) → C0(iop A,l , RN wh )( X)(Vi)hi=1 7 →
+
+> (
+
+Softmax  
+
+> (
+
+QW iQ(KW iK )T
+
+√dk
+
+> )
+
+Vi
+
+> )hi=1
+
+WZ : C0(iop A,l , RN wh )( X) → C0(iop A,l , RN d )( X)(Zi)hi=1 7 → WZ (Zi)hi=1 
+
+(90) 
+
+Remark 5.2. We note that a single encoder layer of the attention-transformer is equivalent to the formulation of dynamic routing of capsules from capsule neural networks. In particular, the two 26 
+
+neural networks are equivalent if the number of capsules C is equal to the number of multi-head attentions h.
+
+Remark 5.3. The positional encoding function of the attention-transformer projects the input data set D defined over the topological space Y to a cylinder S1 × [0 , 1] . Because the attention-transformer is a discrete deep learning technique, it is unable to fully encapsulate the topological properties of 
+
+Y . This is not an issue as long as the underlying topological space Y is contractible or homotopic to S1. For example, natural languages or images are data defined over the euclidean space Rd,which is contractible. Variants of transformers are experimentally shown to produce state of the art results in natural language processes [ 48 ] and image classifications [ 38 ]. In fact, the projection of a 2-dimensional Euclidean space to a cylinder is far from a preposterous construction, as the space R
+
+is a universal cover of S1, which also induces a covering map R2 → S1 × R.
+
+Remark 5.4. Attention-transformer with more than two encoder and decoder layers is an example of a non-neighborhood aggregating discrete deep learning technique. The first encoder and decoder layer of the attention-transformer is a neighborhood aggregating layer, whereas the other layers do not satisfy (1) and (4) of the neighborhood aggregating axioms (from Definition 3.4). Hence, we observe that Theorems 3.12 and 3.14 still remain valid for attention-transformers, whereas conditions for Theorem 3.15 are not satisfied. To elaborate, Theorem 3.12 provides a theoretical explanation for hallucinations observed in many transformer architecture, as explored in [ 30 , 47 ]. Here, we may reinterpret hallucinations as limitations in gluing short length sentences or words coherently to form a lengthy coherent logical statement. Theorem 3.14 gives a mathematical formulation of vulnerability of transformer architecture against adversarial attacks, as pointed out empirically in recent studies [ 18 , 44 ]. Nevertheless, as the conditions for Theorem 3.15 are not satisfied, one may expect that transformers could have capabilities to outperform other conventional message passing neural networks. Indeed, empirical evidences support that performances of attention transformers in processing both natural language processes [ 29 ] and image classifications [ 17 ] outperform deep learning techniques which utilize classical convolutional neural networks or residual neural networks. One interesting property of attention-transformers is that under certain rigid conditions the attention weight matrix obtained from the multihead attention function can be approximated by sparse matrices. Let P ∈ (0 , 1) , and {Uα}α∈A be a finite open cover of a cylinder X = S1 × [0 , 1] 
+
+such that |A| = N . One may ask a question whether for any input data of dimension N d there exists a choice of predetermined P N d values, a finite open cover {Vj }h+1  
+
+> j=1
+
+of X which satisfy 
+
+Vj =
+
+> 
+
+∩α′∈A ′ 
+
+> j⊊A
+
+Uα′ if 1 ≤ j ≤ hX \ ∪ hj=1 Vj if j = h + 1 , (91) and a fixed constant c > 0 such that for each 1 ≤ j ≤ h, the open subsets V ′ 
+
+> j
+
+s satisfy 
+
+# ( Vj ∩ A) < P N d + c. (92) Suppose further that for each 1 ≤ j ≤ h, there exists a morphism 
+
+> ∏
+> α∈A
+
+C0(iop Vj ∩A,l , Rwh )( Uα) →
+
+> h∏
+> m=1
+
+C0(iop Vj ∩A,l , RN w )( Vm) (93) such that the following commutative diagram holds:  
+
+> ∏
+> α∈A
+
+C0(iop Vj ∩A,l , Rwh )( Uα) ∏hm=1 C0(iop Vj ∩A,l , RN w )( Vm) 
+
+> ∏
+> α∈A
+
+C0(iop A,l , Rwh )( Uα) C0(iop A,l , RN wh )( X) 
+
+> ∃
+> MultiHead Uα MultiHead Vm 27
+
+Then such a collection of finite open sets {Vj }hj=1 always exist for any value of P ∈ (0 , 1) if the probability distribution of the data {xi}Ni=1 of sufficiently large enough dimension d is a Gaussian distribution with mean 0, and the entries of the random weight matrices WQ, WK , and WV also form a Gaussian distribution with mean 0. The data points {xi} project to form a uniform distribution over the sphere Sd, and it is a classical result that for any matrix W , the probability distribution of xiW x Ti for a unit vector xi converges to the Gaussian distribution with mean 1 
+
+> d
+
+Tr (W ), and the probability distribution of two i.i.d. unit vectors ⟨xi, x j ⟩ is the beta distribution (d−12 , d−12 ). By fixing the data inputs with sufficiently large enough high attention scores, we can force the attention scores obtained from other data inputs except for possibly at c inputs to be sufficiently close to 0.Furthermore, Hahn proves that such a collection {Vj }hj=1 always exist for input data consisting of 1-dimensional binary entries, where the predetermined values are chosen from components with high attention scores. This implies that attention-transformers with bounded number of layers or heads is not capable of modeling periodic or hierarchical structure of finite-state languages [21]. Nevertheless, the same limitation can also make attention-transformers robust to perturbations in input data, because it constrains the weighted sum of coordinate-wise perturbations to from growing arbitrarily large, assuming that the value P is sufficiently close to 0. Indeed, as demonstrated in [ 29 ]and [ 21 ] under rigid constraints on the input data, attention-transformers are observed to be more robust to small perturbations of input data compared to other neighborhood aggregating discrete deep learning techniques. 
+
+Remark 5.5. Note that the encoder and decoder layers other than the first ones admit the output of the previous encoder and decoder layer as inputs. This construction in fact redefines the layers as a function from C0(iop A,l , RN d )( X) to itself. 
+
+> N d ∏
+> αi
+
+C0(iop A,l , R)( X) → C0(iop A,l , R)( X) (94) This gives us a hint as to why attention-transformers are able to outperform other neighborhood aggregating discrete deep learning techniques in analyzing natural languages and images, because the composition of encoder and decoder layers allows one to construct a wider range of continuous functions. Required for a thorough assessment on the strengths of encoder and decoder layers is a careful analysis on how the image of the attention-transformer evolves with respect to the increase in the number of encoder and decoder layers. 5.2. Sheaves other than skyscraper cosheaves. As aforementioned, the fact that C0(iA,l , Rk)
+
+does not satisfy the sheaf axioms gives rise to limitations of discrete deep learning techniques. Therefore, future research may focus on constructing a deep learning technique associated to a sheaf 
+
+F other than the presheaf of continuous functions induced from skyscraper cosheaves. 
+
+Definition 5.6 (Deep Learning Technique associated to a sheaf / cosheaf) . Let X be a locally compact topological space. Let F be a sheaf (or a cosheaf) of real vector spaces over X. Consider a sequence of collections of finite open subsets 
+
+> {
+
+{U 0 
+
+> α0
+
+}Nα0=1 , {U 1 
+
+> α1
+
+}α1∈A 1 , · · · , {U mαm }αm∈A m , X }
+
+(95) A deep learning algorithm associated to a sheaf (or a cosheaf) F with m layers, denoted as DL m 
+
+> F
+
+,is a well-defined composition of functions given as: 
+
+> N∏
+> α0=1
+
+F(Uα0 ) → ∏
+
+> α1∈A 1
+
+F(Uα1 ) → · · · → ∏
+
+> αm∈A m
+
+F(Uαm ) → F (X) (96) Each function, possibly non-linear, 
+
+ψi+1 : ∏
+
+> αi∈A i
+
+F(Uαi ) → ∏
+
+> αi+1 ∈A i+1
+
+F(Uαi+1 ) (97) 28 
+
+corresponds to the i + 1 -th layer of the deep learning technique associated to F.
+
+Remark 5.7. Any graph neural networks which utilizes both node labels and the gluing information of subgraphs of a graph G are global sections of the presheaf C0(iA,l , Rk)( G), which forgets non-trivial topological invariants of the input graph G. This is because the skyscraper cosheaf is flasque, forgetting any gluing structure. Examples of graph neural networks incorporating richer data than skyscraper cosheaves include persistent homological techniques [ 9, 42 ] over graphs, cellular sheaves [ 3, 4, 5, 6 ] over graphs introduced from [ 15 ], and copresheaves over combinatorial complexes [ 23 ]. Future research may focus on whether using different sheaves over a topological space allows one to evade limitations of conventional discrete deep learning techniques suggested from Theorems 3.12, 3.14, and 3.15. 
+
+Remark 5.8. Neural ordinary differential equations can be considered as a deep learning technique associated to the sheaf of differential equations ΩX [ 10 ]. Compared to recurrent neural networks, neural ODEs are more effective than recurrent neural networks in detecting temporal patterns among time series data which are governed by an underlying globally defined differential equation. Such enhanced performances may originate from the fact that ΩX is a sheaf over a topological space, which guarantees that the restriction map of global sections to products of local sections is injective, whereas recurrent neural networks are modeled by sheaves C0(iA,l , Rk) which fails the respective condition on the restriction map (see Theorem 3.12). 5.3. Principal circle bundles and dynamic graphs. We conclude the discussion on formulating a functorial model for neighborhood aggregating deep learning methods with a demonstration on the correspondence between discrete deep learning techniques which process time series data over graphs (considered as a 1-dimensional CW complex) and those which process data over 2-dimensional topological spaces, such as image data sets. These correspondences, as empirically demonstrated from recent breakthroughs on utilizing attention transformers to image classification tasks [ 17 ], can be obtained from the observation that universal covers of 2-dimensional orientable smooth connected manifolds with non-trivial genus are homeomorphic to either R2 or the 2-dimensional hyperbolic disk D2. To rigorously formulate these observations, we first recall the definition of torsors, which we closely follow the exposition from Chapters 4,5, and 6 of [46]. 
+
+Definition 5.9 (Torsors) . Let F be a sheaf of abelian groups over X. A F-torsor is a sheaf of sets 
+
+G on X with an action F × G → G such that (1) For any open neighborhood U ⊂ X, the action F(U ) × G (U ) → G (U ) is simply transitive. (2) For every x ∈ X and every open neighborhood U containing x, the set G(U ) is nonempty (i.e. the stalk Gx is nonempty). 
+
+Example 5.10. The sheaf F is the trivial F-torsor, endowed with the action induced from left multiplication. 
+
+F(U ) × F (U ) → F (U )(f, g ) 7 → f g (98) 
+
+Example 5.11. Let GL n,X be the constant sheaf of general linear group GL n over the real manifold 
+
+X. The GL n,X -torsors correspond to rank n vector bundles f : Y → X over X.
+
+Example 5.12. Let G be a group. Let X be a topological space such that G acts over X endowed with the action X × G → X that satisfies (1) x · 1 = x
+
+(2) x · (gh ) = ( x · g) · h
+
+(3) The map G → X given by g 7 → x · g is bijective. 29 
+
+x · 1 = xx · (gh ) = ( x · g) · h (99) By definition, X is a G-torsor, where G is considered as a constant sheaf over X. These topological spaces are also known as G-principal homogeneous spaces. For instance, there exists a natural action of the special orthogonal group SO (2) consisting of rotational symmetries over the complex circle group S1
+
+> C
+
+.There is a canonical relation between the first sheaf cohomology group of F and the set of isomorphism classes of F-torsors over X.
+
+Lemma 5.13. There exists a canonical bijection between H1(X, F) and the set of isomorphism classes of F-torsors. Proof. We refer to Lemma 4.3 of [46]. □
+
+Using the lemma provided above, it is a classical result that isomorphism classes of principal S1
+
+bundles of a topological space X are in bijection with second cohomology classes of X.
+
+Lemma 5.14. There exists a canonical bijection between H2(X, Z) and the set of isomorphism classes of principal S1 bundles of X.Proof. The result follows from using a long exact sequence associated to the exponential map 
+
+0 → Z → Z → S1 → 0. □
+
+We hence obtain the following correspondence between classical deep learning techniques and deep learning techniques for representing dynamic graphs with non-trivial cycles. 
+
+Theorem 5.15. (1) The MPNN processing a dynamic dataset over a graph G homeomorphic to S1, a deep learning technique processing sets of inputs in R2, or that processing sets of inputs in S1 × R endowed with the Euclidean metric are equivalent. (2) The MPNN processing a dynamic dataset over a dynamic graph G such that rank ZH1(G, Z)
+
+is at least 2 is equivalent to a deep learning technique processing sets of inputs in a subset S
+
+of a closed 2-dimensional disk D2 endowed with the hyperbolic metric, such that the interior of S is the open 2-dimensional disk. Proof. By Lemma 5.14, every principal S1 bundle of a 1-dimensional graph G is homeomorphic to 
+
+G × S1, which is a compact manifold with (or without) boundary. We first consider the case where 
+
+G ∼= S1. Then there exist covering maps R2 → S1 × S1 and S1 × R → S1 × S1, both of which are endowed with the Euclidean metric. If rank ZH1(G, Z) ≥ 2, then we proceed as in [ 32 ]. The compact manifold G × S1 is a Riemann surface endowed with a hyperbolic metric with geodesic boundary. Its universal cover is a subset S of a closed 2-dimensional disk D2 endowed with the hyperbolic metric constructed as follows: one has S = D2, and D2 \ S is a subset of ∂D 2 homeomorphic to an infinite disjoint union of open circular arcs and a cantor set, see for example Theorem 3.4.6 of [ 31 ](Here we identify G × S1 as a quotient of S by the action of a Fuchsian group of second kind, see page 67, item (b) of [ 31 ] for its definition). Let ^G × S1 be a covering space of G × S1. Let A be the set of finitely many discrete points over ^G × S1. Then the theorem immediately follows from the fact that the representations obtained from such MPNN techniques are global sections of the presheaf C0(iop A,l , Rk)( ^G × S1). □
+
+Remark 5.16. Theorem 5.15 verifies the empirical result that visual transformers with 1-dimensional positional encodings can be utilized to classify 2-dimensional image datasets, and produce state of the art results in large datasets compared to other convolutional neural networks [17]. 30 
+
+References 
+
+[1] Allan Pinkus “Approximation theory of the MLP model in neural networks”. Acta Numerica. vol.8 pp.143–195 (1999) [2] Jacob Bamberger. “A Topological characterisation of Weisfeiler-Leman equivalence classes”. ICML Workshop: Topology, Algebra, and Geometry in Machine Learning. (2022) [3] Federico Barbero, Cristian Bodnar, Haitz Sáez de Ocáriz Borde, Michael Bronstein, Petar Veličković, and Pietro Liò. “Sheaf Neural Networks with Connection Laplacians”. ICML 2022 Workshop on Topology, Algebra, and Geometry in Machine Learning. (2022) [4] Federico Barbero, Christian Bodnar, Haitz Sáez de Ocáriz Borde, and Pietro Liò. “Sheaf attention networks”. NeurIPS’22 Workshop on Symmetry and Geometry in Neural Representations (2022). [5] Luke Braithwaite, Alessio Borgi, Gabriele Onorato, Kristjan Tarantelli, Iulia Duta, Francesco Restuccia, Fabrizio Silvestri, and Pietro Liò. “Heterogeneous Sheaf Neural Networks”. Arxiv preprint (2024). [6] Cristian Bodnar, Francesco Di Giovanni, Benjamin Paul Chamberlain, Pietro Lio, and Michael M. Bronstein. “Neural Sheaf Diffusion: A Topological Perspective on Heterophily and Oversmoothing in GNNs”. NeurIPS’22: Proceedings of the 36th International Conference on Neural Information Processing Systems. (2022) [7] Alessio Borgi, Fabrizio Silvestri, and Pietro Liò. “Polynomial Neural Sheaf Diffusion: A Spectral Filtering Approach on Cellular Sheaves”. Arxiv Preprint. (2025) [8] Glen E. Bredon. “Sheaf Theory”. Graduate Texts in Mathematics, Springer. 279–448 (1997) [9] Mathieu Carriere, Frederic Chazal, Yuichi Ike, Theo Lacombe, Martin Royer, Yuhei Umeda. “Perslay: a neural network layer for persistence diagrams and new graph topological signatures”. Proceedings of the 23rd International Conference on Artificial Intelligence and Statistics (2020). [10] Ricky T.Q.Chen, Yulia Rubanova, Jesse Bettencourt, and David Duvenaud. “Neural Ordinary Differential Equations”. Advances in Neural Information Processing Systems. Vol. 31. (2019). [11] Kyunghyun Cho, Bart van Merrienboer, Caglar Culcehre, Dzmitry Bahdanau Fethi Bougares, Holger Schwenk, Yoshua Bengio. “Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation”. Empirical Methods in Natural Language Processing (EMNLP). pp.1724-1734. (2014). [12] Yunyoung Choi, Sun Woo Park, U Jin Choi, and Youngho Woo. “Cycle to Clique (Cy2C) Graph Neural Network: A Sight to See beyond Neighborhood Aggregation”. Preprint, Submitted. (2022) [13] Taco Cohen. “Equivariant Convolutional Networks”. Ph.D. Thesis. Available at https://pure.uva.nl/ws/files/60770359/Thesis.pdf (2021) [14] Taco Cohen, Mario Geiger, Jonas Kohler, and Max Welling. “Spherical CNNs”. Proceedings of the International Conference on Learning Representations (2018) [15] Justin Curry. “Sheaves, Cosheaves, and Applications”. Ph.D. Thesis. Arxiv Preprint (2013) [16] George Cybenko “Approximation by superpositions of a sigmoidal function”. Mathematics of Control, Signals, and Systems. 2 (4): 303–314 (1989) [17] Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai et al. “An image is worth 16x16 words: Transformers for image recognition at scale”. Proceedings of the International Conference on Learning Representations (2021) [18] Philipp Foth, Lukas Gosch, Simon Geisler, Leo Schwinn, and Stephan Günnemann. “Adversarial Robustness of Graph Transformers”. Transactions on Machine Learning Research (2025). [19] Ken-Ichi Funahashi “On the approximate realization of continuous mappings by neural networks”. Neural Networks. 2 (3): 183–192 (1989) [20] Ian J. Goodfellow, Jonathon Shlens, and Christian Szegedy “Explaining and harnessing adversarial examples”. Proceedings of the International Conference on Learning Representations (2015) [21] Michael Hahn. “Theoretical Limitations of Self-Attention in Neural Sequence Models”. Transactions of the Association for Computational Linguistics. Vol. 8 pp.156–171. (2020) [22] Jakob Hansen and Thomas Gebhart. “Sheaf Neural Networks”. NeurIPS’20 Workshop on TDA and Beyond. (2020) [23] Mustafa Hajij, Lennart Bastian, Sarah Osentoski, Hardik Kabaria, John Davenport, Dawood, Balaji Cherukuri, Joseph Kocheemoolayil, Nastaran Shahmansouri, Adrian Lew, Theodore Papamarkou, and Tolga Birdal.“Copresheaf Topological Neural Networks: A Generalized Deep Learning Framework”. NeurIPS’25. Proceedings of the 39th International Conference on Neural Information Processing Systems. (2025) [24] Robin Hartshorne. “Algebraic Geometry”. Graduate Texts in Mathematics, Springer. 60–69 (1977) [25] Allen Hatcher. “Algebraic Topology”. Cambridge University PRess. (2002) 31 
+
+[26] Yu He, Cristian Bodnar, and Pietro Liò. “Sheaf-based Positional Encodings for Graph Neural Networks”. Proceedings of the 2nd NeurIPS Workshop on Symmetry and Geometry in Neural Representations, PMLR 228:1-18. (2024) [27] S. Hochreiter and J. Schmidhuber. “Long short-term meory”. Neural Computation. Vol. 9 No. 8, pp.1700-1709 (1997) [28] Kurt Hornik, Maxwell Stinchcombe, and Halbert White “Multilayer feedforward networks are universal approxi-mators”. Neural Networks. 2 (5): 359–366. (1989) [29] Yu-Lun Hsieh, Minhao Cheng, Da-Cheng Juan, wei Wei, Wen-Lian Hsu, and Cho-Jui Hsieh. “On the Robustness of Self-attentive models”. Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics. pp. 1502-001529. (2019) [30] Yixiao Huang, Hanlin Zhu, Tianyu Guo, Jiantao Jiao, Somayeh Sojoudi, Michael Jordan, Stuart J Russell, and Song Mei. “Generalization or Hallucination? Understanding Out-of-Context Reasoning in Transformers”. NeurIPS’25. Proceedings of the 39th International Conference on Neural Information Processing Systems. (2025) [31] Svetlana Katok. “Fuchsian Groups”. University of Chicago Press. pp. 63–77 (1992) [32] Moishe Kohan “Universal Cover of a Surface (with Boundary)”. Mathematics Stack Exchange, https://math.stackexchange.com/questions/673187/universal-cover-of-a-surface-with-boundary (version: February 12th, 2014) [33] Patrick Kidger and Terry Lyons. “Universal Approximation with Deep Narrow Networks”. Conference on Learning Theory. (2020) [34] Thomas Kipf, Max Welling “Semi-supervised classification with graph convolutional networks”. ICLR (2017). [35] Moishe Kohan. (https://math.stackexchange.com/questions/3130389/does-there-exist-a-continuous-open-and-surjective-map-from-f-colon-mathbbr). “Does there exist a continuous, open, and surjective map from f : Rn → Rm
+
+for m > n ?”. Mathematics Stack Exchange. Answer provided on March 4th, 2019. [36] Andreas Krebs and Oleg Verbitsky. “Universal covers, color refinement, and two-variable counting logic: Lower bounds for the depth". 2015 30th Annual ACM/IEEE Symposium on Logic in Computer Science. 15345831 (2015) [37] Zhou Lu, Hongming Pu, Feicheng Wang, Zhiqiang Hu, and Liwei Wang. “The Expressive Power of Neural Networks: A View from the Width”. Advances in Neural Information Processing Systems. Vol. 30. (2017) [38] Kaleel Mahmood, Rigel Mahmood, and Marten van Dijk. “On the robustness of vision transformers to adversarial examples”. IEEE/CVF International Conference on Computer Vision (ICCV). (2021) [39] Felix Michels, Tobian Uelwer, Eric Upschulte, and Stefan Harmeling “On the Vulnerability of Capsule Networks to Adversarial Attacks”. International Conference on deep learning 2019, Workshop on Security and Privacy of deep learning (2019). [40] Nicolas Papernot, Patrick McDaniel, Ananthram Swami, and Richard Harang. “Crafting Adversarial Input Sequences for Recurrent Neural Networks”. IEEE Military Communications Conference (2016) [41] Sejun Park, Chulhee Yun, Jaeho Lee, and Jinwoo Shin. “Minimum Width for Universal Approximation”. Proceedings of the International Conference on Learning Representations (2021) [42] Bastian Rieck, Christian Bock, Karsten Borgwardt. “A persistent Weisfeiler-Lehman procedure for graph classification”, Proceedings of the 36th International Conference on deep learning, PMLR 97:5448-5458 (2019). [43] Sara Sabour, Nicholas Frosst, and Geoffrey E Hinton. “Dynamic Routing between Capsules”. Advances in Neural Information Processing Systems. vol.30 (2017) [44] Brandon Schwab and Johannes Kriebel. “Mitigating adversarial attacks on transformer models in credit scoring”. European Journal of Operational Research 328 (1) pp. 309-323 (2026) [45] Nino Shervashidze, Pascal Schweitzer, Erik Jan van Leeuwen, Kurt Mehlhorn, Karsten M. Borgwardt. “Weisfeiler-Lehman Graph Kernels”, Journal of deep learning Research no.12 (2011) 2539-2561. [46] Stacks Project. “Cohomology of Sheaves”. url: https://stacks.math.columbia.edu/tag/01DZ [47] Praneet Suresh, Jack Stanley, Sonia Joseph, Luca Scimeca, and Danilo Bzdok. “From Noise to Narrative: Tracing the Origins of Hallucinations in Transformers”. NeurIPS’25. Proceedings of the 39th International Conference on Neural Information Processing Systems. (2025) [48] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, Illia Polosukhin. “Attention is all you need”. Advances in Neural Information Processing Systems. Vol. 30. (2017) [49] Edward Wagstaff, Fabian B. Fuchs, Martin Engelcke, Ingmar Posner, and Michael Osborne. “On the limitations of representing functions on sets”. Proceedings of the 36th International Conference on Machine Learning. (2019) [50] John Walsh. “Monotone and open mappings on manifolds. I”. Transactions of the American Mathematical Society. Vol. 209 (1975) [51] Keyulu Xu, Weihua Hu, Jure Leskovec, and Stefanie Jegelka. “How Powerful are Graph Neural Networks?”. International Conference on Learning Representations (2019). 32 
+
+[52] Manzil Zaheer, Satwik Kottur, Siamak Ravanbhakhsh, Barnabas Poczos, Ruslan Salakhutdinov, and Alexander J Smola. “Deep Sets”. 31st Conference on Neural Information Processing Systems. (2017) [53] Wei Emma Zhang, Quan Z. Sheng, Ahoud Alhazmi, and Chenliang Li. “Adversarial attacks on deep learning models in natural language processing: A survey”. ACM Transactions on Intelligent Systems and Technology. Vol.11 No.3 pp.1-41. (2020) [54] Jie Zhou, Ganqu Cui, Shengding Hu, Zhengyan Zhang, Cheng Yang, Zhiyuan Liu, Lifeng Wang, Changcheng Li, and Maosong Sun.“Graph neural networks: A review of methods and applications”. AI Open I. 57–81 (2020) [55] Daniel Zugner and Stephan Gunnemann “Adversarial Attacks on Graph Neural Networks via Meta Learning”. Proceedings of the International Conference on Learning Representations (2019) 
+
+Max Planck Institute for Mathematics, Vivatsgasse 7, 53111 Bonn, Germany 
+
+Email address : s.park@mpim-bonn.mpg.de 
+
+SolverX, Gangseo-gu, Seoul 07801, Republic of Korea 
+
+Email address : young@solverx.ai 
+
+Korea Advanced Institute of Science and Technology, Department of Mathematical Sciences, 291 Daehak-ro, Yuseong-gu, Daejeon 34141, Republic of Korea 
+
+Email address : ujinchoi@kaist.ac.kr 
+
+National Institute for Mathematical Sciences, 463-1 Jeonmin-dong, Yuseong-gu, Daejeon, 34047, Republic of Korea 
+
+Email address : youngw@nims.re.kr

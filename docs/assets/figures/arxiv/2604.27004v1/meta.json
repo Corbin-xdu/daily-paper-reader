@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.27004v1/fig-001.webp",
+      "caption": "Fig. 5. Seven-month field-deployment time series across 64 nodes. Top: mean daily energy consumption (mWh/day), stable at 1.638±0.022mWh/day. Bottom: mean classification accuracy with adaptation enabled (solid) and disabled (dashed), illustrating the 1.4 pp recovery delivered by the local plasticity rule by Month 7.",
+      "page": 6,
+      "index": 1,
+      "width": 501,
+      "height": 296
+    },
+    {
+      "url": "assets/figures/arxiv/2604.27004v1/fig-002.webp",
+      "caption": "TABLE X MONTHLY FIELD TELEMETRY: ENERGY, LIFETIME, AND DRIFT ADAPTATION (64 NODES)",
+      "page": 7,
+      "index": 2,
+      "width": 496,
+      "height": 244
+    }
+  ]
+}

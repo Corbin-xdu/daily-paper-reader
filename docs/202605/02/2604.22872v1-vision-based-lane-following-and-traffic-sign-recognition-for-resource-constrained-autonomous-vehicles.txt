@@ -1,0 +1,193 @@
+Title: Vision-Based Lane Following and Traffic Sign Recognition for Resource-Constrained Autonomous Vehicles
+
+URL Source: https://arxiv.org/pdf/2604.22872v1
+
+Published Time: Tue, 28 Apr 2026 00:06:48 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# Vision-Based Lane Following and Traffic Sign Recognition for Resource-Constrained Autonomous Vehicles 
+
+Md Tanjemul Islam and Md Rafiul Kabir 
+
+Central Michigan University, Mount Pleasant, MI, USA 
+
+tanje2m@cmich.edu, kabir2m@cmich.edu 
+
+Abstract. Autonomous vehicles (AVs) rely on real-time perception systems to understand road environments and ensure safe naviga-tion. However, implementing reliable perception algorithms on resource-constrained embedded platforms remains challenging due to limited computational resources. This paper presents a lightweight vision-based framework that integrates lane detection, lane tracking, and traffic sign recognition for embedded autonomous vehicles. A computationally effi-cient threshold-based lane segmentation method combined with perspec-tive transformation and histogram-based curvature estimation is used for robust lane tracking under varying illumination conditions. A rule-based steering controller generates steering commands to maintain stable ve-hicle navigation. For traffic sign recognition, two lightweight convolu-tional neural networks (CNNs), EfficientNet-B0 and MobileNetV2, are evaluated using a custom dataset captured from the vehicle’s onboard camera. Experimental results show that the system achieves real-time performance while maintaining accurate lane tracking with only 3.16% maximum offset RMSE. EfficientNet-B0 achieves a high offline classifica-tion accuracy of 98.77% on the test dataset, while achieving 90% accu-racy during real-time on-device deployment, outperforming MobileNetV2 in both settings. MobileNetV2, however, offers slightly faster inference and lower computational cost. These results highlight the effectiveness of lightweight vision-based perception pipelines for resource-constrained autonomous driving applications. 
+
+Keywords: Autonomous Vehicles · Lane Detection · Traffic Sign Recog-nition · Embedded Vision Systems 
+
+# 1 Introduction 
+
+In recent years, the automotive industry has focused tremendously on au-tonomous vehicles and intelligent transportation systems. The vision of smart cities and smart transportation infrastructures is rapidly reshaping modern mo-bility. The potential capabilities of these transportation technologies are wide-ranging, including improvements in safety, efficiency, comfort, and security. On-going advances in sensors and artificial intelligence are making these systems  
+
+> arXiv:2604.22872v1 [cs.CV] 23 Apr 2026 2Md Tanjemul Islam and Md Rafiul Kabir
+
+more reliable and efficient. This rapid technological growth is transforming not only vehicle design but also the way vehicles interact with users and their en-vironment [1]. One of the key requirements of autonomous driving technology is the ability to accurately perceive the surrounding environment, including the interpretation of road regulations such as traffic signs in real time [2], [3]. This capability enables vehicles to navigate intelligently and safely through complex urban road environments. Among the most important perception tasks are road path detection and traffic sign recognition. For resource-constrained AVs, these tasks become even more critical, since efficient resource utilization is an important factor in achiev-ing reliable real-time performance. Recent advances in computer vision and deep learning have significantly improved the performance of perception systems in AV. CNNs have demonstrated remarkable success in image classification tasks. However, reliable road detection and traffic sign classification can still become challenging in real-world conditions due to varying illumination, road surface variations, occlusions, complex backgrounds, motion blur, and sensor noise [4], [5]. In addition, selecting appropriate algorithms and models is particularly im-portant for autonomous systems operating on platforms with limited computa-tional resources. In this work, a vision-based framework is proposed that integrates lane de-tection, lane tracking, and traffic sign recognition for resource-constrained au-tonomous vehicles under varying illumination conditions. Two lightweight CNN models are used for traffic sign classification and evaluated in both offline and real-time embedded settings. It also evaluates the performance gap between of-fline testing and real-time deployment within a unified perception-control sys-tem. The main contributions of this work are summarized as follows: 
+
+– Integration of a real-time perception and control system for resource-constrained AVs, combining lane detection, lane tracking, and traffic sign recognition on a single embedded platform. 
+
+– A lightweight lane tracking approach using classical vision techniques, de-signed for stable real-time performance on resource-constrained hardware and validated under varying illumination conditions. 
+
+– A custom traffic sign dataset collected from the onboard vehicle camera to improve real-world embedded performance and reduce domain shift. 
+
+– Comparative evaluation of lightweight CNN architectures (EfficientNet-B0 and MobileNetV2) under both offline and real-time embedded settings under varying illumination conditions, highlighting the trade-offs. 
+
+# 2 Background Study 
+
+For AV, both road path tracking and traffic sign classification are very basic and crucial tasks. On resource-limited systems, these tasks become even more critical, as both accuracy and efficient use of resources must be carefully balanced to make the system operate smoothly. Vision-Based Lane Following and Traffic Sign Recognition for AVs 3
+
+2.1 Lane Detection Methods Image Processing Methods The core principle of image processing methods for this purpose is to extract features such as curves, edges, and boundaries. Some of the popular techniques are Canny Edge Detection and then using Hough Transformation. Those methods work by generating image gradients, which can be translated into lane boundaries, then finding straight lines that represent lane markings. Those methods are efficient and suitable for AV; however, in real-time, environmental disturbance or surrounding environmental objects could hugely affect the performance. 
+
+Color and Threshold-Based Methods Another image processing method, which is a widely used approach, involves exploiting the color characteristics of roads and lanes. Roads’ color is very distinct from the environmental ele-ments around it, which can be isolated using color thresholding techniques. This method is computationally simple and fast, but performance can be degraded significantly under varying illumination and complex road conditions. 
+
+Model-Based Detection Model-based techniques attempt to fit mathematical curves to detect lane curvature features. Lane curvature can be modeled using polynomial functions to represent curved roads. For improvement, estimation techniques such as RANSAC are commonly used to remove outliers and improve the accuracy of the model. The success of these model-based approaches mostly depends heavily on the accuracy of feature extraction from the input image. 
+
+Deep Learning-Based CNNs have significantly improved the performance of road path tracking. These models efficiently extract features from lane and learn representations directly from large datasets. For example, U-Net and SegNet can classify roads, lanes, or background from the images. Deep learning-based models work accurately across a wide range of errors and environmental disturbances at the cost of high computational power. 
+
+Multi-Sensor Fusion-Based Modern AV systems have started to use fusion-based multiple sensory approaches to be able to track the path. The main concept of fusion-based approaches is that camera-based lane detection can be integrated with LiDAR, radar, and GPS sensor data to enhance the performance of road and lane detection. 
+
+2.2 Traffic Sign Recognition Methods 
+
+The second most important task of the AV is to be able to classify each traf-fic sign efficiently and accurately. Early classification methods mostly worked with color segmentation or shape-based detection techniques for finding specific 4 Md Tanjemul Islam and Md Rafiul Kabir 
+
+shapes from the image, then histogram techniques were used for edge segmen-tation, which were finally provided to different classification techniques such as Support Vector Machines (SVM), k-Nearest Neighbors (k-NN), or decision trees. The methods achieved reasonable performance, but in a real-time AV system, their effectiveness can be limited. With the advancement of deep learning techniques, CNNs have become the leading approach for traffic sign classification and recognition. CNN-based models automatically learn hierarchical feature representations from an image dataset. These models have demonstrated greater and stable performance under varying illumination, scale, viewpoint conditions, motion blur, color distortion, partial blocking, and so on. As a result, deep learning-based approaches have significantly improved the accuracy and reliability of traffic sign recognition sys-tems in modern autonomous driving. In this research work, the focus was on working with resource-limited AV sys-tems. So, lightweight CNN models were only taken into consideration. Models such as MobileNet (V1, V2, and V3), ShuffleNet, SqueezeNet, and EfficientNet are such models that are specifically designed to reduce computational com-plexity and memory requirements while maintaining competitive classification accuracy. These architectures employ techniques such as depthwise separable convolutions, channel shuffling, parameter compression, and compound scaling to achieve efficient performance.                                       
+
+> Table 1. Comparison of lightweight CNN models for classification
+> Model Parameters FLOPs Accuracy Features
+> SqueezeNet ∼1.2M ∼0.83 GFLOPs 57.5% Drastically reduces parame-ters for lightweight applica-tions MobileNet V1 ∼4.2M ∼569 MFLOPs 70.6% Uses depthwise separable convolutions to reduce com-putation ShuffleNet ∼1.4M ∼140 MFLOPs 67.4% Employs group convolution and channel shuffle for effi-ciency MobileNet V2 ∼3.4M ∼300 MFLOPs 72.0% Introduces inverted resid-ual blocks and linear bottle-necks EfficientNet-B0 ∼5.3M ∼390 MFLOPs 77.1% Uses compound scaling of depth, width, and resolu-tion for better accuracy MobileNet V3 ∼5.4M ∼219 MFLOPs 75.2% Combines Neural Architec-ture Search &attention modules
+
+Lightweight CNN models have been proposed for embedded vision tasks [6,7,8,9,10], which are compared in the Table 1. MobileNet V2 and EfficientNet-Vision-Based Lane Following and Traffic Sign Recognition for AVs 5
+
+B0 were selected for further evaluation in this work because they have a kind of balance between improved classification accuracy and smaller model size. 
+
+# 3 Related Work 
+
+Extensive research has been conducted in this domain, evolving from traditional computer vision and image processing techniques to advanced approaches that integrate neural networks with machine learning classifiers. Several studies have explored vision-based lane detection using camera systems. For instance, a lane detection algorithm based on a single RGB camera was proposed to identify the safe drivable region in front of a vehicle by applying color-space analysis, Canny edge detection, and the Hough transform to extract lane boundaries, achieving an accuracy of approximately 95.75% in simulation environments [11]. To improve robustness under challenging driving conditions such as low visibility, occlusion, and poor lighting, another study introduced a comprehensive intensity threshold range to enhance the traditional Canny edge detector, enabling more reliable detection of faint or obscured lane markings [12]. Similarly, a perspective-based lane detection approach utilized region-of-interest selection, perspective warping, and color filtering in LUV and LAB color spaces to isolate lane pixels, followed by polynomial regression to estimate lane curves [13]. Furthermore, another method improved lane detection accuracy by processing yellow and white lane markings separately, extracting yellow lanes in the HSV color space and white lanes in grayscale space, and applying a sliding window polynomial fitting technique to better detect curved lane boundaries compared to traditional Hough-transform-based methods [14]. CNNs automatically learn hierarchical feature representations, making them more robust than traditional approaches. Several studies have explored CNN-based solutions for traffic sign detection and classification in autonomous driving systems. For example, a deep learning-based traffic sign detection model was pro-posed to achieve real-time performance and high accuracy using a custom dataset containing diverse traffic sign types and challenging driving scenarios [15]. To further reduce computational cost, another study introduced a CNN-based traf-fic sign recognition method that applies non-uniform adaptive approximation, allowing different image regions to be processed with varying levels of compu-tational precision based on their importance [16]. Another study investigated a neural network–based traffic sign recognition (TSR) system under different envi-ronmental conditions and image resolutions. The experiments evaluated recogni-tion performance across multiple weather scenarios and resolutions. The results showed that the trained network could achieve recognition accuracy above 96% [17]. Furthermore, a platform-independent CNN-based traffic sign recognition system was developed to detect multiple traffic sign shapes, including circular, triangular, and rectangular signs, trained on 43 classes from the GTSRB dataset, demonstrating suitability for real-time embedded applications [18]. 6 Md Tanjemul Islam and Md Rafiul Kabir 
+
+# 4 Implementation And Setup 
+
+4.1 Environment Setup 
+
+In the laboratory environment, a closed-loop track was constructed to evaluate the AV system. A small-scale AV testbed based on a Raspberry Pi platform, hereafter referred to as the Pi-AV (Pi-based Autonomous Vehicle Testbed), was deployed on a closed-loop track to evaluate the proposed perception and control framework, shown as Fig. 1 and 2. The Pi-AV was tasked with continuously detecting and tracking the path. Multiple traffic signs were positioned along the route to simulate real-world conditions. To assess the system’s robustness, tests were conducted under varying illumination conditions, which work as environ-mental perturbations for this study. During navigation, the system concurrently performed path tracking and traffic sign classification using a single camera as the primary input sensor.  
+
+> Fig. 1. Pi-AV real-time deployment environment
+
+4.2 Lane Detection and Tracking 
+
+For resource-constrained Pi-AV, it is important to detect the track around the surroundings efficiently with minimal computation. These robotic systems have severe computational complexity, minimal hardware requirements and low toler-ance for performance. Highly computational image processing or deep learning methods can easily take away most of the computational resources. To work around this, a threshold-based segmentation method was used. The algorithm is computationally very efficient, lightweight, and still very reliable. A color and intensity threshold is applied to the image frame, which iso-lates the lanes from the surrounding environment, making it easier to remove Vision-Based Lane Following and Traffic Sign Recognition for AVs 7 
+
+> Fig. 2. Deployed Pi-AV performing classification and following the track
+
+everything from the image except the track. This thresholding technique leaves a binary representation of the track, shown as Fig. 3. For simplifying the track ge-ometry, a perspective transformation was then applied to the frame. This is often referred to as the “Bird’s-eye view”. This effectively reduces geometric distortion by aligning lane boundaries vertically. The computational part of the algorithm is the horizontal pixel intensity histogram over the lower region of the warped image. Peaks in the histogram correspond to lane boundaries, allowing a good estimation of the lane center. The difference between the detected lane center and the image midpoint is then calculated, which is basically the deviation of the Pi-AV from the lane. This is the source signal of our steering control. A rule-based steering control method was developed that converts lane center deviation into a bounded steering angle using a predefined linear relation. A smoothing mechanism is applied to ensure stable real-time motion. The resulting control signal is sent to the steering actuator for real-time lane following. 
+
+Finding Threshold Value The accuracy of this algorithm depends highly on threshold settings. Captured RGB frames are processed to the HSV color space. Based on lower and upper thresholding values, the frames are masked to extract the track. 
+
+Lower =  Hlow , S low , V low 
+
+, Upper =  Hhigh , S high , V high 
+
+ (1) 
+
+mask( p) = 
+
+
+
+1, if Hlow ≤ H(p) ≤ Hhigh , S low ≤ S(p) ≤ Shigh , V low ≤
+
+V (p) ≤ Vhigh 
+
+0, otherwise (2) 8 Md Tanjemul Islam and Md Rafiul Kabir    
+
+> (a) (b) (c)
+> Fig. 3. Lane curvature detection method: (a) Original Pi-AV vision, (b) Extracted path, (c) Detecting curvature of the lane.
+
+The threshold values were empirically determined through trial-and-error for each illumination condition. The selection process involved calibrating the thresholds based on the average ambient lighting and manually tuning the upper and lower bounds to effectively isolate the track while minimizing background noise. This ensures that appropriate threshold values are selected according to luminosity conditions. The chosen thresholds are illumination-dependent and remain fixed during each experimental run. 
+
+Color Space Transformation HSV color space provides greater flexibility in isolating and detecting chrominance components within image frames compared to the RGB space. Because of this, the frame is converted from RGB to HSV color segmentation. 
+
+Perspective Transformation Detection accuracy can be further improved by using a classical perspective transformation slightly. Each frame is then trans-ferred with this perspective change to get “Bird’s eye view”, which allows to reduce the effects of perspective distortion. The transformed coordinates of a point (x,y) are computed as: 
+
+x′ = h11 x + h12 y + h13 
+
+h31 x + h32 y + h33 
+
+, y′ = h21 x + h22 y + h23 
+
+h31 x + h32 y + h33 
+
+(3) Where hij are elements of the 3 ×3 homography matrix H. 
+
+Lane Curvature Calculation This is the most important part, which cal-culates how much the curvature of the track is ahead of the vehicle that has to be proportionally offset by generating appropriate steering command signals, which eventually reduces the displacement of the vehicle from the center line of the track and keeps the vehicle on the track. For the calculation of the curvature, a specific region of interest (ROI) is selected that is very close to the camera of the vehicle and covers some track distance in front of it. An image histogram is applied to detect the curvature from the ROI area of the image. Vision-Based Lane Following and Traffic Sign Recognition for AVs 9 
+
+> Fig. 4. Path detecting and tracking block diagram
+
+Rule-based Steering Controller Based on the curvature calculation, the controller simultaneously provides a steering control signal that is fed to the steering servo. This enables precise vehicle maneuvers and accurate path follow-ing. Fig. 4 shows details of the overall path tracking method of the Pi-AV. 
+
+4.3 Traffic Sign Classification Classification with EfficientNetB0 EfficientNetB0 belongs to the Efficient-Net family. The key feature of this model is that, unlike conventional CNN ar-chitectures, which arbitrarily increase network depth or width, EfficientNet ap-plies a principled scaling strategy that improves model performance while main-taining computational efficiency. This is called a “Compound Scaling Method”, which systematically scales network depth, width, and input resolution. The EfficientNet-B0 model is selected because of its computational efficiency, ac-curacy, and inference speed, which are critical factors for resource-constrained systems. Another feature of EfficientNetB0 is that it uses input images of reso-lution 224 × 224, which is divisible by common hardware processing units (e.g., multiples of 8 or 16). This design helps to reduce unnecessary zero-padding op-erations and improve computational efficiency during convolution operations. To optimize the model better, a custom traffic sign dataset was created for training the model. Public traffic sign datasets often focus on large-scale road environments and sometimes are tightly cropped. By collecting and labeling images directly from the Pi-AV camera system, the dataset captures realistic environmental variations such as viewing angles, varying illumination, motion blur, camera perspective, background clutter, and background noise specific to the robot’s real-world operating environment. Some sample images from the dataset are shown in Fig. 5. There are a total of seven classes, six are for six different traffic signs, and another is the default "None" class. Each class has 2270 images, which were taken from the original camera of the Pi-AV while it traveled through the track. The dataset was divided into train, test, and validation sets in 70%, 15%, and 15%, respectively, for each class. 10 Md Tanjemul Islam and Md Rafiul Kabir  
+
+> Fig. 5. Sample images from training dataset
+
+Classification with MobileNet-V2 MobileNetV2 was also considered for traffic sign classification due to its suitability and performance in embedded sys-tems and robotics. MobileNetV2 is an improvement over earlier mobile-oriented CNNs. The model was specifically designed to achieve high performance while maintaining low computational memory requirements, making it appropriate for deployment on resource-constrained platforms. The core architectural benefits of MobileNetV2 are the use of inverted residual blocks and linear bottleneck layers. Traditionally, residual networks ( e.g. , ResNet) use wide layers internally and nar-row layers at the input and output. MobileNetV2 inverts this structure, result-ing in reducing the number of parameters and floating-point operations required during inference while preserving important feature representations. Another im-portant aspect is that MobileNetV2 employs depthwise separable convolutions, splitting convolution operations into depthwise and pointwise stages. This sig-nificantly reduces computational complexity compared to conventional CNNs while maintaining competitive accuracy. Overall, MobileNetV2’s efficient archi-tecture and lower computational demand lead to faster inference time, allowing the Pi-AV to process visual information and respond in near real-time. To be able to make a fair comparison between the performance of the EfficientNet-B0 model and the MobileNet-V2 model, the exact same dataset and splitting were used for training, validating, and testing both models. The training strategy was kept consistent. Exact same configuration was used for im-age size, data transformations, batch size, optimizer, warm-up strategy, learning rate schedule, total number of training epochs, early stopping criteria, and loss function. Vision-Based Lane Following and Traffic Sign Recognition for AVs 11 
+
+# 5 Result And Discussions 
+
+In the laboratory setup, Pi-AV was deployed to operate autonomously while performing real-time object classification, while following the track. Separate experiments were conducted using the EfficientNet-B0 and MobileNetV2 mod-els to evaluate their performance, efficiency, and relative strengths in different luminosity. 
+
+5.1 Lane Tracking Performance 
+
+The Pi-AV was allowed to run on the road for 5 minutes without any disturbance in two different environmental luminosity. The performance log was saved for further analysis.                                     
+
+> Table 2. Performance evaluation under different lighting conditions
+> Avg. Luminosity Avg. Inference Avg. FPS Avg. Lane Offset (Lux) Time (ms) (Pixels)
+> 282.82 27 .96 ±2.37 35 .83 ±1.24 9.04 ±18 .07
+> 487.90 33 .24 ±5.98 30 .67 ±3.91 8.30 ±17 .64
+> Avg. Luminosity Lane Offset Normalized Curvature Steering (Lux) RMSE (Pixels) RMSE (%) Correlation
+> 282.82 20.2 3.16 0.996 487.90 19.5 3.05 0.994
+
+The experimental results are shown in Table 2. It demonstrates that the system maintains real-time processing capability, achieving an average inference time of 27.96 ms and 33.24 ms at 282.82 lux and 487.90 lux, respectively. Over-all, the system exhibits robust performance across varying illumination levels. Correspondingly, the system operates at an average frame rate of 35.83 FPS and 30.67 FPS, indicating that the algorithm is capable of real-time operation suitable for autonomous driving applications. In terms of tracking accuracy, the average lane offset remains relatively small for both lighting conditions, with values of 9.04 pixels and 8.30 pixels, respectively. The lane offset RMSE values of 20.2 pixels and 19.5 pixels further confirm the stability of the detection algo-rithm. Additionally, the normalized RMSE values remain around 3%, suggesting that the proposed method maintains consistent accuracy despite variations in illumination. Furthermore, the curvature–steering correlation values of 0.996 and 0.994 in-dicate a strong relationship between the detected track curvature and the steer-ing control signal generated by the controller. This high correlation demonstrates that the controller responds accurately to the geometry of the detected track, en-abling smooth and reliable vehicle navigation. Fig. 6 illustrates the relationship between path curvature and the steering command angle under two different il-lumination conditions. In both cases, a strong linear correlation can be observed, 12 Md Tanjemul Islam and Md Rafiul Kabir   
+
+> (a) (b)
+> Fig. 6. Path curvature and steering angle relationship: (a) In 282.82 lux condition and (b) In 487.90 lux condition
+
+indicating that the controller generates steering commands proportional to the detected track curvature. Overall, the experimental results confirm that the proposed system provides robust and reliable performance under varying lighting conditions while main-taining real-time processing capability. The proposed method was compared with a baseline approach where steer-ing angles were directly mapped from lane deviation without smoothing. The baseline method resulted in noticeable steering jitter and higher tracking error, whereas the proposed method achieved smoother and more stable lane tracking with reduced error (RMSE reduced to 3.16% at maximum in different settings as mentioned in the Table 2 ). 
+
+5.2 Traffic Sign Recognition Performance 
+
+Separate experimentation with the EfficientNet-B0 and MobileNetV2 models was carried out to find their efficiency and strengths.                             
+
+> Table 3. Test performance comparison of lightweight CNN models for traffic sign classification
+> Model Avg. Accuracy Avg. Macro Avg. Params Avg. Inference (%) F1 (M) (ms)
+> EfficientNet-B0 98 .77 ±0.10 0.9878 ±0.0011 4.02 8.63 ±0.007
+> MobileNetV2 95 .91 ±1.67 0.958 ±0.017 2.23 7.46 ±0.09
+
+Classification Model Test Result Comparison Training was conducted for the EfficientNet-B0 model. Some randomness in data augmentations, dataset shuffling, classifier weight initialization, and dropout layers was added to con-duct three iterations of training. The same steps were followed for the Mo-bileNetV2 model training. After training, testing was performed with the same Vision-Based Lane Following and Traffic Sign Recognition for AVs 13 
+
+test dataset for all the iterations. For better resemblance, very small distur-bances were added, such as motion blur, color change, and sensor noise to the images. The result is presented in Table 3. It can be observed that EfficientNet-B0 has a higher average accuracy (98.77%) and a higher macro F1 (0.9878) compared to MobileNetV2 (95.91% accuracy, 0.958 macro F1). The higher macro F1 score for EfficientNet-B0 indicates that it performs better across all classes. Also, EfficientNet-B0’s low standard deviation suggests it is more stable and consistent in predictions. EfficientNet-B0 has 4.02M parameters, almost double MobileNetV2 (2.23M). This means EfficientNet-B0 is larger and more complex, which usually contributes to its higher accuracy but at the cost of more resource consumption. MobileNetV2 is slightly faster (7.46 ms) than EfficientNet-B0 (8.63 ms). The difference (1.17 ms) is relatively small; it could be an issue based on applications, such as hardware constraints or real-time decisions. If the goal is maximum accuracy and consistent performance, EfficientNet-B0 is the better choice. If the goal is speed and minimal model size for deployment on devices with limited memory or computation, MobileNetV2 is more suitable.                                            
+
+> Table 4. Real-time performance comparison of lightweight CNN models under different lighting conditions
+> Model Avg. Luminosity Accuracy Macro F1 Avg. Inference (Lux) (%) F1 (ms)
+> EfficientNet-B0 282.82 90.00 0.90 221.01 487.90 85.70 0.87 220.22 MobileNetV2 282.82 85.71 0.85 193.81 487.90 82.86 0.83 192.51
+> Model Avg. Luminosity Avg. FPS Avg. Memory Avg. CPU (Lux) Avg. FPS Usage (MB) (%)
+> EfficientNet-B0 282.82 4.58 564.73 66.35 487.90 4.60 565.37 61.69 MobileNetV2 282.82 5.23 555.78 65.65 487.90 5.29 555.27 60.39
+
+Real Time Performance Comparison The models were compared using clas-sification accuracy, Macro F1-score, inference time, frames per second (FPS), CPU usage, and memory utilization. A confusion matrix was built for each model. The evaluation results are summarized in Table 4. At an average 282.82 lux luminosity condition, EfficientNet-B0 achieved an overall accuracy of 90% and a Macro F1-score of 0.90, outperforming MobileNetV2, which achieved 85.71% accuracy and a Macro F1-score of 0.85. EfficientNet-B0’s higher accu-racy comes at the cost of a little bit slower inference, with an average frame rate of 4.58 FPS, compared to 5.23 FPS for MobileNetV2. The additional computa-tional load is also reflected in slightly higher CPU and memory utilization. At an 14 Md Tanjemul Islam and Md Rafiul Kabir 
+
+average luminance of 487.90 lux, both models’ accuracies are slightly reduced. But EfficientNet-B0 still holds higher accuracy than the MobileNetV2 model; on the other hand, MobileNet has higher fps than EfficientNet. The relationship between the two models holds the same in different luminosity conditions. So the trade-off between model accuracy and real-time performance on resource-constrained embedded platforms can easily be noticed. For real-time Pi-AV, MobileNetV2 offers a better balance between responsiveness and computational efficiency, enabling smoother operation without substantial loss of accuracy. On the other hand, EfficientNet-B0 is more precise at the cost of more hardware and time resources. If accuracy is a higher priority, then some hardware acceleration or model optimization techniques might be used to achieve comparable real-time performance. 
+
+# 6 Conclusion 
+
+The experimental results demonstrate that the proposed system reliably per-forms path detection, path tracking, and real-time traffic-sign classification us-ing a single-camera input. The observed relationship between track curvature and steering command confirms that the control mechanism effectively trans-lates perception outputs into appropriate steering actions for stable vehicle nav-igation. The system maintained stable performance under varying illumination conditions in the controlled indoor environment, indicating robustness of the perception and control pipeline. However, higher illumination levels occasionally reduced classification accuracy due to glare, reflections, and potential imbalance in the training dataset across different lighting conditions. Another factor affect-ing performance was the frame rate used for traffic sign classification. To optimize CPU and memory usage, the classification module processed two frames per sec-ond, which ensured stable system operation but may lead to missed detections. The current implementation is limited to a structured indoor environment with predefined tracks and traffic signs. Real-world environments introduce addi-tional challenges, including dynamic obstacles, complex road geometries, varying weather conditions, and diverse lighting scenarios, which may affect perception accuracy and control stability. Future work will focus on extending the system to more complex environments and improving the robustness of the perception and control modules. 
+
+# References  
+
+> 1. Kabir, M.R., Ravi, B.B.Y., Ray, S.: Digital twin technologies for vehicular proto-typing: A survey. IEEE Open Journal of Intelligent Transportation Systems (2025) 2. Marti, E., De Miguel, M.A., Garcia, F., Perez, J.: A review of sensor technologies for perception in automated driving. IEEE intelligent transportation systems magazine
+> 11 (4), 94–108 (2019) 3. Gruyer, D., Magnier, V., Hamdi, K., Claussmann, L., Orfila, O., Rakotonirainy, A.: Perception, information processing and modeling: Critical stages for autonomous driving applications. Annual Reviews in Control 44 , 323–341 (2017)
+
+Vision-Based Lane Following and Traffic Sign Recognition for AVs 15 4. More, P., More, R., Sonavane, S., Kalasgonda, M., More, S.: Optimizing road sign detection with convolutional neural networks (cnn). In: International Conference On Innovative Computing And Communication. pp. 231–243. Springer (2025) 5. Gao, Q., Hu, H., Liu, W.: Traffic sign detection under adverse environmental con-ditions based on cnn. IEEE Access 12 , 117572–117580 (2024) 6. Iandola, F.N., Moskewicz, M.W., Ashraf, K., Han, S., Dally, W.J., Keutzer, K.: Squeezenet: Alexnet-level accuracy with 50x fewer parameters and <1mb model size. ArXiv abs/1602.07360 (2016), https://api.semanticscholar.org/ CorpusID:14136028 
+
+7. Howard, A.G., Zhu, M., Chen, B., Kalenichenko, D., Wang, W., Weyand, T., An-dreetto, M., Adam, H.: Mobilenets: Efficient convolutional neural networks for mobile vision applications. In: arXiv preprint arXiv:1704.04861 (2017) 8. Zhang, X., Zhou, X., Lin, M., Sun, J.: Shufflenet: An extremely efficient convolu-tional neural network for mobile devices. In: IEEE Conference on Computer Vision and Pattern Recognition (CVPR) (2018) 9. Sandler, M., Howard, A., Zhu, M., Zhmoginov, A., Chen, L.C.: Mobilenetv2: In-verted residuals and linear bottlenecks. In: IEEE Conference on Computer Vision and Pattern Recognition (CVPR) (2018) 10. Tan, M., Le, Q.V.: Efficientnet: Rethinking model scaling for convolutional neural networks. In: International Conference on Machine Learning (ICML) (2019) 11. Muthalagu, R., Bolimera, A., Kalaichelvi, V.: Lane detection technique based on perspective transformation and histogram analysis for self-driving cars. Computers & Electrical Engineering 85 , 106653 (2020) 12. Sultana, S., Ahmed, B., Paul, M., Islam, M.R., Ahmad, S.: Vision-based robust lane detection and tracking in challenging conditions. IEEE Access 11 , 67938– 67955 (2023) 13. Sapkal, A., Arti, Pawar, D., Singh, P.: Lane detection techniques for self-driving vehicle: comprehensive review. Multimedia Tools and Applications 82 (22), 33983– 34004 (2023) 14. Nugraha, B.T., Su, S.F., et al.: Towards self-driving car using convolutional neural network and road lane detector. In: 2017 2nd international conference on automa-tion, cognitive science, optics, micro electro-mechanical system, and information technology (ICACOMIT). pp. 65–69. IEEE (2017) 15. Yu, Z., Ye, T.: Autonomous traffic sign detection for self-driving car system using convolutional neural network algorithm. Journal of Intelligent & Fuzzy Systems 
+
+46 (3), 5975–5984 (2024) 16. Omidian, F., Abdi, A., Hamed-Rouhbakhs, A.: Adapts: adaptive approximate computing-based traffic sign recognition unit for self-driving cars: F. omidian et al. The Journal of Supercomputing 81 (14), 1339 (2025) 17. Tiron, G.Z., Poboroniuc, M.S.: Neural network based traffic sign recognition for autonomous driving. In: 2019 International Conference on Electromechanical and Energy Systems (SIELMEN). pp. 1–5. IEEE (2019) 18. Farag, W.: Recognition of traffic signs by convolutional neural nets for self-driving vehicles. International Journal of Knowledge-based and Intelligent Engineering Systems 22 (3), 205–214 (2018)

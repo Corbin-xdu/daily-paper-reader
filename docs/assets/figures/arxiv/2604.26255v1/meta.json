@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.26255v1/fig-001.webp",
+      "caption": "Fig. 2. Computational profiles of different gait recognition models. Backbone FLOPs versus rank-1 accuracy on Gait3D, with bubble size indicating parameter count.",
+      "page": 6,
+      "index": 1,
+      "width": 516,
+      "height": 340
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26255v1/fig-002.webp",
+      "caption": "Fig. 1. Overview of GaitKD for heterogeneous gait distillation. Given an input gait sequence, both a frozen teacher and an efficient student extract partstructured gait representations. To enable distillation across heterogeneous models, their part-wise outputs are aligned in a shared part-wise space through a gait part alignment module. On top of this shared space, GaitKD performs two complementary knowledge transfers: decision-level distillation, which aligns part-wise class distributions to transfer decision relations, and boundary-level distillation, which preserves teacher-induced discriminative boundaries in the embedding space instead of directly regressing feature values. The two objectives are optimized jointly with the student base task loss during training. At inference time, only the student is used, with no additional overhead. For clarity, the base task supervision (e.g., identification and metric learning losses) is omitted from the figure.",
+      "page": 2,
+      "index": 2,
+      "width": 1014,
+      "height": 390
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26255v1/fig-003.webp",
+      "caption": "TABLE V MULTI-TEACHER DISTILLATION RESULTS ACROSS THREE BENCHMARKS (STUDENT: GAITBASE). ∆BASE IS COMPUTED AGAINST THE BASELINE; ∆BEST IS COMPUTED AGAINST THE BEST SINGLE-TEACHER RESULT.",
+      "page": 8,
+      "index": 3,
+      "width": 516,
+      "height": 442
+    },
+    {
+      "url": "assets/figures/arxiv/2604.26255v1/fig-004.webp",
+      "caption": "TABLE VII ABLATION ON DISTILLATION OBJECTIVES (TEACHER: DEEPGAITV2, STUDENT: GAITBASE).",
+      "page": 9,
+      "index": 4,
+      "width": 494,
+      "height": 273
+    }
+  ]
+}
